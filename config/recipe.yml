@@ -31,10 +31,10 @@ modules:
   
   - type: script
       snippets:
-      - "curl -fsSL https://tailscale.com/install.sh | sh"
+      # - "curl -fsSL https://tailscale.com/install.sh | sh" -- failed attempt at adding tailscale
       # - "ln -sf /usr/bin/ld.bfd /etc/alternatives/ld && ln -sf /etc/alternatives/ld /usr/bin/ld" # example: ld alternatives symlink workaround
       scripts:
-      # - myscript.sh # example: run config/scripts/myscript.sh
+      - tailscale-installer.sh # example: run config/scripts/myscript.sh
   
   - type: default-flatpaks
     notify: true # Send notification after install/uninstall is finished (true/false)
