@@ -1,10 +1,9 @@
-#!/bin/sh
-# Copyright (c) Tailscale Inc & AUTHORS
-# SPDX-License-Identifier: BSD-3-Clause
-#
-# This script detects the current operating system, and installs
-# Tailscale according to that OS's conventions.
+#!/usr/bin/env bash
 
+# Tell this script to exit if there are any errors.
+# You should have this in every custom script, to ensure that your completed
+# builds actually ran successfully without any errors!
+set -oue pipefail
 set -eu
 
 # All the code is wrapped in a main function that gets called at the
