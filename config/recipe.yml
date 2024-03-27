@@ -26,9 +26,16 @@ modules:
     remove:
       # example: removing firefox (in favor of the flatpak)
       # "firefox" is the main package, "firefox-langpacks" is a dependency
-      # - firefox
-      # - firefox-langpacks # also remove firefox dependency (not required for all packages, this is a special case)
-
+      - firefox
+      - firefox-langpacks # also remove firefox dependency (not required for all packages, this is a special case)
+  
+  - type: script
+      snippets:
+      - "curl -fsSL https://tailscale.com/install.sh | sh"
+      # - "ln -sf /usr/bin/ld.bfd /etc/alternatives/ld && ln -sf /etc/alternatives/ld /usr/bin/ld" # example: ld alternatives symlink workaround
+      scripts:
+      # - myscript.sh # example: run config/scripts/myscript.sh
+  
   - type: default-flatpaks
     notify: true # Send notification after install/uninstall is finished (true/false)
     system:
@@ -57,6 +64,7 @@ modules:
         - org.libreoffice.LibreOffice
         - page.codeberg.libre_menu_editor.LibreMenuEditor
         - io.github.vikdevelop.SaveDesktop
+        - com.mattjakeman.ExtensionManager
         - com.leinardi.gst
         # - org.mozilla.firefox
         # - org.gnome.Loupe
