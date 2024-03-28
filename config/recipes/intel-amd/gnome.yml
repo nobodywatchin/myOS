@@ -1,5 +1,5 @@
 # image will be published to ghcr.io/<user>/<name>
-name: myos
+name: myos-gnome
 # description will be included in the image's metadata
 description: "myOS is an operating system dedicated to being user-friendly and progressive "
 
