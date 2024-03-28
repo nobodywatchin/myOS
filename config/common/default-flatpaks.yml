@@ -27,4 +27,8 @@ install:
   - com.mattjakeman.ExtensionManager
   - com.leinardi.gst
 remove:
-  # - org.gnome.eog
+  - org.gnome.Contacts
+  - org.gnome.Weather
+  - org.gnome.Maps
+  - com.github.GradienceTeam.Gradience
+  - io.missioncenter.MissionCenter
