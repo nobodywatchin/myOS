@@ -28,10 +28,6 @@ modules:
       # "firefox" is the main package, "firefox-langpacks" is a dependency
       - firefox
       - firefox-langpacks # also remove firefox dependency (not required for all packages, this is a special case)
-  
-  - type: script
-      scripts:
-      # - tailscale-installer.sh # example: run config/scripts/myscript.sh
   - type: default-flatpaks
     notify: true # Send notification after install/uninstall is finished (true/false)
     system:
