@@ -1,0 +1,5 @@
+type: rpm-ostree
+repos: 
+  - https://pkgs.tailscale.com/stable/fedora/tailscale.repo
+install:    
+  - tailscale
