@@ -1,0 +1,31 @@
+  - type: default-flatpaks
+    notify: true # Send notification after install/uninstall is finished (true/false)
+    system:
+      repo-url: https://dl.flathub.org/repo/flathub.flatpakrepo
+      repo-name: flathub
+      repo-title: "Flathub (system-wide)" # Optional; this sets the remote's user-facing name in graphical frontends like GNOME Software
+      install:
+        - io.github.dvlv.boxbuddyrs
+        - dev.deedles.Trayscale
+        - io.github.flattool.Warehouse
+        - com.github.tchx84.Flatseal
+        - it.mijorus.gearlever
+        - com.usebottles.bottles
+        - com.github.marhkb.Pods
+        - dev.skynomads.Seabird
+        - net.nokyan.Resources
+        - org.gnome.Calculator
+        - org.gnome.Characters
+        - org.gnome.Evince
+        - org.gnome.FileRoller
+        - org.gnome.NautilusPreviewer
+        - org.gnome.TextEditor
+        - org.gnome.clocks
+        - org.gnome.font-viewer
+        - org.libreoffice.LibreOffice
+        - page.codeberg.libre_menu_editor.LibreMenuEditor
+        - io.github.vikdevelop.SaveDesktop
+        - com.mattjakeman.ExtensionManager
+        - com.leinardi.gst
+      remove:
+        # - org.gnome.eog
