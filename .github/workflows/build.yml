@@ -11,7 +11,7 @@ on:
   workflow_dispatch: # allow manually triggering builds
 jobs:
   bluebuild:
-    name: Build Custom Image
+    name: Build myOS
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -21,11 +21,10 @@ jobs:
       fail-fast: false # stop GH from cancelling all matrix builds if one fails
       matrix:
         recipe:
-          # !! Add your recipes here 
-          - recipe.yml
+          - recipes/intel-amd/gnome.yml
     steps:
        # the build is fully handled by the reusable github action
-      - name: Build Custom Image
+      - name: Build myOS
         uses: blue-build/github-action@v1.2
         with:
           recipe: ${{ matrix.recipe }}
