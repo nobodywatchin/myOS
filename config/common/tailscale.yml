@@ -3,7 +3,3 @@ repos:
   - https://pkgs.tailscale.com/stable/fedora/tailscale.repo
 install:    
   - tailscale
-type: systemd
-system:
-  enabled:
-  - tailscaled.service
