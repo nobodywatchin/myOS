@@ -7,3 +7,4 @@ install:
   - gnome-shell-extension-caffeine
   - gnome-shell-extension-drive-menu
   - gnome-shell-extension-forge
+  - gnome-randr-rust
