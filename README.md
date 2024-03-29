@@ -13,4 +13,10 @@ To rebase an existing atomic Fedora (or Universal Blue) installation to the late
   ```
   systemctl reboot
   ```
-  
+- Then rebase to the signed image, like so:
+  ```
+  rpm-ostree rebase ostree-image-signed:docker://ghcr.io/nobodywatchin/myos-gnome:latest
+  ```
+- Reboot again to complete the installation
+  ```
+  systemctl reboot
