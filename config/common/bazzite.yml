@@ -6,4 +6,4 @@
   install:
     - joystickwake
     - mangohud
-    - ptyxis
+    - prompt
