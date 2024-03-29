@@ -5,9 +5,7 @@ install:
   - gnome-shell-extension-blur-my-shell
   - gnome-shell-extension-system76-scheduler
   - gnome-shell-extension-user-theme
-  - gnome-shell-extension-clipboard-history
   - gnome-shell-extension-caffeine
   - gnome-shell-extension-vitals
-  - gnome-shell-extension-extension-list
   - gnome-shell-extension-drive-menu
   - gnome-shell-extension-forge
