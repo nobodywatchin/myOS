@@ -2,8 +2,8 @@
   repos: 
     - https://copr.fedorainfracloud.org/coprs/kylegospo/bazzite-multilib/repo/fedora-39/kylegospo-bazzite-multilib-fedora-39.repo
     - https://copr.fedorainfracloud.org/coprs/kylegospo/bazzite/repo/fedora-39/kylegospo-bazzite-fedora-39.repo
-    - https://copr.fedorainfracloud.org/coprs/kylegospo/prompt/repo/fedora-39/kylegospo-prompt-fedora-39.repo
+    - https://copr.fedorainfracloud.org/coprs/kylegospo/system76-scheduler/repo/fedora-39/kylegospo-system76-scheduler-fedora-39.repo
   install:
     - joystickwake
     - mangohud
-    - prompt
+    - system76-scheduler
