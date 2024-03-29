@@ -1,7 +1,8 @@
 type: systemd
 system:
   enabled:
-    -tailscaled.service # Enabled (runs on system boot)
+    - tailscaled.service # Enabled (runs on system boot)
+    - com.system76.Scheduler.service
   disabled:
     # Disabled (does not run on system boot, unless other unit strictly requires it)
   masked:
