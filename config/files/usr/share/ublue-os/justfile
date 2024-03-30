@@ -1,0 +1,25 @@
+set allow-duplicate-recipes := true
+set ignore-comments := true
+
+_default:
+    #!/usr/bin/bash
+    source /usr/lib/ujust/libformatting.sh
+    echo "$(Urllink "https://universal-blue.discourse.group/docs?topic=42" "Click here to view the Universal Blue just documentation")"
+    /usr/bin/ujust --list --list-heading $'Available commands:\n' --list-prefix $' - '
+
+# Imports
+import "/usr/share/ublue-os/just/00-default.just"
+import "/usr/share/ublue-os/just/10-update.just"
+import "/usr/share/ublue-os/just/20-clean.just"
+import "/usr/share/ublue-os/just/30-distrobox.just"
+import "/usr/share/ublue-os/just/31-toolbox.just"
+import "/usr/share/ublue-os/just/40-nvidia.just"
+import "/usr/share/ublue-os/just/50-akmods.just"
+import "/usr/share/ublue-os/just/60-custom.just"
+import "/usr/share/ublue-os/just/80-bazzite.just"
+import "/usr/share/ublue-os/just/81-bazzite-fixes.just"
+import "/usr/share/ublue-os/just/82-bazzite-apps.just"
+import "/usr/share/ublue-os/just/82-bazzite-sunshine.just"
+import "/usr/share/ublue-os/just/82-bazzite-waydroid.just"
+import "/usr/share/ublue-os/just/83-bazzite-audio.just"
+import "/usr/share/ublue-os/just/84-bazzite-virt.just"
