@@ -1,5 +1,4 @@
 name: yafti
-title: myOS setup
 properties:
   mode: "run-once"
   save_state: "always"
