@@ -8,6 +8,7 @@ install:
   - gnome-shell-extension-drive-menu
   - gnome-shell-extension-forge
   - gnome-randr-rust
+  - gnome-shell-extension-tailscale-gnome-qs
 remove:
   - yelp
   - gnome-tour
