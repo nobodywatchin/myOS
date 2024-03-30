@@ -9,6 +9,10 @@ install:
   - gnome-shell-extension-forge
   - gnome-randr-rust
   - gnome-shell-extension-tailscale-gnome-qs
+repos:
+  - https://copr.fedorainfracloud.org/coprs/astrawan/gnome-shell-extensions/repo/fedora-39/astrawan-gnome-shell-extensions-fedora-39.repo
+install:
+  - gnome-shell-extension-vitals
 remove:
   - yelp
   - gnome-tour
