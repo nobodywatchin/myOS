@@ -1,4 +1,4 @@
-name: yafti
+title: Welcome to myOS
 properties:
   mode: "run-once"
   save_state: "always"
