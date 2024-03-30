@@ -8,3 +8,6 @@ install:
   - gnome-shell-extension-drive-menu
   - gnome-shell-extension-forge
   - gnome-randr-rust
+remove:
+  - yelp
+  - gnome-tour
