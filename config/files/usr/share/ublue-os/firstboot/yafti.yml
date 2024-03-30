@@ -1,3 +1,4 @@
+name: yafti
 title: myOS setup
 properties:
   mode: "run-once"
