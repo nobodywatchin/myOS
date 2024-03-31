@@ -1,4 +1,3 @@
-type: yafti
 title: Welcome to myOS
 properties:
   mode: "run-once"
