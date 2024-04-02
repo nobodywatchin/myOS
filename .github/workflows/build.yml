@@ -24,6 +24,7 @@ jobs:
         recipe:
           - recipes/intel-amd/gnome.yml
           - recipes/intel-amd/kde.yml
+          - recipes/intel-amd/cinnamon.yml
     steps:
        # the build is fully handled by the reusable github action
       - name: Build myOS
