@@ -15,7 +15,7 @@ for file in /usr/share/hyprland/*.png; do
 done
 
 # Removes GNOME Desktop Files
-rm /usr/share/applications/org.gnome.ColorProfileViewer.desktop
-rm /usr/share/applications/org.gnome.Settings.desktop
-rm /usr/share/applications/org.gnome.Tecla.desktop
-rm /usr/share/applications/org.gnome.Tour.desktop
+# rm /usr/share/applications/org.gnome.ColorProfileViewer.desktop
+# rm /usr/share/applications/org.gnome.Settings.desktop
+# rm /usr/share/applications/org.gnome.Tecla.desktop
+# rm /usr/share/applications/org.gnome.Tour.desktop
