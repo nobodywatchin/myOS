@@ -12,4 +12,4 @@ for file in /usr/share/hyprland/*.png; do
 done
 
 # Activates custom dotfiles
-ags
+# ags
