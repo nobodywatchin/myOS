@@ -3,23 +3,91 @@ repos:
 - https://copr.fedorainfracloud.org/coprs/solopasha/hyprland/repo/fedora-39/solopasha-hyprland-fedora-39.repo
 - https://copr.fedorainfracloud.org/coprs/principis/zrepl/repo/fedora-39/principis-zrepl-fedora-39.repo
 install: 
-# Simple Desktop Display Manager
-- sddm
-- sddm-themes
-- qt5-qtgraphicaleffects
-- qt5-qtquickcontrols2
-- qt5-qtsvg
+# GNOME Display Manager
+- gdm
+
+# launcher
+  - rofi-wayland
+
+# environment
+  - xorg-x11-server-Xwayland
+  - polkit
+  - lxpolkit
+  - xdg-user-dirs
+  - dbus-tools
+  - dbus-daemon
+  - wl-clipboard
+  - gnome-keyring
+  - pavucontrol
+  - playerctl
+  - qt5-qtwayland
+  - qt6-qtwayland
+  - vulkan-validation-layers
+  - vulkan-tools
+  - google-noto-emoji-fonts
+  - gnome-disk-utility
+  
+# sound
+  - wireplumber
+  - pipewire
+  - pamixer
+
+# networking
+  - network-manager-applet
+  - NetworkManager-openvpn
+  - NetworkManager-openconnect
+  - bluez
+  - bluez-tools
+  - blueman
+
+# file manager
+  - thunar
+  - thunar-archive-plugin 
+  - thunar-volman
+  - xarchiver
+  - imv
+  - p7zip
+  - unrar-free
+
+# screenshot
+  - slurp
+  - grim
+
+# display
+  - wlr-randr
+  - wlsunset
+  - grimshot
+  - brightnessctl
+  - swaylock
+  - swayidle
+  - kanshi
+
+# terminal
+  - foot
+
+# notifications
+  - dunst
+
+# theme and GUI
+  - adwaita-qt5
+  - fontawesome-fonts-all
+  - gnome-themes-extra
+  - gnome-icon-theme
+  - paper-icon-theme
+  - breeze-icon-theme 
+  - papirus-icon-theme
+  
 # Hyprland & Tools
-- hyprland
-- hyprnome
-- hyprlock
-- hypridle
-- hyprpicker
-- hyprland-plugins
-- pyprland
-- aylurs-gtk-shell
-- swww
-- waypaper
-- xdg-desktop-portal-hyprland
-- wl-clipboard
-- brightnessctl
+  - hyprland
+  - hyprnome
+  - hyprlock
+  - hypridle
+  - hyprpicker
+  - hyprland-plugins
+  - pyprland
+  - aylurs-gtk-shell
+  - swww
+  - waypaper
+  - xdg-desktop-portal-hyprland
+  - wl-clipboard
+  - brightnessctl
