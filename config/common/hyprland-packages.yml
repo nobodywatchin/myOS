@@ -10,6 +10,7 @@ install:
 - hyprpicker
 - hyprland-plugins
 - pyprland
+- aylurs-gtk-shell
 - eww-git
 - swww
 - waypaper
