@@ -8,12 +8,11 @@ install:
 - hyprlock
 - hypridle
 - hyprpicker
-- swww
-- waypaper
 - hyprland-plugins
 - pyprland
 - eww-git
-- aylurs-gtk-shell
+- swww
+- waypaper
 - xdg-desktop-portal-hyprland
 - wl-clipboard
 - brightnessctl
