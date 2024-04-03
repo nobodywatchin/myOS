@@ -4,7 +4,7 @@
 set -oue pipefail
 
 # Activates custom dotfiles
-ags
+# ags
 
 # Removes cringe anime wallpapers
 for file in /usr/share/hyprland/*.png; do
