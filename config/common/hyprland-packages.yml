@@ -6,11 +6,14 @@ install:
 - hyprnome
 - hyprlock
 - hypridle
+- hyprpicker
 - swww
 - waypaper
 - hyprland-plugins
 - pyprland
 - eww-git
+- aylurs-gtk-shell
 - xdg-desktop-portal-hyprland
 - wl-clipboard
 - brightnessctl
+- fd
