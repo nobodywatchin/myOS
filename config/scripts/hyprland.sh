@@ -13,3 +13,6 @@ for file in /usr/share/hyprland/*.png; do
         echo "Removed: $file"
     fi
 done
+
+# Sets Theming
+sed -i 's/Inherits=Adwaita/Inherits=ePapirus/' /usr/share/icons/default/index.theme 
