@@ -18,5 +18,3 @@ install:
 - wl-clipboard
 - brightnessctl
 - fd
-- dart-sass
-- bun
