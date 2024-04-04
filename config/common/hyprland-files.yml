@@ -1,5 +1,5 @@
 modules:
   - type: files
     files:
-      - /hyprland/usr/etc/homedir: /homedir
-      - /hyprland/usr/share: /usr/share
+      - /hyprland/homedir: ~/
+      - /hyprland/usr: /usr
