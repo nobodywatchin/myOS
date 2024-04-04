@@ -1,0 +1,6 @@
+type: rpm-ostree
+repos: 
+- https://copr.fedorainfracloud.org/coprs/solopasha/hyprland/repo/fedora-39/solopasha-hyprland-fedora-39.repo
+install: 
+  - aylurs-gtk-shell
+  - swww
