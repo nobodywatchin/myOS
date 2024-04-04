@@ -79,6 +79,8 @@ install:
   
 # Hyprland & Tools
   - hyprland
+  - xdg-desktop-portal-hyprland
+  - brightnessctl
   - hyprnome
   - hyprlock
   - hypridle
@@ -88,6 +90,3 @@ install:
   - aylurs-gtk-shell
   - swww
   - waypaper
-  - xdg-desktop-portal-hyprland
-  - wl-clipboard
-  - brightnessctl
