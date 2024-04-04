@@ -1,7 +1,5 @@
 modules:
   - type: files
     files:
-      - /hyprland/usr/etc/homedir: /usr/etc/homedir #copy static configurations
-                  # configuration you wish to end up in /etc/ on the booted system should be
-                  # added into /usr/etc/ as that is the proper "distro" config directory on ostree
-                  # read more in the files module's README
+      - /hyprland/usr/: /usr/etc/homedir
+      - /hyprland/usr/share: /usr/share
