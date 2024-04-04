@@ -1,5 +1,4 @@
 modules:
   - type: files
     files:
-      - /hyprland/homedir: ~/
       - /hyprland/usr: /usr
