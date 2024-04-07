@@ -9,7 +9,6 @@ winxp:
         gsettings set org.cinnamon.desktop.interface gtk-theme "Windows XP Luna"
         gsettings set org.cinnamon.desktop.interface icon-theme "WindowsXP"
         gsettings set org.cinnamon.theme name "Windows XP Luna"
-        gsettings set org.cinnamon.desktop.background picture-uri file:///usr/share/backgrounds/bliss.jpg
     if [[ ${BASE_IMAGE_NAME} == 'silverblue' ]]; then
         gsettings set org.gnome.desktop.interface gtk-theme "Windows XP Luna"
         gsettings set org.gnome.desktop.interface icon-theme 'Windows XP'
@@ -24,7 +23,6 @@ win7:
         gsettings set org.cinnamon.desktop.interface gtk-theme "Windows7"
         gsettings set org.cinnamon.desktop.interface icon-theme "Windows7"
         gsettings set org.cinnamon.theme name "Windows7"
-        gsettings set org.cinnamon.desktop.background picture-uri file:///usr/share/backgrounds/7.jpg
     if [[ ${BASE_IMAGE_NAME} == 'silverblue' ]]; then
         gsettings set org.gnome.desktop.interface gtk-theme "Windows7"
         gsettings set org.gnome.desktop.interface icon-theme 'Windows7'
@@ -39,7 +37,6 @@ win10-dark:
         gsettings set org.cinnamon.desktop.interface gtk-theme "Windows10-Dark"
         gsettings set org.cinnamon.desktop.interface icon-theme "Windows10"
         gsettings set org.cinnamon.theme name "Windows10-Dark"
-        gsettings set org.cinnamon.desktop.background picture-uri file:///usr/share/backgrounds/10.jpg
     if [[ ${BASE_IMAGE_NAME} == 'silverblue' ]]; then
         gsettings set org.gnome.desktop.interface gtk-theme "Windows10-Dark"
         gsettings set org.gnome.desktop.interface icon-theme 'Windows10'
@@ -54,7 +51,6 @@ win10-light:
         gsettings set org.cinnamon.desktop.interface gtk-theme "Windows10-Light"
         gsettings set org.cinnamon.desktop.interface icon-theme "Windows10"
         gsettings set org.cinnamon.theme name "Windows10-Light"
-        gsettings set org.cinnamon.desktop.background picture-uri file:///usr/share/backgrounds/10.jpg
     if [[ ${BASE_IMAGE_NAME} == 'silverblue' ]]; then
         gsettings set org.gnome.desktop.interface gtk-theme "Windows10-Light"
         gsettings set org.gnome.desktop.interface icon-theme 'Windows10'
@@ -73,11 +69,10 @@ macos-dark:
         gsettings set org.cinnamon.desktop.interface gtk-theme "MacOS-Dark"
         gsettings set org.cinnamon.desktop.interface icon-theme "MacOS"
         gsettings set org.cinnamon.theme name "MacOS-Dark"
-        gsettings set org.cinnamon.desktop.background picture-uri file:///usr/share/backgrounds/sonoma.jpg
     fi
 
     # Enable MacOS Light Theme
-macos-dark:
+macos-light:
     #!/usr/bin/bash
     IMAGE_INFO="/usr/share/ublue-os/image-info.json"
     BASE_IMAGE_NAME=$(jq -r '."base-image-name"' < $IMAGE_INFO)
@@ -89,5 +84,4 @@ macos-dark:
         gsettings set org.cinnamon.desktop.interface gtk-theme "MacOS-Light"
         gsettings set org.cinnamon.desktop.interface icon-theme "MacOS"
         gsettings set org.cinnamon.theme name "MacOS-Light"
-        gsettings set org.cinnamon.desktop.background picture-uri file:///usr/share/backgrounds/sonoma.jpg
     fi
