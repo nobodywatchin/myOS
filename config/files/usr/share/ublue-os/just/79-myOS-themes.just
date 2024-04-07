@@ -13,7 +13,8 @@ winxp:
         gsettings set org.gnome.desktop.interface gtk-theme "Windows XP Luna"
         gsettings set org.gnome.desktop.interface icon-theme 'Windows XP'
         gsettings set org.gnome.desktop.wm.preferences theme "Windows XP Luna"
-        
+    fi    
+    
     # Enable Windows 7 Theme
 win7:
     #!/usr/bin/bash
@@ -27,7 +28,8 @@ win7:
         gsettings set org.gnome.desktop.interface gtk-theme "Windows7"
         gsettings set org.gnome.desktop.interface icon-theme 'Windows7'
         gsettings set org.gnome.desktop.wm.preferences theme "Windows7"
-        
+    fi            
+    
     # Enable Windows 10 Dark Theme
 win10-dark:
     #!/usr/bin/bash
@@ -41,7 +43,8 @@ win10-dark:
         gsettings set org.gnome.desktop.interface gtk-theme "Windows10-Dark"
         gsettings set org.gnome.desktop.interface icon-theme 'Windows10'
         gsettings set org.gnome.desktop.wm.preferences theme "Windows10-Dark"
-        
+    fi            
+    
     # Enable Windows 10 Light Theme
 win10-light:
     #!/usr/bin/bash
@@ -55,7 +58,8 @@ win10-light:
         gsettings set org.gnome.desktop.interface gtk-theme "Windows10-Light"
         gsettings set org.gnome.desktop.interface icon-theme 'Windows10'
         gsettings set org.gnome.desktop.wm.preferences theme "Windows10-Light"
-        
+     fi    
+     
     # Enable MacOS Dark Theme
 macos-dark:
     #!/usr/bin/bash
@@ -80,8 +84,10 @@ macos-light:
         gsettings set org.gnome.desktop.interface gtk-theme "MacOS-Light"
         gsettings set org.gnome.desktop.interface icon-theme 'MacOS'
         gsettings set org.gnome.desktop.wm.preferences theme "MacOS-Light"
+        gsettings set org.gnome.desktop.interface cursor-theme 'MacOS-Cursors'
     if [[ ${BASE_IMAGE_NAME} == 'cinnamon' ]]; then
         gsettings set org.cinnamon.desktop.interface gtk-theme "MacOS-Light"
         gsettings set org.cinnamon.desktop.interface icon-theme "MacOS"
         gsettings set org.cinnamon.theme name "MacOS-Light"
+        gsettings set org.gnome.desktop.interface cursor-theme 'MacOS-Cursors'
     fi
