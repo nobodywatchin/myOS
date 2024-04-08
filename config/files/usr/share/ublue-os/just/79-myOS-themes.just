@@ -79,24 +79,3 @@ macos-dark:
         gsettings set org.cinnamon.desktop.interface icon-theme "MacOS"
         gsettings set org.cinnamon.theme name "MacOS-Dark"
     fi
-
-# Enable MacOS Light Theme
-macos-light:
-    #!/usr/bin/bash
-    set_macos_light_theme() {
-    if [[ $1 == 'gnome' ]]; then
-        gsettings set org.gnome.desktop.interface gtk-theme "MacOS-Light"
-        gsettings set org.gnome.desktop.interface icon-theme 'MacOS'
-        gsettings set org.gnome.desktop.wm.preferences theme "MacOS-Light"
-        gsettings set org.gnome.desktop.interface cursor-theme 'MacOS-Cursors'
-    elif [[ $1 == 'cinnamon' ]]; then
-        gsettings set org.cinnamon.desktop.interface gtk-theme "MacOS-Light"
-        gsettings set org.cinnamon.desktop.interface icon-theme "MacOS"
-        gsettings set org.cinnamon.theme name "MacOS-Light"
-        gsettings set org.gnome.desktop.interface cursor-theme 'MacOS-Cursors'
-    else
-        echo "Unsupported desktop environment: $1"
-    fi
-}
-desktop_environment=$(echo $XDG_CURRENT_DESKTOP | tr '[:upper:]' '[:lower:]')
-set_macos_light_theme "$desktop_environment"
