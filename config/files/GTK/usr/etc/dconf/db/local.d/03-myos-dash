@@ -1,0 +1,2 @@
+[org/gnome/shell] 
+favorite-apps=['gnome-terminal.desktop', 'org.mozilla.firefox.desktop', 'net.lutris.Lutris.desktop', 'org.gnome.Software.desktop', 'org.gnome.Ptyxis.desktop', 'org.gnome.Nautilus.desktop', 'org.gnome.TextEditor.desktop']

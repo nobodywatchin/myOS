@@ -1,0 +1,30 @@
+[org/gnome/desktop/app-folders]
+folder-children=['Games', 'GamingUtilities', 'Utilities', 'Containers', 'Waydroid']
+
+[org/gnome/desktop/app-folders/folders/GamingUtilities]
+apps=['com.github.Matoking.protontricks.desktop', 'io.github.trigg.discover_overlay.desktop', 'com.vysp3r.ProtonPlus.desktop', 'io.github.benjamimgois.goverlay.desktop', 'com.gerbilsoft.rom-properties.rp-config.desktop', 'input-remapper-gtk.desktop', 'steamos-nested-desktop.desktop', 'io.github.philipk.boilr', 'io.github.loot.loot']
+name='Gaming Utilities'
+translate=false
+
+[org/gnome/desktop/app-folders/folders/Containers]
+apps=['com.github.tchx84.Flatseal.desktop', 'io.github.flattool.Warehouse.desktop', 'it.mijorus.gearlever.desktop', 'com.github.marhkb.Pods.desktop', 'io.github.dvlv.boxbuddyrs.desktop', 'io.github.giantpinkrobots.flatsweep.desktop', 'com.usebottles.bottles.desktop']
+name='Containers'
+translate=true
+
+[org/gnome/desktop/app-folders/folders/Utilities]
+apps=['yafti.desktop', 'system-update.desktop', 'yelp.desktop', 'com.mattjakeman.ExtensionManager.desktop', 'org.gnome.tweaks.desktop', 'com.github.GradienceTeam.Gradience']
+categories=['X-GNOME-Utilities']
+name='X-GNOME-Utilities.directory'
+translate=true
+
+[org/gnome/desktop/app-folders/folders/Waydroid]
+apps=['Waydroid.desktop']
+categories=['X-WayDroid-App']
+name='Waydroid'
+translate=false
+
+[org/gnome/desktop/app-folders/folders/Games]
+apps=['com.valvesoftware.Steam', 'org.prismlauncher.PrismLauncher', 'com.heroicgameslauncher.hgl', 'com.pokemmo.PokeMMO', 'io.github.benjamimgois.goverlay.desktop']
+categories=['Game']
+name='Games'
+translate=false
