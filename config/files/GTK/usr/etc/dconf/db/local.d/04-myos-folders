@@ -1,5 +1,5 @@
 [org/gnome/desktop/app-folders]
-folder-children=['Social', 'Office', 'Games', 'GamingUtilities', 'Utilities', 'Containers', 'Waydroid']
+folder-children=['Internet', 'Social', 'Office', 'Social', 'Work', 'Games', 'GamingUtilities', 'Emulators', 'Utilities', 'Music', 'Images', 'Video', 'Containers', 'Waydroid']
 
 [org/gnome/desktop/app-folders/folders/GamingUtilities]
 apps=['com.github.Matoking.protontricks.desktop', 'io.github.trigg.discover_overlay.desktop', 'com.vysp3r.ProtonPlus.desktop', 'io.github.benjamimgois.goverlay.desktop', 'com.gerbilsoft.rom-properties.rp-config.desktop', 'input-remapper-gtk.desktop', 'steamos-nested-desktop.desktop', 'io.github.philipk.boilr.desktop', 'io.github.Foldex.AdwSteamGtk.desktop', 'com.steamgriddb.steam-rom-manager.desktop', 'io.github.loot.loot.desktop', 'io.github.Adda0.Stardrop.desktop']
@@ -12,9 +12,9 @@ name='Containers'
 translate=true
 
 [org/gnome/desktop/app-folders/folders/Utilities]
-apps=['yafti.desktop', 'system-update.desktop', 'yelp.desktop', 'com.mattjakeman.ExtensionManager.desktop', 'org.gnome.tweaks.desktop', 'com.github.GradienceTeam.Gradience']
-categories=['X-GNOME-Utilities']
-name='X-GNOME-Utilities.directory'
+apps=['yafti.desktop']
+categories=['Utilities']
+name='Utilities'
 translate=true
 
 [org/gnome/desktop/app-folders/folders/Waydroid]
@@ -25,11 +25,38 @@ translate=false
 
 [org/gnome/desktop/app-folders/folders/Games]
 apps=['com.valvesoftware.Steam.desktop', 'org.prismlauncher.PrismLauncher.desktop', 'com.heroicgameslauncher.hgl.desktop', 'com.pokemmo.PokeMMO.desktop', 'io.github.benjamimgois.goverlay.desktop']
+excluded-apps=['org.mamedev.MAME.desktop', 'io.github.stella_emu.Stella.desktop', 'io.github.dosbox-staging.desktop', 'org.scummvm.ScummVM.desktop', 'com.retrodev.blastem.desktop', 'org.flycast.Flycast.desktop', 'app.xemu.xemu.desktop', 'org.duckstation.DuckStation.desktop', 'net.pcsx2.PCSX2.desktop', 'org.ppsspp.PPSSPP.desktop', 'net.rpcs3.RPCS3.desktop', 'ca._0ldsk00l.Nestopia.desktop', 'dev.bsnes.bsnes.desktop', 'com.github.Rosalie241.RMG.desktop', 'io.mgba.mGBA.desktop', 'org.DolphinEmu.dolphin-emu.desktop', 'net.kuribo64.melonDS.desktop', 'org.desmume.DeSmuME.desktop', 'info.cemu.Cemu.desktop', 'io.github.lime3ds.Lime3DS.desktop', 'org.ryujinx.Ryujinx.desktop']
 categories=['Game']
 name='Games'
 translate=false
 
+[org/gnome/desktop/app-folders/folders/Emulators]
+apps=['org.mamedev.MAME.desktop', 'io.github.stella_emu.Stella.desktop', 'io.github.dosbox-staging.desktop', 'org.scummvm.ScummVM.desktop', 'com.retrodev.blastem.desktop', 'org.flycast.Flycast.desktop', 'app.xemu.xemu.desktop', 'org.duckstation.DuckStation.desktop', 'net.pcsx2.PCSX2.desktop', 'org.ppsspp.PPSSPP.desktop', 'net.rpcs3.RPCS3.desktop', 'ca._0ldsk00l.Nestopia.desktop', 'dev.bsnes.bsnes.desktop', 'com.github.Rosalie241.RMG.desktop', 'io.mgba.mGBA.desktop', 'org.DolphinEmu.dolphin-emu.desktop', 'net.kuribo64.melonDS.desktop', 'org.desmume.DeSmuME.desktop', 'info.cemu.Cemu.desktop', 'io.github.lime3ds.Lime3DS.desktop', 'org.ryujinx.Ryujinx.desktop']
+name='Emulators'
+translate=false
+
 [org/gnome/desktop/app-folders/folders/Office]
 categories=['Office']
+excluded-apps=['com.github.marhkb.Pods.desktop', 'org.gnome.Calendar.desktop', 'org.gnome.Contacts.desktop']
 name='Office'
+translate=false
+
+[org/gnome/desktop/app-folders/folders/Music]
+name='Music'
+categories=['Music']
+translate=false
+
+[org/gnome/desktop/app-folders/folders/Images]
+name='Images'
+categories=['Images']
+translate=false
+
+[org/gnome/desktop/app-folders/folders/Video]
+name='Video'
+categories=['Video']
+translate=false
+
+[org/gnome/desktop/app-folders/folders/Social]
+name='Social'
+apps=['com.discordapp.Discord.desktop', 'com.slack.Slack.desktop', 'us.zoom.Zoom.desktop', 'com.github.IsmaelMartinez.teams_for_linux.desktop', 'com.rtosta.zapzap.desktop', 'com.sindresorhus.Caprine.desktop', 'org.telegram.desktop.desktop', 'org.signal.Signal.desktop', 'org.gnome.Fractal.desktop', 'org.ferdium.Ferdium.desktop']
 translate=false

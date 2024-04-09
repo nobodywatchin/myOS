@@ -154,6 +154,7 @@ screens:
           - melonDS (DS & DSi): net.kuribo64.melonDS
           - DeSmuME (DS): org.desmume.DeSmuME
           - Cemu (WiiU): info.cemu.Cemu
+          - Lime3DS (3DS): io.github.lime3ds.Lime3DS
           - Ryujinx (Nintendo Switch): org.ryujinx.Ryujinx
         Music:
           description: Jam out
