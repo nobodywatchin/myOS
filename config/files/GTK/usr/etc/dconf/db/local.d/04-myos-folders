@@ -1,8 +1,8 @@
 [org/gnome/desktop/app-folders]
-folder-children=['Games', 'GamingUtilities', 'Utilities', 'Containers', 'Waydroid']
+folder-children=['Social', 'Office', 'Games', 'GamingUtilities', 'Utilities', 'Containers', 'Waydroid']
 
 [org/gnome/desktop/app-folders/folders/GamingUtilities]
-apps=['com.github.Matoking.protontricks.desktop', 'io.github.trigg.discover_overlay.desktop', 'com.vysp3r.ProtonPlus.desktop', 'io.github.benjamimgois.goverlay.desktop', 'com.gerbilsoft.rom-properties.rp-config.desktop', 'input-remapper-gtk.desktop', 'steamos-nested-desktop.desktop', 'io.github.philipk.boilr', 'io.github.loot.loot']
+apps=['com.github.Matoking.protontricks.desktop', 'io.github.trigg.discover_overlay.desktop', 'com.vysp3r.ProtonPlus.desktop', 'io.github.benjamimgois.goverlay.desktop', 'com.gerbilsoft.rom-properties.rp-config.desktop', 'input-remapper-gtk.desktop', 'steamos-nested-desktop.desktop', 'io.github.philipk.boilr.desktop', 'io.github.Foldex.AdwSteamGtk.desktop', 'com.steamgriddb.steam-rom-manager.desktop', 'io.github.loot.loot.desktop', 'io.github.Adda0.Stardrop.desktop']
 name='Gaming Utilities'
 translate=false
 
@@ -24,7 +24,12 @@ name='Waydroid'
 translate=false
 
 [org/gnome/desktop/app-folders/folders/Games]
-apps=['com.valvesoftware.Steam', 'org.prismlauncher.PrismLauncher', 'com.heroicgameslauncher.hgl', 'com.pokemmo.PokeMMO', 'io.github.benjamimgois.goverlay.desktop']
+apps=['com.valvesoftware.Steam.desktop', 'org.prismlauncher.PrismLauncher.desktop', 'com.heroicgameslauncher.hgl.desktop', 'com.pokemmo.PokeMMO.desktop', 'io.github.benjamimgois.goverlay.desktop']
 categories=['Game']
 name='Games'
+translate=false
+
+[org/gnome/desktop/app-folders/folders/Office]
+categories=['Office']
+name='Office'
 translate=false
