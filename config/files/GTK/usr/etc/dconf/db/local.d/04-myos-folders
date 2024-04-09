@@ -9,7 +9,7 @@ translate=false
 [org/gnome/desktop/app-folders/folders/Containers]
 apps=['com.github.tchx84.Flatseal.desktop', 'io.github.flattool.Warehouse.desktop', 'it.mijorus.gearlever.desktop', 'com.github.marhkb.Pods.desktop', 'io.github.dvlv.boxbuddyrs.desktop', 'io.github.giantpinkrobots.flatsweep.desktop', 'com.usebottles.bottles.desktop']
 name='Containers'
-translate=true
+translate=false
 
 [org/gnome/desktop/app-folders/folders/Utilities]
 apps=['yafti.desktop']
@@ -28,35 +28,35 @@ apps=['com.valvesoftware.Steam.desktop', 'org.prismlauncher.PrismLauncher.deskto
 excluded-apps=['org.mamedev.MAME.desktop', 'io.github.stella_emu.Stella.desktop', 'io.github.dosbox-staging.desktop', 'org.scummvm.ScummVM.desktop', 'com.retrodev.blastem.desktop', 'org.flycast.Flycast.desktop', 'app.xemu.xemu.desktop', 'org.duckstation.DuckStation.desktop', 'net.pcsx2.PCSX2.desktop', 'org.ppsspp.PPSSPP.desktop', 'net.rpcs3.RPCS3.desktop', 'ca._0ldsk00l.Nestopia.desktop', 'dev.bsnes.bsnes.desktop', 'com.github.Rosalie241.RMG.desktop', 'io.mgba.mGBA.desktop', 'org.DolphinEmu.dolphin-emu.desktop', 'net.kuribo64.melonDS.desktop', 'org.desmume.DeSmuME.desktop', 'info.cemu.Cemu.desktop', 'io.github.lime3ds.Lime3DS.desktop', 'org.ryujinx.Ryujinx.desktop']
 categories=['Game']
 name='Games'
-translate=false
+translate=true
 
 [org/gnome/desktop/app-folders/folders/Emulators]
 apps=['org.mamedev.MAME.desktop', 'io.github.stella_emu.Stella.desktop', 'io.github.dosbox-staging.desktop', 'org.scummvm.ScummVM.desktop', 'com.retrodev.blastem.desktop', 'org.flycast.Flycast.desktop', 'app.xemu.xemu.desktop', 'org.duckstation.DuckStation.desktop', 'net.pcsx2.PCSX2.desktop', 'org.ppsspp.PPSSPP.desktop', 'net.rpcs3.RPCS3.desktop', 'ca._0ldsk00l.Nestopia.desktop', 'dev.bsnes.bsnes.desktop', 'com.github.Rosalie241.RMG.desktop', 'io.mgba.mGBA.desktop', 'org.DolphinEmu.dolphin-emu.desktop', 'net.kuribo64.melonDS.desktop', 'org.desmume.DeSmuME.desktop', 'info.cemu.Cemu.desktop', 'io.github.lime3ds.Lime3DS.desktop', 'org.ryujinx.Ryujinx.desktop']
 name='Emulators'
-translate=false
+translate=true
 
 [org/gnome/desktop/app-folders/folders/Office]
 categories=['Office']
 excluded-apps=['com.github.marhkb.Pods.desktop', 'org.gnome.Calendar.desktop', 'org.gnome.Contacts.desktop']
 name='Office'
-translate=false
+translate=true
 
 [org/gnome/desktop/app-folders/folders/Music]
 name='Music'
 categories=['Music']
-translate=false
+translate=true
 
 [org/gnome/desktop/app-folders/folders/Images]
 name='Images'
 categories=['Images']
-translate=false
+translate=true
 
 [org/gnome/desktop/app-folders/folders/Video]
 name='Video'
 categories=['Video']
-translate=false
+translate=true
 
 [org/gnome/desktop/app-folders/folders/Social]
 name='Social'
 apps=['com.discordapp.Discord.desktop', 'com.slack.Slack.desktop', 'us.zoom.Zoom.desktop', 'com.github.IsmaelMartinez.teams_for_linux.desktop', 'com.rtosta.zapzap.desktop', 'com.sindresorhus.Caprine.desktop', 'org.telegram.desktop.desktop', 'org.signal.Signal.desktop', 'org.gnome.Fractal.desktop', 'org.ferdium.Ferdium.desktop']
-translate=false
+translate=true
