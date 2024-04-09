@@ -1,5 +1,5 @@
 [org/gnome/desktop/app-folders]
-folder-children=['Internet', 'Office', 'Social', 'Work', 'Games', 'GamingUtilities', 'Emulators', 'Utilities', 'Music', 'Images', 'Video', 'Containers', 'Waydroid']
+folder-children=['Internet', 'Office', 'Social', 'Work', 'Games', 'GamingUtilities', 'Emulators', 'Utilities', 'Accessories', 'Music', 'Images', 'Video', 'Containers', 'Waydroid']
 
 [org/gnome/desktop/app-folders/folders/GamingUtilities]
 apps=['com.github.Matoking.protontricks.desktop', 'io.github.trigg.discover_overlay.desktop', 'com.vysp3r.ProtonPlus.desktop', 'io.github.benjamimgois.goverlay.desktop', 'com.gerbilsoft.rom-properties.rp-config.desktop', 'input-remapper-gtk.desktop', 'steamos-nested-desktop.desktop', 'io.github.philipk.boilr.desktop', 'io.github.Foldex.AdwSteamGtk.desktop', 'com.steamgriddb.steam-rom-manager.desktop', 'io.github.loot.loot.desktop', 'io.github.Adda0.Stardrop.desktop']
@@ -7,7 +7,7 @@ name='Gaming Utilities'
 translate=false
 
 [org/gnome/desktop/app-folders/folders/Containers]
-apps=['com.github.tchx84.Flatseal.desktop', 'io.github.flattool.Warehouse', 'it.mijorus.gearlever', 'com.github.marhkb.Pods', 'io.github.dvlv.boxbuddyrs', 'io.github.giantpinkrobots.flatsweep, 'com.usebottles.bottles']
+apps=['com.github.tchx84.Flatseal.desktop', 'io.github.flattool.Warehouse.desktop', 'it.mijorus.gearlever.desktop', 'com.github.marhkb.Pods.desktop', 'io.github.dvlv.boxbuddyrs.desktop', 'io.github.giantpinkrobots.flatsweep.desktop', 'com.usebottles.bottles.desktop']
 categories=['Distrobox']
 name='Containers'
 translate=false
@@ -48,8 +48,14 @@ apps=['sh.cider.Cider.desktop', 'com.spotify.Client.desktop', 'com.mastermindzh.
 categories=['Music']
 translate=true
 
+[org/gnome/desktop/app-folders/folders/Accessories]
+name='Accessories'
+categories=['Accessories']
+translate=true
+
 [org/gnome/desktop/app-folders/folders/Graphics]
 name='Graphics'
+apps=['com.xnview.XnViewMP.desktop']
 categories=['Graphics']
 translate=true
 
