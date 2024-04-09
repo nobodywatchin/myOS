@@ -7,14 +7,15 @@ name='Gaming Utilities'
 translate=false
 
 [org/gnome/desktop/app-folders/folders/Containers]
-apps=['com.github.tchx84.Flatseal.desktop', 'io.github.flattool.Warehouse.desktop', 'it.mijorus.gearlever.desktop', 'com.github.marhkb.Pods.desktop', 'io.github.dvlv.boxbuddyrs.desktop', 'io.github.giantpinkrobots.flatsweep.desktop', 'com.usebottles.bottles.desktop']
+apps=['com.github.tchx84.Flatseal.desktop', 'io.github.flattool.Warehouse', 'it.mijorus.gearlever', 'com.github.marhkb.Pods', 'io.github.dvlv.boxbuddyrs', 'io.github.giantpinkrobots.flatsweep, 'com.usebottles.bottles']
+categories=['Distrobox']
 name='Containers'
 translate=false
 
 [org/gnome/desktop/app-folders/folders/Utilities]
-apps=['yafti.desktop']
-categories=['Utilities']
-name='Utilities'
+apps=['yafti.desktop', 'system-update.desktop', 'webapp-manager.desktop', 'tuned-gui.desktop', 'rog-control-center.desktop', 'fish.desktop', 'tuned-gui.desktop', 'nvtop.desktop', 'yelp.desktop', 'btop.desktop', 'com.github.tchx84.Flatseal.desktop', 'io.github.flattool.Warehouse.desktop', 'it.mijorus.gearlever.desktop', 'com.mattjakeman.ExtensionManager.desktop', 'org.gnome.tweaks.desktop', 'com.github.GradienceTeam.Gradience', 'io.github.fastrizwaan.WineZGUI.desktop', 'setroubleshoot.desktop']
+categories=['X-GNOME-Utilities']
+name='X-GNOME-Utilities.directory'
 translate=true
 
 [org/gnome/desktop/app-folders/folders/Waydroid]
@@ -37,7 +38,7 @@ translate=true
 
 [org/gnome/desktop/app-folders/folders/Office]
 categories=['Office']
-excluded-apps=['com.github.marhkb.Pods.desktop', 'org.gnome.Calendar.desktop', 'org.gnome.Contacts.desktop']
+excluded-apps=['com.github.marhkb.Pods', 'org.gnome.Calendar.desktop', 'org.gnome.Contacts.desktop']
 name='Office'
 translate=true
 
