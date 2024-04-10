@@ -38,7 +38,7 @@ translate=true
 
 [org/gnome/desktop/app-folders/folders/Office]
 categories=['Office']
-excluded-apps=['com.github.marhkb.Pods', 'org.gnome.Calendar.desktop', 'org.gnome.Contacts.desktop']
+excluded-apps=['com.github.marhkb.Pods.desktop', 'org.gnome.Calendar.desktop', 'org.gnome.Contacts.desktop']
 name='Office'
 translate=true
 
