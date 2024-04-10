@@ -1,5 +1,5 @@
 [org/gnome/desktop/app-folders]
-folder-children=['Internet', 'Office', 'Social', 'Work', 'Games', 'GamingUtilities', 'Emulators', 'Utilities', 'Accessories', 'Music', 'Images', 'Video', 'Containers', 'Waydroid']
+folder-children=['Web', 'Office', 'Social', 'Work', 'Games', 'GamingUtilities', 'Emulators', 'Utilities', 'Accessories', 'Music', 'Images', 'Video', 'Containers', 'Waydroid']
 
 [org/gnome/desktop/app-folders/folders/GamingUtilities]
 apps=['com.github.Matoking.protontricks.desktop', 'io.github.trigg.discover_overlay.desktop', 'com.vysp3r.ProtonPlus.desktop', 'io.github.benjamimgois.goverlay.desktop', 'com.gerbilsoft.rom-properties.rp-config.desktop', 'input-remapper-gtk.desktop', 'steamos-nested-desktop.desktop', 'io.github.philipk.boilr.desktop', 'io.github.Foldex.AdwSteamGtk.desktop', 'com.steamgriddb.steam-rom-manager.desktop', 'io.github.loot.loot.desktop', 'io.github.Adda0.Stardrop.desktop']
@@ -7,15 +7,14 @@ name='Gaming Utilities'
 translate=false
 
 [org/gnome/desktop/app-folders/folders/Containers]
-apps=['com.github.tchx84.Flatseal.desktop', 'io.github.flattool.Warehouse.desktop', 'it.mijorus.gearlever.desktop', 'com.github.marhkb.Pods.desktop', 'io.github.dvlv.boxbuddyrs.desktop', 'io.github.giantpinkrobots.flatsweep.desktop', 'com.usebottles.bottles.desktop']
-categories=['Distrobox']
+apps=['com.github.tchx84.Flatseal.desktop', 'io.github.flattool.Warehouse.desktop', 'it.mijorus.gearlever.desktop', 'com.github.marhkb.Pods.desktop', 'io.github.dvlv.boxbuddyrs.desktop', 'io.github.giantpinkrobots.flatsweep.desktop', 'com.usebottles.bottles.desktop', 'io.podman_desktop.PodmanDesktop.desktop', 'pm.mirko.Atoms.desktop', 'com.github.sdv43.whaler.desktop']
 name='Containers'
 translate=false
 
 [org/gnome/desktop/app-folders/folders/Utilities]
-apps=['yafti.desktop', 'system-update.desktop', 'webapp-manager.desktop', 'tuned-gui.desktop', 'rog-control-center.desktop', 'fish.desktop', 'tuned-gui.desktop', 'nvtop.desktop', 'yelp.desktop', 'btop.desktop', 'com.github.tchx84.Flatseal.desktop', 'io.github.flattool.Warehouse.desktop', 'it.mijorus.gearlever.desktop', 'com.mattjakeman.ExtensionManager.desktop', 'org.gnome.tweaks.desktop', 'com.github.GradienceTeam.Gradience', 'io.github.fastrizwaan.WineZGUI.desktop', 'setroubleshoot.desktop']
-categories=['X-GNOME-Utilities']
-name='X-GNOME-Utilities.directory'
+apps=['yafti.desktop', 'system-update.desktop', 'webapp-manager.desktop', 'tuned-gui.desktop', 'rog-control-center.desktop', 'fish.desktop', 'tuned-gui.desktop', 'nvtop.desktop', 'yelp.desktop', 'btop.desktop', 'com.mattjakeman.ExtensionManager.desktop', 'org.gnome.tweaks.desktop', 'com.github.GradienceTeam.Gradience', 'io.github.fastrizwaan.WineZGUI.desktop', 'setroubleshoot.desktop']
+categories=['Utilities']
+name='Utilities'
 translate=true
 
 [org/gnome/desktop/app-folders/folders/Waydroid]
@@ -44,7 +43,7 @@ translate=true
 
 [org/gnome/desktop/app-folders/folders/Music]
 name='Music'
-apps=['sh.cider.Cider.desktop', 'com.spotify.Client.desktop', 'com.mastermindzh.tidal-hifi.desktop', 'com.github.neithern.g4music.desktop', 'org.gnome.SoundJuicer.desktop', 'org.nickvision.tagger.desktop']
+apps=['sh.cider.Cider.desktop', 'com.spotify.Client.desktop', 'com.mastermindzh.tidal-hifi.desktop', 'com.github.neithern.g4music.desktop', 'org.gnome.SoundJuicer.desktop', 'org.nickvision.tagger.desktop', 'com.github.Flacon.desktop']
 categories=['Music']
 translate=true
 
@@ -64,7 +63,17 @@ name='Video'
 categories=['Video']
 translate=true
 
+[org/gnome/desktop/app-folders/folders/Web]
+name='Web'
+apps=['com.brave.Browser.desktop', 'com.google.Chrome.desktop', 'com.github.Eloston.UngoogledChromium.desktop', 'com.microsoft.Edge.desktop', 'org.mozilla.firefox.desktop', 'io.gitlab.librewolf-community.desktop', 'one.ablaze.floorp.desktop', 'com.opera.Opera.desktop', 'com.vivaldi.Vivaldi.desktop']
+translate=true
+
 [org/gnome/desktop/app-folders/folders/Social]
 name='Social'
 apps=['com.discordapp.Discord.desktop', 'com.slack.Slack.desktop', 'us.zoom.Zoom.desktop', 'com.github.IsmaelMartinez.teams_for_linux.desktop', 'com.rtosta.zapzap.desktop', 'com.sindresorhus.Caprine.desktop', 'org.telegram.desktop.desktop', 'org.signal.Signal.desktop', 'org.gnome.Fractal.desktop', 'org.ferdium.Ferdium.desktop']
+translate=true
+
+[org/gnome/desktop/app-folders/folders/System]
+name='System'
+apps=['net.nokyan.Resources.desktop', 'com.leinardi.gst.desktop', 'lact.desktop']
 translate=true
