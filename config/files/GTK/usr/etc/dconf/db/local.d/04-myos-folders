@@ -2,14 +2,14 @@
 folder-children=['Web', 'Office', 'Social', 'Work', 'Games', 'GamingUtilities', 'Emulators', 'Utilities', 'Accessories', 'Music', 'Images', 'Video', 'Containers', 'Waydroid', 'System']
 
 [org/gnome/desktop/app-folders/folders/GamingUtilities]
-apps=['com.github.Matoking.protontricks.desktop', 'io.github.trigg.discover_overlay.desktop', 'com.vysp3r.ProtonPlus.desktop', 'io.github.benjamimgois.goverlay.desktop', 'com.gerbilsoft.rom-properties.rp-config.desktop', 'input-remapper-gtk.desktop', 'steamos-nested-desktop.desktop', 'io.github.philipk.boilr.desktop', 'io.github.Foldex.AdwSteamGtk.desktop', 'com.steamgriddb.steam-rom-manager.desktop', 'io.github.loot.loot.desktop', 'io.github.Adda0.Stardrop.desktop']
+apps=['com.github.Matoking.protontricks.desktop', 'io.github.trigg.discover_overlay.desktop', 'com.vysp3r.ProtonPlus.desktop', 'io.github.benjamimgois.goverlay.desktop', 'com.gerbilsoft.rom-properties.rp-config.desktop', 'input-remapper-gtk.desktop', 'steamos-nested-desktop.desktop', 'io.github.philipk.boilr.desktop', 'io.github.Foldex.AdwSteamGtk.desktop', 'com.steamgriddb.steam-rom-manager.desktop', 'io.github.loot.loot.desktop', 'io.github.Adda0.Stardrop.desktop', 'com.vysp3r.RetroPlus.desktop']
 name='Gaming Utilities'
 translate=false
 
 [org/gnome/desktop/app-folders/folders/Containers]
-apps=['com.github.tchx84.Flatseal', 'io.github.flattool.Warehouse', 'it.mijorus.gearlever', 'com.github.marhkb.Pods', 'io.github.dvlv.boxbuddyrs', 'io.github.giantpinkrobots.flatsweep', 'com.usebottles.bottles', 'io.podman_desktop.PodmanDesktop.desktop', 'pm.mirko.Atoms.desktop', 'com.github.sdv43.whaler.desktop']
+apps=['com.github.tchx84.Flatseal.desktop', 'io.github.flattool.Warehouse.desktop', 'it.mijorus.gearlever.desktop', 'com.github.marhkb.Pods.desktop', 'io.github.dvlv.boxbuddyrs.desktop', 'io.github.giantpinkrobots.flatsweep.desktop', 'com.usebottles.bottles.desktop', 'io.podman_desktop.PodmanDesktop.desktop', 'pm.mirko.Atoms.desktop', 'com.github.sdv43.whaler.desktop']
 name='Containers'
-translate=false
+translate=true
 
 [org/gnome/desktop/app-folders/folders/Utilities]
 apps=['yafti.desktop', 'system-update.desktop', 'webapp-manager.desktop', 'tuned-gui.desktop', 'rog-control-center.desktop', 'fish.desktop', 'tuned-gui.desktop', 'nvtop.desktop', 'yelp.desktop', 'btop.desktop', 'com.mattjakeman.ExtensionManager.desktop', 'org.gnome.tweaks.desktop', 'com.github.GradienceTeam.Gradience', 'io.github.fastrizwaan.WineZGUI.desktop', 'setroubleshoot.desktop']
@@ -26,6 +26,7 @@ translate=false
 [org/gnome/desktop/app-folders/folders/Games]
 apps=['com.valvesoftware.Steam.desktop', 'org.prismlauncher.PrismLauncher.desktop', 'com.heroicgameslauncher.hgl.desktop', 'com.pokemmo.PokeMMO.desktop', 'io.github.benjamimgois.goverlay.desktop']
 excluded-apps=['org.mamedev.MAME.desktop', 'io.github.stella_emu.Stella.desktop', 'io.github.dosbox-staging.desktop', 'org.scummvm.ScummVM.desktop', 'com.retrodev.blastem.desktop', 'org.flycast.Flycast.desktop', 'app.xemu.xemu.desktop', 'org.duckstation.DuckStation.desktop', 'net.pcsx2.PCSX2.desktop', 'org.ppsspp.PPSSPP.desktop', 'net.rpcs3.RPCS3.desktop', 'ca._0ldsk00l.Nestopia.desktop', 'dev.bsnes.bsnes.desktop', 'com.github.Rosalie241.RMG.desktop', 'io.mgba.mGBA.desktop', 'org.DolphinEmu.dolphin-emu.desktop', 'net.kuribo64.melonDS.desktop', 'org.desmume.DeSmuME.desktop', 'info.cemu.Cemu.desktop', 'io.github.lime3ds.Lime3DS.desktop', 'org.ryujinx.Ryujinx.desktop']
+excluded-apps=['com.vysp3r.ProtonPlus.desktop', 'com.vysp3r.RetroPlus.desktop']
 categories=['Game']
 name='Games'
 translate=true
@@ -75,5 +76,10 @@ translate=true
 
 [org/gnome/desktop/app-folders/folders/System]
 name='System'
-apps=['net.nokyan.Resources.desktop', 'com.leinardi.gst.desktop', 'lact.desktop']
+apps=['net.nokyan.Resources.desktop', 'com.leinardi.gst.desktop', 'io.github.lact-linux.desktop', 'org.gnome.DiskUtility.desktop', ]
+translate=true
+
+[org/gnome/desktop/app-folders/folders/GNOME]
+name='GNOME'
+apps=['org.gnome.Logs.desktop', 'org.gnome.Loupe.desktop', 'org.gnome.baobab.desktop', 'org.gnome.clocks.desktop', 'org.gnome.Evince.desktop', 'org.gnome.Calendar.desktop', 'org.gnome.Contacts.desktop', 'org.gnome.Calculator.desktop', 'org.gnome.Characters.desktop', 'org.gnome.FileRoller.desktop', 'org.gnome.TextEditor.desktop', 'org.gnome.font-viewer.desktop', 'gnome-system-monitor-kde.desktop', 'org.gnome.Software.desktop', 'org.gnome.Extensions.desktop']
 translate=true
