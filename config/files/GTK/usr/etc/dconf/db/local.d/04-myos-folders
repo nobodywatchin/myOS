@@ -9,13 +9,7 @@ translate=false
 [org/gnome/desktop/app-folders/folders/Containers]
 apps=['com.github.tchx84.Flatseal.desktop', 'io.github.flattool.Warehouse.desktop', 'it.mijorus.gearlever.desktop', 'com.github.marhkb.Pods.desktop', 'io.github.dvlv.boxbuddyrs.desktop', 'io.github.giantpinkrobots.flatsweep.desktop', 'com.usebottles.bottles.desktop', 'io.podman_desktop.PodmanDesktop.desktop', 'pm.mirko.Atoms.desktop', 'com.github.sdv43.whaler.desktop']
 name='Containers'
-translate=true
-
-[org/gnome/desktop/app-folders/folders/Utilities]
-apps=['yafti.desktop', 'system-update.desktop', 'webapp-manager.desktop', 'tuned-gui.desktop', 'rog-control-center.desktop', 'fish.desktop', 'tuned-gui.desktop', 'nvtop.desktop', 'yelp.desktop', 'btop.desktop', 'com.mattjakeman.ExtensionManager.desktop', 'org.gnome.tweaks.desktop', 'com.github.GradienceTeam.Gradience', 'io.github.fastrizwaan.WineZGUI.desktop', 'setroubleshoot.desktop', 'page.codeberg.libre_menu_editor.LibreMenuEditor.desktop', 'io.github.andreibachim.shortcut.desktop', 'io.github.vikdevelop.SaveDesktop.desktop']
-categories=['Utilities']
-name='Utilities'
-translate=true
+translate=false
 
 [org/gnome/desktop/app-folders/folders/Waydroid]
 apps=['Waydroid.desktop']
@@ -26,13 +20,13 @@ translate=false
 [org/gnome/desktop/app-folders/folders/Games]
 apps=['com.valvesoftware.Steam.desktop', 'org.prismlauncher.PrismLauncher.desktop', 'com.heroicgameslauncher.hgl.desktop', 'com.pokemmo.PokeMMO.desktop', 'io.github.benjamimgois.goverlay.desktop']
 excluded-apps=['org.mamedev.MAME.desktop', 'io.github.stella_emu.Stella.desktop', 'io.github.dosbox-staging.desktop', 'org.scummvm.ScummVM.desktop', 'com.retrodev.blastem.desktop', 'org.flycast.Flycast.desktop', 'app.xemu.xemu.desktop', 'org.duckstation.DuckStation.desktop', 'net.pcsx2.PCSX2.desktop', 'org.ppsspp.PPSSPP.desktop', 'net.rpcs3.RPCS3.desktop', 'ca._0ldsk00l.Nestopia.desktop', 'dev.bsnes.bsnes.desktop', 'com.github.Rosalie241.RMG.desktop', 'io.mgba.mGBA.desktop', 'org.DolphinEmu.dolphin-emu.desktop', 'net.kuribo64.melonDS.desktop', 'org.desmume.DeSmuME.desktop', 'info.cemu.Cemu.desktop', 'io.github.lime3ds.Lime3DS.desktop', 'org.ryujinx.Ryujinx.desktop']
-excluded-apps=['com.vysp3r.ProtonPlus.desktop', 'com.vysp3r.RetroPlus.desktop']
+excluded-apps=['com.vysp3r.ProtonPlus.desktop', 'com.vysp3r.RetroPlus.desktop', 'org.mamedev.MAME.desktop', 'io.github.stella_emu.Stella.desktop', 'io.github.dosbox-staging.desktop', 'org.scummvm.ScummVM.desktop', 'com.retrodev.blastem.desktop', 'org.flycast.Flycast.desktop', 'app.xemu.xemu.desktop', 'org.duckstation.DuckStation.desktop', 'net.pcsx2.PCSX2.desktop', 'org.ppsspp.PPSSPP.desktop', 'net.rpcs3.RPCS3.desktop', 'ca._0ldsk00l.Nestopia.desktop', 'dev.bsnes.bsnes.desktop', 'com.github.Rosalie241.RMG.desktop', 'io.mgba.mGBA.desktop', 'org.DolphinEmu.dolphin-emu.desktop', 'net.kuribo64.melonDS.desktop', 'org.desmume.DeSmuME.desktop', 'info.cemu.Cemu.desktop', 'io.github.lime3ds.Lime3DS.desktop', 'org.ryujinx.Ryujinx.desktop']
 categories=['Game']
 name='Games'
 translate=true
 
 [org/gnome/desktop/app-folders/folders/Emulators]
-apps=['org.mamedev.MAME.desktop', 'io.github.stella_emu.Stella.desktop', 'io.github.dosbox-staging.desktop', 'org.scummvm.ScummVM.desktop', 'com.retrodev.blastem.desktop', 'org.flycast.Flycast.desktop', 'app.xemu.xemu.desktop', 'org.duckstation.DuckStation.desktop', 'net.pcsx2.PCSX2.desktop', 'org.ppsspp.PPSSPP.desktop', 'net.rpcs3.RPCS3.desktop', 'ca._0ldsk00l.Nestopia.desktop', 'dev.bsnes.bsnes.desktop', 'com.github.Rosalie241.RMG.desktop', 'io.mgba.mGBA.desktop', 'org.DolphinEmu.dolphin-emu.desktop', 'net.kuribo64.melonDS.desktop', 'org.desmume.DeSmuME.desktop', 'info.cemu.Cemu.desktop', 'io.github.lime3ds.Lime3DS.desktop', 'org.ryujinx.Ryujinx.desktop']
+apps=['com.vysp3r.RetroPlus.desktop', 'org.mamedev.MAME.desktop', 'io.github.stella_emu.Stella.desktop', 'io.github.dosbox-staging.desktop', 'org.scummvm.ScummVM.desktop', 'com.retrodev.blastem.desktop', 'org.flycast.Flycast.desktop', 'app.xemu.xemu.desktop', 'org.duckstation.DuckStation.desktop', 'net.pcsx2.PCSX2.desktop', 'org.ppsspp.PPSSPP.desktop', 'net.rpcs3.RPCS3.desktop', 'ca._0ldsk00l.Nestopia.desktop', 'dev.bsnes.bsnes.desktop', 'com.github.Rosalie241.RMG.desktop', 'io.mgba.mGBA.desktop', 'org.DolphinEmu.dolphin-emu.desktop', 'net.kuribo64.melonDS.desktop', 'org.desmume.DeSmuME.desktop', 'info.cemu.Cemu.desktop', 'io.github.lime3ds.Lime3DS.desktop', 'org.ryujinx.Ryujinx.desktop']
 name='Emulators'
 translate=true
 
