@@ -1,14 +1,20 @@
 [org/gnome/desktop/app-folders]
-folder-children=['Web', 'Office', 'Social', 'Work', 'Games', 'GamingUtilities', 'Emulators', 'Utilities', 'Accessories', 'Music', 'Images', 'Video', 'Containers', 'Waydroid', 'System']
+folder-children=['Web', 'Office', 'Social', 'Work', 'Games', 'GamingUtilities', 'Emulators', 'Utilities', 'Accessories', 'Music', 'Images', 'Video', 'Waydroid', 'System', 'Flatpak', 'Distrobox']
 
 [org/gnome/desktop/app-folders/folders/GamingUtilities]
 apps=['com.github.Matoking.protontricks.desktop', 'io.github.trigg.discover_overlay.desktop', 'com.vysp3r.ProtonPlus.desktop', 'io.github.benjamimgois.goverlay.desktop', 'com.gerbilsoft.rom-properties.rp-config.desktop', 'input-remapper-gtk.desktop', 'steamos-nested-desktop.desktop', 'io.github.philipk.boilr.desktop', 'io.github.Foldex.AdwSteamGtk.desktop', 'com.steamgriddb.steam-rom-manager.desktop', 'io.github.loot.loot.desktop', 'io.github.Adda0.Stardrop.desktop', 'com.vysp3r.RetroPlus.desktop']
 name='Gaming Utilities'
 translate=false
 
-[org/gnome/desktop/app-folders/folders/Containers]
-apps=['com.github.tchx84.Flatseal.desktop', 'io.github.flattool.Warehouse.desktop', 'it.mijorus.gearlever.desktop', 'com.github.marhkb.Pods.desktop', 'io.github.dvlv.boxbuddyrs.desktop', 'io.github.giantpinkrobots.flatsweep.desktop', 'com.usebottles.bottles.desktop', 'io.podman_desktop.PodmanDesktop.desktop', 'pm.mirko.Atoms.desktop', 'com.github.sdv43.whaler.desktop']
-name='Containers'
+[org/gnome/desktop/app-folders/folders/Flatpak]
+apps=['com.github.tchx84.Flatseal.desktop', 'io.github.flattool.Warehouse.desktop', 'io.github.giantpinkrobots.flatsweep.desktop']
+name='Flatpak Tools'
+translate=false
+
+[org/gnome/desktop/app-folders/folders/Distrobox]
+apps=['io.github.dvlv.boxbuddyrs']
+categories=['Distrobox']
+name='Distrobox'
 translate=false
 
 [org/gnome/desktop/app-folders/folders/Waydroid]
