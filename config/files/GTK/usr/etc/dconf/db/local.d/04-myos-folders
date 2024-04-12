@@ -1,5 +1,5 @@
 [org/gnome/desktop/app-folders]
-folder-children=['Web', 'Office', 'Social', 'Work', 'Games', 'GamingUtilities', 'Emulators', 'Utilities', 'Accessories', 'Music', 'Images', 'Video', 'Waydroid', 'System', 'Flatpak', 'Distrobox']
+folder-children=['Web', 'Office', 'Social', 'Work', 'Games', 'GamingUtilities', 'Emulators', 'Utilities', 'Accessories', 'Music', 'Images', 'Video', 'Waydroid', 'System', 'Flatpak', 'Distrobox', 'AppImage']
 
 [org/gnome/desktop/app-folders/folders/GamingUtilities]
 apps=['com.github.Matoking.protontricks.desktop', 'io.github.trigg.discover_overlay.desktop', 'com.vysp3r.ProtonPlus.desktop', 'io.github.benjamimgois.goverlay.desktop', 'com.gerbilsoft.rom-properties.rp-config.desktop', 'input-remapper-gtk.desktop', 'steamos-nested-desktop.desktop', 'io.github.philipk.boilr.desktop', 'io.github.Foldex.AdwSteamGtk.desktop', 'com.steamgriddb.steam-rom-manager.desktop', 'io.github.loot.loot.desktop', 'io.github.Adda0.Stardrop.desktop', 'com.vysp3r.RetroPlus.desktop']
@@ -12,9 +12,15 @@ name='Flatpak Tools'
 translate=false
 
 [org/gnome/desktop/app-folders/folders/Distrobox]
-apps=['io.github.dvlv.boxbuddyrs']
+apps=['io.github.dvlv.boxbuddyrs.desktop']
 categories=['Distrobox']
 name='Distrobox'
+translate=false
+
+[org/gnome/desktop/app-folders/folders/AppImage]
+apps=['it.mijorus.gearlever.desktop']
+categories=['AppImage']
+name='AppImages'
 translate=false
 
 [org/gnome/desktop/app-folders/folders/Waydroid]
