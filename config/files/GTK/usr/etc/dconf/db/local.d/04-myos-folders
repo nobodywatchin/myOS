@@ -1,5 +1,5 @@
 [org/gnome/desktop/app-folders]
-folder-children=['Web', 'Office', 'Social', 'Work', 'Games', 'GamingUtilities', 'Emulators', 'Utilities', 'Accessories', 'Music', 'Images', 'Video', 'Waydroid', 'System', 'Flatpak', 'Distrobox', 'AppImage']
+folder-children=['Web', 'Office', 'Social', 'Work', 'Games', 'GamingUtilities', 'Emulators', 'Utilities', 'Accessories', 'Music', 'Video', 'Waydroid', 'System', 'Flatpak', 'Distrobox', 'AppImage', 'GNOME']
 
 [org/gnome/desktop/app-folders/folders/GamingUtilities]
 apps=['com.github.Matoking.protontricks.desktop', 'io.github.trigg.discover_overlay.desktop', 'com.vysp3r.ProtonPlus.desktop', 'io.github.benjamimgois.goverlay.desktop', 'com.gerbilsoft.rom-properties.rp-config.desktop', 'input-remapper-gtk.desktop', 'steamos-nested-desktop.desktop', 'io.github.philipk.boilr.desktop', 'io.github.Foldex.AdwSteamGtk.desktop', 'com.steamgriddb.steam-rom-manager.desktop', 'io.github.loot.loot.desktop', 'io.github.Adda0.Stardrop.desktop', 'com.vysp3r.RetroPlus.desktop']
@@ -15,12 +15,6 @@ translate=false
 apps=['io.github.dvlv.boxbuddyrs.desktop']
 categories=['Distrobox']
 name='Distrobox'
-translate=false
-
-[org/gnome/desktop/app-folders/folders/AppImage]
-apps=['it.mijorus.gearlever.desktop']
-categories=['AppImage']
-name='AppImages'
 translate=false
 
 [org/gnome/desktop/app-folders/folders/Waydroid]
@@ -50,7 +44,7 @@ translate=true
 
 [org/gnome/desktop/app-folders/folders/Music]
 name='Music'
-apps=['sh.cider.Cider.desktop', 'com.spotify.Client.desktop', 'com.mastermindzh.tidal-hifi.desktop', 'com.github.neithern.g4music.desktop', 'org.gnome.SoundJuicer.desktop', 'org.nickvision.tagger.desktop', 'com.github.Flacon.desktop']
+apps=['org.gnome.Decibels.desktop', 'sh.cider.Cider.desktop', 'com.spotify.Client.desktop', 'com.mastermindzh.tidal-hifi.desktop', 'com.github.neithern.g4music.desktop', 'org.gnome.SoundJuicer.desktop', 'org.nickvision.tagger.desktop', 'com.github.Flacon.desktop']
 categories=['Music']
 translate=true
 
@@ -61,7 +55,7 @@ translate=true
 
 [org/gnome/desktop/app-folders/folders/Graphics]
 name='Graphics'
-apps=['com.xnview.XnViewMP.desktop']
+apps=['org.gimp.GIMP.desktop', 'org.inkscape.Inkscape.desktop', 'com.boxy_svg.BoxySVG.desktop', 'org.kde.krita', 'com.xnview.XnViewMP.desktop']
 categories=['Graphics']
 translate=true
 
