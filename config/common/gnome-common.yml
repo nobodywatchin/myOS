@@ -1,0 +1,41 @@
+type: rpm-ostree
+repos: 
+  - https://copr.fedorainfracloud.org/coprs/astrawan/gnome-shell-extensions/repo/fedora-39/astrawan-gnome-shell-extensions-fedora-39.repo
+install:
+  - gnome-shell-extension-gsconnect
+  - gnome-shell-extension-appindicator
+  - gnome-shell-extension-blur-my-shell
+  - gnome-shell-extension-user-theme
+  - gnome-shell-extension-caffeine
+  - gnome-shell-extension-drive-menu
+  - gnome-shell-extension-forge
+  - gnome-randr-rust
+  - gnome-shell-extension-tailscale-gnome-qs
+  - gnome-shell-extension-vitals
+remove:
+  - yelp
+  - gnome-tour
+  
+type: default-flatpaks
+system:
+repo-url: https://dl.flathub.org/repo/flathub.flatpakrepo
+repo-name: flathub
+repo-title: "Flathub (system-wide)" # Optional; this sets the remote's user-facing name in graphical frontends like GNOME Software
+install:
+  - org.gnome.Calculator
+  - org.gnome.Characters
+  - org.gnome.Evince
+  - org.gnome.FileRoller
+  - org.gnome.NautilusPreviewer
+  - org.gnome.TextEditor
+  - org.gnome.clocks
+  - org.gnome.font-viewer
+  - org.gnome.Decibels
+  - io.github.celluloid_player.Celluloid
+  - io.github.vikdevelop.SaveDesktop
+  - com.mattjakeman.ExtensionManager
+  remove:
+  - org.gnome.Contacts
+  - org.gnome.Weather
+  - org.gnome.Maps
+  - com.github.GradienceTeam.Gradience

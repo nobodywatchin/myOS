@@ -13,22 +13,8 @@ install:
   - com.github.marhkb.Pods
   - dev.skynomads.Seabird
   - net.nokyan.Resources
-  - org.gnome.Calculator
-  - org.gnome.Characters
-  - org.gnome.Evince
-  - org.gnome.FileRoller
-  - org.gnome.NautilusPreviewer
-  - org.gnome.TextEditor
-  - org.gnome.clocks
-  - org.gnome.font-viewer
+  - com.leinardi.gst
   - org.libreoffice.LibreOffice
   - page.codeberg.libre_menu_editor.LibreMenuEditor
-  - io.github.vikdevelop.SaveDesktop
-  - com.mattjakeman.ExtensionManager
-  - com.leinardi.gst
 remove:
-  - org.gnome.Contacts
-  - org.gnome.Weather
-  - org.gnome.Maps
-  - com.github.GradienceTeam.Gradience
   - io.missioncenter.MissionCenter

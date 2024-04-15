@@ -14,7 +14,7 @@ modules:
   - from-file: common/remove-firefox.yml
   - from-file: common/tailscale.yml
   - from-file: common/bazzite.yml
-  - from-file: common/gnome-extensions.yml
+  - from-file: common/gnome-common.yml
   - type: script
     scripts:
     - enable-gnome-extensions.sh
