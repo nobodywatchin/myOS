@@ -15,7 +15,6 @@ install:
 remove:
   - yelp
   - gnome-tour
-  
 type: default-flatpaks
 system:
 repo-url: https://dl.flathub.org/repo/flathub.flatpakrepo
