@@ -30,7 +30,6 @@ install:
   - page.codeberg.libre_menu_editor.LibreMenuEditor
 remove:
   - io.missioncenter.MissionCenter
-  remove:
   - org.gnome.Contacts
   - org.gnome.Weather
   - org.gnome.Maps
