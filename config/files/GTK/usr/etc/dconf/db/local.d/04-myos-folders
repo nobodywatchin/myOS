@@ -77,7 +77,7 @@ translate=true
 
 [org/gnome/desktop/app-folders/folders/System]
 name='System'
-apps=['net.nokyan.Resources.desktop', 'com.leinardi.gst.desktop', 'io.github.lact-linux.desktop', 'org.gnome.DiskUtility.desktop']
+apps=['net.nokyan.Resources.desktop', 'com.leinardi.gst.desktop', 'io.github.lact-linux.desktop', 'org.gnome.DiskUtility.desktop', 'org.openrgb.OpenRGB.desktop']
 translate=true
 
 [org/gnome/desktop/app-folders/folders/Programming]
@@ -87,7 +87,7 @@ categories=['X-GNOME-Programming']
 translate=true
 
 [org/gnome/desktop/app-folders/folders/Religion]
-name='Programming'
+name='Religion'
 apps=['net.lugsole.bible_gui.desktop', 'io.github.kovzol.bibref.desktop', 'sh.shuriken.Eeman.desktop', 'io.github.adenlall.salatok-gtk.desktop']
 categories=['Religion']
 translate=true

@@ -73,6 +73,3 @@ show-system=true
 show-temperature=true
 show-voltage=true
 update-time=5
-
-[org/gnome/shell/extensions/just-perfection]
-animation=4
