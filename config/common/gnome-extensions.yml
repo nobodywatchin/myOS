@@ -12,6 +12,7 @@ install:
   - gnome-randr-rust
   - gnome-shell-extension-tailscale-gnome-qs
   - gnome-shell-extension-vitals
+  - gnome-shell-extension-just-perfection
 remove:
   - yelp
   - gnome-tour

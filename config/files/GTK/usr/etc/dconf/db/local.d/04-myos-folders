@@ -1,5 +1,5 @@
 [org/gnome/desktop/app-folders]
-folder-children=['Web', 'Office', 'Social', 'Work', 'Games', 'GamingUtilities', 'Emulators', 'Utilities', 'Accessories', 'Music', 'Video', 'Waydroid', 'System', 'Flatpak', 'Distrobox', 'AppImage', 'GNOME', 'Graphics', 'Audio', 'Programming']
+folder-children=['Web', 'Office', 'Social', 'Work', 'Games', 'GamingUtilities', 'Emulators', 'Utilities', 'Accessories', 'Video', 'Waydroid', 'System', 'Flatpak', 'Distrobox', 'AppImage', 'GNOME', 'Graphics', 'Audio', 'Programming', 'Religion', 'Downloads']
 
 [org/gnome/desktop/app-folders/folders/GamingUtilities]
 apps=['com.github.Matoking.protontricks.desktop', 'io.github.trigg.discover_overlay.desktop', 'com.vysp3r.ProtonPlus.desktop', 'io.github.benjamimgois.goverlay.desktop', 'com.gerbilsoft.rom-properties.rp-config.desktop', 'input-remapper-gtk.desktop', 'steamos-nested-desktop.desktop', 'io.github.philipk.boilr.desktop', 'io.github.Foldex.AdwSteamGtk.desktop', 'com.steamgriddb.steam-rom-manager.desktop', 'io.github.loot.loot.desktop', 'io.github.Adda0.Stardrop.desktop', 'com.vysp3r.RetroPlus.desktop']
@@ -20,7 +20,7 @@ translate=false
 [org/gnome/desktop/app-folders/folders/Waydroid]
 apps=['Waydroid.desktop']
 categories=['X-WayDroid-App']
-name='Waydroid'
+name='Android'
 translate=false
 
 [org/gnome/desktop/app-folders/folders/Games]
@@ -82,11 +82,23 @@ translate=true
 
 [org/gnome/desktop/app-folders/folders/Programming]
 name='Programming'
-apps=['org.raspberrypi.rpi-imager.desktop', 'dev.skynomads.Seabird.desktop', 'io.github.shiftey.Desktop.desktop', 'org.gnome.Builder.desktop']
+apps=['org.raspberrypi.rpi-imager.desktop', 'dev.skynomads.Seabird.desktop', 'io.github.shiftey.Desktop.desktop', 'org.gnome.Builder.desktop', 're.sonny.Workbench.desktop']
 categories=['X-GNOME-Programming']
+translate=true
+
+[org/gnome/desktop/app-folders/folders/Religion]
+name='Programming'
+apps=['net.lugsole.bible_gui.desktop', 'io.github.kovzol.bibref.desktop', 'sh.shuriken.Eeman.desktop', 'io.github.adenlall.salatok-gtk.desktop']
+categories=['Religion']
 translate=true
 
 [org/gnome/desktop/app-folders/folders/GNOME]
 name='GNOME'
-apps=['org.gnome.Logs.desktop', 'org.gnome.Loupe.desktop', 'org.gnome.baobab.desktop', 'org.gnome.clocks.desktop', 'org.gnome.Evince.desktop', 'org.gnome.Calendar.desktop', 'org.gnome.Contacts.desktop', 'org.gnome.Calculator.desktop', 'org.gnome.Characters.desktop', 'org.gnome.FileRoller.desktop', 'org.gnome.TextEditor.desktop', 'org.gnome.font-viewer.desktop', 'gnome-system-monitor-kde.desktop', 'org.gnome.Software.desktop', 'org.gnome.Extensions.desktop', 'io.github.andreibachim.shortcut.desktop', 'io.github.vikdevelop.SaveDesktop.desktop', 'com.mattjakeman.ExtensionManager.desktop']
+apps=['org.gnome.Software.desktop', 'org.gnome.Settings.desktop', 'org.gnome.tweaks.desktop', 'com.mattjakeman.ExtensionManager.desktop', 'page.codeberg.libre_menu_editor.LibreMenuEditor.desktop', 'ca.desrt.dconf-editor.desktop', , 'io.github.vikdevelop.SaveDesktop.desktop', 'org.gnome.Logs.desktop', 'org.gnome.Loupe.desktop', 'org.gnome.baobab.desktop', 'org.gnome.clocks.desktop', 'org.gnome.Evince.desktop', 'org.gnome.Calendar.desktop', 'org.gnome.Contacts.desktop', 'org.gnome.Calculator.desktop', 'org.gnome.Characters.desktop', 'org.gnome.FileRoller.desktop', 'org.gnome.TextEditor.desktop', 'org.gnome.font-viewer.desktop', 'org.gnome.Extensions.desktop', 'io.github.andreibachim.shortcut.desktop']
+translate=true
+
+[org/gnome/desktop/app-folders/folders/Downloads]
+name='Downloads'
+apps=['de.haeckerfelix.Fragments.desktop', 'io.github.giantpinkrobots.varia.desktop', 'com.github.gabutakut.gabutdm.desktop', 'com.ktechpit.torrhunt.desktop', 'org.qbittorrent.qBittorrent.desktop', 'com.transmissionbt.Transmission.desktop', 'com.ktechpit.orion.desktop']
+categories=['Downloads']
 translate=true

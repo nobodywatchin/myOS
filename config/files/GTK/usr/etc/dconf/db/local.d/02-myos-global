@@ -62,7 +62,7 @@ download-updates-notify=false
 # restore-window-size=false
 # audible-bell=false
 
-[/org/gnome/shell/extensions/vitals/]
+[/org/gnome/shell/extensions/vitals]
 icon-style=1
 hot-sensors=['_memory_usage_', '_processor_usage_', '__temperature_avg__']
 monitor-cmd='flatpak run net.nokyan.Resources'
@@ -73,3 +73,6 @@ show-system=true
 show-temperature=true
 show-voltage=true
 update-time=5
+
+[org/gnome/shell/extensions/just-perfection]
+animation=4
