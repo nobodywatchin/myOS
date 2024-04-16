@@ -86,5 +86,5 @@ translate=true
 
 [org/gnome/desktop/app-folders/folders/GNOME]
 name='GNOME'
-apps=['org.gnome.Logs.desktop', 'org.gnome.Loupe.desktop', 'org.gnome.baobab.desktop', 'org.gnome.clocks.desktop', 'org.gnome.Evince.desktop', 'org.gnome.Calendar.desktop', 'org.gnome.Contacts.desktop', 'org.gnome.Calculator.desktop', 'org.gnome.Characters.desktop', 'org.gnome.FileRoller.desktop', 'org.gnome.TextEditor.desktop', 'org.gnome.font-viewer.desktop', 'gnome-system-monitor-kde.desktop', 'org.gnome.Software.desktop', 'org.gnome.Extensions.desktop', 'io.github.andreibachim.shortcut.desktop', 'io.github.vikdevelop.SaveDesktop.desktop']
+apps=['org.gnome.Logs.desktop', 'org.gnome.Loupe.desktop', 'org.gnome.baobab.desktop', 'org.gnome.clocks.desktop', 'org.gnome.Evince.desktop', 'org.gnome.Calendar.desktop', 'org.gnome.Contacts.desktop', 'org.gnome.Calculator.desktop', 'org.gnome.Characters.desktop', 'org.gnome.FileRoller.desktop', 'org.gnome.TextEditor.desktop', 'org.gnome.font-viewer.desktop', 'gnome-system-monitor-kde.desktop', 'org.gnome.Software.desktop', 'org.gnome.Extensions.desktop', 'io.github.andreibachim.shortcut.desktop', 'io.github.vikdevelop.SaveDesktop.desktop', 'com.mattjakeman.ExtensionManager.desktop']
 translate=true

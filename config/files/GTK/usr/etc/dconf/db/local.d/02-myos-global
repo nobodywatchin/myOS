@@ -80,7 +80,7 @@ show-boxbuddy=true
 
 [org/gnome/shell/extensions/vitals]
 hot-sensors=['_memory_usage_', '_processor_usage_', '__temperature_avg__']
-monitor-cmd=['net.nokyan.Resources']
+monitor-cmd=['flatpak run net.nokyan.Resources']
 position-in-panel=0
 show-fan=true
 show-storage=true

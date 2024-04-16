@@ -1,8 +1,5 @@
 type: default-flatpaks
 system:
-repo-url: https://dl.flathub.org/repo/flathub.flatpakrepo
-repo-name: flathub
-repo-title: "Flathub (system-wide)" # Optional; this sets the remote's user-facing name in graphical frontends like GNOME Software
 install:
   - org.gnome.Calculator
   - org.gnome.Characters
