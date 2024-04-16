@@ -94,7 +94,7 @@ translate=true
 
 [org/gnome/desktop/app-folders/folders/GNOME]
 name='GNOME'
-apps=['org.gnome.Software.desktop', 'org.gnome.Settings.desktop', 'org.gnome.tweaks.desktop', 'com.mattjakeman.ExtensionManager.desktop', 'page.codeberg.libre_menu_editor.LibreMenuEditor.desktop', 'ca.desrt.dconf-editor.desktop', , 'io.github.vikdevelop.SaveDesktop.desktop', 'org.gnome.Logs.desktop', 'org.gnome.Loupe.desktop', 'org.gnome.baobab.desktop', 'org.gnome.clocks.desktop', 'org.gnome.Evince.desktop', 'org.gnome.Calendar.desktop', 'org.gnome.Contacts.desktop', 'org.gnome.Calculator.desktop', 'org.gnome.Characters.desktop', 'org.gnome.FileRoller.desktop', 'org.gnome.TextEditor.desktop', 'org.gnome.font-viewer.desktop', 'org.gnome.Extensions.desktop', 'io.github.andreibachim.shortcut.desktop']
+apps=['org.gnome.Software.desktop', 'org.gnome.Settings.desktop', 'org.gnome.tweaks.desktop', 'com.mattjakeman.ExtensionManager.desktop', 'page.codeberg.libre_menu_editor.LibreMenuEditor.desktop', 'ca.desrt.dconf-editor.desktop', 'io.github.vikdevelop.SaveDesktop.desktop', 'org.gnome.Logs.desktop', 'org.gnome.Loupe.desktop', 'org.gnome.baobab.desktop', 'org.gnome.clocks.desktop', 'org.gnome.Evince.desktop', 'org.gnome.Calendar.desktop', 'org.gnome.Contacts.desktop', 'org.gnome.Calculator.desktop', 'org.gnome.Characters.desktop', 'org.gnome.FileRoller.desktop', 'org.gnome.TextEditor.desktop', 'org.gnome.font-viewer.desktop', 'org.gnome.Extensions.desktop', 'io.github.andreibachim.shortcut.desktop']
 translate=true
 
 [org/gnome/desktop/app-folders/folders/Downloads]
