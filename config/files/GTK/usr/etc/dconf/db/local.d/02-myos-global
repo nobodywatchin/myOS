@@ -62,25 +62,10 @@ download-updates-notify=false
 # restore-window-size=false
 # audible-bell=false
 
-[org/gnome/shell/extensions/Logo-menu]
-symbolic-icon=false
-menu-button-icon-image=0
-menu-button-icon-size=20
-hide-icon-shadow=false
-menu-button-terminal='ptyxis --new-window'
-menu-button-system-monitor='flatpak run io.missioncenter.MissionCenter'
-menu-button-extensions-app='com.mattjakeman.ExtensionManager.desktop'
-menu-button-software-center='gnome-software'
-show-activities-button=true
-show-lockscreen=false
-show-power-option=false
-show-gamemode=false
-hide-forcequit=true
-show-boxbuddy=true
-
-[org/gnome/shell/extensions/vitals]
+[/org/gnome/shell/extensions/vitals/]
+icon-style=1
 hot-sensors=['_memory_usage_', '_processor_usage_', '__temperature_avg__']
-monitor-cmd=['flatpak run net.nokyan.Resources']
+monitor-cmd='flatpak run net.nokyan.Resources'
 position-in-panel=0
 show-fan=true
 show-storage=true
