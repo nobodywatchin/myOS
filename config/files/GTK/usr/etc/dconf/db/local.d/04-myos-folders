@@ -77,7 +77,7 @@ translate=true
 
 [org/gnome/desktop/app-folders/folders/System]
 name='System'
-apps=['net.nokyan.Resources.desktop', 'com.leinardi.gst.desktop', 'io.github.lact-linux.desktop', 'org.gnome.DiskUtility.desktop',  'org.gnome.baobab.desktop', 'org.openrgb.OpenRGB']
+apps=['net.nokyan.Resources.desktop', 'com.leinardi.gst.desktop', 'io.github.lact-linux.desktop', 'org.gnome.DiskUtility.desktop',  'org.gnome.baobab.desktop', 'org.openrgb.OpenRGB.desktop']
 translate=true
 
 [org/gnome/desktop/app-folders/folders/Programming]
