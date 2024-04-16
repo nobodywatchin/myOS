@@ -1,5 +1,8 @@
 type: default-flatpaks
 system:
+repo-url: https://dl.flathub.org/repo/flathub.flatpakrepo
+repo-name: flathub
+repo-title: "Flathub (system-wide)" # Optional; this sets the remote's user-facing name in graphical frontends like GNOME Software
 install:
   - org.gnome.Calculator
   - org.gnome.Characters
@@ -13,6 +16,20 @@ install:
   - io.github.celluloid_player.Celluloid
   - io.github.vikdevelop.SaveDesktop
   - com.mattjakeman.ExtensionManager
+  - io.github.dvlv.boxbuddyrs
+  - dev.deedles.Trayscale
+  - io.github.flattool.Warehouse
+  - com.github.tchx84.Flatseal
+  - it.mijorus.gearlever
+  - com.usebottles.bottles
+  - com.github.marhkb.Pods
+  - dev.skynomads.Seabird
+  - net.nokyan.Resources
+  - com.leinardi.gst
+  - org.libreoffice.LibreOffice
+  - page.codeberg.libre_menu_editor.LibreMenuEditor
+remove:
+  - io.missioncenter.MissionCenter
   remove:
   - org.gnome.Contacts
   - org.gnome.Weather

@@ -42,12 +42,6 @@ excluded-apps=['com.github.marhkb.Pods.desktop', 'org.gnome.Calendar.desktop', '
 name='Office'
 translate=true
 
-[org/gnome/desktop/app-folders/folders/Music]
-name='Music'
-apps=['org.gnome.Decibels.desktop', 'sh.cider.Cider.desktop', 'com.spotify.Client.desktop', 'com.mastermindzh.tidal-hifi.desktop', 'com.github.neithern.g4music.desktop', 'org.gnome.SoundJuicer.desktop', 'org.nickvision.tagger.desktop', 'com.github.Flacon.desktop']
-categories=['Music']
-translate=true
-
 [org/gnome/desktop/app-folders/folders/Accessories]
 name='Accessories'
 categories=['Accessories']
@@ -61,7 +55,7 @@ translate=true
 
 [org/gnome/desktop/app-folders/folders/Video]
 name='Video'
-apps=['org.nickvision.tubeconverter.desktop']
+apps=['org.nickvision.tubeconverter.desktop', 'org.kde.kdenlive.desktop', 'com.obsproject.Studio.desktop', 'com.dec05eba.gpu_screen_recorder.desktop']
 categories=['Video']
 translate=true
 
@@ -88,7 +82,8 @@ translate=true
 
 [org/gnome/desktop/app-folders/folders/Programming]
 name='Programming'
-categories=['Programming']
+apps=['org.raspberrypi.rpi-imager.desktop', 'dev.skynomads.Seabird.desktop', 'io.github.shiftey.Desktop.desktop', 'org.gnome.Builder.desktop']
+categories=['X-GNOME-Programming']
 translate=true
 
 [org/gnome/desktop/app-folders/folders/GNOME]
