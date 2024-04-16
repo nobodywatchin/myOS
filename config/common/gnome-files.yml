@@ -1,4 +1,4 @@
 modules:
   - type: files
     files:
-      - /GTK/usr: /usr
+      - /gnome/usr: /usr

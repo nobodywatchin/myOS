@@ -12,8 +12,6 @@ install:
   - org.gnome.TextEditor
   - org.gnome.clocks
   - org.gnome.font-viewer
-  - org.gnome.Decibels
-  - io.github.celluloid_player.Celluloid
   - io.github.vikdevelop.SaveDesktop
   - com.mattjakeman.ExtensionManager
   - io.github.dvlv.boxbuddyrs
@@ -28,6 +26,8 @@ install:
   - com.leinardi.gst
   - org.libreoffice.LibreOffice
   - page.codeberg.libre_menu_editor.LibreMenuEditor
+  - org.gnome.Decibels
+  - io.github.celluloid_player.Celluloid
 remove:
   - io.missioncenter.MissionCenter
   - org.gnome.Contacts
