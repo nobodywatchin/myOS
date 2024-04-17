@@ -73,3 +73,68 @@ show-system=true
 show-temperature=true
 show-voltage=true
 update-time=5
+
+[org/gnome/shell/extensions/forge]
+auto-split-enabled=true
+float-always-on-top-enabled=true
+focus-border-size=3
+focus-border-toggle=true
+move-pointer-focus-enabled true
+preview-hint-enabled=true
+primary-layout-mode='tiling'
+quick-settings-enabled=true
+stacked-tiling-mode-enabled=false
+tabbed-tiling-mode-enabled=false
+tiling-mode-enabled=true
+window-gap-hidden-on-single=false
+window-gap-size=2
+window-gap-size-increment=1
+
+[org/gnome/shell/extensions/blur-my-shell]
+brightness=0.59999999999999998
+color=(0.0, 0.0, 0.0, 0.0)
+color-and-noise=true
+debug=false
+hacks-level=1
+noise-amount=0.0
+noise-lightness=0.0
+sigma=30
+[org/gnome/shell/extensions/blur-my-shell/appfolder]
+blur=true
+brightness=0.80000000000000004
+color=(0.0, 0.0, 0.0, 0.0)
+customize=true
+noise-amount=0.0
+noise-lightness=0.0
+sigma=40
+style-dialogs=2
+[org/gnome/shell/extensions/blur-my-shell/lockscreen]
+blur=true
+brightness=0.59999999999999998
+color=(0.0, 0.0, 0.0, 0.0)
+customize=true
+noise-amount=0.0
+noise-lightness=0.0
+sigma=30
+[org/gnome/shell/extensions/blur-my-shell/overview]
+blur=true
+brightness=0.59999999999999998
+color=(0.0, 0.0, 0.0, 0.0)
+customize=false
+noise-amount=0.0
+noise-lightness=0.0
+sigma=30
+style-components=3
+[org/gnome/shell/extensions/blur-my-shell/panel]
+blur=true
+brightness=0.0
+color=(0.0, 0.0, 0.0, 0.0)
+customize=true
+noise-amount=0.0
+noise-lightness=0.0
+override-background=true
+override-background-dynamically=false
+sigma=0
+static-blur=false
+style-panel=3
+unblur-in-overview=false
