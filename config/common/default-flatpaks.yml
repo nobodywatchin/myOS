@@ -12,8 +12,6 @@ install:
   - com.usebottles.bottles
   - com.github.marhkb.Pods
   - dev.skynomads.Seabird
-  - net.nokyan.Resources
-  - com.leinardi.gst
   - org.libreoffice.LibreOffice
   - page.codeberg.libre_menu_editor.LibreMenuEditor
 remove:
