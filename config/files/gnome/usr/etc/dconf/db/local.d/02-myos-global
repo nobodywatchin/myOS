@@ -67,7 +67,7 @@ animation=5
 
 [org/gnome/shell/extensions/vitals]
 icon-style=1
-hot-sensors=['_memory_usage_', '_processor_usage_', '__temperature_avg__']
+hot-sensors=['__temperature_avg__', '_memory_usage_', '_processor_usage_']
 monitor-cmd='flatpak run net.nokyan.Resources'
 position-in-panel=0
 show-fan=true
