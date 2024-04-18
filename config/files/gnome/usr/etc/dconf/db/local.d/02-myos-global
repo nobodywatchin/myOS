@@ -62,6 +62,9 @@ download-updates-notify=false
 # restore-window-size=false
 # audible-bell=false
 
+[org/gnome/shell/extensions/just-perfection]
+animation=5
+
 [org/gnome/shell/extensions/vitals]
 icon-style=1
 hot-sensors=['_memory_usage_', '_processor_usage_', '__temperature_avg__']
