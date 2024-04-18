@@ -24,7 +24,6 @@ jobs:
         recipe:
           - recipes/intel-amd/gnome.yml
           - recipes/intel-amd/kde.yml
-          - recipes/intel-amd/cinnamon.yml
           - recipes/intel-amd/hyprland.yml
           - recipes/intel-amd/cosmic.yml
     steps:
