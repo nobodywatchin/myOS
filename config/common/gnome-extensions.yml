@@ -16,4 +16,3 @@ install:
 remove:
   - yelp
   - gnome-tour
-  - gnome-system-monitor
