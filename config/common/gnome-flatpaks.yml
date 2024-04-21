@@ -23,6 +23,7 @@ install:
   - com.github.marhkb.Pods
   - dev.skynomads.Seabird
   - net.nokyan.Resources
+  - fr.sgued.ten_forward
   - com.leinardi.gst
   - org.libreoffice.LibreOffice
   - page.codeberg.libre_menu_editor.LibreMenuEditor
