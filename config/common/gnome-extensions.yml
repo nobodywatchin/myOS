@@ -13,6 +13,7 @@ install:
   - gnome-shell-extension-tailscale-gnome-qs
   - gnome-shell-extension-vitals
   - gnome-shell-extension-just-perfection
+  - gnome-shell-extension-system76-scheduler
 remove:
   - yelp
   - gnome-tour
