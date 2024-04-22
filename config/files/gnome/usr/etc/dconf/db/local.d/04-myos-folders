@@ -1,14 +1,14 @@
 [org/gnome/desktop/app-folders]
-folder-children=['Web', 'Office', 'Social', 'Work', 'Games', 'GamingUtilities', 'Emulators', 'Utilities', 'Accessories', 'Video', 'Waydroid', 'System', 'Flatpak', 'Distrobox', 'AppImage', 'GNOME', 'Graphics', 'Audio', 'Programming', 'Religion', 'Downloads']
+folder-children=['Web', 'Office', 'Social', 'Work', 'Games', 'GamingUtilities', 'Emulators', 'Utilities', 'Accessories', 'Video', 'Waydroid', 'System', 'Applications', 'Distrobox', 'AppImage', 'GNOME', 'Graphics', 'Audio', 'Programming', 'Religion', 'Downloads']
 
 [org/gnome/desktop/app-folders/folders/GamingUtilities]
 apps=['com.github.Matoking.protontricks.desktop', 'io.github.trigg.discover_overlay.desktop', 'com.vysp3r.ProtonPlus.desktop', 'io.github.benjamimgois.goverlay.desktop', 'com.gerbilsoft.rom-properties.rp-config.desktop', 'input-remapper-gtk.desktop', 'steamos-nested-desktop.desktop', 'io.github.philipk.boilr.desktop', 'io.github.Foldex.AdwSteamGtk.desktop', 'com.steamgriddb.steam-rom-manager.desktop', 'io.github.loot.loot.desktop', 'io.github.Adda0.Stardrop.desktop', 'com.vysp3r.RetroPlus.desktop']
 name='Gaming Utilities'
 translate=false
 
-[org/gnome/desktop/app-folders/folders/Flatpak]
-apps=['com.github.tchx84.Flatseal.desktop', 'io.github.flattool.Warehouse.desktop', 'io.github.giantpinkrobots.flatsweep.desktop']
-name='Flatpak Tools'
+[org/gnome/desktop/app-folders/folders/Applications]
+apps=['it.mijorus.gearlever.desktop', 'com.github.tchx84.Flatseal.desktop', 'io.github.flattool.Warehouse.desktop', 'io.github.giantpinkrobots.flatsweep.desktop']
+name='Application Tools'
 translate=false
 
 [org/gnome/desktop/app-folders/folders/Distrobox]
@@ -67,7 +67,7 @@ translate=true
 
 [org/gnome/desktop/app-folders/folders/Web]
 name='Web'
-apps=['com.brave.Browser.desktop', 'com.google.Chrome.desktop', 'com.github.Eloston.UngoogledChromium.desktop', 'com.microsoft.Edge.desktop', 'org.mozilla.firefox.desktop', 'io.gitlab.librewolf-community.desktop', 'one.ablaze.floorp.desktop', 'com.opera.Opera.desktop', 'com.vivaldi.Vivaldi.desktop']
+apps=['com.brave.Browser.desktop', 'com.google.Chrome.desktop', 'io.github.ungoogled_software.ungoogled_chromium', 'com.microsoft.Edge.desktop', 'org.mozilla.firefox.desktop', 'io.gitlab.librewolf-community.desktop', 'one.ablaze.floorp.desktop', 'com.opera.Opera.desktop', 'com.vivaldi.Vivaldi.desktop']
 translate=true
 
 [org/gnome/desktop/app-folders/folders/Social]
