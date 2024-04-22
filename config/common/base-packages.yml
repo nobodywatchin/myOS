@@ -1,6 +1,7 @@
 type: rpm-ostree
 install:
   - podman-compose
+  - neofetch
 remove:
   - htop
   - nvtop
