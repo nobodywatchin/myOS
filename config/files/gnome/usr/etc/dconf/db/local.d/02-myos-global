@@ -13,11 +13,11 @@ numlock-state=true
 [org/gnome/desktop/peripherals/touchpad]
 tap-to-click=true
 
-# Ptyxis KeyBindings
-# [org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom0]
-# binding='<Control><Alt>t'
-# command='ptyxis --new-window'
-# name='Ptyxis'
+Ptyxis KeyBindings
+[org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom0]
+binding='<Control><Alt>t'
+command='ptyxis --new-window'
+name='Ptyxis'
 
 [org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom1]
 binding='<Control><Alt>KP_Delete'
@@ -49,18 +49,18 @@ allow-updates=false
 download-updates=false
 download-updates-notify=false
 
-# Ptyxis default terminal
-# [com/github/stunkymonkey/nautilus-open-any-terminal]
-# terminal='ptyxis'
-# keybindings=''
-# new-tab=false
-# flatpak='off'
+Ptyxis default terminal
+[com/github/stunkymonkey/nautilus-open-any-terminal]
+terminal='ptyxis'
+keybindings=''
+new-tab=false
+flatpak='off'
 
-# Ptyxis Settings
-# [org/gnome/Ptyxis]
-# restore-session=false
-# restore-window-size=false
-# audible-bell=false
+Ptyxis Settings
+[org/gnome/Ptyxis]
+restore-session=false
+restore-window-size=false
+audible-bell=false
 
 [org/gnome/shell/extensions/just-perfection]
 animation=5
