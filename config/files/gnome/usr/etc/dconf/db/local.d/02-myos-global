@@ -13,7 +13,7 @@ numlock-state=true
 [org/gnome/desktop/peripherals/touchpad]
 tap-to-click=true
 
-Ptyxis KeyBindings
+# Ptyxis KeyBindings
 [org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom0]
 binding='<Control><Alt>t'
 command='ptyxis --new-window'
@@ -49,14 +49,14 @@ allow-updates=false
 download-updates=false
 download-updates-notify=false
 
-Ptyxis default terminal
+# Ptyxis default terminal
 [com/github/stunkymonkey/nautilus-open-any-terminal]
 terminal='ptyxis'
 keybindings=''
 new-tab=false
 flatpak='off'
 
-Ptyxis Settings
+# Ptyxis Settings
 [org/gnome/Ptyxis]
 restore-session=false
 restore-window-size=false
