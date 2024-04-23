@@ -67,7 +67,7 @@ translate=true
 
 [org/gnome/desktop/app-folders/folders/Web]
 name='Web'
-apps=['com.brave.Browser.desktop', 'com.google.Chrome.desktop', 'io.github.ungoogled_software.ungoogled_chromium', 'com.microsoft.Edge.desktop', 'org.mozilla.firefox.desktop', 'io.gitlab.librewolf-community.desktop', 'one.ablaze.floorp.desktop', 'com.opera.Opera.desktop', 'com.vivaldi.Vivaldi.desktop']
+apps=['com.brave.Browser.desktop', 'com.google.Chrome.desktop', 'io.github.ungoogled_software.ungoogled_chromium.desktop', 'com.microsoft.Edge.desktop', 'org.mozilla.firefox.desktop', 'io.gitlab.librewolf-community.desktop', 'one.ablaze.floorp.desktop', 'com.opera.Opera.desktop', 'com.vivaldi.Vivaldi.desktop']
 translate=true
 
 [org/gnome/desktop/app-folders/folders/Social]
