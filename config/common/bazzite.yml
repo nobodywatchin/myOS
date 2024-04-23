@@ -5,11 +5,6 @@
     - https://copr.fedorainfracloud.org/coprs/kylegospo/system76-scheduler/repo/fedora-39/kylegospo-system76-scheduler-fedora-39.repo
     - https://copr.fedorainfracloud.org/coprs/ublue-os/staging/repo/fedora-39/ublue-os-staging-fedora-39.repo
   install:
-    - gtk4
-    - vte291
-    - vte-profile
-    - libadwaita
     - joystickwake
     - mangohud
     - system76-scheduler
-    - ptyxis
