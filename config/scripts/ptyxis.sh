@@ -17,7 +17,6 @@ wget https://copr.fedorainfracloud.org/coprs/ublue-os/staging/repo/fedora-39/ubl
         vte-profile \
         libadwaita
     rpm-ostree install ptyxis
-fi
 
 # Add Nerd Fonts
 wget https://copr.fedorainfracloud.org/coprs/che/nerd-fonts/repo/fedora-39/che-nerd-fonts-fedora-39.repo -O /etc/yum.repos.d/_copr_che-nerd-fonts-39.repo
