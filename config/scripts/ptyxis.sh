@@ -5,18 +5,13 @@ set -oue pipefail
 # Add Staging repo
 wget https://copr.fedorainfracloud.org/coprs/ublue-os/staging/repo/fedora-39/ublue-os-staging-fedora-39.repo -O /etc/yum.repos.d/ublue-os-staging-fedora-39.repo
 
-# 39 gets VRR and Ptyxis
-    wget https://copr.fedorainfracloud.org/coprs/kylegospo/gnome-vrr/repo/fedora-39/kylegospo-gnome-vrr-fedora-39.repo -O /etc/yum.repos.d/_copr_kylegospo-gnome-vrr.repo
-    rpm-ostree override replace --experimental --from repo=copr:copr.fedorainfracloud.org:kylegospo:gnome-vrr mutter mutter-common gnome-control-center gnome-control-center-filesystem
-    rm -f /etc/yum.repos.d/_copr_kylegospo-gnome-vrr.repo
-    rpm-ostree override replace \
+rpm-ostree override replace \
     --experimental \
     --from repo=copr:copr.fedorainfracloud.org:ublue-os:staging \
-        gtk4 \
         vte291 \
-        vte-profile \
-        libadwaita
+        vte-profile
     rpm-ostree install ptyxis
-
-# Add Nerd Fonts
-wget https://copr.fedorainfracloud.org/coprs/che/nerd-fonts/repo/fedora-39/che-nerd-fonts-fedora-39.repo -O /etc/yum.repos.d/_copr_che-nerd-fonts-39.repo
+    rpm-ostree override replace \
+        --experimental \
+        --from repo=copr:copr.fedorainfracloud.org:ublue-os:staging \
+            mutter
