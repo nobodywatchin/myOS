@@ -2,8 +2,6 @@ type: rpm-ostree
 install:
   - podman-compose
   - neofetch
-  - glow
-  - fastfetch
 remove:
   - htop
   - nvtop
