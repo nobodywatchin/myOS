@@ -1,20 +1,19 @@
-type: rpm-ostree
-repos: 
-  - https://copr.fedorainfracloud.org/coprs/astrawan/gnome-shell-extensions/repo/fedora-39/astrawan-gnome-shell-extensions-fedora-39.repo
+type: gnome-extensions
 install:
-  - gnome-shell-extension-gsconnect
-  - gnome-shell-extension-appindicator
-  - gnome-shell-extension-blur-my-shell
-  - gnome-shell-extension-user-theme
-  - gnome-shell-extension-caffeine
-  - gnome-shell-extension-drive-menu
-  - gnome-shell-extension-forge
-  - gnome-randr-rust
-  - gnome-shell-extension-tailscale-gnome-qs
-  - gnome-shell-extension-vitals
-  - gnome-shell-extension-just-perfection
-  - gnome-shell-extension-system76-scheduler
-remove:
-  - yelp
-  - gnome-tour
-  - gnome-system-monitor
+	- s76-scheduler@mattjakeman.com
+	- enhunceactivitiese@github.com.orbitcorrection
+	- logoactivities@github.com.orbitcorrection
+	- just-perfection-desktop@just-perfection
+	- pano@elhan.io
+	- logomenu@aryan_k
+	- appindicatorsupport@rgcjonas.gmail.com
+	- caffeine@patapon.info
+	- clipboard-history@alexsaveau.dev
+	- extension-list@tu.berry
+	- forge@jmmaranan.com
+	- drive-menu@gnome-shell-extensions.gcampax.github.com
+	- tailscale@joaophi.github.com
+	- blur-my-shell@aunetx
+	- gsconnect@andyholmes.github.io
+	- Vitals@CoreCoding.com
+	- user-theme@gnome-shell-extensions.gcampax.github.com
