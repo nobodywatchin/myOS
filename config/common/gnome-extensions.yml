@@ -1,6 +1,5 @@
 type: gnome-extensions
 install:
-    - s76-schedulermattjakeman.com.v5
     - just-perfection-desktopjust-perfection.v28
     - panoelhan.io.v22
     - logomenuaryan_k.v29
