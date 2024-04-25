@@ -3,7 +3,7 @@
 set -oue pipefail
 
 # Add Staging repo
-wget https://copr.fedorainfracloud.org/coprs/ublue-os/staging/repo/fedora-"${FEDORA_MAJOR_VERSION}"/ublue-os-staging-fedora-"${FEDORA_MAJOR_VERSION}".repo -O /etc/yum.repos.d/ublue-os-staging-fedora-"${FEDORA_MAJOR_VERSION}".repo
+wget https://copr.fedorainfracloud.org/coprs/ublue-os/staging/repo/fedora-40/ublue-os-staging-fedora-40.repo -O /etc/yum.repos.d/ublue-os-staging-fedora-40.repo
 
 # 40 gets Ptyxis and patched Mutter
     rpm-ostree override replace \
@@ -18,4 +18,4 @@ wget https://copr.fedorainfracloud.org/coprs/ublue-os/staging/repo/fedora-"${FED
             mutter
             
 # Add Nerd Fonts
-wget https://copr.fedorainfracloud.org/coprs/che/nerd-fonts/repo/fedora-"${FEDORA_MAJOR_VERSION}"/che-nerd-fonts-fedora-"${FEDORA_MAJOR_VERSION}".repo -O /etc/yum.repos.d/_copr_che-nerd-fonts-"${FEDORA_MAJOR_VERSION}".repo
+wget https://copr.fedorainfracloud.org/coprs/che/nerd-fonts/repo/fedora-40/che-nerd-fonts-fedora-40.repo -O /etc/yum.repos.d/_copr_che-nerd-fonts-40.repo
