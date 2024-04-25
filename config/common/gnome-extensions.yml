@@ -1,19 +1,16 @@
 type: gnome-extensions
 install:
-	- s76-scheduler@mattjakeman.com
-	- enhunceactivitiese@github.com.orbitcorrection
-	- logoactivities@github.com.orbitcorrection
+	- s76-schedulermattjakeman.com.v5
 	- just-perfection-desktop@just-perfection
-	- pano@elhan.io
-	- logomenu@aryan_k
-	- appindicatorsupport@rgcjonas.gmail.com
-	- caffeine@patapon.info
-	- clipboard-history@alexsaveau.dev
-	- extension-list@tu.berry
-	- forge@jmmaranan.com
-	- drive-menu@gnome-shell-extensions.gcampax.github.com
-	- tailscale@joaophi.github.com
-	- blur-my-shell@aunetx
-	- gsconnect@andyholmes.github.io
-	- Vitals@CoreCoding.com
-	- user-theme@gnome-shell-extensions.gcampax.github.com
+	- panoelhan.io.v22
+	- logomenuaryan_k.v29
+	- appindicatorsupportrgcjonas.gmail.com.v58
+	- caffeinepatapon.info.v54
+	- extension-listtu.berry.v38
+	- forgejmmaranan.com.v78
+	- drive-menugnome-shell-extensions.gcampax.github.com.v59
+	- tailscalejoaophi.github.com.v15
+	- blur-my-shellaunetx.v61
+	- gsconnectandyholmes.github.io.v57
+	- VitalsCoreCoding.com.v67
+	- user-themegnome-shell-extensions.gcampax.github.com.v57
