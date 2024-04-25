@@ -1,0 +1,16 @@
+type: gnome-extensions
+install:
+	- s76-schedulermattjakeman.com.v5
+	- just-perfection-desktopjust-perfection.v28
+	- panoelhan.io.v22
+	- logomenuaryan_k.v29
+	- appindicatorsupportrgcjonas.gmail.com.v58
+	- caffeinepatapon.info.v54
+	- extension-listtu.berry.v38
+	- forgejmmaranan.com.v78
+	- drive-menugnome-shell-extensions.gcampax.github.com.v59
+	- tailscalejoaophi.github.com.v15
+	- blur-my-shellaunetx.v61
+	- gsconnectandyholmes.github.io.v57
+	- VitalsCoreCoding.com.v67
+	- user-themegnome-shell-extensions.gcampax.github.com.v57
