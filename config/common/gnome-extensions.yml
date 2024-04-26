@@ -1,7 +1,6 @@
 type: gnome-extensions
 install:
     - just-perfection-desktopjust-perfection.v28
-    - logomenuaryan_k.v29
     - appindicatorsupportrgcjonas.gmail.com.v58
     - caffeinepatapon.info.v54
     - extension-listtu.berry.v38
