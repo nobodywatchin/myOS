@@ -169,7 +169,7 @@ enable-facetimehd:
     #!/bin/bash
     set -oue pipefail
     wget https://copr.fedorainfracloud.org/coprs/mulderje/facetimehd-kmod/repo/fedora-40/mulderje-facetimehd-kmod-fedora-40.repo -O /etc/yum.repos.d/mulderje-facetimehd-kmod-fedora-40.repo 
-    rpm-ostree install facetimehd-kmod
+    rpm-ostree install facetimehd-kmod facetimehd-firmware
 
 # Install and configure Decky Loader (https://github.com/SteamDeckHomebrew/decky-loader) and plugins for alternative handhelds
 setup-decky ACTION="":
