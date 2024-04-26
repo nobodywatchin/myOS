@@ -164,6 +164,13 @@ configure-powerprofile ACTION="":
       bazzite-powersave 0
     fi
 
+# Installs facetimehd drivers for intel macbooks
+enable-facetimehd:
+    #!/bin/bash
+    set -oue pipefail
+    wget https://copr.fedorainfracloud.org/coprs/mulderje/facetimehd-kmod/repo/fedora-40/mulderje-facetimehd-kmod-fedora-40.repo -O /etc/yum.repos.d/mulderje-facetimehd-kmod-fedora-40.repo 
+    rpm-ostree install facetimehd-kmod
+
 # Install and configure Decky Loader (https://github.com/SteamDeckHomebrew/decky-loader) and plugins for alternative handhelds
 setup-decky ACTION="":
     #!/bin/bash

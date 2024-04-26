@@ -1,0 +1,5 @@
+type: rpm-ostree
+remove:
+  - yelp
+  - gnome-tour
+  - gnome-system-monitor
