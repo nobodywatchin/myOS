@@ -17,12 +17,6 @@ restore-original-terminal:
         echo "Done. Change your default Terminal in System Settings to complete the swap."
     fi
 
-# Install Bazzite's Steam Game Mode Startup Video
-install-gamemode-video:
-    mkdir -p $HOME/.local/share/Steam/config/uioverrides/movies
-    rm -f $HOME/.local/share/Steam/config/uioverrides/movies/deck_startup.webm
-    cp /usr/share/ublue-os/bazzite/bazzite.webm $HOME/.local/share/Steam/config/uioverrides/movies/deck_startup.webm
-
 # Force-enable AMD pstate
 pstate-force-enable:
     rpm-ostree kargs --append-if-missing=amd_pstate=active
