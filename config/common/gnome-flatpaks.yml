@@ -1,10 +1,10 @@
-- type: default-flatpaks
-    notify: true # Send notification after install/uninstall is finished (true/false)
-    system:
+type: default-flatpaks
+notify: true # Send notification after install/uninstall is finished (true/false)
+system:
       # If no repo information is specified, Flathub will be used by default
-      repo-url: https://dl.flathub.org/repo/flathub.flatpakrepo
-      repo-name: flathub
-      repo-title: "Flathub (system-wide)" # Optional; this sets the remote's user-facing name in graphical frontends like GNOME Software
+  repo-url: https://dl.flathub.org/repo/flathub.flatpakrepo
+  repo-name: flathub
+  repo-title: "Flathub (system-wide)" # Optional; this sets the remote's user-facing name in graphical frontends like GNOME Software
       install:
         - org.gnome.Calculator
         - org.gnome.Characters
