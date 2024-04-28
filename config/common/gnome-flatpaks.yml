@@ -1,9 +1,6 @@
 type: default-flatpaks
-notify: true # Send notification after install/uninstall is finished (true/false)
-system:
-repo-url: https://dl.flathub.org/repo/flathub.flatpakrepo
-repo-name: flathub
-repo-title: "Flathub (system-wide)"
+    notify: true # Send notification after install/uninstall is finished (true/false)
+    system:
 install:
   - org.gnome.Calculator
   - org.gnome.Characters
