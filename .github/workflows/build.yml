@@ -26,6 +26,7 @@ jobs:
           - recipes/intel-amd/kde.yml
           - recipes/intel-amd/hyprland.yml
           - recipes/intel-amd/cosmic.yml
+          - recipes/intel-mac/gnome.yml
     steps:
        # the build is fully handled by the reusable github action
       - name: Build myOS
