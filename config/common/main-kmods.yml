@@ -2,9 +2,10 @@ type: akmods
 base: main # if not specified, classic "main" base is used by default
 install:
   - openrazer
-  - openrgb
   - v4l2loopback
   - gcadapter_oc
   - wl
   - xpadneo
   - xone
+base: extra
+  - openrgb
