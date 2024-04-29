@@ -7,3 +7,4 @@ install:
   - wl
   - xpadneo
   - xone
+  - openrgb
