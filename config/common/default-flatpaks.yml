@@ -1,8 +1,9 @@
+---
 type: default-flatpaks
-system:
+system: null
 repo-url: https://dl.flathub.org/repo/flathub.flatpakrepo
 repo-name: flathub
-repo-title: "Flathub (system-wide)" # Optional; this sets the remote's user-facing name in graphical frontends like GNOME Software
+repo-title: Flathub (system-wide)
 install:
   - io.github.dvlv.boxbuddyrs
   - dev.deedles.Trayscale
@@ -16,3 +17,4 @@ install:
   - page.codeberg.libre_menu_editor.LibreMenuEditor
 remove:
   - io.missioncenter.MissionCenter
+
