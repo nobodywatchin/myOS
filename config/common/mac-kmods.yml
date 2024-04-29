@@ -1,4 +1,3 @@
 type: akmods
-base: main # if not specified, classic "main" base is used by default
 install:
-  - facetimehd
+- facetimehd
