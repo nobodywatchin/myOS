@@ -1,8 +1,4 @@
 ---
-type: rpm-ostree
-repos: 
-  - https://copr.fedorainfracloud.org/coprs/mulderje/facetimehd-kmod/repo/fedora-40/mulderje-facetimehd-kmod-fedora-40.repo
-
 type: akmods
 install:
   - facetimehd
