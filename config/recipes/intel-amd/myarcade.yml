@@ -4,7 +4,7 @@ name: myarcade
 description: "myOS is an operating system dedicated to being user-friendly and progressive "
 
 # the base image to build on top of (FROM) and the version tag to use
-base-image: ghcr.io/ublue-os/bazzite-htpc-gnome
+base-image: ghcr.io/ublue-os/bazzite-deck-gnome
 image-version: latest # is also supported if you want new updates ASAP
 
 # module configuration, executed in order
