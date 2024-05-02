@@ -29,7 +29,6 @@ jobs:
           - recipes/intel-amd/myarcade.yml
           - recipes/intel-mac/gnome.yml
           - recipes/intel-mac/kde.yml
-          - recipes/intel-mac/hyprland.yml
           - recipes/intel-mac/cosmic.yml
     steps:
        # the build is fully handled by the reusable github action
