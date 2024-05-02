@@ -1,10 +1,9 @@
-type: default-flatpaks
-notify: true
-system: null
-repo-url: https://dl.flathub.org/repo/flathub.flatpakrepo
-repo-name: flathub
-repo-title: Flathub (system-wide)
-install:
+  type: default-flatpaks
+  system:
+  repo-url: https://dl.flathub.org/repo/flathub.flatpakrepo
+  repo-name: flathub
+  repo-title: "Flathub (system-wide)"
+  install:
   - org.gnome.Calculator
   - org.gnome.Characters
   - org.gnome.Evince
@@ -30,7 +29,7 @@ install:
   - page.codeberg.libre_menu_editor.LibreMenuEditor
   - org.gnome.Decibels
   - io.github.celluloid_player.Celluloid
-remove:
+  remove:
   - io.missioncenter.MissionCenter
   - org.gnome.Contacts
   - org.gnome.Weather
