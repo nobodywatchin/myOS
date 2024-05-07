@@ -1,4 +1,0 @@
-modules:
-  - type: files
-    files:
-      - /cinnamon/usr: /usr
