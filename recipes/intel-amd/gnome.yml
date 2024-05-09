@@ -18,6 +18,7 @@ modules:
   - from-file: common/gnome-flatpaks.yml
   - from-file: common/tailscale.yml
   - from-file: common/bazzite.yml
+  - from-file: common/apple.yml
   - from-file: common/gnome-packages.yml
   - from-file: common/gnome-extensions.yml
   - from-file: common/gnome-files.yml
