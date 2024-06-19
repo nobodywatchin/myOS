@@ -59,7 +59,6 @@ setup-virtualization ACTION="":
         --delete-if-present="kvm.report_ignored_msrs=0"
         echo 'Please re-run "ujust enable-virtualization" after the reboot to finish setup'
       fi
-    elif [[ "${OPTION,,}" =~ (^enable[[:space:]]vfio|vfio-on) ]]; then
       echo "Enabling VFIO..."
       VIRT_TEST=$(rpm-ostree kargs)
       CPU_VENDOR=$(grep "vendor_id" "/proc/cpuinfo" | uniq | awk -F": " '{ print $2 }')
@@ -88,7 +87,6 @@ setup-virtualization ACTION="":
           echo "NOTE: Your second GPU will not be usable by the host after you do this!"
         fi
       fi
-    elif [[ "${OPTION,,}" =~ (^disable[[:space:]]vfio|vfio-off) ]]; then
       echo ""
       echo "Make sure you have ${b}disabled autostart of all VMs using VFIO${n} before continuing!"
       CONFIRM=$(Choose Cancel Continue)
@@ -114,7 +112,6 @@ setup-virtualization ACTION="":
         --delete-if-present="vfio_pci.disable_vga=0" \
         $VFIO_IDS_KARG
       fi
-    elif [[ "${OPTION,,}" =~ kvmfr ]]; then
       echo "$(Urllink "https://looking-glass.io/docs/rc/ivshmem_kvmfr/#libvirt" "This module") along with $(Urllink "https://looking-glass.io" "Looking Glass") is very experimental and not recommended for production use!"
       echo "The ublue team packages the kvmfr module only because it has to be supplied with the system image while using an atomic desktop."
       echo "If you do plan to use Looking Glass, please $(Urllink "https://universal-blue.discourse.group/docs?topic=956" "follow the guide here") on how to compile it for your system."
