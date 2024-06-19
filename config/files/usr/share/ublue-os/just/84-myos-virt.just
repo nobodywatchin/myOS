@@ -60,11 +60,6 @@ setup-virtualization ACTION="":
         echo 'Please re-run "ujust enable-virtualization" after the reboot to finish setup'
       fi
     elif [[ "${OPTION,,}" =~ (^enable[[:space:]]vfio|vfio-on) ]]; then
-      # Check if we are running on a Steam Deck
-      if /usr/libexec/hwsupport/valve-hardware; then
-        echo "IOMMU is not supported on Steam Deck"
-        exit 0
-      fi
       echo "Enabling VFIO..."
       VIRT_TEST=$(rpm-ostree kargs)
       CPU_VENDOR=$(grep "vendor_id" "/proc/cpuinfo" | uniq | awk -F": " '{ print $2 }')
@@ -94,11 +89,6 @@ setup-virtualization ACTION="":
         fi
       fi
     elif [[ "${OPTION,,}" =~ (^disable[[:space:]]vfio|vfio-off) ]]; then
-      # Check if we are running on a Steam Deck
-      if /usr/libexec/hwsupport/valve-hardware; then
-        echo "IOMMU is not supported on Steam Deck"
-        exit 0
-      fi
       echo ""
       echo "Make sure you have ${b}disabled autostart of all VMs using VFIO${n} before continuing!"
       CONFIRM=$(Choose Cancel Continue)
@@ -125,11 +115,6 @@ setup-virtualization ACTION="":
         $VFIO_IDS_KARG
       fi
     elif [[ "${OPTION,,}" =~ kvmfr ]]; then
-      # Check if we are running on a Steam Deck
-      if /usr/libexec/hwsupport/valve-hardware; then
-        echo "IOMMU is not supported on Steam Deck"
-        exit 0
-      fi
       echo "$(Urllink "https://looking-glass.io/docs/rc/ivshmem_kvmfr/#libvirt" "This module") along with $(Urllink "https://looking-glass.io" "Looking Glass") is very experimental and not recommended for production use!"
       echo "The ublue team packages the kvmfr module only because it has to be supplied with the system image while using an atomic desktop."
       echo "If you do plan to use Looking Glass, please $(Urllink "https://universal-blue.discourse.group/docs?topic=956" "follow the guide here") on how to compile it for your system."
