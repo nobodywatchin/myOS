@@ -4,7 +4,6 @@ install:
   - neofetch
   - pipewire-jack-audio-connection-kit-devel 
   - wine-devel
-  - kvm
 remove:
   - htop
   - nvtop

@@ -57,7 +57,7 @@ setup-virtualization ACTION="":
         rpm-ostree kargs \
         --delete-if-present="kvm.ignore_msrs=1" \
         --delete-if-present="kvm.report_ignored_msrs=0"
-        echo 'Please re-run "ujust enable-virtualization" after the reboot to finish setup'
+        echo 'Please re-run "ujust setup-virtualization" after the reboot to finish setup'
       fi
     elif [[ "${OPTION,,}" =~ (^enable[[:space:]]vfio|vfio-on) ]]; then
       echo "Enabling VFIO..."
