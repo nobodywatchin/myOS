@@ -3,3 +3,5 @@ remove:
   - yelp
   - gnome-tour
   - gnome-system-monitor
+  - gnome-terminal
+  - gnome-terminal-nautilus
