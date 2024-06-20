@@ -2,8 +2,6 @@ type: rpm-ostree
 install:
   - podman-compose
   - neofetch
-  - pipewire-jack-audio-connection-kit-devel 
-  - wine-devel
 remove:
   - htop
   - nvtop
