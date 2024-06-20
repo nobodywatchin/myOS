@@ -61,23 +61,23 @@ setup-virtualization ACTION="":
       fi
     elif [[ "${OPTION,,}" =~ (^enable[[:space:]]vfio|vfio-on) ]]; then
       echo "Enabling VFIO..."
-      virt_test=$(rpm-ostree kargs)
-      cpu_vendor=$(grep "vendor_id" "/proc/cpuinfo" | uniq | awk -F": " '{ print $2 }')
-      vendor_karg="unset"
-      if [[ ${virt_test} == *kvm.report_ignored_msrs* ]]; then
+      VIRT_TEST=$(rpm-ostree kargs)
+      CPU_VENDOR=$(grep "vendor_id" "/proc/cpuinfo" | uniq | awk -F": " '{ print $2 }')
+      VENDOR_KARG="unset"
+      if [[ ${VIRT_TEST} == *kvm.report_ignored_msrs* ]]; then
         echo 'add_drivers+=" vfio vfio_iommu_type1 vfio-pci "' | sudo tee /etc/dracut.conf.d/vfio.conf
         rpm-ostree initramfs --enable
-        if [[ ${cpu_vendor} == "AuthenticAMD" ]]; then
-          vendor_karg="amd_iommu=on"
-        elif [[ ${cpu_vendor} == "GenuineIntel" ]]; then
-          vendor_karg="intel_iommu=on"  
+        if [[ ${CPU_VENDOR} == "AuthenticAMD" ]]; then
+          VENDOR_KARG="amd_iommu=on"
+        elif [[ ${CPU_VENDOR} == "GenuineIntel" ]]; then
+          VENDOR_KARG="intel_iommu=on"  
         fi
-        if [[ ${vendor_karg} == "unset" ]]; then
+        if [[ ${VENDOR_KARG} == "unset" ]]; then
           echo "Failed to get CPU vendor, exiting..."
           exit 1
         else
           rpm-ostree kargs \
-            --append-if-missing="${vendor_karg}" \
+            --append-if-missing="${VENDOR_KARG}" \
             --append-if-missing="iommu=pt" \
             --append-if-missing="rd.driver.pre=vfio_pci" \
             --append-if-missing="vfio_pci.disable_vga=1"
