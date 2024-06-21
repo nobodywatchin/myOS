@@ -2,6 +2,7 @@ type: rpm-ostree
 install:
   - podman-compose
   - neofetch
+  - libvirt
 remove:
   - htop
   - nvtop
