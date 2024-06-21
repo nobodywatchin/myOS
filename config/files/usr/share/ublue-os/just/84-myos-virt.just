@@ -89,7 +89,6 @@ setup-virtualization ACTION="":
         fi
       fi
     elif [[ "${OPTION,,}" =~ (^disable[[:space:]]vfio|vfio-off) ]]; then
-      echo ""
       echo "Make sure you have ${b}disabled autostart of all VMs using VFIO${n} before continuing!"
       CONFIRM=$(Choose Cancel Continue)
       if [ "$CONFIRM" == "Continue" ]; then
