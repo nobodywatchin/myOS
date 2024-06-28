@@ -26,7 +26,6 @@ jobs:
           - intel-amd/kde.yml
           - intel-amd/hyprland.yml
           - intel-amd/cosmic.yml
-          - intel-amd/myarcade.yml
           - intel-mac/gnome.yml
           - intel-mac/kde.yml
           - intel-mac/cosmic.yml
