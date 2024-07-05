@@ -28,6 +28,7 @@ jobs:
           - intel-amd/cosmic.yml
           - intel-mac/gnome.yml
           - intel-mac/kde.yml
+          - intel-mac/hyprland.yml
           - intel-mac/cosmic.yml
           - server/headless.yml
     steps:
