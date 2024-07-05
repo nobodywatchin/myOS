@@ -1,7 +1,7 @@
 type: systemd
 system:
   enabled:
-    - tailscaled.service # Enabled (runs on system boot)
+  #  - tailscaled.service # Enabled (runs on system boot)
     - com.system76.Scheduler.service
     - libvirtd.service
   disabled:
