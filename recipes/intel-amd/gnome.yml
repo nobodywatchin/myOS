@@ -23,6 +23,5 @@ modules:
   - from-file: gnome/gnome-files.yml
   - from-file: common/services.yml
   - from-file: common/initramfs.yml
-  - from-file: common/common-scripts.yml
   - type: signing # this sets up the proper policy & signing files for signed images to work fully
   - type: yafti
