@@ -15,6 +15,7 @@ system:
   - dev.skynomads.Seabird
   - org.libreoffice.LibreOffice
   - page.codeberg.libre_menu_editor.LibreMenuEditor
+  - app.devsuite.Ptyxis
   remove:
   - io.missioncenter.MissionCenter
 

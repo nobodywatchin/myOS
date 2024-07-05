@@ -29,6 +29,7 @@ jobs:
           - intel-mac/gnome.yml
           - intel-mac/kde.yml
           - intel-mac/cosmic.yml
+          - server/headless.yml
     steps:
        # the build is fully handled by the reusable github action
       - name: Build myOS

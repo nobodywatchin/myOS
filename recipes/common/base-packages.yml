@@ -3,7 +3,6 @@ repos:
   - https://copr.fedorainfracloud.org/coprs/hikariknight/looking-glass-kvmfr/repo/fedora-40/hikariknight-looking-glass-kvmfr-fedora-40.repo
 install:
   - podman-compose
-  - neofetch
   - libvirt
 remove:
   - htop
