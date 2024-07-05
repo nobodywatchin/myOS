@@ -1,0 +1,7 @@
+[Desktop Entry]
+Type=Application
+Name=myOS Setup
+Comment=First-run utility for configuring helpful additions to myOS
+Icon=/usr/share/pixmaps/system-logo-white.png
+Categories=Utility;
+Exec=/usr/bin/yafti --force
