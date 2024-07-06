@@ -6,7 +6,6 @@ system:
   repo-title: "Flathub (system-wide)" # Optional; this sets the remote's user-facing name in graphical frontends like GNOME Software
   install:
   - io.github.dvlv.boxbuddyrs
-  - dev.deedles.Trayscale
   - io.github.flattool.Warehouse
   - com.github.tchx84.Flatseal
   - it.mijorus.gearlever
@@ -15,7 +14,6 @@ system:
   - dev.skynomads.Seabird
   - org.libreoffice.LibreOffice
   - page.codeberg.libre_menu_editor.LibreMenuEditor
-  - app.devsuite.Ptyxis
   remove:
   - io.missioncenter.MissionCenter
 
