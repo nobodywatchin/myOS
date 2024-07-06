@@ -5,7 +5,6 @@ system:
     - com.system76.Scheduler.service
     - libvirtd.service
     - podman-tcp.service
-    - podman.socket
   disabled:
     # Disabled (does not run on system boot, unless other unit strictly requires it)
   masked:
