@@ -4,6 +4,7 @@
     - https://copr.fedorainfracloud.org/coprs/kylegospo/bazzite/repo/fedora-40/kylegospo-bazzite-fedora-40.repo
     - https://copr.fedorainfracloud.org/coprs/kylegospo/system76-scheduler/repo/fedora-40/kylegospo-system76-scheduler-fedora-40.repo
     - https://copr.fedorainfracloud.org/coprs/ublue-os/staging/repo/fedora-40/ublue-os-staging-fedora-40.repo
+    - https://copr.fedorainfracloud.org/coprs/ublue-os/bling/repo/fedora-40/ublue-os-bling-fedora-40.repo
   install:
     - joystickwake
     - mangohud
@@ -13,3 +14,4 @@
     - nautilus-open-any-terminal
     - nautilus-gsconnect
     - ptyxis
+    - ublue-update
