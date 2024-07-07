@@ -3,6 +3,7 @@ repos:
   - https://copr.fedorainfracloud.org/coprs/fiftydinar/gnome-randr-rust/repo/fedora-40/fiftydinar-gnome-randr-rust-fedora-40.repo
 install:
   - gnome-randr-rust
+  - loupe
 remove:
   - yelp
   - gnome-tour
