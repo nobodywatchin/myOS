@@ -28,7 +28,7 @@ system:
   - org.libreoffice.LibreOffice
   - page.codeberg.libre_menu_editor.LibreMenuEditor
   - org.gnome.Decibels
-  - io.github.celluloid_player.Celluloid
+  - org.gnome.Showtime
   remove:
   - io.missioncenter.MissionCenter
   - org.gnome.Contacts
