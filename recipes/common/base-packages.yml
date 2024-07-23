@@ -8,6 +8,8 @@ install:
   - miniaturo
   - libopenraw
   - cockpit
+  - cockpit-ostree
+  - cockpit-podman
 remove:
   - htop
   - nvtop
