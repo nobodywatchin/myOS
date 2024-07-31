@@ -4,6 +4,10 @@ repos:
 install:
   - gnome-randr-rust
   - loupe
+  - gnome-shell-extension-gsconnect
+  - gnome-shell-extension-system76-scheduler
+  - nautilus-open-any-terminal
+  - nautilus-gsconnect
 remove:
   - yelp
   - gnome-tour
