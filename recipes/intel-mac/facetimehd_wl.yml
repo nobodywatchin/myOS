@@ -7,3 +7,4 @@ modules:
 - type: akmods
   install:
   - facetimehd
+  - wl
