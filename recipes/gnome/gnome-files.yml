@@ -1,4 +1,5 @@
 modules:
   - type: files
     files:
-      - /gnome/usr: /usr
+      - source: gnome
+        destination: /
