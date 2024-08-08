@@ -1,0 +1,6 @@
+type: rpm-ostree
+repos: 
+  - https://copr.fedorainfracloud.org/coprs/wiiznokes/cosmic-applets-unofficial/repo/fedora-40/wiiznokes-cosmic-applets-unofficial-fedora-40.repo
+install:
+  - cosmic-ext-applet-clipboard-manager
+  - cosmic-ext-applet-ollama
