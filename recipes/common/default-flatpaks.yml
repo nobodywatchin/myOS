@@ -12,8 +12,9 @@ system:
   - com.usebottles.bottles
   - com.github.marhkb.Pods
   - dev.skynomads.Seabird
+  - net.nokyan.Resources
+  - fr.sgued.ten_forward
   - org.libreoffice.LibreOffice
-  - page.codeberg.libre_menu_editor.LibreMenuEditor
   remove:
   - io.missioncenter.MissionCenter
 

@@ -14,21 +14,12 @@ system:
   - org.gnome.font-viewer
   - io.github.vikdevelop.SaveDesktop
   - com.mattjakeman.ExtensionManager
-  - io.github.dvlv.boxbuddyrs
   - dev.deedles.Trayscale
-  - io.github.flattool.Warehouse
-  - com.github.tchx84.Flatseal
-  - it.mijorus.gearlever
-  - com.usebottles.bottles
-  - com.github.marhkb.Pods
-  - dev.skynomads.Seabird
-  - net.nokyan.Resources
-  - fr.sgued.ten_forward
   - com.leinardi.gst
-  - org.libreoffice.LibreOffice
   - page.codeberg.libre_menu_editor.LibreMenuEditor
   - org.gnome.Decibels
   - org.gnome.Showtime
+  - nl.emphisia.icon
   remove:
   - io.missioncenter.MissionCenter
   - org.gnome.Contacts

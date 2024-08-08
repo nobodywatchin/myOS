@@ -3,7 +3,6 @@ install:
   - openrazer
   - v4l2loopback
   - gcadapter_oc
-  - wl
   - xpadneo
   - xone
   - openrgb

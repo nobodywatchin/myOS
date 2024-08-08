@@ -7,9 +7,6 @@ install:
   - libvirt
   - miniaturo
   - libopenraw
-  - cockpit
-  - cockpit-ostree
-  - cockpit-podman
 remove:
   - htop
   - nvtop
