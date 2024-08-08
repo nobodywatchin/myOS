@@ -17,7 +17,8 @@ tap-to-click=true
 button-layout='appmenu:minimize,close'
 action-double-click-titlebar='lower'
 action-middle-click-titlebar='none'
-focus-mode='mouse'
+focus-mode='sloppy'
+auto-raise=true
 
 # Ptyxis KeyBindings
 [org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom0]
