@@ -13,11 +13,24 @@ numlock-state=true
 [org/gnome/desktop/peripherals/touchpad]
 tap-to-click=true
 
+[org/gnome/desktop/wm/preferences]
+button-layout='appmenu:minimize,close'
+action-double-click-titlebar='lower'
+action-middle-click-titlebar='none'
+focus-mode='mouse'
+
 # Ptyxis KeyBindings
 [org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom0]
 binding='<Control><Alt>t'
 command='ptyxis --new-window'
 name='Ptyxis'
+
+#Ptyxis Defaults
+[org/gnome/Ptyxis]
+cursor-blink-mode='on'
+cursor-shape='ibeam'
+use-system-font=false
+font-name='Monospace 12'
 
 [org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom1]
 binding='<Control><Alt>KP_Delete'
@@ -143,16 +156,3 @@ sigma=0
 static-blur=false
 style-panel=3
 unblur-in-overview=false
-
-[org/gnome/shell/extensions/Logo-menu]
-symbolic-icon=false
-menu-button-icon-image=0
-menu-button-icon-size=20
-hide-icon-shadow=false
-menu-button-terminal='ptyxis --new-window'
-menu-button-system-monitor='flatpak run net.nokyan.Resources'
-menu-button-extensions-app='com.mattjakeman.ExtensionManager.desktop'
-menu-button-software-center='gnome-software'
-show-activities-button=true
-show-lockscreen=false
-show-power-option=false
