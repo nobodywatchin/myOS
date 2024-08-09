@@ -13,13 +13,6 @@ numlock-state=true
 [org/gnome/desktop/peripherals/touchpad]
 tap-to-click=true
 
-[org/gnome/desktop/wm/preferences]
-button-layout='appmenu:minimize,close'
-action-double-click-titlebar='lower'
-action-middle-click-titlebar='none'
-focus-mode='sloppy'
-auto-raise=true
-
 # Ptyxis KeyBindings
 [org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom0]
 binding='<Control><Alt>t'
