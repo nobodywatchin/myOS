@@ -4,3 +4,4 @@ repos:
 install:
   - cosmic-ext-applet-clipboard-manager
   - cosmic-ext-applet-ollama
+  - power-profiles-daemon
