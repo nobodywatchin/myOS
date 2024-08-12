@@ -26,6 +26,10 @@ jobs:
           - intel-amd/kde.yml
           - intel-amd/hyprland.yml
           - intel-amd/cosmic.yml
+          - nvidia/gnome.yml
+          - nvidia/kde.yml
+          - nvidia/hyprland.yml
+          - nvidia/cosmic.yml
           - intel-mac/gnome.yml
           - intel-mac/kde.yml
           - intel-mac/hyprland.yml
