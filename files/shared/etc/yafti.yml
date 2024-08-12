@@ -1,0 +1,217 @@
+title: Welcome to myOS
+properties:
+  mode: "run-once"
+  save_state: "always"
+screens:
+  first-screen:
+    source: yafti.screen.title
+    values:
+      title: "Welcome to myOS"
+      icon: 
+      description: |
+        Configure your system to get started. This utility can be re-opened at any time, so don't feel like you have to get it perfect your first go-through.
+  configure-myOS:
+    source: yafti.screen.package
+    values:
+      title: Setting up myOS
+      show_terminal: true
+      package_manager: yafti.plugin.run
+      groups:
+        Add input group to current user:
+          description: Adds the input group to your current user. Required by certain controller drivers.
+          default: true
+          packages:
+          - Set input group: sudo -A ujust add-user-to-input-group
+        Sunshine:
+          description: A self-hosted game stream host for Moonlight
+          default: false
+          packages:
+          - Install Sunshine: ujust setup-sunshine install
+          - Autostart Sunshine: ujust setup-sunshine autostart
+        Hide GRUB Menu:
+          description: |
+            NOTE: Press the escape key before boot to show the menu
+          default: true
+          packages:
+          - Hide GRUB: sudo -A ujust configure-grub hide
+        Solaar:
+          description: Application to control Logitech Mice, Keyboards, and Trackpads
+          default: false
+          packages:
+          - Install Solaar: ujust install-solaar
+        OpenTabletDriver:
+          description: Open source, cross-platform, user-mode tablet driver
+          default: false
+          packages:
+          - Install OpenTabletDriver: ujust install-opentabletdriver
+        Resilio Sync:
+          description: A file synchronization utility powered by BitTorrent
+          default: false
+          packages:
+          - Install Resilio Sync: ujust install-resilio-sync
+        scrcpy:
+          description: scrcpy provides display and control of Android devices connected on USB (or over TCP/IP)
+          default: false
+          packages:
+          - Install scrcpy: ujust install-scrcpy
+  applications:
+    source: yafti.screen.package
+    values:
+      title: Application Installation
+      show_terminal: true
+      package_manager: yafti.plugin.flatpak
+      package_manager_defaults:
+        user: true
+        system: false
+      groups:
+        Web Browsers:
+          description: Surf the Web
+          default: false
+          packages:
+          - Brave: com.brave.Browser
+          - Google Chrome: com.google.Chrome
+          - Ungoogled Chromium: com.github.Eloston.UngoogledChromium
+          - Microsoft Edge: com.microsoft.Edge
+          - Firefox: org.mozilla.firefox
+          - LibreWolf: io.gitlab.librewolf-community
+          - Floorp: one.ablaze.floorp
+          - Opera: com.opera.Opera
+          - Vivaldi: com.vivaldi.Vivaldi
+        Social Networking:
+          description: Stay Connected
+          default: false
+          packages:
+          - Discord: com.discordapp.Discord
+          - Slack: com.slack.Slack
+          - Zoom: us.zoom.Zoom
+          - Microsoft Teams: com.github.IsmaelMartinez.teams_for_linux
+          - Whatsapp (ZapZap): com.rtosta.zapzap
+          - Facebook Messenger (Caprine): com.sindresorhus.Caprine
+          - Telegram: org.telegram.desktop
+          - Signal: org.signal.Signal
+          - Fractal (Matrix Client): org.gnome.Fractal
+          - Ferdium (multi-platform messaging tool): org.ferdium.Ferdium
+        Office and Productivity:
+          description: Get things done
+          default: false
+          packages:
+          - LibreOffice: org.libreoffice.LibreOffice
+          - OnlyOffice: org.onlyoffice.desktopeditors
+          - Obsidian: md.obsidian.Obsidian
+          - Cohesion (Notion): io.github.brunofin.Cohesion
+          - AppFlowy: io.appflowy.AppFlowy
+          - Slack: com.slack.Slack
+          - Iotas (note-taking app): org.gnome.World.Iotas
+          - Thunderbird Email: org.mozilla.Thunderbird
+          - Microsoft Outlook: io.github.mahmoudbahaa.outlook_for_linux
+          - Amazon Workspaces: com.amazon.Workspaces
+          - Draw.io (Diagramming tool): com.jgraph.drawio.desktop
+          - Planify: io.github.alainm23.planify
+        Gaming:
+          description: Game Launchers that we recommend
+          default: false
+          packages:
+          - Steam: com.valvesoftware.Steam
+          - Heroic Games Launcher (GOG, Epic, and Amazon Games): com.heroicgameslauncher.hgl
+          - itch: io.itch.itch
+          - ludusavi (Game Save Backup): com.github.mtkennerly.ludusavi
+          - Minecraft (Prism Launcher): org.prismlauncher.PrismLauncher
+          - Minecraft Bedrock Launcher: io.mrarm.mcpelauncher
+          - PokeMMO: com.pokemmo.PokeMMO
+          - PlayStation Remote Play (Chiaki): re.chiaki.Chiaki
+          - GeForce NOW: io.github.hmlendea.geforcenow-electron
+          - xCloud & Xbox Home Streaming (Greenlight): io.github.unknownskl.greenlight
+          - Moonlight: com.moonlight_stream.Moonlight
+        Steam Tools:
+          description: Take your steam gaming experience even further
+          default: false
+          packages:
+          - Steam TinkerLaunch: com.valvesoftware.Steam.Utility.steamtinkerlaunch
+          - ProtonPlus: com.vysp3r.ProtonPlus
+          - ProtonTricks: com.github.Matoking.protontricks
+          - BoilR: io.github.philipk.boilr
+          - Steam ROM Manager: com.steamgriddb.steam-rom-manager
+        Emulation:
+          description: Preserve your collection
+          default: false
+          packages:
+          - MAME (Arcade): org.mamedev.MAME
+          - Stella (Atari 2600): io.github.stella_emu.Stella
+          - DOSBox Staging (DOS Gaming): io.github.dosbox-staging
+          - ScummVM (Other retro PC gaming): org.scummvm.ScummVM
+          - BlastEm (Sega Master System & Genesis): com.retrodev.blastem
+          - Flycast (Sega Dreamcast): org.flycast.Flycast
+          - xemu (Original Xbox): app.xemu.xemu
+          - DuckStation (PS1): org.duckstation.DuckStation
+          - PCSX2 (PS2): net.pcsx2.PCSX2
+          - PPSSPP (PSP): org.ppsspp.PPSSPP
+          - RPCS3 (PS3): net.rpcs3.RPCS3
+          - Nestopia (Nintendo Entertainment System): ca._0ldsk00l.Nestopia
+          - bsnes (Super Nintendo): dev.bsnes.bsnes
+          - Rosalie's Mupen GUI (N64): com.github.Rosalie241.RMG
+          - mGBA (Gameboy Advance): io.mgba.mGBA
+          - Dolphin (Gamecube & Wii): org.DolphinEmu.dolphin-emu
+          - melonDS (DS & DSi): net.kuribo64.melonDS
+          - DeSmuME (DS): org.desmume.DeSmuME
+          - Cemu (WiiU): info.cemu.Cemu
+          - Lime3DS (3DS): io.github.lime3ds.Lime3DS
+          - Ryujinx (Nintendo Switch): org.ryujinx.Ryujinx
+        Music:
+          description: Jam out
+          default: false
+          packages:
+          - Apple Music (Cider): sh.cider.Cider
+          - Spotify: com.spotify.Client
+          - Tidal: com.mastermindzh.tidal-hifi
+          - G4Music Player: com.github.neithern.g4music
+          - Sound Juicer: org.gnome.SoundJuicer
+          - Tagger: org.nickvision.tagger
+        Multimedia & Production:
+          description: Make Things
+          default: false
+          packages:
+          - Celluloid (Media Player): io.github.celluloid_player.Celluloid 
+          - Ardour (DAW): org.ardour.Ardour
+          - Tenacity (Record Audio): org.tenacityaudio.Tenacity
+          - Kdenlive (Video Editor): org.kde.kdenlive
+          - Blender: org.blender.Blender
+          - darktable (Organize and develop images from digital cameras): org.darktable.Darktable
+          - GIMP (Image Editor): org.gimp.GIMP
+          - Inkscape (Vector Graphics Editor): org.inkscape.Inkscape
+          - Krita (Drawing Software): org.kde.krita
+          - OBS Studio: com.obsproject.Studio
+          - GPU Screen Recorder: com.dec05eba.gpu_screen_recorder
+        Utilities and System Tools:
+          description: Other elpful tools
+          default: false
+          packages:
+          - ProtonVPN: com.protonvpn.www
+          - Transmission (Torrent Client): com.transmissionbt.Transmission
+          - Syncthing (Sync files across your devices): com.github.zocker_160.SyncThingy
+          - Foliate (e-book reader): com.github.johnfactotum.Foliate
+          - Decoder (Scan & Generate QR Codes): com.belmoussaoui.Decoder
+          - Frog (Extract Text from images): com.github.tenderowl.frog
+          - Fedora Media Writer: org.fedoraproject.MediaWriter
+          - Metadata Cleaner: fr.romainvigier.MetadataCleaner
+          - OpenRGB (Control RGB in one place): org.openrgb.OpenRGB
+          - Secrets (Password Manager): org.gnome.World.Secrets
+          - PinApp (Create and edit application shortcuts): io.github.fabrialberio.pinapp
+          - Deja Dup Backups: org.gnome.DejaDup
+  final-screen:
+    source: yafti.screen.title
+    values:
+      title: "All done!"
+      icon: 
+      links:
+      - "Install More Applications":
+          run: /usr/bin/plasma-discover
+      - "Documentation":
+          run: /usr/bin/xdg-open https://universal-blue.discourse.group/docs?category=5
+      - "Forums":
+          run: /usr/bin/xdg-open https://universal-blue.discourse.group/c/bazzite/5
+      - "Join the Discord Community":
+          run: /usr/bin/xdg-open https://discord.gg/XjG48C7VHx
+      - "Reboot now":
+          run: systemctl reboot
+      description: |
+        Thank you for trying myOS. Please reboot to apply all changes made by this setup utility.
