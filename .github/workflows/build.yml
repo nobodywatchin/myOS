@@ -30,6 +30,8 @@ jobs:
           - intel-mac/kde.yml
           - intel-mac/hyprland.yml
           - intel-mac/cosmic.yml
+          - surface/gnome.yml
+          - surface/kde.yml
           - server/headless.yml
     steps:
        # the build is fully handled by the reusable github action
