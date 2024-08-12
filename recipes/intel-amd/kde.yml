@@ -12,6 +12,7 @@ image-version: latest # latest is also supported if you want new updates ASAP
 modules:
   - from-file: common/base-packages.yml
   - from-file: common/remove-firefox.yml
+  - from-file: common/main-kmods.yml
   - from-file: common/tailscale.yml
   - from-file: common/bazzite.yml
   - from-file: kde/kde-packages.yml

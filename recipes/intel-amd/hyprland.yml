@@ -12,6 +12,7 @@ image-version: 40 # latest is also supported if you want new updates ASAP
 modules:
   - from-file: hyprland/hyprland-packages.yml
   - from-file: common/base-packages.yml
+  - from-file: common/main-kmods.yml
   - from-file: common/tailscale.yml
   - from-file: common/bazzite.yml
   - from-file: hyprland/hyprland-files.yml

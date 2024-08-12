@@ -32,7 +32,7 @@ name='Games'
 translate=true
 
 [org/gnome/desktop/app-folders/folders/Emulators]
-apps=['com.vysp3r.RetroPlus.desktop', 'org.mamedev.MAME.desktop', 'io.github.stella_emu.Stella.desktop', 'io.github.dosbox-staging.desktop', 'org.scummvm.ScummVM.desktop', 'com.retrodev.blastem.desktop', 'org.flycast.Flycast.desktop', 'app.xemu.xemu.desktop', 'org.duckstation.DuckStation.desktop', 'net.pcsx2.PCSX2.desktop', 'org.ppsspp.PPSSPP.desktop', 'net.rpcs3.RPCS3.desktop', 'ca._0ldsk00l.Nestopia.desktop', 'dev.bsnes.bsnes.desktop', 'com.github.Rosalie241.RMG.desktop', 'io.mgba.mGBA.desktop', 'org.DolphinEmu.dolphin-emu.desktop', 'net.kuribo64.melonDS.desktop', 'org.desmume.DeSmuME.desktop', 'info.cemu.Cemu.desktop', 'io.github.lime3ds.Lime3DS.desktop', 'org.ryujinx.Ryujinx.desktop']
+apps=['rs.ruffle.Ruffle.desktop', 'net._86box._86Box', 'org.mamedev.MAME.desktop', 'io.github.stella_emu.Stella.desktop', 'io.github.dosbox-staging.desktop', 'org.scummvm.ScummVM.desktop', 'com.retrodev.blastem.desktop', 'org.flycast.Flycast.desktop', 'app.xemu.xemu.desktop', 'org.duckstation.DuckStation.desktop', 'net.pcsx2.PCSX2.desktop', 'org.ppsspp.PPSSPP.desktop', 'net.rpcs3.RPCS3.desktop', 'ca._0ldsk00l.Nestopia.desktop', 'dev.bsnes.bsnes.desktop', 'com.github.Rosalie241.RMG.desktop', 'io.mgba.mGBA.desktop', 'org.DolphinEmu.dolphin-emu.desktop', 'net.kuribo64.melonDS.desktop', 'org.desmume.DeSmuME.desktop', 'info.cemu.Cemu.desktop', 'io.github.lime3ds.Lime3DS.desktop', 'org.ryujinx.Ryujinx.desktop']
 name='Emulators'
 translate=true
 
@@ -50,12 +50,13 @@ translate=true
 [org/gnome/desktop/app-folders/folders/Graphics]
 name='Graphics'
 apps=['org.gimp.GIMP.desktop', 'org.inkscape.Inkscape.desktop', 'com.boxy_svg.BoxySVG.desktop', 'org.kde.krita', 'com.xnview.XnViewMP.desktop']
+excluded-apps=['nl.emphisia.icon.desktop']
 categories=['Graphics']
 translate=true
 
 [org/gnome/desktop/app-folders/folders/Video]
 name='Video'
-apps=['org.nickvision.tubeconverter.desktop', 'org.kde.kdenlive.desktop', 'com.obsproject.Studio.desktop', 'com.dec05eba.gpu_screen_recorder.desktop']
+apps=['org.nickvision.tubeconverter.desktop', 'org.kde.kdenlive.desktop', 'com.obsproject.Studio.desktop', 'com.dec05eba.gpu_screen_recorder.desktop', 'org.videolan.VLC.desktop', 'io.gitlab.adhami3310.Footage.desktop']
 categories=['Video']
 translate=true
 
@@ -94,7 +95,7 @@ translate=true
 
 [org/gnome/desktop/app-folders/folders/GNOME]
 name='GNOME'
-apps=['org.gnome.Software.desktop', 'org.gnome.Settings.desktop', 'org.gnome.tweaks.desktop', 'com.mattjakeman.ExtensionManager.desktop', 'page.codeberg.libre_menu_editor.LibreMenuEditor.desktop', 'ca.desrt.dconf-editor.desktop', 'io.github.vikdevelop.SaveDesktop.desktop', 'org.gnome.Logs.desktop', 'org.gnome.Loupe.desktop', 'org.gnome.clocks.desktop', 'org.gnome.Evince.desktop', 'org.gnome.Calendar.desktop', 'org.gnome.Contacts.desktop', 'org.gnome.Calculator.desktop', 'org.gnome.Characters.desktop', 'org.gnome.FileRoller.desktop', 'org.gnome.TextEditor.desktop', 'org.gnome.font-viewer.desktop', 'org.gnome.Extensions.desktop', 'io.github.andreibachim.shortcut.desktop']
+apps=['org.gnome.Software.desktop', 'org.gnome.Settings.desktop', 'org.gnome.tweaks.desktop', 'com.mattjakeman.ExtensionManager.desktop', 'page.codeberg.libre_menu_editor.LibreMenuEditor.desktop', 'ca.desrt.dconf-editor.desktop', 'io.github.vikdevelop.SaveDesktop.desktop', 'org.gnome.Logs.desktop', 'org.gnome.Loupe.desktop', 'org.gnome.clocks.desktop', 'org.gnome.Evince.desktop', 'org.gnome.Calendar.desktop', 'org.gnome.Contacts.desktop', 'org.gnome.Calculator.desktop', 'org.gnome.Characters.desktop', 'org.gnome.FileRoller.desktop', 'org.gnome.TextEditor.desktop', 'org.gnome.font-viewer.desktop', 'org.gnome.Extensions.desktop', 'io.github.andreibachim.shortcut.desktop', 'nl.emphisia.icon.desktop']
 translate=true
 
 [org/gnome/desktop/app-folders/folders/Downloads]
