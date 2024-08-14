@@ -6,7 +6,5 @@
     - https://copr.fedorainfracloud.org/coprs/ublue-os/staging/repo/fedora-40/ublue-os-staging-fedora-40.repo
     - https://copr.fedorainfracloud.org/coprs/kylegospo/rom-properties/repo/fedora-40/kylegospo-rom-properties-fedora-40.repo
   install:
-    - joystickwake
-    - mangohud
     - system76-scheduler
     - ptyxis

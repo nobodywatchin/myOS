@@ -10,7 +10,7 @@ modules:
   - from-file: common/default-flatpaks.yml
   - from-file: gnome/gnome-flatpaks.yml
   - from-file: common/tailscale.yml
-#  - from-file: common/bazzite.yml
+  - from-file: common/bazzite.yml
   - from-file: common/apple.yml
   - from-file: gnome/gnome-packages.yml
   - from-file: gnome/gnome-extensions.yml
