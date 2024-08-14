@@ -1,3 +1,4 @@
 type: rpm-ostree
 install:
+  - rom-properties-kf5
 remove:

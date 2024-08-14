@@ -8,6 +8,7 @@ install:
   - gnome-shell-extension-system76-scheduler
   - nautilus-open-any-terminal
   - nautilus-gsconnect
+  - rom-properties-gtk3
 remove:
   - yelp
   - gnome-tour
