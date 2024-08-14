@@ -9,5 +9,4 @@ install:
   - gcadapter_oc
   - xpadneo
   - xone
-  - openrgb
   - kvmfr
