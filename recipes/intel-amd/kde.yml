@@ -1,14 +1,7 @@
-# image will be published to ghcr.io/<user>/<name>
 name: myos-kde
-# description will be included in the image's metadata
 description: "myOS is an operating system dedicated to being user-friendly and progressive "
-
-# the base image to build on top of (FROM) and the version tag to use
 base-image: ghcr.io/ublue-os/kinoite-main
-image-version: latest # latest is also supported if you want new updates ASAP
-
-# module configuration, executed in order
-# you can include multiple instances of the same module
+image-version: latest 
 modules:
   - from-file: common/base-packages.yml
   - from-file: common/remove-firefox.yml
@@ -20,5 +13,5 @@ modules:
   - from-file: common/default-flatpaks.yml
 #  - from-file: common/kde-flatpaks.yml
   - from-file: common/services.yml
-  - type: signing # this sets up the proper policy & signing files for signed images to work fully
+  - type: signing 
   - type: yafti

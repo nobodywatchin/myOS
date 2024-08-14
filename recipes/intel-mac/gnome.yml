@@ -1,13 +1,6 @@
-# image will be published to ghcr.io/<user>/<name>
 name: myos-gnome-intel-mac
-# description will be included in the image's metadata
 description: "myOS is an operating system dedicated to being user-friendly and progressive "
-
-# the base image to build on top of (FROM) and the version tag to use
 base-image: ghcr.io/nobodywatchin/myos-gnome
-image-version: latest # is also supported if you want new updates ASAP
-
-# module configuration, executed in order
-# you can include multiple instances of the same module
+image-version: latest 
 modules:
   - from-file: intel-mac/facetimehd_wl.yml
