@@ -3,6 +3,7 @@ system:
   enabled:
   #  - tailscaled.service # Enabled (runs on system boot)
     - power-profiles-daemon.service
+    - cosmic-greeter.service
   disabled:
     # Disabled (does not run on system boot, unless other unit strictly requires it)
   masked:
