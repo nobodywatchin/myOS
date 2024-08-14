@@ -7,5 +7,5 @@ install:
   - swww
   - hyprnome
   - swayosd
-  - hyprland-plugins-git
+  - hyprland-plugins
  
