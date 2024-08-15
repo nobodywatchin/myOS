@@ -8,7 +8,7 @@ modules:
   - from-file: common/main-kmods.yml
   - from-file: common/remove-firefox.yml
   - from-file: common/tailscale.yml
-  - from-file: intel-amd/bazzite-amd.yml
+  - from-file: intel-amd/amd-packages.yml
   - from-file: common/apple.yml
   - from-file: cosmic/cosmic-packages.yml
   - from-file: common/common-files.yml
