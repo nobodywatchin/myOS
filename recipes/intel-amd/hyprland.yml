@@ -14,7 +14,7 @@ modules:
   - from-file: common/base-packages.yml
   - from-file: common/main-kmods.yml
   - from-file: common/tailscale.yml
-  - from-file: common/bazzite.yml
+  - from-file: intel-amd/bazzite-amd.yml
   - from-file: hyprland/hyprland-files.yml
   - from-file: hyprland/hyprland-dotfiles.yml
   - from-file: common/common-files.yml
