@@ -1,3 +1,13 @@
   type: rpm-ostree 
   install:
-    - joystickwake
+    - mangohud
+    - gamescope
+    - gamescope-libs
+    - gamescope-shaders 
+    - gamescope-legacy 
+    - rocm-hip 
+    - rocm-opencl 
+    - rocm-clinfo 
+    - waydroid 
+    - cage
+    - wlr-randr

@@ -13,6 +13,7 @@ install:
   - libopenraw
   - system76-scheduler
   - ptyxis
+  - joystickwake
 remove:
   - htop
   - nvtop
