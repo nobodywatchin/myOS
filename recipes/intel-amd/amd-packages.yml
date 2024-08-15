@@ -1,9 +1,6 @@
   type: rpm-ostree 
   install:
     - mangohud
-    - gamescope
-    - gamescope-shaders 
-    - gamescope-legacy 
     - rocm-hip 
     - rocm-opencl 
     - rocm-clinfo 
