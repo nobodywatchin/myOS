@@ -3,13 +3,12 @@
 set -ouex pipefail
 
 # Make systemd targets 
-mkdir -p /usr/lib/systemd/user
 QUADLET_TARGETS=(
     "dockge"
 )
 for i in "${QUADLET_TARGETS[@]}"
 do
-cat > "/usr/lib/systemd/user/${i}.target" <<EOF
+cat > "/usr/lib/systemd/${i}.target" <<EOF
 [Unit]
 Description=${i}"target for ${i} quadlet
 
@@ -18,5 +17,5 @@ WantedBy=default.target
 EOF
 
 # Have autostart tied to systemd targets
-printf "\n\n[Install]\nWantedBy=%s.target" "$i" >> /etc/containers/systemd/users/"$i".container
+printf "\n\n[Install]\nWantedBy=%s.target" "$i" >> /etc/containers/systemd/"$i".container
 done
