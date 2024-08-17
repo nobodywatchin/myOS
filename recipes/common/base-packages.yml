@@ -8,6 +8,7 @@ repos:
   - https://copr.fedorainfracloud.org/coprs/kylegospo/rom-properties/repo/fedora-40/kylegospo-rom-properties-fedora-40.repo
 install:
   - podman-compose
+  - podman-docker
   - libvirt
   - miniaturo
   - libopenraw
