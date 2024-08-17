@@ -1,5 +1,5 @@
 [Unit]
-Description=Ubuntu Toolbox for your distrobox fun
+Description=For managing compose.yml files
 
 [Container]
 Image=docker.io/louislam/dockge:1
@@ -7,7 +7,7 @@ Annotation=run.oci.keep_original_groups=1
 ContainerName=dockge
 Environment=DOCKGE_STACKS_DIR=/opt/stacks
 Volume=/var/run/docker.sock:/var/run/docker.sock
-Volume=./data:/app/data
+Volume=/etc/containers/dockge:/app/data
 
 [Install]
 # Start by default on boot
