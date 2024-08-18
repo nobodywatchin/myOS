@@ -1,0 +1,16 @@
+# dockge.container
+
+[Unit]
+Description=For managing compose.yml files
+
+[Container]
+Environment=DOCKGE_STACKS_DIR=/opt/stacks
+Image=louislam/dockge:1
+PublishPort=5001:5001
+Volume=/var/run/docker.sock:/var/run/docker.sock
+Volume=./data:/app/data
+Volume=/opt/stacks:/opt/stacks
+
+[Service]
+Restart=always
+

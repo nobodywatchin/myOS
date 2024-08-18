@@ -8,7 +8,7 @@ QUADLET_TARGETS=(
 )
 for i in "${QUADLET_TARGETS[@]}"
 do
-cat > "/usr/lib/systemd/${i}.target" <<EOF
+cat > "/usr/lib/systemd/user/${i}.target" <<EOF
 [Unit]
 Description=${i}"target for ${i} quadlet
 
@@ -17,5 +17,5 @@ WantedBy=default.target
 EOF
 
 # Have autostart tied to systemd targets
-printf "\n\n[Install]\nWantedBy=%s.target" "$i" >> /etc/containers/systemd/"$i".container
+printf "\n\n[Install]\nWantedBy=%s.target" "$i" >> /etc/containers/systemd/user/"$i".container
 done
