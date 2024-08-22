@@ -1,10 +1,10 @@
 <p align="center">
-  <a href="https://github.com/secureblue/secureblue">
-    <img src="https://github.com/nobodywatchin/myOS/files/shared/usr/share/pixmaps/fedora-logo-sprite.png" href="https://github.com/secureblue/secureblue" width=180 />
+  <a href="https://github.com/nobodywatchin/myOS">
+    <img src="https://github.com/nobodywatchin/myOS/files/shared/usr/share/pixmaps/system-logo-white.png" href="https://github.com/nobodywatchin/myOS" width=180 />
   </a>
 </p>
 
-<h1 align="center">secureblue</h1>
+<h1 align="center">myOS</h1>
 
 This repo uses [BlueBuild](https://blue-build.org/) to generate hardened operating system images, using [uBlue](https://universal-blue.org)'s [Fedora Atomic](https://fedoraproject.org/atomic-desktops/)-based [base images](https://github.com/orgs/ublue-os/packages?repo_name=main) as a starting point. 
 
