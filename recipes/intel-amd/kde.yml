@@ -14,5 +14,6 @@ modules:
   - from-file: common/default-flatpaks.yml
 #  - from-file: common/kde-flatpaks.yml
   - from-file: common/services.yml
+  - from-file: common/dotfiles.yml
   - type: signing 
   - type: yafti

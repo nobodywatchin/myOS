@@ -18,5 +18,6 @@ modules:
   - from-file: gnome/gnome-files.yml
   - from-file: common/services.yml
   - from-file: common/initramfs.yml
+  - from-file: common/dotfiles.yml
   - type: signing 
   - type: yafti

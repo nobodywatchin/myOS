@@ -2,7 +2,7 @@ type: chezmoi
 # Installs chezmoi to /usr/bin/chezmoi from latest Github release
 install_chezmoi: true # Optional - Default: true  - Expects type: boolean
 # () Git repository to initialize
-repository: "https://github.com/end-4/dots-hyprland" # Required - Default: n/a  - Expects type: string
+repository: "https://github.com/nobodywatchin/myOS-dotfiles" # Required - Default: n/a  - Expects type: string
 # Enable the modules services globally for all users
 enable_all_users: true # Optional - Default: true - Expects type: boolean
 # Dotfiles will be updated with this interval

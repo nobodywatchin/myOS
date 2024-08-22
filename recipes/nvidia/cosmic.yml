@@ -19,5 +19,6 @@ modules:
   - from-file: common/services.yml
   - from-file: cosmic/cosmic-services.yml
   - from-file: common/initramfs.yml
+  - from-file: common/dotfiles.yml
   - type: signing 
   - type: yafti

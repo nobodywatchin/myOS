@@ -18,7 +18,7 @@ modules:
   - from-file: common/tailscale.yml
   - from-file: intel-amd/amd-packages.yml
   - from-file: hyprland/hyprland-files.yml
-  - from-file: hyprland/hyprland-dotfiles.yml
   - from-file: common/default-flatpaks.yml
   - from-file: common/services.yml
+  - from-file: common/dotfiles.yml
   - type: signing # this sets up the proper policy & signing files for signed images to work fully
