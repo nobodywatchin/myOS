@@ -1,12 +1,13 @@
 type: gnome-extensions
 install:
-    - just-perfection-desktopjust-perfection.v28
-    - appindicatorsupportrgcjonas.gmail.com.v58
+    - just-perfection-desktopjust-perfection.v30
+    - appindicatorsupportrgcjonas.gmail.com.v59
     - caffeinepatapon.info.v54
     - extension-listtu.berry.v40
     - drive-menugnome-shell-extensions.gcampax.github.com.v59
     - tailscalejoaophi.github.com.v15
-    - blur-my-shellaunetx.v61
+    - blur-my-shellaunetx.v65
     - tilingshellferrarodomenico.com.v26
     - user-themegnome-shell-extensions.gcampax.github.com.v57
     - clipboard-indicatortudmotu.com.v62
+    - VitalsCoreCoding.com.v68

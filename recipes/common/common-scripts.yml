@@ -1,3 +1,4 @@
 type: script
 scripts:
   - quadlets.sh
+  - image_name.sh

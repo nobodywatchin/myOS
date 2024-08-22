@@ -120,7 +120,7 @@ screens:
           - PokeMMO: com.pokemmo.PokeMMO
           - PlayStation Remote Play (Chiaki): re.chiaki.Chiaki
           - GeForce NOW: io.github.hmlendea.geforcenow-electron
-          - xCloud & Xbox Home Streaming (Greenlight): io.github.unknownskl.greenlight
+          - xCloud and Xbox Home Streaming (Greenlight): io.github.unknownskl.greenlight
           - Moonlight: com.moonlight_stream.Moonlight
         Steam Tools:
           description: Take your steam gaming experience even further
@@ -139,7 +139,7 @@ screens:
           - Stella (Atari 2600): io.github.stella_emu.Stella
           - DOSBox Staging (DOS Gaming): io.github.dosbox-staging
           - ScummVM (Other retro PC gaming): org.scummvm.ScummVM
-          - BlastEm (Sega Master System & Genesis): com.retrodev.blastem
+          - BlastEm (Sega Master System and Genesis): com.retrodev.blastem
           - Flycast (Sega Dreamcast): org.flycast.Flycast
           - xemu (Original Xbox): app.xemu.xemu
           - DuckStation (PS1): org.duckstation.DuckStation
@@ -150,10 +150,11 @@ screens:
           - bsnes (Super Nintendo): dev.bsnes.bsnes
           - Rosalie's Mupen GUI (N64): com.github.Rosalie241.RMG
           - mGBA (Gameboy Advance): io.mgba.mGBA
-          - Dolphin (Gamecube & Wii): org.DolphinEmu.dolphin-emu
-          - melonDS (DS & DSi): net.kuribo64.melonDS
+          - Dolphin (Gamecube and Wii): org.DolphinEmu.dolphin-emu
+          - melonDS (DS and DSi): net.kuribo64.melonDS
           - DeSmuME (DS): org.desmume.DeSmuME
           - Cemu (WiiU): info.cemu.Cemu
+          - Lime3DS (3DS): io.github.lime3ds.Lime3DS
           - Ryujinx (Nintendo Switch): org.ryujinx.Ryujinx
         Music:
           description: Jam out
@@ -165,7 +166,7 @@ screens:
           - G4Music Player: com.github.neithern.g4music
           - Sound Juicer: org.gnome.SoundJuicer
           - Tagger: org.nickvision.tagger
-        Multimedia & Production:
+        Multimedia and Production:
           description: Make Things
           default: false
           packages:
@@ -188,7 +189,7 @@ screens:
           - Transmission (Torrent Client): com.transmissionbt.Transmission
           - Syncthing (Sync files across your devices): com.github.zocker_160.SyncThingy
           - Foliate (e-book reader): com.github.johnfactotum.Foliate
-          - Decoder (Scan & Generate QR Codes): com.belmoussaoui.Decoder
+          - Decoder (Scan and Generate QR Codes): com.belmoussaoui.Decoder
           - Frog (Extract Text from images): com.github.tenderowl.frog
           - Fedora Media Writer: org.fedoraproject.MediaWriter
           - Metadata Cleaner: fr.romainvigier.MetadataCleaner

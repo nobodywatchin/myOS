@@ -8,8 +8,8 @@ Environment=DOCKGE_STACKS_DIR=/opt/stacks
 Image=louislam/dockge:1
 PublishPort=5001:5001
 Volume=/var/run/docker.sock:/var/run/docker.sock
-Volume=./dockge:/app/data
-Volume=/opt/stacks:/opt/stacks
+Volume=~/.config/containers/:/app/data
+Volume=~/.config/containers/stacks:/opt/stacks
 
 [Service]
 Restart=always

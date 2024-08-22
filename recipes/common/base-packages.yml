@@ -10,6 +10,7 @@ install:
   - podman-compose
   - podman-docker
   - libvirt
+  - fastfetch
   - miniaturo
   - libopenraw
   - system76-scheduler
