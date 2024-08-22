@@ -1,6 +1,6 @@
 <p align="center">
   <a href="https://github.com/nobodywatchin/myOS">
-    <img src="https://github.com/nobodywatchin/myOS/files/shared/usr/share/pixmaps/system-logo-white.png" href="https://github.com/nobodywatchin/myOS" width=180 />
+    <img src="https://github.com/nobodywatchin/myOS/files/shared/usr/share/pixmaps/bootloader/fedora.icns" href="https://github.com/nobodywatchin/myOS" width=180 />
   </a>
 </p>
 
