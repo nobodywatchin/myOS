@@ -5,7 +5,6 @@ repos:
 install: 
   - aylurs-gtk-shell
   - swww
-  - bun
   - hyprnome
   - swayosd
   - nautilus
