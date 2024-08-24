@@ -11,6 +11,7 @@ modules:
   - from-file: common/tailscale.yml
 #  - from-file: nvidia/bazzite-nvidia.yml
   - from-file: hyprland/hyprland-files.yml
+  - from-file: hyprland/hyprland-scripts.yml
   - from-file: common/dotfiles.yml
   - from-file: common/default-flatpaks.yml
   - from-file: nvidia/nvidia-flatpaks.yml
