@@ -6,11 +6,17 @@
 
 <h1 align="center">myOS</h1>
 
-This repo uses [BlueBuild](https://blue-build.org/) to generate hardened operating system images, using [uBlue](https://universal-blue.org)'s [Fedora Atomic](https://fedoraproject.org/atomic-desktops/)-based [base images](https://github.com/orgs/ublue-os/packages?repo_name=main) as a starting point. 
+myOS is an opinionated all-purpose operating system dedicated to progress, freedom, and ease-of-use.
 
-# Scope
+# How it's made
 
-myOS is a custom universal blue image dedicated to progress, freedom, and ease-of-use.
+This repo uses [BlueBuild](https://blue-build.org/) to generate operating system images, using [uBlue](https://universal-blue.org)'s [Fedora Atomic](https://fedoraproject.org/atomic-desktops/)-based [images](https://github.com/orgs/ublue-os/packages?repo_name=main) as a starting point. 
+
+# Vision
+
+myOS was created to offer a user-friendly yet powerful operating system that embraces open-source principles while providing a cohesive and polished experience. 
+
+myOS works out of the box with minimal setup, allowing users to focus on their tasks without unnecessary distractions.
 
 # Customization
 
@@ -41,28 +47,25 @@ To rebase a Fedora Atomic installation, choose an $IMAGE_NAME from the [list bel
   systemctl reboot
   ```
 
-# Images <sup>[userns?](USERNS.md)</sup>
-## Desktop
-### Recommended <sup>[why?](RECOMMENDED.md)</sup>
+# Images
+### Recommended
 - `myos-gnome`
 - `myos-kde`
-### Experimental
-- `myos-cosmic`
-- `myos-hyprland`
 ### NVIDIA 
 - `myos-gnome-nvidia`
 - `myos-kde-nvidia`
-- `myos-cosmic-nvidia`
-- `myos-hyprland-nvidia`
 ### Intel Macbook
 - `myos-gnome-intel-mac`
 - `myos-kde-intel-mac`
-- `myos-cosmic-intel-mac`
-- `myos-hyprland-intel-mac`
 ### Surface 
 - `myos-gnome-surface`
 - `myos-kde-surface`
-- `myos-cosmic-surface`
-- `myos-hyprland-surface`
+## Experimental [NOT YET RECOMMENDED]
+- `myos-cosmic`
+- `myos-hyprland`
+- `myos-cosmic-nvidia`
+- `myos-hyprland-nvidia`
+- `myos-cosmic-intel-mac`
+- `myos-hyprland-intel-mac`
 ## Server
 - `myos-headless`
