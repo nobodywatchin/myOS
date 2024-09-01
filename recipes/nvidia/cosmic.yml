@@ -4,21 +4,21 @@ base-image: ghcr.io/ublue-os/cosmic-nvidia
 image-version: 40
 modules:
   - from-file: common/common-files.yml
-  - from-file: common/base-packages.yml
   - from-file: common/common-scripts.yml
-#  - from-file: common/main-kmods.yml
+  - from-file: common/base-packages.yml
+  - from-file: common/main-kmods.yml
   - from-file: common/remove-firefox.yml
-  - from-file: common/tailscale.yml
- # - from-file: nvidia/bazzite-nvidia.yml
-  - from-file: common/apple.yml
-  - from-file: cosmic/cosmic-packages.yml
-  - from-file: common/common-files.yml
   - from-file: common/default-flatpaks.yml
-  - from-file: cosmic/cosmic-flatpaks.yml
-  - from-file: nvidia/nvidia-flatpaks.yml
+  - from-file: common/tailscale.yml
+  - from-file: common/apple.yml
   - from-file: common/services.yml
-  - from-file: cosmic/cosmic-services.yml
   - from-file: common/initramfs.yml
   - from-file: common/dotfiles.yml
   - type: signing 
   - type: yafti
+# NVIDIA Components
+  - from-file: nvidia/nvidia-flatpaks.yml
+# COSMIC Components
+  - from-file: cosmic/cosmic-packages.yml
+  - from-file: cosmic/cosmic-flatpaks.yml
+  - from-file: cosmic/cosmic-services.yml

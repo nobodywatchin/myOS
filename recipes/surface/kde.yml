@@ -3,16 +3,20 @@ description: "myOS is an operating system dedicated to being user-friendly and p
 base-image: ghcr.io/ublue-os/kinoite-surface
 image-version: latest 
 modules:
-  - from-file: common/base-packages.yml
   - from-file: common/common-files.yml
   - from-file: common/common-scripts.yml
+  - from-file: common/base-packages.yml
+  - from-file: common/main-kmods.yml
   - from-file: common/remove-firefox.yml
-  - from-file: surface/surface-kmods.yml
-  - from-file: common/tailscale.yml
-#  - from-file: common/bazzite.yml
-  - from-file: kde/kde-packages.yml
   - from-file: common/default-flatpaks.yml
-#  - from-file: common/kde-flatpaks.yml
+  - from-file: common/tailscale.yml
+  - from-file: common/apple.yml
   - from-file: common/services.yml
-  - type: signing
+#  - from-file: common/initramfs.yml
+  - from-file: common/dotfiles.yml
+  - type: signing 
   - type: yafti
+# KDE Components
+  - from-file: kde/kde-packages.yml
+#  - from-file: common/kde-flatpaks.yml
+
