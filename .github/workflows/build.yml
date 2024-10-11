@@ -24,19 +24,19 @@ jobs:
         recipe:
           - intel-amd/gnome.yml
           - intel-amd/kde.yml
-          - intel-amd/hyprland.yml
-          - intel-amd/cosmic.yml
+       #   - intel-amd/hyprland.yml
+       #   - intel-amd/cosmic.yml
           - nvidia/gnome.yml
           - nvidia/kde.yml
-          - nvidia/hyprland.yml
-          - nvidia/cosmic.yml
+       #   - nvidia/hyprland.yml
+       #   - nvidia/cosmic.yml
           - intel-mac/gnome.yml
           - intel-mac/kde.yml
-          - intel-mac/hyprland.yml
-          - intel-mac/cosmic.yml
+       #   - intel-mac/hyprland.yml
+       #   - intel-mac/cosmic.yml
           - surface/gnome.yml
           - surface/kde.yml
-          - server/headless.yml
+       #   - server/headless.yml
     steps:
        # the build is fully handled by the reusable github action
       - name: Build myOS
