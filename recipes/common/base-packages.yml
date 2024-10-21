@@ -15,9 +15,7 @@ install:
   - cockpit-packagekit
   - cockpit-ostree
   - cockpit-podman
-  - cockpit-file-sharing
   - cockpit-files
-  - cockpit-tailscale
   - libvirt
   - fastfetch
   - miniaturo
