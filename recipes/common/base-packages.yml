@@ -16,9 +16,7 @@ install:
   - cockpit-ostree
   - cockpit-podman
   - cockpit-files
-  - nethserver-cockpit-lib 
   - cockpit-bridge 
-  - nethserver-lang-cockpit 
   - cockpit-ws 
   - cockpit-storaged 
   - cockpit-system
