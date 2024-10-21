@@ -9,6 +9,15 @@ repos:
 install:
   - podman-compose
   - podman-docker
+  - cockpit
+  - cockpit-selinux
+  - cockpit-networkmanager
+  - cockpit-packagekit
+  - cockpit-ostree
+  - cockpit-podman
+  - cockpit-file-sharing
+  - cockpit-files
+  - cockpit-tailscale
   - libvirt
   - fastfetch
   - miniaturo
