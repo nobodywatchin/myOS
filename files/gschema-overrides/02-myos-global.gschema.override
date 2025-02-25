@@ -60,7 +60,7 @@ download-updates-notify=false
 [com/github/stunkymonkey/nautilus-open-any-terminal]
 terminal='ptyxis'
 keybindings=''
-new-tab=false
+new-tab=true
 flatpak='off'
 
 # Ptyxis Settings
@@ -69,3 +69,12 @@ restore-session=false
 restore-window-size=false
 audible-bell=false
 
+# Set Desktop Mode
+[org.gnome.desktop.interface]
+gtk-theme='adw-gtk3-dark'
+color-scheme='prefer-dark'
+clock-format='12h'
+
+# File Chooser
+[org.gtk.settings.file-chooser]
+sort-directories-first=true
