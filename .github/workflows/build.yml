@@ -1,4 +1,4 @@
-name: bootc-builder
+name: myos-builder
 on:
   schedule:
     - cron:
@@ -16,7 +16,7 @@ concurrency:
   cancel-in-progress: true
 jobs:
   workstation10:
-    name: EL10 Workstation
+    name: Alma 10 Workstation
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -26,36 +26,11 @@ jobs:
       fail-fast: false # stop GH from cancelling all matrix builds if one fails
       matrix:
         recipe:
-          - /RHEL/alma10/alma10-workstation.yml
-          - /RHEL/alma10/alma10-workstation-nvidia.yml
+          - /RHEL/alma10/alma10.yml
+          - /RHEL/alma10/alma10-nvidia.yml
     steps:
       # the build is fully handled by the reusable github action
       - name: EL10 Workstation
-        uses: blue-build/github-action@v1.9
-        with:
-          recipe: ${{ matrix.recipe }}
-          cosign_private_key: ${{ secrets.SIGNING_SECRET }}
-          registry_token: ${{ github.token }}
-          pr_event_number: ${{ github.event.number }}
-          rechunk: true
-          maximize_build_space: true
-
-  server10:
-    name: EL10 Server
-    runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      packages: write
-      id-token: write
-    strategy:
-      fail-fast: false # stop GH from cancelling all matrix builds if one fails
-      matrix:
-        recipe:
-          - /RHEL/alma10/alma10-server.yml
-          - /RHEL/alma10/alma10-server-nvidia.yml
-    steps:
-      # the build is fully handled by the reusable github action
-      - name: EL10 Server
         uses: blue-build/github-action@v1.9
         with:
           recipe: ${{ matrix.recipe }}
@@ -76,36 +51,11 @@ jobs:
       fail-fast: false # stop GH from cancelling all matrix builds if one fails
       matrix:
         recipe:
-          - /RHEL/alma9/alma9-workstation.yml
-          - /RHEL/alma9/alma9-workstation-nvidia.yml
+          - /RHEL/alma9/alma9.yml
+          - /RHEL/alma9/alma9-nvidia.yml
     steps:
       # the build is fully handled by the reusable github action
-      - name: EL9 Workstation
-        uses: blue-build/github-action@v1.9
-        with:
-          recipe: ${{ matrix.recipe }}
-          cosign_private_key: ${{ secrets.SIGNING_SECRET }}
-          registry_token: ${{ github.token }}
-          pr_event_number: ${{ github.event.number }}
-          rechunk: true
-          maximize_build_space: true
-
-  server9:
-    name: EL9 Server
-    runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      packages: write
-      id-token: write
-    strategy:
-      fail-fast: false # stop GH from cancelling all matrix builds if one fails
-      matrix:
-        recipe:
-          - /RHEL/alma9/alma9-server.yml
-          - /RHEL/alma9/alma9-server-nvidia.yml
-    steps:
-      # the build is fully handled by the reusable github action
-      - name: EL9 Server
+      - name: Alma 9 Workstation
         uses: blue-build/github-action@v1.9
         with:
           recipe: ${{ matrix.recipe }}
@@ -126,36 +76,11 @@ jobs:
       fail-fast: false # stop GH from cancelling all matrix builds if one fails
       matrix:
         recipe:
-          - /fedora/fedora42-workstation.yml
-          - /fedora/fedora42-workstation-nvidia.yml
+          - /fedora/fedora42.yml
+          - /fedora/fedora42-nvidia.yml
     steps:
       # the build is fully handled by the reusable github action
       - name: Fedora 42 Workstation
-        uses: blue-build/github-action@v1.9
-        with:
-          recipe: ${{ matrix.recipe }}
-          cosign_private_key: ${{ secrets.SIGNING_SECRET }}
-          registry_token: ${{ github.token }}
-          pr_event_number: ${{ github.event.number }}
-          rechunk: true
-          maximize_build_space: true
-
-  server42:
-    name: Fedora Server
-    runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      packages: write
-      id-token: write
-    strategy:
-      fail-fast: false # stop GH from cancelling all matrix builds if one fails
-      matrix:
-        recipe:
-          - /fedora/fedora42-server.yml
-          - /fedora/fedora42-server-nvidia.yml
-    steps:
-      # the build is fully handled by the reusable github action
-      - name: Fedora 42 Server
         uses: blue-build/github-action@v1.9
         with:
           recipe: ${{ matrix.recipe }}
