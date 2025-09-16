@@ -176,7 +176,7 @@ modules:
         # --- Systemd extras
         - systemd-container
 
-        # --- GNOME Packages (not in COPR)
+        # --- GNOME Packages
         - gnome-color-manager
         - gnome-disk-utility
         - ptyxis
@@ -185,6 +185,7 @@ modules:
         - xdg-user-dirs-gtk
         - colord
         - baobab
+        - gnome-software
 
         # --- GNOME Session
         - gdm

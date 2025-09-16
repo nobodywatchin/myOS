@@ -1,0 +1,36 @@
+[customizations.installer.kickstart]
+contents = """
+# --- Locale & input (safe defaults) ---
+lang en_US.UTF-8
+keyboard us
+
+# Use the installer UI and let it prompt (timezone, storage, etc.)
+graphical
+
+# --- Security & services (persist on installed system) ---
+selinux --enforcing
+firewall --enabled --service=ssh
+services --enabled=sshd
+
+# Lock root; create your admin user manually in the installer UI
+rootpw --lock
+
+# Reboot after install
+reboot
+
+# --- Post-install tweaks ---
+%post --erroronfail
+echo myos > /etc/hostname
+%end
+"""
+
+[customizations.installer.modules]
+enable = [
+  "org.fedoraproject.Anaconda.Modules.Users",
+  "org.fedoraproject.Anaconda.Modules.Timezone",
+  "org.fedoraproject.Anaconda.Modules.Storage",
+  "org.fedoraproject.Anaconda.Modules.Network",
+]
+disable = [
+  "org.fedoraproject.Anaconda.Modules.Subscription",
+]

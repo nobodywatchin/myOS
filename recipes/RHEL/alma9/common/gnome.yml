@@ -111,6 +111,7 @@ modules:
         - gnome-disk-utility
         - gnome-terminal
         - gnome-terminal-nautilus
+        - gnome-software
         - nautilus
         - orca
         - xdg-user-dirs-gtk

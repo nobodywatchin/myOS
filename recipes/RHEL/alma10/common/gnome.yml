@@ -200,6 +200,7 @@ modules:
         - gnome-remote-desktop
         - xdg-desktop-portal
         - xdg-desktop-portal-gnome
+        - gnome-software
         
         # GNOME 48 COPR REPLACEMENT PACKAGES
     replace:

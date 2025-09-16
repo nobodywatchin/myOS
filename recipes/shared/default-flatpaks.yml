@@ -19,7 +19,7 @@ modules:
           name: org-system
           title: Flathub (system, managed)
         install:
-          - io.github.kolunmi.Bazaar
+          # - io.github.kolunmi.Bazaar
           - com.github.marhkb.Pods
           - io.github.dvlv.boxbuddyrs
           - com.github.tchx84.Flatseal
