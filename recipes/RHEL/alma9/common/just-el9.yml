@@ -5,7 +5,7 @@ modules:
       - just-el9.sh
   - type: files # adds common justfiles
     files:
-      - source: justfiles/common 
+      - source: justfiles 
         destination: /
   - type: containerfile # makes wrapper run as program
     snippets:
