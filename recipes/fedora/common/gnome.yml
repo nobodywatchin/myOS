@@ -220,8 +220,6 @@ modules:
     files:
       - source: gnome 
         destination: /
-      - source: justfiles/desktop 
-        destination: /
   
   - type: bling # Updates dconf on boot (GNOME Extensions Settings, Themes, App Folders)
     install:
