@@ -15,8 +15,8 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.ref || github.run_id }}
   cancel-in-progress: true
 jobs:
-  workstation10:
-    name: Alma 10 Workstation
+  alma10:
+    name: Alma 10
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -30,7 +30,7 @@ jobs:
           - /RHEL/alma10/alma10-nvidia.yml
     steps:
       # the build is fully handled by the reusable github action
-      - name: Alma 10 Workstation
+      - name: Alma 10
         uses: blue-build/github-action@v1.9
         with:
           recipe: ${{ matrix.recipe }}
@@ -40,8 +40,8 @@ jobs:
           rechunk: true
           maximize_build_space: true
 
-  workstation9:
-    name: Alma 9 Workstation
+  alma9:
+    name: Alma 9
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -55,7 +55,7 @@ jobs:
           - /RHEL/alma9/alma9-nvidia.yml
     steps:
       # the build is fully handled by the reusable github action
-      - name: Alma 9 Workstation
+      - name: Alma 9
         uses: blue-build/github-action@v1.9
         with:
           recipe: ${{ matrix.recipe }}
@@ -65,8 +65,8 @@ jobs:
           rechunk: true
           maximize_build_space: true
 
-  workstation42:
-    name: Fedora Workstation
+  fedora:
+    name: Fedora 42
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -80,7 +80,7 @@ jobs:
           - /fedora/fedora42-nvidia.yml
     steps:
       # the build is fully handled by the reusable github action
-      - name: Fedora 42 Workstation
+      - name: Fedora 42
         uses: blue-build/github-action@v1.9
         with:
           recipe: ${{ matrix.recipe }}
