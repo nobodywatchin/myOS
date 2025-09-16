@@ -42,6 +42,7 @@ modules:
     snippets:
       - RUN chmod 0755 /usr/local/sbin/wl-akmods-build.sh
       - RUN chmod 0755 /usr/local/sbin/needs-wl.sh
+      - RUN chmod 0755 /usr/local/sbin/akmods-should-run.sh
       - RUN semanage fcontext -a -t modules_object_t '/var/lib/wl-mount(/.*)?'
       - RUN restorecon -Rv /var/lib/wl-mount
       - RUN rm -f /etc/yum.repos.d/rpmfusion-*.repo
