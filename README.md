@@ -13,8 +13,8 @@ myOS is an opinionated all-purpose operating system dedicated to progress, freed
 This repo uses [BlueBuild](https://blue-build.org/) to generate operating system images, using [uBlue](https://universal-blue.org)'s [Fedora Atomic](https://fedoraproject.org/atomic-desktops/)-based [images](https://github.com/orgs/ublue-os/packages?repo_name=main) as a starting point. 
 
 I am currently building on top of the following bootc images:
-[Almalinux](https://quay.io/repository/almalinuxorg/almalinux-bootc?tab=tags)
-[CentOS](https://quay.io/repository/centos-bootc/centos-bootc?tab=tags)
+[Almalinux](https://quay.io/repository/almalinuxorg/almalinux-bootc?tab=tags), 
+[CentOS](https://quay.io/repository/centos-bootc/centos-bootc?tab=tags), and 
 [Fedora](https://quay.io/repository/fedora/fedora-bootc?tab=tags)
 
 # Vision
