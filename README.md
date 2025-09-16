@@ -29,7 +29,7 @@ If you want to add your own customizations on top of myOS, you are advised stron
 
 ```bash
 TMP=$(mktemp) && \
-curl -fsSL https://raw.githubusercontent.com/nobodywatchin/myOS/main/image.toml -o "$TMP" && \
+curl -fsSL https://raw.githubusercontent.com/nobodywatchin/myOS/stable/image.toml -o "$TMP" && \
 sudo podman pull ghcr.io/nobodywatchin/alma10:latest && \
 sudo podman pull quay.io/centos-bootc/bootc-image-builder:latest && \
 sudo podman run --rm -it --privileged --pull=newer \
@@ -52,7 +52,7 @@ rm -f "$TMP"
 
 ```bash
 TMP=$(mktemp) && \
-curl -fsSL https://raw.githubusercontent.com/nobodywatchin/myOS/main/iso.toml -o "$TMP" && \
+curl -fsSL https://raw.githubusercontent.com/nobodywatchin/myOS/stable/iso.toml -o "$TMP" && \
 sudo podman pull ghcr.io/nobodywatchin/alma10:latest && \
 sudo podman pull quay.io/centos-bootc/bootc-image-builder:latest && \
 sudo podman run --rm -it --privileged --pull=newer \
