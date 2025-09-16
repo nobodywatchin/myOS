@@ -1,0 +1,9 @@
+---
+type: dnf
+install:
+  packages:
+    - libnvidia-fbc
+    - libnvidia-cfg
+    - nvidia-settings
+    - nvidia-libXNVCtrl
+    - nvidia-libXNVCtrl-devel

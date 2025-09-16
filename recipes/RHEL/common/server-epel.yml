@@ -1,0 +1,106 @@
+---
+modules:
+  - type: dnf
+    install:
+      packages:
+        - epel-release
+
+  - type: containerfile
+    snippets:
+      - RUN dnf -y config-manager --set-enabled crb
+
+  - type: dnf
+    install:
+      install-weak-deps: false
+      packages:
+        - fastfetch
+        - fzf
+        # Networking extras
+        - ethtool
+        - iproute-tc
+        - NetworkManager-tui
+        - dracut-network
+        - mtr
+        - tcpdump
+        - traceroute
+        - iptables
+        - socat
+
+        # Storage / perf / fabrics
+        - cryptsetup
+        - mdadm
+        - quota
+        - rdma-core
+        - nvmetcli
+        - blktrace
+        - bpftool
+        - tuned
+        - nvme-cli
+
+        # File sharing
+        - cifs-utils
+        - nfs-utils
+
+        # Virtualization
+        - libvirt
+        - libvirt-daemon-config-network
+        - libvirt-daemon-driver-network
+        - virt-what
+
+        # Cockpit
+        - cockpit
+        - cockpit-ostree
+        - cockpit-files
+        - cockpit-storaged
+        - cockpit-podman
+        - cockpit-machines
+
+        # Logging
+        - rsyslog
+
+        # Containers
+        - podman
+        - podman-docker
+        - podman-compose
+        - container-selinux
+        - conntrack-tools
+        - skopeo
+        - buildah
+        - distrobox
+
+        # Security
+        - fuse-overlayfs
+        - slirp4netns
+        - shadow-utils
+        - policycoreutils-python-utils
+
+        # Admin / diagnostics
+        - lsof
+        - sos
+        - smartmontools
+        - strace
+        - rasdaemon
+        - time
+
+        # Partitioning & kernel tools
+        - parted
+        - kernel-tools
+
+        # Userland convenience
+        - vim-minimal
+        - bzip2
+        - file
+        - gnupg2
+        - mailcap
+        - rsync
+        - tar
+        - unzip
+        - wget
+        - which
+        - zip
+
+        # SSH client (daemon is in base)
+        - openssh-clients
+
+        # Firewall (optional; enable if you manage via firewalld)
+        - firewalld

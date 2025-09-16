@@ -1,6 +1,0 @@
-type: systemd
-system:
-  enabled:
-  #  - tailscaled.service # Enabled (runs on system boot)
-  #  - power-profiles-daemon.service
-    - cosmic-greeter.service

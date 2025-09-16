@@ -1,5 +1,0 @@
-modules:
-  - type: files
-    files:
-      - source: gnome
-        destination: /

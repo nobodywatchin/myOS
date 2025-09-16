@@ -1,0 +1,12 @@
+---
+modules:
+  - type: script # installs just
+    scripts:
+      - just-el9.sh
+  - type: files # adds common justfiles
+    files:
+      - source: justfiles/common 
+        destination: /
+  - type: containerfile # makes wrapper run as program
+    snippets:
+      - RUN chmod 0755 /usr/local/bin/just

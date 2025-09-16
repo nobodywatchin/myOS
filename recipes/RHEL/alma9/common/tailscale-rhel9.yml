@@ -1,0 +1,6 @@
+---
+type: containerfile
+snippets:
+  - RUN dnf config-manager --add-repo https://pkgs.tailscale.com/stable/rhel/9/tailscale.repo
+  - RUN dnf config-manager --set-disabled "tailscale-stable"
+  - RUN dnf -y --enablerepo "tailscale-stable" install tailscale

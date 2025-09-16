@@ -1,0 +1,31 @@
+---
+# yaml-language-server: $schema=https://schema.blue-build.org/recipe-v1.json
+# image will be published to ghcr.io/<user>/<name>
+name: alma10-nvidia
+# description will be included in the image's metadata
+description: This is my personal OS image.
+
+# the base image to build on top of (FROM) and the version tag to use
+base-image: quay.io/almalinuxorg/almalinux-bootc
+image-version: 10 # latest is also supported if you want new updates ASAP
+
+# module configuration, executed in order
+# you can include multiple instances of the same module
+modules:
+  - type: dnf
+    install:
+      packages:
+        - plocate
+  - from-file: shared/server-base.yml
+  - from-file: RHEL/common/server-epel.yml
+  - from-file: RHEL/alma10/common/tailscale-rhel10.yml
+  - from-file: RHEL/alma10/common/just-el10.yml
+  - from-file: shared/kubernetes.yml
+  - from-file: RHEL/alma10/common/wl-el10.yml
+  - from-file: RHEL/common/nvidia-epel.yml
+  - from-file: shared/nvidia-workstation.yml
+  - from-file: RHEL/alma10/common/gnome.yml
+  - from-file: shared/default-flatpaks.yml
+  - from-file: shared/services.yml 
+  - from-file: shared/logos.yml 
+  - type: signing # this sets up the proper policy & signing files for signed images to work fully

@@ -1,0 +1,14 @@
+[Unit]
+Description=Build & load Broadcom wl once per new kernel (ostree-safe)
+After=local-fs.target
+ConditionPathExists=/usr/local/sbin/wl-akmods-build.sh
+
+[Service]
+Type=oneshot
+ExecCondition=/usr/local/sbin/needs-wl.sh
+ExecStart=/usr/local/sbin/wl-akmods-build.sh
+RemainAfterExit=yes
+Environment="PATH=/usr/sbin:/usr/bin:/sbin:/bin"
+
+[Install]
+WantedBy=multi-user.target

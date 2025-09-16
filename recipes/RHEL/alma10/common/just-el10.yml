@@ -1,0 +1,14 @@
+---
+modules:
+  - type: dnf # installs just
+    install:
+      install-weak-deps: false
+      packages:
+        - just
+  - type: files # adds common justfiles
+    files:
+      - source: justfiles/common 
+        destination: /
+  - type: containerfile # makes wrapper run as program
+    snippets:
+      - RUN chmod 0755 /usr/local/bin/just

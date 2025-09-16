@@ -1,0 +1,58 @@
+polkit.addRule(function (action, subject) {
+  var ok = subject.isInGroup("wheel") && subject.active && subject.local;
+
+  function startsWith(p) {
+    return action.id.lastIndexOf(p, 0) === 0;
+  }
+
+  // Users (AccountsService + GNOME Control Center)
+  if (startsWith("org.freedesktop.accounts.") && ok)
+    return polkit.Result.AUTH_ADMIN_KEEP;
+  if (startsWith("org.gnome.controlcenter.user-accounts.") && ok)
+    return polkit.Result.AUTH_ADMIN_KEEP;
+
+  // Date & Time
+  if (startsWith("org.freedesktop.timedate1.") && ok)
+    return polkit.Result.AUTH_ADMIN_KEEP;
+
+  // Hostname
+  if (startsWith("org.freedesktop.hostname1.") && ok)
+    return polkit.Result.YES;
+
+  // Locale
+  if (startsWith("org.freedesktop.locale1.") && ok)
+    return polkit.Result.YES;
+
+  // Disks
+  if (startsWith("org.freedesktop.udisks2.") && ok)
+    return polkit.Result.AUTH_ADMIN_KEEP;
+
+  // Power / Reboot / Shutdown / Suspend (systemd-logind)
+  if (startsWith("org.freedesktop.login1.") && ok)
+    return polkit.Result.YES;
+
+  // Firmware updates (GNOME Firmware, fwupd)
+  if (startsWith("org.freedesktop.fwupd.") && ok)
+    return polkit.Result.AUTH_ADMIN_KEEP;
+
+  // Color management (colord)
+  if (startsWith("org.freedesktop.color-manager.") && ok)
+    return polkit.Result.YES;
+
+  // Networking (NetworkManager)
+  if (startsWith("org.freedesktop.NetworkManager.") && ok)
+    return polkit.Result.YES;
+
+  // Power profiles (tuned-ppd implements power-profiles-daemon API)
+  if (
+    startsWith("net.hadess.PowerProfiles.") && ok ||
+    startsWith("org.freedesktop.UPower.PowerProfiles.") && ok
+  ) {
+    return polkit.Result.YES;
+  }
+
+  // Thunderbolt Devices (bolt)
+  if (startsWith("org.freedesktop.bolt") && ok)
+    return polkit.Result.AUTH_ADMIN_KEEP;
+
+});

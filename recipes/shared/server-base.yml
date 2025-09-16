@@ -1,0 +1,59 @@
+---
+modules:
+  - type: dnf
+    remove:
+      packages:
+        - subscription-manager
+    install:
+      install-weak-deps: false
+      packages:
+        # Core
+        - dnf-plugins-core
+        - audit
+        - rpm-plugin-audit
+        - basesystem
+        - bash
+        - coreutils
+        - crypto-policies
+        - crypto-policies-scripts
+        - dnf
+        - e2fsprogs
+        - filesystem
+        - glibc
+        - ca-certificates
+        - hostname
+        - irqbalance
+        - kbd
+        - less
+        - ncurses
+        - policycoreutils
+        - procps-ng
+        - rootfiles
+        - rpm
+        - selinux-policy-targeted
+        - setup
+        - shadow-utils
+        - sudo
+        - systemd
+        - systemd-udev
+        - util-linux
+        - xfsprogs
+        # Networking (core)
+        - curl
+        - iproute
+        - iputils
+        - NetworkManager
+        - openssh-server
+        - p11-kit
+        - chrony
+        # Storage & FS
+        - dosfstools
+        - lvm2
+        - sg3_utils
+        - sg3_utils-libs
+        # System plumbing
+        - dbus
+        - python3-libselinux
+        - linux-firmware
+        # BootC helper
+        - system-reinstall-bootc

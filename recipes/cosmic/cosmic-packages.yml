@@ -1,7 +1,0 @@
-type: rpm-ostree
-repos: 
-  - https://copr.fedorainfracloud.org/coprs/wiiznokes/cosmic-applets-unofficial/repo/fedora-41/wiiznokes-cosmic-applets-unofficial-fedora-41.repo
-install:
-  - cosmic-ext-applet-clipboard-manager
-  - cosmic-ext-applet-emoji-selector
-#  - power-profiles-daemon

@@ -1,0 +1,10 @@
+type: systemd
+system:
+  enabled:
+    - tailscaled.service
+#    - libvirtd.service
+#    - virtxend.service
+#    - virtxend.socket
+  disabled:
+    - rpm-ostree-countme.service
+    - rpm-ostree-countme.timer

@@ -1,1 +1,0 @@
-SUBSYSTEM=="vfio", KERNEL=="vfio[0-9]*", GROUP="libvirt", MODE="0660"

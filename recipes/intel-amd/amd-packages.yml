@@ -1,9 +1,0 @@
-  type: rpm-ostree 
-  install:
-    - mangohud
-    - rocm-hip 
-    - rocm-opencl 
-    - rocm-clinfo 
-    - waydroid 
-    - cage
-    - wlr-randr

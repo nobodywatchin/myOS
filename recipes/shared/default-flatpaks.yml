@@ -1,0 +1,49 @@
+---
+modules:
+  - type: containerfile
+    snippets:
+      - RUN rm -f /usr/share/flatpak/remotes.d/*.flatpakrepo || true
+      - RUN rm -f /etc/flatpak/remotes.d/*.flatpakrepo || true
+  - type: default-flatpaks
+    configurations:
+      - scope: user
+        notify: true
+        repo:
+          url: https://dl.flathub.org/repo/flathub.flatpakrepo
+          name: flathub
+          title: Flathub (user)
+      - scope: system
+        notify: false
+        repo:
+          url: https://dl.flathub.org/repo/flathub.flatpakrepo
+          name: org-system
+          title: Flathub (system, managed)
+        install:
+          - io.github.kolunmi.Bazaar
+          - com.github.marhkb.Pods
+          - io.github.dvlv.boxbuddyrs
+          - com.github.tchx84.Flatseal
+          - io.github.giantpinkrobots.flatsweep
+          - it.mijorus.gearlever
+          - com.usebottles.bottles
+          - net.nokyan.Resources
+          - com.mattjakeman.ExtensionManager
+          - io.github.flattool.Warehouse
+          - io.github.flattool.Ignition
+          - org.gnome.Epiphany
+          - org.gnome.TextEditor
+          - org.gnome.Calculator
+          - org.gnome.Loupe
+          - org.gnome.Decibels
+          - org.gnome.Showtime
+          - org.gnome.FileRoller
+          - org.gnome.Firmware
+          - org.gnome.Logs
+  - type: files
+    files:
+      - source: flatpak
+        destination: /
+  - type: systemd
+    system:
+      enabled:
+        - flatpak-hide-org-system.service

@@ -1,9 +1,0 @@
-type: systemd
-system:
-  enabled:
-    - com.system76.Scheduler.service
-    - libvirtd.service
-    - cockpit.socket
-    - sshd
-    - virtxend.service
-    - virtxend.socket

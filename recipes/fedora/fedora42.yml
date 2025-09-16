@@ -1,0 +1,29 @@
+---
+# yaml-language-server: $schema=https://schema.blue-build.org/recipe-v1.json
+# image will be published to ghcr.io/<user>/<name>
+name: fedora42
+# description will be included in the image's metadata
+description: This is my personal OS image.
+
+# the base image to build on top of (FROM) and the version tag to use
+base-image: quay.io/fedora/fedora-bootc
+image-version: 42 # latest is also supported if you want new updates ASAP
+
+# module configuration, executed in order
+# you can include multiple instances of the same module
+modules:
+  - type: dnf
+    install:
+      packages:
+        - plocate
+  - from-file: shared/server-base.yml
+  - from-file: fedora/common/server-fedora.yml
+  - from-file: fedora/common/tailscale-fedora.yml
+  - from-file: fedora/common/just-fedora.yml
+  - from-file: shared/kubernetes.yml
+  - from-file: fedora/common/wl-fedora.yml
+  - from-file: fedora/common/gnome.yml
+  - from-file: shared/default-flatpaks.yml
+  - from-file: shared/services.yml 
+  - from-file: shared/logos.yml 
+  - type: signing # this sets up the proper policy & signing files for signed images to work fully

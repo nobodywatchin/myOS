@@ -1,0 +1,13 @@
+#!/bin/sh
+# Prefer a project justfile; else use immutable index.just in /usr/share.
+find_up() {
+  dir="$PWD"
+  while :; do
+    [ -f "$dir/justfile" ] && exec /usr/bin/just "$@"
+    [ -f "$dir/Justfile" ] && exec /usr/bin/just "$@"
+    [ "$dir" = "/" ] && break
+    dir="$(dirname "$dir")"
+  done
+}
+find_up
+exec /usr/bin/just --justfile /usr/share/myos/just/index.just "$@"

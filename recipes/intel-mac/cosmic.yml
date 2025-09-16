@@ -1,6 +1,0 @@
-name: myos-cosmic-intel-mac
-description: "myOS is an operating system dedicated to being user-friendly and progressive "
-base-image: ghcr.io/nobodywatchin/myos-cosmic
-image-version: latest 
-modules:
-  - from-file: intel-mac/facetimehd_wl.yml
