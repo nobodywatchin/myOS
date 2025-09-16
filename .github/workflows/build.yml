@@ -30,7 +30,7 @@ jobs:
           - /RHEL/alma10/alma10-nvidia.yml
     steps:
       # the build is fully handled by the reusable github action
-      - name: EL10 Workstation
+      - name: Alma 10 Workstation
         uses: blue-build/github-action@v1.9
         with:
           recipe: ${{ matrix.recipe }}
@@ -41,7 +41,7 @@ jobs:
           maximize_build_space: true
 
   workstation9:
-    name: EL9 Workstation
+    name: Alma 9 Workstation
     runs-on: ubuntu-latest
     permissions:
       contents: read
