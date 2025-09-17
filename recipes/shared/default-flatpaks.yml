@@ -45,6 +45,9 @@ modules:
   - type: script
     scripts:
       - flatpak-blocklist.sh
+  - type: containerfile
+    snippets:
+      - RUN chmod 0755 /usr/local/sbin/apply-flatpak-blocklist.sh
   - type: systemd
     system:
       enabled:

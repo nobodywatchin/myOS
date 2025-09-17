@@ -1,36 +1,11 @@
 [Unit]
-Description=Ensure user Flatpak remote exists, attach autoblock filter, and mask duplicates
+Description=Apply Flatpak autoblock filter and mask system-installed apps
 After=network-online.target
 Wants=network-online.target
 
 [Service]
 Type=oneshot
-ExecStart=/bin/bash -lc '\
-  set -euo pipefail; \
-  CFG="/usr/share/bluebuild/default-flatpaks/configuration.yaml"; \
-  FILTER=$(ls /etc/flatpak/filters/*.autoblock.filter 2>/dev/null | head -n1 || true); \
-  [[ -n "$FILTER" ]] || { echo "No autoblock filter found; skipping"; exit 0; }; \
-  # parse user-remote name & url from config (fallbacks if not present)
-  USER_REMOTE=$(awk '"'"'BEGIN{in_user=0; got=0} /^- /{in_user=0} /^[[:space:]]*scope:[[:space:]]*user/{in_user=1} in_user&&/^[[:space:]]*name:/{sub(/.*name:[[:space:]]*/,""); gsub(/["'"'"'"]/,""); print; exit}'"'"' "$CFG" 2>/dev/null || echo flathub); \
-  USER_URL=$(awk '"'"'BEGIN{in_user=0} /^- /{in_user=0} /^[[:space:]]*scope:[[:space:]]*user/{in_user=1} in_user&&/^[[:space:]]*url:/{sub(/.*url:[[:space:]]*/,""); gsub(/["'"'"'"]/,""); print; exit}'"'"' "$CFG" 2>/dev/null || echo https://dl.flathub.org/repo/flathub.flatpakrepo); \
-  echo "Using user remote: $USER_REMOTE ($USER_URL)"; \
-  # derive appids from the filter (lines: deny app/<ID>/*)
-  mapfile -t APPIDS < <(awk '"'"'/^deny[[:space:]]+app\//{sub(/^deny[[:space:]]+app\//,""); sub(/\/\*$/,""); print}'"'"' "$FILTER"); \
-  # iterate real homedirs
-  for home in /home/*; do \
-    [[ -d "$home" ]] || continue; u=$(basename "$home"); \
-    echo "Applying to user: $u"; \
-    su -l "$u" -s /bin/bash -c '"'"'\
-      set -e; \
-      # ensure user remote exists (from .flatpakrepo URL)
-      flatpak --user remote-add --if-not-exists --from "'"'"'"$USER_URL"'"'"'" "'"'"'"$USER_REMOTE"'"'"'" || true; \
-      # attach filter and refresh appstream
-      flatpak --user remote-modify --filter="'"'"'"$FILTER"'"'"'" "'"'"'"$USER_REMOTE"'"'"'" || true; \
-      flatpak --user update --appstream || true; \
-      # hard-block explicit installs via masks (optional — comment out if you only want to hide)
-      for id in "'"'"'${APPIDS[@]}'"'"' ; do flatpak mask --user "$id" >/dev/null 2>&1 || true; done \
-    '"'"'; \
-  done'
+ExecStart=/usr/local/sbin/apply-flatpak-blocklist.sh
 RemainAfterExit=yes
 
 [Install]
