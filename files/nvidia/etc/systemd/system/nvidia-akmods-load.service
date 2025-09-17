@@ -1,7 +1,7 @@
 [Unit]
-Description=Build & load NVIDIA (akmods) once per new kernel (ostree-safe)
-After=local-fs.target systemd-modules-load.service
-ConditionPathExists=/run/ostree-booted
+Description=Build & load NVIDIA once per new kernel (ostree-safe)
+After=local-fs.target
+ConditionPathExists=/usr/local/sbin/nvidia-akmods-build.sh
 
 [Service]
 Type=oneshot
