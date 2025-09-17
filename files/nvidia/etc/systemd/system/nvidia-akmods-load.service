@@ -1,23 +1,14 @@
 [Unit]
-Description=Build, stage, and load NVIDIA (akmods) on ostree/BootC
+Description=Build & load NVIDIA (akmods) once per new kernel (ostree-safe)
 After=local-fs.target systemd-modules-load.service
 ConditionPathExists=/run/ostree-booted
 
 [Service]
 Type=oneshot
-# Ensure akmods key exists (skip template entirely)
-ExecStartPre=/bin/bash -lc 'test -f /etc/pki/akmods/certs/public_key.der || kmodgenca -a'
-
-# Build for the running kernel
-ExecStart=/bin/bash -lc 'akmods --force --kernels "$(uname -r)" --kmod nvidia'
-
-# Stage into /usr/lib/modules/<kver>/updates via bind mount
-ExecStart=/usr/local/sbin/ostree-stage-akmod.sh nvidia
-
-# Load the modules
-ExecStart=/sbin/modprobe nvidia nvidia_modeset nvidia_uvm nvidia_drm
-
+ExecCondition=/usr/local/sbin/needs-nvidia.sh
+ExecStart=/usr/local/sbin/nvidia-akmods-build.sh
 RemainAfterExit=yes
+Environment="PATH=/usr/sbin:/usr/bin:/sbin:/bin"
 
 [Install]
 WantedBy=multi-user.target
