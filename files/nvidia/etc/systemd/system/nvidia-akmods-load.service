@@ -1,0 +1,13 @@
+[Unit]
+Description=Build & load NVIDIA once per new kernel (ostree-safe)
+After=local-fs.target
+ConditionPathExists=/usr/local/sbin/nvidia-akmods-build.sh
+
+[Service]
+Type=oneshot
+ExecStart=/usr/local/sbin/nvidia-akmods-build.sh
+RemainAfterExit=yes
+Environment="PATH=/usr/sbin:/usr/bin:/sbin:/bin"
+
+[Install]
+WantedBy=multi-user.target

@@ -8,3 +8,4 @@ system:
   disabled:
     - rpm-ostree-countme.service
     - rpm-ostree-countme.timer
+    - akmods-keygen@akmods-keygen.service

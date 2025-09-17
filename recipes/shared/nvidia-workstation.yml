@@ -1,9 +1,24 @@
 ---
-type: dnf
-install:
-  packages:
-    - libnvidia-fbc
-    - libnvidia-cfg
-    - nvidia-settings
-    - nvidia-libXNVCtrl
-    - nvidia-libXNVCtrl-devel
+modules:
+  - type: dnf
+    install:
+      packages:
+        - libnvidia-fbc
+        - libnvidia-cfg
+        - nvidia-settings
+        - nvidia-libXNVCtrl
+        - nvidia-libXNVCtrl-devel
+  
+  - type: files
+    files:
+      - source: nvidia 
+        destination: /
+  
+  - type: containerfile
+    snippets:
+      - RUN chmod 0755 /usr/local/sbin/nvidia-akmods-build.sh
+  
+  - type: systemd
+    system:
+      enabled:
+      - nvidia-akmods-load.service
