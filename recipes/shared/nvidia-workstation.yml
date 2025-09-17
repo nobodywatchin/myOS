@@ -16,7 +16,6 @@ modules:
   
   - type: containerfile
     snippets:
-      - RUN chmod 0755 /usr/local/sbin/needs-nvidia.sh
       - RUN chmod 0755 /usr/local/sbin/nvidia-akmods-build.sh
   
   - type: systemd
