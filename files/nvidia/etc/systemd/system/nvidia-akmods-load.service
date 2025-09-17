@@ -5,7 +5,6 @@ ConditionPathExists=/run/ostree-booted
 
 [Service]
 Type=oneshot
-ExecCondition=/usr/local/sbin/needs-nvidia.sh
 ExecStart=/usr/local/sbin/nvidia-akmods-build.sh
 RemainAfterExit=yes
 Environment="PATH=/usr/sbin:/usr/bin:/sbin:/bin"
