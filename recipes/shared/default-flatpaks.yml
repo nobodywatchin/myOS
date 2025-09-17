@@ -7,7 +7,7 @@ modules:
   - type: default-flatpaks
     configurations:
       - scope: user
-        notify: true
+        notify: false
         repo:
           url: https://dl.flathub.org/repo/flathub.flatpakrepo
           name: flathub
@@ -19,7 +19,6 @@ modules:
           name: org-system
           title: Flathub (system, managed)
         install:
-          # - io.github.kolunmi.Bazaar
           - com.github.marhkb.Pods
           - io.github.dvlv.boxbuddyrs
           - com.github.tchx84.Flatseal
@@ -43,7 +42,11 @@ modules:
     files:
       - source: flatpak
         destination: /
+  - type: script
+    scripts:
+      - flatpak-blocklist.sh
   - type: systemd
     system:
       enabled:
         - flatpak-hide-org-system.service
+        - flatpak-apply-user-filter.service

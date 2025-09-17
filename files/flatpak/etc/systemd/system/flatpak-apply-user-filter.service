@@ -1,0 +1,17 @@
+[Unit]
+Description=Attach Flatpak autoblock filter to each user remote
+After=multi-user.target
+
+[Service]
+Type=oneshot
+ExecStart=/bin/bash -lc '\
+  FILTER=$(ls /etc/flatpak/filters/*.autoblock.filter 2>/dev/null | head -n1) || exit 0; \
+  REMOTE=$(basename "$FILTER" | sed "s/\.autoblock\.filter$//"); \
+  loginctl list-users --no-legend | awk "{print \$2}" | while read -r u; do \
+    su -l "$u" -s /bin/bash -c "flatpak --user remote-modify --if-exists --filter=\"$FILTER\" \"$REMOTE\" && flatpak --user update --appstream || true"; \
+  done'
+
+RemainAfterExit=yes
+
+[Install]
+WantedBy=multi-user.target
