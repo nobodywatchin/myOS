@@ -1,6 +1,4 @@
 #!/usr/bin/env bash
-# Attach autoblock filter to user remotes and mask system-installed apps.
-
 set -euo pipefail
 
 CFG="/usr/share/bluebuild/default-flatpaks/configuration.yaml"
@@ -17,11 +15,7 @@ USER_REMOTE=$(awk '
   /^- /{in_user=0}
   /^[[:space:]]*scope:[[:space:]]*user/{in_user=1}
   in_user && /^[[:space:]]*name:/ && !got {
-    sub(/.*name:[[:space:]]*/,"")
-    gsub(/["'"'"']/,"")
-    print
-    got=1
-    exit
+    sub(/.*name:[[:space:]]*/,""); gsub(/["'\''"]/,""); print; got=1; exit
   }
 ' "$CFG" 2>/dev/null || echo flathub)
 
@@ -31,17 +25,11 @@ USER_URL=$(awk '
   /^- /{in_user=0}
   /^[[:space:]]*scope:[[:space:]]*user/{in_user=1}
   in_user && /^[[:space:]]*url:/ {
-    sub(/.*url:[[:space:]]*/,"")
-    gsub(/["'"'"']/,"")
-    print
-    exit
+    sub(/.*url:[[:space:]]*/,""); gsub(/["'\''"]/,""); print; exit
   }
 ' "$CFG" 2>/dev/null || echo https://dl.flathub.org/repo/flathub.flatpakrepo)
 
 echo "Using user remote: $USER_REMOTE ($USER_URL)"
-
-# collect app IDs from filter (deny lines)
-mapfile -t APPIDS < <(awk '/^deny[[:space:]]+app\//{sub(/^deny[[:space:]]+app\//,""); sub(/\/\*$/,""); print}' "$FILTER")
 
 # iterate real homedirs
 for home in /home/*; do
@@ -51,14 +39,15 @@ for home in /home/*; do
 
   su -l "$u" -s /bin/bash -c "
     set -e
-    # ensure user remote exists
-    flatpak --user remote-add --if-not-exists --from \"$USER_URL\" \"$USER_REMOTE\" || true
-    # attach filter and refresh
+    # ensure user remote exists (NOTE: NAME then URL)
+    flatpak --user remote-add --if-not-exists --from \"$USER_REMOTE\" \"$USER_URL\" || true
+    # attach filter and refresh appstream
     flatpak --user remote-modify --filter=\"$FILTER\" \"$USER_REMOTE\" || true
     flatpak --user update --appstream || true
-    # mask explicit installs
-    for id in ${APPIDS[@]}; do
-      flatpak mask --user \"\$id\" >/dev/null 2>&1 || true
-    done
+    # derive appids from the filter and mask them (hard-block explicit installs)
+    awk '/^deny[[:space:]]+app\\//{sub(/^deny[[:space:]]+app\\//,\"\"); sub(/\\/\\*$/,\"\"); print}' \"$FILTER\" \
+      | while read -r id; do
+          [ -n \"\$id\" ] && flatpak mask --user \"\$id\" >/dev/null 2>&1 || true
+        done
   "
 done
