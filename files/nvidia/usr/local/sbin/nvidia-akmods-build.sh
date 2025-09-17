@@ -1,46 +1,57 @@
 #!/usr/bin/env bash
-# Build (via akmods), stage, bind-mount, and load NVIDIA kmods for the current kernel on ostree/immutable systems.
-# Idempotent: will only rebuild/restage when needed; safe to run at boot or manually.
+# Build + stage NVIDIA kmods from negativo17's akmod-nvidia on immutable/ostree systems.
+# Safe to run at boot or manually; re-runs are idempotent.
 
 set -euo pipefail
 
-KVER="$(uname -r)"
-MARK="/var/lib/nvidia-akmods/done-${KVER}"
-WORK="/var/lib/nvidia-spool"
-SRC_BASE="/var/lib/nvidia-mount/${KVER}/updates"
-SRC_NVIDIA="${SRC_BASE}/nvidia"
-DST="/usr/lib/modules/${KVER}/updates"
-UNIT="$(systemd-escape --path --suffix=mount "${DST}")"  # e.g. usr-lib-modules-<...>-updates.mount
-
 log() { echo "[nvidia-akmods] $*"; }
 
+KVER="$(uname -r)"
+STATE_DIR="/var/lib/nvidia-akmods"
+MARK="${STATE_DIR}/done-${KVER}"
+
+# Stage modules to a writable tree and bind-mount into /usr/lib/modules/<kver>/updates
+SRC_BASE="/var/lib/nvidia-mount/${KVER}/updates"
+SRC_DIR="${SRC_BASE}/nvidia"
+DST_BASE="/usr/lib/modules/${KVER}/updates"
+DST_MOUNT_UNIT="$(systemd-escape --path --suffix=mount "${DST_BASE}")"
+
 restore_label() {
-  # Ensure SELinux labels allow module_load on staged files and bind-mounted target
   if command -v selinuxenabled >/dev/null 2>&1 && selinuxenabled; then
     command -v restorecon >/dev/null 2>&1 && restorecon -RF "$1" || true
   fi
 }
 
-ensure_mount_unit() {
-  # Ensure our bind-mount of /usr/lib/modules/<kver>/updates exists via a systemd .mount
-  install -d -m 0755 "${DST}"
-  restore_label "${DST}"
+ensure_akmods_key() {
+  if [ -x /usr/local/sbin/akmods-key-ensure.sh ]; then
+    /usr/local/sbin/akmods-key-ensure.sh || true
+    return
+  fi
+  local der="/etc/pki/akmods/certs/public_key.der"
+  if [ ! -f "$der" ] && command -v kmodgenca >/dev/null 2>&1; then
+    log "No akmods key detected; generating with kmodgenca -a"
+    kmodgenca -a || true
+  fi
+  # If Secure Boot is enabled, remember to MOK-enroll the DER once.
+}
 
-  # Create a transient .mount unit if a unit file doesn't already exist
-  if ! systemctl is-enabled --quiet "${UNIT}" 2>/dev/null; then
-    # Create a drop-in mount unit
-    local unit_path="/etc/systemd/system/${UNIT}"
+ensure_updates_bind_mount() {
+  install -d -m 0755 "${SRC_BASE}" "${DST_BASE}"
+  restore_label "${SRC_BASE}" ; restore_label "${DST_BASE}"
+
+  local unit_path="/etc/systemd/system/${DST_MOUNT_UNIT}"
+  if [ ! -f "${unit_path}" ]; then
     install -d -m 0755 /etc/systemd/system
     cat > "${unit_path}" <<EOF
 [Unit]
-Description=Bind mount for kernel updates (akmods staging) for ${KVER}
+Description=Bind mount for /usr/lib/modules/${KVER}/updates (akmods staging)
 DefaultDependencies=no
 After=local-fs.target
 Before=sysinit.target
 
 [Mount]
 What=${SRC_BASE}
-Where=${DST}
+Where=${DST_BASE}
 Type=none
 Options=bind
 
@@ -48,158 +59,101 @@ Options=bind
 WantedBy=multi-user.target
 EOF
     systemctl daemon-reload
-    systemctl enable --now "${UNIT}"
+    systemctl enable --now "${DST_MOUNT_UNIT}"
   else
-    # If unit exists but not started, start it
-    systemctl is-active --quiet "${UNIT}" || systemctl start "${UNIT}"
+    systemctl is-active --quiet "${DST_MOUNT_UNIT}" || systemctl start "${DST_MOUNT_UNIT}"
   fi
 
-  # If someone manually mounted it, make sure the label is sane
-  if mountpoint -q "${DST}"; then
-    restore_label "${DST}"
-  fi
+  restore_label "${DST_BASE}"
 }
 
-blacklist_conf() {
-  # Blacklist nouveau (and its fbdev helper) to avoid conflicts
+blacklist_nouveau_and_enable_kms() {
   install -d -m 0755 /etc/modprobe.d
   cat > /etc/modprobe.d/blacklist-nouveau.conf <<'EOF'
 blacklist nouveau
 blacklist lbm-nouveau
 options nouveau modeset=0
 EOF
-  # Enable DRM KMS for NVIDIA (optional but recommended)
   cat > /etc/modprobe.d/nvidia-kms.conf <<'EOF'
 options nvidia-drm modeset=1
 EOF
 }
 
-ensure_akmods_key() {
-  # Try your helper if present; otherwise, generate if missing.
-  if [ -x /usr/local/sbin/akmods-key-ensure.sh ]; then
-    /usr/local/sbin/akmods-key-ensure.sh || true
-    return
+build_akmod_nvidia() {
+  if ! command -v akmods >/dev/null 2>&1; then
+    log "ERROR: akmods not installed. Ensure negativo17 repo and akmod-nvidia are installed."
+    return 1
   fi
-  local pub="/etc/pki/akmods/certs/public_key.der"
-  if [ ! -f "${pub}" ]; then
-    if command -v kmodgenca >/dev/null 2>&1; then
-      log "No akmods key found; generating via kmodgenca -a"
-      kmodgenca -a || true
-    fi
-    # Note: mokutil enrollment typically handled elsewhere during provisioning
-  fi
+  log "Building akmods for --akmod nvidia on ${KVER} (only if needed)"
+  akmods --akmod nvidia --kernels "${KVER}" || true
 }
 
-find_built_modules() {
-  # Heuristics to locate nvidia*.ko produced/installed by akmods for this KVER.
-  # We gather the core set if present: nvidia, nvidia-modeset, nvidia-uvm, nvidia-drm, nvidia-peermem
-  local -a candidates=(
-    "/usr/lib/modules/${KVER}/extra/nvidia"
-    "/lib/modules/${KVER}/extra/nvidia"
+collect_built_modules() {
+  local -a roots=(
     "/var/lib/akmods/${KVER}/extra/nvidia"
     "/var/lib/akmods/${KVER}/weak-updates/nvidia"
+    "/usr/lib/modules/${KVER}/extra/nvidia"
+    "/lib/modules/${KVER}/extra/nvidia"
     "/var/cache/akmods/nvidia"
   )
   local -a found=()
-  for base in "${candidates[@]}"; do
-    [ -d "${base}" ] || continue
+  for r in "${roots[@]}"; do
+    [ -d "$r" ] || continue
     while IFS= read -r -d '' f; do
       found+=("$f")
-    done < <(find "${base}" -type f -name 'nvidia*.ko*' -print0 2>/dev/null || true)
+    done < <(find "$r" -type f -name 'nvidia*.ko*' -print0 2>/dev/null || true)
   done
+  [ "${#found[@]}" -gt 0 ] || return 1
 
-  if [ "${#found[@]}" -eq 0 ]; then
-    return 1
-  fi
-
-  # Filter to the key modules if multiple versions are present
-  # Prefer the plain .ko over compressed variants where both exist
-  local -a need=(nvidia nvidia-modeset nvidia-uvm nvidia-drm nvidia-peermem)
-  local -A best=()
-  for mod in "${need[@]}"; do
-    local picked=""
-    for f in "${found[@]}"; do
-      case "$(basename "$f")" in
-        "${mod}.ko") picked="$f"; break ;;
-        "${mod}.ko."*) [ -z "$picked" ] && picked="$f" ;;
-      esac
-    done
-    if [ -n "$picked" ]; then best["$mod"]="$picked"; fi
+  install -d -m 0755 "${SRC_DIR}"
+  for f in "${found[@]}"; do
+    install -m 0644 "$f" "${SRC_DIR}/"
   done
-
-  # Always include core nvidia.ko if available
-  if [ -z "${best[nvidia]:-}" ]; then
-    return 1
-  fi
-
-  # Emit list to stdout
-  for k in "${!best[@]}"; do
-    echo "${best[$k]}"
-  done
-  return 0
+  restore_label "${SRC_DIR}"
 }
 
-try_insmod() {
-  # Load in safe order; ignore failures for optional modules
+load_modules() {
   depmod -a "${KVER}" || true
   modprobe -r nvidia_drm nvidia_uvm nvidia_modeset nvidia 2>/dev/null || true
 
-  # Core
-  modprobe nvidia || insmod "${DST}/nvidia/nvidia.ko" || return 1
-  # Stack
-  modprobe nvidia-modeset 2>/dev/null || insmod "${DST}/nvidia/nvidia-modeset.ko" || true
-  modprobe nvidia-uvm 2>/dev/null || insmod "${DST}/nvidia/nvidia-uvm.ko" || true
-  modprobe nvidia-drm 2>/dev/null || insmod "${DST}/nvidia/nvidia-drm.ko" || true
-
-  return 0
+  local rc=0
+  modprobe nvidia || rc=1
+  modprobe nvidia-modeset 2>/dev/null || true
+  modprobe nvidia-uvm 2>/dev/null || true
+  modprobe nvidia-drm 2>/dev/null || true
+  return "${rc}"
 }
 
 main() {
   if [ -f "${MARK}" ]; then
-    log "Already done for ${KVER}; exiting."
+    log "Already staged for ${KVER}; nothing to do."
     exit 0
   fi
 
-  ensure_akmods_key
-
-  # 1) Build via akmods (if not already)
-  log "Building akmods for nvidia on ${KVER} (if needed)"
-  if command -v akmods >/dev/null 2>&1; then
-    akmods --force --kernels "${KVER}" nvidia || true
-  else
-    log "akmods not found; expecting modules to be present from prior build/install"
-  fi
-
-  # 2) Locate built modules
-  log "Searching for built nvidia*.ko for ${KVER}"
-  mapfile -t MODULES < <(find_built_modules || true)
-  if [ "${#MODULES[@]}" -eq 0 ]; then
-    log "ERROR: Could not locate built NVIDIA modules for ${KVER}. See /var/cache/akmods/nvidia/*.log for details."
+  if ! rpm -q akmod-nvidia >/dev/null 2>&1; then
+    log "ERROR: akmod-nvidia not installed. Install it from negativo17 and re-run."
     exit 1
   fi
-  for m in "${MODULES[@]}"; do log "Found: ${m}"; done
 
-  # 3) Stage into our mountable updates/ tree
-  install -d -m 0755 "${SRC_NVIDIA}"
-  for f in "${MODULES[@]}"; do
-    base="$(basename "$f")"
-    install -m 0644 "${f}" "${SRC_NVIDIA}/${base%.*}.ko"
-  done
-  restore_label "${SRC_BASE}"
+  ensure_akmods_key
+  blacklist_nouveau_and_enable_kms
+  build_akmod_nvidia || true
 
-  # 4) Bind-mount -> relabel -> blacklist -> load -> mark
-  ensure_mount_unit
-  restore_label "${SRC_BASE}"
-  if mountpoint -q "${DST}"; then restore_label "${DST}"; fi
-  blacklist_conf
-  if ! try_insmod; then
-    log "WARN: Module load failed; will still mark as staged/mounted. Check dmesg and ensure Secure Boot/MOK enrollment."
+  if ! collect_built_modules; then
+    log "ERROR: No built NVIDIA modules found for ${KVER}."
+    log "Check akmods logs under: /var/cache/akmods/nvidia/ and dmesg."
+    exit 1
   fi
 
-  # 5) Mark done
-  install -d -m 0755 /var/lib/nvidia-akmods
+  ensure_updates_bind_mount
+
+  if ! load_modules; then
+    log "WARN: modprobe nvidia failed. If Secure Boot is enabled, MOK enrollment is likely required."
+  fi
+
+  install -d -m 0755 "${STATE_DIR}"
   : > "${MARK}"
-  log "NVIDIA modules staged/mounted for ${KVER}"
+  log "NVIDIA modules staged (and mounted) for ${KVER}."
 }
 
 main "$@"
