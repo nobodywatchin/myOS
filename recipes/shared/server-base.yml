@@ -1,5 +1,7 @@
 ---
 modules:
+  - type: soar
+  
   - type: dnf
     remove:
       packages:
