@@ -1,5 +1,5 @@
 [Unit]
-Description=Apply Flatpak autoblock filter and mask system-installed apps
+Description=Apply Flatpak autoblock filter to the standard user remote
 After=network-online.target
 Wants=network-online.target
 
