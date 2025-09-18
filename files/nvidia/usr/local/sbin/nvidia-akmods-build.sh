@@ -1,205 +1,102 @@
 #!/usr/bin/env bash
-# nvidia-akmods-build.sh
-# Build via akmods, harvest modules (from loose .ko, results/, OR by extracting the kmod RPM),
-# stage to /var/lib/nvidia-mount/<kver>/updates/nvidia, bind-mount to /usr/lib/modules/<kver>/updates, and load.
-
+# Build & load Negativo17 NVIDIA akmods on immutable (EL BootC) systems.
+# Robust RPM discovery: cache -> log "Wrote:" -> /tmp/akmodsbuild.* glob
 set -euo pipefail
 
 KVER="$(uname -r)"
-MARK="/var/lib/nvidia-akmods/done-${KVER}"
-SRC_BASE="/var/lib/nvidia-mount/${KVER}/updates"
-SRC_NVIDIA="${SRC_BASE}/nvidia"
-DST="/usr/lib/modules/${KVER}/updates"
-UNIT="$(systemd-escape --path --suffix=mount "${DST}")"
+STAMP_DIR="/var/lib/akmods"
+STAMP_FILE="${STAMP_DIR}/.nvidia-built-${KVER}"
+CACHE_DIR="/var/cache/akmods/nvidia"
+EXTRACT_ROOT="/var/lib/nvidia-akmods/${KVER}"
+need_pkgs=(gcc make binutils elfutils-libelf-devel rpm cpio xz)
 
-log(){ echo "[nvidia-akmods] $*"; }
+log()  { printf "[nvidia-akmods] %s\n" "$*"; }
+fail() { log "ERROR: $*"; exit 1; }
 
-restore_label(){
-  if command -v selinuxenabled >/dev/null 2>&1 && selinuxenabled; then
-    command -v restorecon >/dev/null 2>&1 && restorecon -RF "$1" || true
-  fi
-}
+# Idempotency
+if [[ -f "${STAMP_FILE}" ]]; then
+  log "Already built/loaded for ${KVER}."
+  exit 0
+fi
 
-ensure_mount_unit(){
-  install -d -m 0755 "${DST}"
-  restore_label "${DST}"
-  if ! systemctl list-unit-files --type=mount | grep -q "^${UNIT}"; then
-    local unit_path="/etc/systemd/system/${UNIT}"
-    install -d -m 0755 /etc/systemd/system
-    cat > "${unit_path}" <<EOF
-[Unit]
-Description=Bind mount for kernel updates (akmods staging) for ${KVER}
-DefaultDependencies=no
-After=local-fs.target
-Before=sysinit.target
+log "Kernel: ${KVER}"
 
-[Mount]
-What=${SRC_BASE}
-Where=${DST}
-Type=none
-Options=bind
+# Prereqs (headers + toolchain)
+[[ -d "/usr/src/kernels/${KVER}" ]] || fail "Missing /usr/src/kernels/${KVER}. Install kernel-devel-${KVER}."
+missing=()
+for p in "${need_pkgs[@]}"; do rpm -q "$p" >/dev/null 2>&1 || missing+=("$p"); done
+(( ${#missing[@]} )) && fail "Missing packages: ${missing[*]}"
 
-[Install]
-WantedBy=multi-user.target
-EOF
-    systemctl daemon-reload
-    systemctl enable --now "${UNIT}"
-  else
-    systemctl is-active --quiet "${UNIT}" || systemctl start "${UNIT}"
-  fi
-  mountpoint -q "${DST}" && restore_label "${DST}"
-}
+# Secure Boot key (harmless if SB off)
+if [[ ! -f /etc/pki/akmods/certs/public_key.der ]]; then
+  log "No akmods key found; generating (kmodgenca -a)…"
+  kmodgenca -a
+else
+  log "akmods key present."
+fi
 
-blacklist_conf(){
-  install -d -m 0755 /etc/modprobe.d
-  cat > /etc/modprobe.d/blacklist-nouveau.conf <<'EOF'
-blacklist nouveau
-blacklist lbm-nouveau
-options nouveau modeset=0
-EOF
-  cat > /etc/modprobe.d/nvidia-kms.conf <<'EOF'
-options nvidia-drm modeset=1
-EOF
-}
+# Build. akmods will try to install (and fail on BootC), that's fine—we just need the RPM.
+log "Building akmod 'nvidia' for ${KVER}…"
+set +e
+akmods --force --kernels "${KVER}" --akmod nvidia
+akrc=$?
+set -e
 
-ensure_akmods_key(){
-  if [ -x /usr/local/sbin/akmods-key-ensure.sh ]; then
-    /usr/local/sbin/akmods-key-ensure.sh || true
-    return
-  fi
-  local pub="/etc/pki/akmods/certs/public_key.der"
-  if [ ! -f "${pub}" ] && command -v kmodgenca >/dev/null 2>&1; then
-    log "Generating akmods key (kmodgenca -a)"
-    kmodgenca -a || true
-  fi
-}
+# Find latest akmods log (success or fail)
+build_log="$(ls -1t ${CACHE_DIR}/*-for-${KVER}.{log,failed.log} 2>/dev/null | head -n1 || true)"
+[[ -z "${build_log}" ]] && build_log="$(ls -1t ${CACHE_DIR}/*${KVER}*.{log,failed.log} 2>/dev/null | head -n1 || true)"
+[[ -n "${build_log}" ]] && { log "Build log: ${build_log}"; tail -n 40 "${build_log}" || true; }
 
-# --- Harvesters --------------------------------------------------------------
+# Discover the built RPM:
+RPM=""
 
-# 1) Find loose .ko files produced by akmods
-harvest_from_paths(){
-  local -a candidates=(
-    "/usr/lib/modules/${KVER}/extra/nvidia"
-    "/lib/modules/${KVER}/extra/nvidia"
-    "/var/lib/akmods/${KVER}/extra/nvidia"
-    "/var/lib/akmods/${KVER}/weak-updates/nvidia"
-    "/var/cache/akmods/nvidia"
-    "/var/cache/akmods/nvidia/*-for-${KVER}*/results/kmods"
-    "/var/cache/akmods/nvidia/*-for-${KVER}*/results"
-    "/tmp/akmods*/results/kmods"
-    "/tmp/akmods*/results"
-  )
+# 1) Preferred: cache
+if [[ -z "${RPM}" ]]; then
+  RPM="$(ls -1t ${CACHE_DIR}/kmod-nvidia-*for-${KVER}*.rpm 2>/dev/null | head -n1 || true)"
+fi
+if [[ -z "${RPM}" ]]; then
+  RPM="$(ls -1t ${CACHE_DIR}/kmod-nvidia-*${KVER}*.rpm 2>/dev/null | head -n1 || true)"
+fi
 
-  local -a found=()
-  for base in "${candidates[@]}"; do
-    for d in $(compgen -G "$base" || true); do
-      [ -d "$d" ] || continue
-      while IFS= read -r -d '' f; do
-        found+=("$f")
-      done < <(find "$d" -type f -name 'nvidia*.ko*' -print0 2>/dev/null || true)
-    done
-  done
+# 2) Parse "Wrote: /tmp/...rpm" from log
+if [[ -z "${RPM}" && -n "${build_log}" ]]; then
+  wrote_path="$(grep -Eo 'Wrote: /tmp/akmodsbuild\.[^ ]+/RPMS/x86_64/kmod-nvidia[^ ]+\.rpm' "${build_log}" | awk '{print $2}' | tail -n1 || true)"
+  [[ -n "${wrote_path}" && -f "${wrote_path}" ]] && RPM="${wrote_path}"
+fi
 
-  if [ "${#found[@]}" -gt 0 ]; then
-    # Prefer uncompressed .ko when both exist
-    local -a need=(nvidia nvidia-modeset nvidia-uvm nvidia-drm nvidia-peermem)
-    declare -A best=()
-    for mod in "${need[@]}"; do
-      local picked=""
-      for f in "${found[@]}"; do
-        case "$(basename "$f")" in
-          "${mod}.ko") picked="$f"; break ;;
-          "${mod}.ko."*) [ -z "$picked" ] && picked="$f" ;;
-        esac
-      done
-      [ -n "$picked" ] && best["$mod"]="$picked"
-    done
-    [ -n "${best[nvidia]:-}" ] || return 1
-    printf '%s\n' "${best[@]}"
-    return 0
-  fi
-  return 1
-}
+# 3) Fallback: glob under /tmp/akmodsbuild.*
+if [[ -z "${RPM}" ]]; then
+  RPM="$(ls -1t /tmp/akmodsbuild.*/RPMS/x86_64/kmod-nvidia-*${KVER}*.rpm 2>/dev/null | head -n1 || true)"
+fi
 
-# 2) Extract .ko from kmod RPM that akmods left in results/
-harvest_from_kmod_rpm(){
-  local rpm
-  rpm="$(ls -1 /var/cache/akmods/nvidia/*-for-${KVER}*/results/kmod-nvidia-*.rpm /tmp/akmods.*/results/kmod-nvidia-*.rpm 2>/dev/null | head -n1 || true)"
-  [ -n "${rpm:-}" ] || return 1
-  log "Extracting modules from $(basename "$rpm")"
-  local tmpd; tmpd="$(mktemp -d)"
-  ( cd "$tmpd" && rpm2cpio "$rpm" | cpio -idmv >/dev/null 2>&1 )
-  find "$tmpd/lib/modules/${KVER}/extra/nvidia" -type f -name 'nvidia*.ko*' -print 2>/dev/null || true
-}
+[[ -n "${RPM}" && -f "${RPM}" ]] || fail "Build did not leave a kmod RPM anywhere I can find."
 
-# ---------------------------------------------------------------------------
+log "Using built RPM: ${RPM}"
 
-stage_modules(){
-  install -d -m 0755 "${SRC_NVIDIA}"
-  while IFS= read -r f; do
-    [ -n "$f" ] || continue
-    local base; base="$(basename "$f")"
-    if [[ "$base" == *.ko.* ]]; then
-      install -m 0644 "$f" "${SRC_NVIDIA}/${base%%.ko.*}.ko"
-    else
-      install -m 0644 "$f" "${SRC_NVIDIA}/${base}"
-    fi
-  done
-  restore_label "${SRC_BASE}"
-}
+# Extract into a private root in /var (RO-safe)
+log "Extracting modules to ${EXTRACT_ROOT}…"
+rm -rf "${EXTRACT_ROOT}"
+mkdir -p "${EXTRACT_ROOT}"
+rpm2cpio "${RPM}" | (cd "${EXTRACT_ROOT}" && cpio -idmv >/dev/null 2>&1 || true)
 
-try_insmod(){
-  depmod -a "${KVER}" || true
-  modprobe -r nvidia_drm nvidia_uvm nvidia_modeset nvidia 2>/dev/null || true
-  modprobe nvidia 2>/dev/null || insmod "${DST}/nvidia/nvidia.ko" || return 1
-  modprobe nvidia-modeset 2>/dev/null || insmod "${DST}/nvidia/nvidia-modeset.ko" || true
-  modprobe nvidia-uvm 2>/dev/null || insmod "${DST}/nvidia/nvidia-uvm.ko" || true
-  modprobe nvidia-drm 2>/dev/null || insmod "${DST}/nvidia/nvidia-drm.ko" || true
-  return 0
-}
+MODTREE="${EXTRACT_ROOT}/lib/modules/${KVER}"
+[[ -d "${MODTREE}" ]] || fail "Extraction missing ${MODTREE}."
 
-main(){
-  if [ -f "${MARK}" ]; then
-    log "Already done for ${KVER}; exiting."
-    exit 0
-  fi
+# Generate private depmod data (in our EXTRACT_ROOT); ignore failures
+log "Generating depmod metadata in private root…"
+depmod -b "${EXTRACT_ROOT}" -a "${KVER}" || true
 
-  ensure_akmods_key
+# Load from private root (no writes to /lib/modules)
+log "Loading NVIDIA modules from private root…"
+modprobe -d "${EXTRACT_ROOT}" -S "${KVER}" nvidia
+modprobe -d "${EXTRACT_ROOT}" -S "${KVER}" nvidia_modeset || true
+modprobe -d "${EXTRACT_ROOT}" -S "${KVER}" nvidia_uvm || true
+modprobe -d "${EXTRACT_ROOT}" -S "${KVER}" nvidia_drm || true
 
-  log "Building akmods for --akmod nvidia on ${KVER} (only if needed)"
-  if command -v akmods >/dev/null 2>&1; then
-    akmods --kernels "${KVER}" --akmod nvidia || log "akmods failed to install RPM (expected on immutable); will harvest results."
-  else
-    log "akmods not found; expecting modules to exist from prior build"
-  fi
+# Devices
+command -v nvidia-modprobe >/dev/null 2>&1 && nvidia-modprobe -u -c=0 || true
 
-  log "Searching for built nvidia*.ko for ${KVER}"
-  mapfile -t MODULES < <(harvest_from_paths || true)
-  if [ "${#MODULES[@]}" -eq 0 ]; then
-    log "No loose .ko found; attempting to extract from kmod RPM cache..."
-    mapfile -t MODULES < <(harvest_from_kmod_rpm || true)
-  fi
-  if [ "${#MODULES[@]}" -eq 0 ]; then
-    log "ERROR: Could not locate built NVIDIA modules for ${KVER}. Check /var/cache/akmods/nvidia/*failed.log"
-    exit 1
-  fi
-  for m in "${MODULES[@]}"; do log "Found: $m"; done
-
-  stage_modules
-
-  ensure_mount_unit
-  restore_label "${SRC_BASE}"
-  mountpoint -q "${DST}" && restore_label "${DST}"
-
-  blacklist_conf
-
-  if ! try_insmod; then
-    log "WARN: Module load failed; check dmesg for signature/symbol errors (Secure Boot MOK enrollment may be needed)."
-  fi
-
-  install -d -m 0755 /var/lib/nvidia-akmods
-  : > "${MARK}"
-  log "NVIDIA modules staged/mounted for ${KVER}"
-}
-
-main "$@"
+mkdir -p "${STAMP_DIR}"
+touch "${STAMP_FILE}"
+log "Success. Loaded modules for ${KVER}."
+lsmod | grep -E '^nvidia(_(modeset|uvm|drm))?' || true

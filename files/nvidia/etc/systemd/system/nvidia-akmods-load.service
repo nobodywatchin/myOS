@@ -1,13 +1,11 @@
 [Unit]
-Description=Build & load NVIDIA once per new kernel (ostree-safe)
-After=local-fs.target
-ConditionPathExists=/usr/local/sbin/nvidia-akmods-build.sh
+Description=Build & Load NVIDIA akmods on first boot for the running kernel
+After=multi-user.target
 
 [Service]
 Type=oneshot
-ExecStart=/usr/local/sbin/nvidia-akmods-build.sh
-RemainAfterExit=yes
-Environment="PATH=/usr/sbin:/usr/bin:/sbin:/bin"
+# Send output to the journal and also to a file for convenience
+ExecStart=/bin/bash -lc '/usr/local/sbin/nvidia-akmods-build.sh | tee -a /var/log/nvidia-akmods-firstboot.log'
 
 [Install]
 WantedBy=multi-user.target
