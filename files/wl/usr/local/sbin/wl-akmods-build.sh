@@ -1,9 +1,4 @@
 #!/usr/bin/env bash
-# Fast WL loader for rpm-ostree/BootC systems.
-# - FAST PATH: if a staged wl.ko matches the running kernel, skip akmods and just load.
-# - SLOW PATH (first boot after kernel update): build via akmods, extract to /var, label, then load.
-# - Handles SELinux labels, vermagic check, dependency preloads, optional signing.
-
 set -Eeuo pipefail
 
 KVER="$(uname -r)"
