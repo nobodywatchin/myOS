@@ -36,8 +36,7 @@ ensure_selinux_labels() {
 vermagic_ok() {
   local f="$1"
   [[ -f "$f" ]] || return 1
-  local v m
-  v="$(/usr/sbin/modinfo -F vermagic "$f" 2>/dev/null | awk '{print $1}')" || return 1
+  local v; v="$(/usr/sbin/modinfo -F vermagic "$f" 2>/dev/null | awk '{print $1}')" || return 1
   [[ "$v" == "$KVER" ]]
 }
 
@@ -48,37 +47,36 @@ preload_deps_for() {
 }
 
 load_sequence() {
-  # Make sure nouveau isn't in the way
+  # Avoid nouveau conflicts
   if lsmod | grep -q '^nouveau\s'; then
     log "Detected nouveau; attempting to unload"
     rmmod nouveau 2>/dev/null || true
   fi
 
-  # Generate deps in our private root
   depmod -b "${ROOT}" "${KVER}"
 
-  # Preload common DRM deps from the host tree
+  # DRM stack helpers
   /usr/sbin/modprobe drm 2>/dev/null || true
   /usr/sbin/modprobe drm_kms_helper 2>/dev/null || true
   /usr/sbin/modprobe i2c-core 2>/dev/null || true
 
-  # Preload per-module declared deps
+  # Preload declared deps
   preload_deps_for "${MOD_NVIDIA}"
   preload_deps_for "${MOD_MODESET}"
   preload_deps_for "${MOD_UVM}"
   preload_deps_for "${MOD_DRM}"
 
-  # Load in correct order; use modprobe -d so parameters work (e.g., modeset=1)
-  /usr/sbin/modprobe -S "${KVER}" -d "${ROOT}" nvidia || fail "load nvidia failed"
-  /usr/sbin/modprobe -S "${KVER}" -d "${ROOT}" nvidia-modeset || fail "load nvidia-modeset failed"
-  /usr/sbin/modprobe -S "${KVER}" -d "${ROOT}" nvidia-uvm || log "WARN: nvidia-uvm load failed (OK if not used by workload)"
+  # Load in order
+  /usr/sbin/modprobe -S "${KVER}" -d "${ROOT}" nvidia            || fail "load nvidia failed"
+  /usr/sbin/modprobe -S "${KVER}" -d "${ROOT}" nvidia-modeset    || fail "load nvidia-modeset failed"
+  /usr/sbin/modprobe -S "${KVER}" -d "${ROOT}" nvidia-uvm        || log "WARN: nvidia-uvm load failed (OK if unused)"
   /usr/sbin/modprobe -S "${KVER}" -d "${ROOT}" nvidia-drm modeset=1 || fail "load nvidia-drm failed"
 
-  # Verify
   lsmod | grep -q '^nvidia\s' && lsmod | grep -q '^nvidia_drm\s' || fail "NVIDIA modules not active"
   log "SUCCESS: NVIDIA modules loaded (nvidia + modeset + drm [+ uvm])."
 }
 
+# ---------- FAST PATH -------------------------------------------------------
 fast_path=true
 for f in "${REQUIRED[@]}"; do
   if ! vermagic_ok "$f"; then fast_path=false; break; fi
@@ -91,59 +89,59 @@ if $fast_path; then
   exit 0
 fi
 
-# ----- SLOW PATH (first boot after kernel update): build & stage -------------
+# ---------- SLOW PATH: exact-for-${KVER} build ------------------------------
 rpm -q "kernel-devel-${KVER}" >/dev/null 2>&1 || \
   fail "Missing kernel-devel for ${KVER} (dnf -y install kernel-devel-${KVER})"
 command -v akmods >/dev/null 2>&1 || fail "Missing tool: akmods"
 
-log "SLOW PATH: building akmod 'nvidia' for ${KVER}..."
-if ! /usr/sbin/akmods --kernels "${KVER}" --akmod nvidia; then
-  log "WARNING: akmods install step failed (immutable base). Will use cached RPM if produced."
-fi
+# (Optional) clear stale cached RPMs to avoid confusion
+# Comment this out if you prefer to keep history.
+find "${CACHE_DIR}" -maxdepth 1 -type f -name '*.rpm' -delete 2>/dev/null || true
 
-# Find the newest cached kmod RPM (names vary slightly)
-RPM="$(ls -1t \
-  "${CACHE_DIR}"/*-for-"${KVER}".rpm \
-  "${CACHE_DIR}"/kmod-nvidia-*.rpm \
-  2>/dev/null | head -n1 || true)"
-[[ -n "${RPM}" && -f "${RPM}" ]] || {
+log "SLOW PATH: building akmod 'nvidia' for ${KVER}..."
+/usr/sbin/akmods --force-rebuild --kernels "${KVER}" --akmod nvidia || \
+  log "WARNING: akmods returned non-zero (install likely failed on immutable base); continuing."
+
+# We REQUIRE an exact-for-${KVER} RPM; do NOT fall back to generic
+RPM_FOR="$(ls -1t "${CACHE_DIR}"/*-for-"${KVER}".rpm 2>/dev/null | head -n1 || true)"
+if [[ -z "${RPM_FOR}" || ! -f "${RPM_FOR}" ]]; then
   log "Build logs (if any):"
   ls -1 "${CACHE_DIR}"/*-for-"${KVER}".{log,failed.log} 2>/dev/null || true
-  fail "No kmod-nvidia RPM produced for ${KVER}."
-}
-log "Using RPM: ${RPM}"
+  fail "No exact kmod-nvidia *-for-${KVER}.rpm produced. Cannot safely continue."
+fi
+log "Using exact RPM: ${RPM_FOR}"
 
-# Extract modules
+# Extract and stage
 pushd "${WORK}" >/dev/null
-rpm2cpio "${RPM}" | cpio -idmv >/dev/null 2>&1 || fail "Failed to extract ${RPM}"
+rpm2cpio "${RPM_FOR}" | cpio -idmv >/dev/null 2>&1 || fail "Failed to extract ${RPM_FOR}"
 FOUND="$(find "${WORK}" -type f \( -name 'nvidia*.ko' -o -name 'nvidia*.ko.xz' \) | sort)"
 popd >/dev/null
-[[ -n "${FOUND}" ]] || fail "No nvidia*.ko files found in ${RPM}"
+[[ -n "${FOUND}" ]] || fail "No nvidia*.ko files found in ${RPM_FOR}"
 
-# Stage
 install -d -m 0755 "${MODBASE}"
 while IFS= read -r f; do
-  tgt="${MODBASE}/$(basename "${f%.*}")"  # strip .xz if present
-  if [[ "$f" == *.xz ]]; then
-    tmp="${f%.xz}"; xz -df "$f" && f="$tmp"
-  fi
-  install -m 0644 "$f" "${tgt}.ko"
+  # Normalize .ko(.xz) → .ko
+  if [[ "$f" == *.xz ]]; then xz -df "$f" || fail "Decompress failed for $f"; f="${f%.xz}"; fi
+  install -m 0644 "$f" "${MODBASE}/$(basename "$f")"
 done <<< "${FOUND}"
 log "Staged NVIDIA modules under ${MODBASE}"
 
-# SELinux labels so modprobe can read
 ensure_selinux_labels
 
-# Optional: sign all staged modules (Secure Boot)
+# Optional Secure Boot signing
 PRIV="/etc/pki/akmods/private/private_key.priv"
 PUB="/etc/pki/akmods/certs/public_key.der"
 if [[ -f "${PRIV}" && -f "${PUB}" && -x "$(command -v kmodsign || true)" ]]; then
   log "Signing NVIDIA modules with akmods key..."
-  for f in "${REQUIRED[@]}"; do kmodsign sha512 "${PRIV}" "${PUB}" "$f" || fail "kmodsign failed for $(basename "$f")"; done
+  for f in "${REQUIRED[@]}"; do
+    [[ -f "$f" ]] && kmodsign sha512 "${PRIV}" "${PUB}" "$f" || fail "kmodsign failed for $(basename "$f")"
+  done
 fi
 
-# Sanity: vermagic checks
-for f in "${REQUIRED[@]}"; do vermagic_ok "$f" || fail "vermagic mismatch for $(basename "$f")"; done
+# Sanity: all staged modules must match vermagic exactly
+for f in "${REQUIRED[@]}"; do
+  vermagic_ok "$f" || fail "vermagic mismatch for $(basename "$f")"
+done
 
 # Load them
 load_sequence
