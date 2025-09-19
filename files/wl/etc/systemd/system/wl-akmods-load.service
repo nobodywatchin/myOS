@@ -1,7 +1,9 @@
 [Unit]
-Description=Build & load Broadcom wl once per new kernel (ostree-safe)
-After=local-fs.target
-ConditionPathExists=/usr/local/sbin/wl-akmods-build.sh
+Description=Stage & load Broadcom wl early (immutable)
+DefaultDependencies=no
+After=local-fs.target sysinit.target
+Before=network-pre.target NetworkManager.service systemd-networkd.service display-manager.service flatpak-system-setup.service
+Wants=network-pre.target
 
 [Service]
 Type=oneshot
