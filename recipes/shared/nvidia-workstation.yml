@@ -22,3 +22,10 @@ modules:
     system:
       enabled:
       - nvidia-akmods-load.service
+
+  - type: kargs
+    kargs:
+      - rd.driver.blacklist=nouveau
+      - modprobe.blacklist=nouveau
+      - nvidia_drm.modeset=1
+      - nvidia_drm.fbdev=1
