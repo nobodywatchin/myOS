@@ -12,8 +12,8 @@ modules:
   - type: containerfile
     snippets:
       - RUN curl -s -L https://nvidia.github.io/libnvidia-container/stable/rpm/nvidia-container-toolkit.repo | tee /etc/yum.repos.d/nvidia-container-toolkit.repo
-      - RUN dnf config-manager --set-disabled libnvidia-container libnvidia-container-experimental nvidia-container-runtime nvidia-container-toolkit
-      - RUN dnf -y --enablerepo="libnvidia-container,nvidia-container-toolkit" install nvidia-container-toolkit 
+      - RUN dnf config-manager --set-disabled nvidia-container-toolkit
+      - RUN dnf -y --enablerepo="nvidia-container-toolkit" install nvidia-container-toolkit 
   
   - type: files
     files:
