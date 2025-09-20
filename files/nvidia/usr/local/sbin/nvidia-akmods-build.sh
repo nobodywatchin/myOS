@@ -104,9 +104,15 @@ _post_fail_hints() {
 
 # ---------------- Enforce proprietary flavor (Negativo17) ---------------------
 # Negativo17 default is 'kernel-open' on recent driver streams; Pascal needs 'kernel'
-if [[ ! -f /etc/nvidia/kernel.conf ]] || ! grep -qx 'kernel' /etc/nvidia/kernel.conf; then
-  log "Setting /etc/nvidia/kernel.conf to 'kernel' (proprietary modules)."
-  echo kernel > /etc/nvidia/kernel.conf
+if ! grep -q 'MODULE_VARIANT=kernel' /etc/nvidia/kernel.conf 2>/dev/null; then
+  log "Writing /etc/nvidia/kernel.conf for proprietary (closed) modules."
+  cat > /etc/nvidia/kernel.conf <<'EOF'
+# Selected NVIDIA kernel module flavor (proprietary vs open)
+# Valid values: kernel (proprietary), kernel-open (open)
+MODULE_VARIANT=kernel
+FLAVOR=kernel
+VARIANT=kernel
+EOF
 fi
 
 # ---------------- FAST PATH (but reject 'open' modules) -----------------------
