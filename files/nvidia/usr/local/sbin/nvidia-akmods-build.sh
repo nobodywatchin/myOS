@@ -24,7 +24,6 @@ for bin in "${need_tools[@]}"; do command -v "$bin" >/dev/null 2>&1 || fail "Mis
 _have_mod() { lsmod | awk '{print $1}' | grep -qx "$1"; }
 
 _copy_kernel_meta() {
-  # Give depmod a more complete view inside ${BASE}
   local src="/lib/modules/${KVER}"
   install -d -m 0755 "${BASE}"
   for f in modules.order modules.builtin modules.builtin.modinfo; do
@@ -35,7 +34,6 @@ _copy_kernel_meta() {
 _label_selinux() {
   if command -v selinuxenabled >/dev/null 2>&1 && selinuxenabled; then
     if command -v semanage >/dev/null 2>&1; then
-      # Modify rule if it exists, else add it
       semanage fcontext -a -t modules_object_t '/var/lib/nvidia-kmods(/.*)?' 2>/dev/null || \
       semanage fcontext -m -t modules_object_t '/var/lib/nvidia-kmods(/.*)?' 2>/dev/null || true
       restorecon -RF "${ROOT}" || true
@@ -47,74 +45,99 @@ _label_selinux() {
 }
 
 _try_unload_nouveau() {
-  # Best effort: if nouveau is loaded, try to remove it to avoid clashes
   if _have_mod nouveau; then
-    log "Detected nouveau loaded; attempting to unload (best effort)."
-    # common helpers sometimes hold references; try in a safe-ish order
-    sudo /usr/sbin/modprobe -r nouveau 2>/dev/null || true
-    _have_mod nouveau && {
-      log "Could not unload nouveau (in use). Consider reboot with nouveau blacklisted."
-      return 1
-    }
+    log "Detected nouveau loaded; attempting to unload."
+    /usr/sbin/modprobe -r nouveau 2>/dev/null || true
+    _have_mod nouveau && { log "Could not unload nouveau (in use). Consider reboot with nouveau blacklisted."; return 1; }
     log "Unloaded nouveau."
   fi
   return 0
 }
 
 _load_stack_from_staged() {
-  # Load in solid order; ignore missing pieces
   depmod -b "${ROOT}" "${KVER}"
-  local ok=0
+  # Load in a safe order; ignore missing
   for name in nvidia nvidia_modeset nvidia_drm nvidia_uvm nvidia_peermem; do
     local file="${MODDIR}/${name//_/-}.ko"
-    [[ -f "${file}" ]] || { continue; }
+    [[ -f "${file}" ]] || continue
     /usr/sbin/insmod "${file}" 2>/dev/null || \
     /usr/sbin/modprobe -S "${KVER}" -d "${ROOT}" "${name}" 2>/dev/null || true
   done
-  _have_mod nvidia && ok=1
-  return "${ok}"
+  _have_mod nvidia
 }
 
-post_fail_hints() {
-  # Tail a bigger window so we catch the first failure
-  local logtail
-  logtail="$(dmesg | tail -n 800 || true)"
-
-  if grep -q 'does not include the required GPU System Processor' <<<"$logtail"; then
-    log "Detected OpenRM/GSP error on a non-GSP GPU (e.g., Pascal)."
-    log "This script only stages the CLOSED/proprietary path. Ensure you do NOT have any '*-open' NVIDIA packages installed."
-    log "Then rebuild akmods for this kernel and rerun."
-    exit 42
+_ensure_nvidia_devnodes() {
+  # Prefer vendor helper
+  if command -v nvidia-modprobe >/dev/null 2>&1; then
+    nvidia-modprobe -u -c=0 || true
+  fi
+  # If still missing, create nodes from majors in /proc/devices
+  if [[ ! -e /dev/nvidiactl || ! -e /dev/nvidia0 ]]; then
+    local maj_nv maj_uvm
+    maj_nv="$(awk '/^Character devices:/{f=1;next}/^Block devices:/{f=0} f && $2=="nvidia"{print $1}' /proc/devices || true)"
+    maj_uvm="$(awk '/^Character devices:/{f=1;next}/^Block devices:/{f=0} f && $2=="nvidia-uvm"{print $1}' /proc/devices || true)"
+    [[ -n "${maj_nv}" ]] || { log "WARNING: No 'nvidia' major in /proc/devices yet."; return 1; }
+    [[ -e /dev/nvidiactl ]] || mknod -m 0666 /dev/nvidiactl c "${maj_nv}" 255
+    [[ -e /dev/nvidia0   ]] || mknod -m 0666 /dev/nvidia0   c "${maj_nv}" 0
+    if [[ -n "${maj_uvm}" ]]; then
+      [[ -e /dev/nvidia-uvm       ]] || mknod -m 0666 /dev/nvidia-uvm       c "${maj_uvm}" 0
+      [[ -e /dev/nvidia-uvm-tools ]] || mknod -m 0666 /dev/nvidia-uvm-tools c "${maj_uvm}" 1
+    fi
+    if getent group video >/dev/null 2>&1; then
+      chgrp video /dev/nvidia* 2>/dev/null || true
+      chmod 0660 /dev/nvidia* 2>/dev/null || true
+    else
+      chmod 0666 /dev/nvidia* 2>/dev/null || true
+    fi
   fi
   return 0
 }
 
-# ---------------- FAST PATH ---------------------------------------------------
+_post_fail_hints() {
+  local logtail; logtail="$(dmesg | tail -n 800 || true)"
+  if grep -q 'does not include the required GPU System Processor' <<<"$logtail"; then
+    log "Detected OpenRM/GSP error on a non-GSP GPU (e.g., Pascal)."
+    log "Ensure /etc/nvidia/kernel.conf contains 'kernel' (proprietary) and rebuild akmods."
+    exit 42
+  fi
+}
+
+# ---------------- Enforce proprietary flavor (Negativo17) ---------------------
+# Negativo17 default is 'kernel-open' on recent driver streams; Pascal needs 'kernel'
+if [[ ! -f /etc/nvidia/kernel.conf ]] || ! grep -qx 'kernel' /etc/nvidia/kernel.conf; then
+  log "Setting /etc/nvidia/kernel.conf to 'kernel' (proprietary modules)."
+  echo kernel > /etc/nvidia/kernel.conf
+fi
+
+# ---------------- FAST PATH (but reject 'open' modules) -----------------------
+if [[ -f "${MODPATH}" ]]; then
+  lic="$(/usr/sbin/modinfo -l "${MODPATH}" 2>/dev/null || true)"
+  if [[ "${lic}" == "Dual MIT/GPL" ]]; then
+    log "Found staged kernel-open module on a non-GSP GPU; removing staged tree."
+    rm -rf "${ROOT}"
+  fi
+fi
+
 if [[ -f "${MODPATH}" ]]; then
   log "Fast path candidate found at ${MODPATH}."
   _label_selinux
   _copy_kernel_meta
-  if _try_unload_nouveau; then
-    if _load_stack_from_staged; then
+  if _try_unload_nouveau && _load_stack_from_staged; then
+    _ensure_nvidia_devnodes || true
+    if lsmod | grep -q '^nvidia\s' && nvidia-smi -L >/dev/null 2>&1; then
       log "Loaded NVIDIA modules (fast path)."
       exit 0
-    else
-      log "Fast path load failed; will try build path."
     fi
-  else
-    log "Fast path blocked by nouveau; will try build path."
+    log "Fast path load incomplete; will try build path."
   fi
 fi
 
-# ---------------- SLOW PATH: build via akmods ---------------------------------
-# We only need akmods to *produce* an RPM in the cache; install is not required.
-if ! command -v akmods >/dev/null 2>&1; then
-  fail "Missing tool: akmods"
-fi
+# ---------------- SLOW PATH: build via akmods, extract only -------------------
+command -v akmods >/dev/null 2>&1 || fail "Missing tool: akmods"
 rpm -q "kernel-devel-${KVER}" >/dev/null 2>&1 || \
   fail "Missing kernel-devel for ${KVER} (dnf -y install kernel-devel-${KVER})"
 
-log "Building akmod 'nvidia' for ${KVER} (immutable-safe: cache artefact only)..."
+log "Building akmod 'nvidia' for ${KVER} (immutable-safe: producing cache artefact only)."
 /usr/sbin/akmods --kernels "${KVER}" --akmod nvidia || \
   log "WARNING: akmods returned non-zero (install likely failed on immutable base); continuing."
 
@@ -122,7 +145,6 @@ RPM="$(ls -1t \
   "${CACHE_DIR}"/*-for-"${KVER}".rpm \
   "${CACHE_DIR}"/kmod-nvidia-*.rpm \
   2>/dev/null | head -n1 || true)"
-
 [[ -n "${RPM}" && -f "${RPM}" ]] || {
   log "Build logs (if any):"; ls -1 "${CACHE_DIR}"/*-for-"${KVER}".{log,failed.log} 2>/dev/null || true
   fail "No kmod-nvidia RPM produced for ${KVER}."
@@ -165,19 +187,21 @@ if [[ -f "${PRIV}" && -f "${PUB}" && -x "$(command -v kmodsign || true)" ]]; the
   done
 fi
 
-# --------- Try to load (then validate on failure) -----------------------------
+# --------- Load & verify ------------------------------------------------------
 if _try_unload_nouveau && _load_stack_from_staged; then
-  log "Loaded NVIDIA modules (build path)."
-  exit 0
+  _ensure_nvidia_devnodes || true
+  if nvidia-smi -L >/dev/null 2>&1; then
+    log "Loaded NVIDIA modules (build path)."
+    exit 0
+  fi
 fi
 
-# If we got here, loading failed. Provide useful diagnostics.
+# Diagnostics if we reach here
 VMOD="$(/usr/sbin/modinfo -F vermagic "${MODPATH}" 2>/dev/null | awk '{print $1}')"
 if [[ -n "${VMOD}" && "${VMOD}" != "${KVER}" ]]; then
-  log "Note: vermagic for nvidia.ko is ${VMOD}, running kernel is ${KVER}."
-  log "If Secure Boot is on, ensure the akmods key is enrolled (MOK) and modules are signed."
+  log "Note: vermagic=${VMOD}, running kernel=${KVER}. If Secure Boot is on, ensure MOK enrolled and modules signed."
 fi
 
-post_fail_hints
+_post_fail_hints
 dmesg | tail -n 200 || true
 fail "Failed to load NVIDIA modules."
