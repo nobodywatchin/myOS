@@ -1,13 +1,14 @@
 [Unit]
-Description=Stage & load NVIDIA early (immutable)
+Description=Stage & load NVIDIA modules
 DefaultDependencies=no
-After=local-fs.target sysinit.target
-Before=display-manager.service gdm.service sddm.service plymouth-quit.service
-Wants=local-fs.target
+After=local-fs.target systemd-modules-load.service akmods.service
+Before=display-manager.service graphical.target
+ConditionPathExists=/usr/local/sbin/nvidia-akmods-build.sh
 
 [Service]
 Type=oneshot
 ExecStart=/usr/local/sbin/nvidia-akmods-build.sh
+TimeoutStartSec=5min
 RemainAfterExit=yes
 
 [Install]
