@@ -31,7 +31,6 @@ modules:
     snippets:
       - RUN chmod 0755 /usr/local/sbin/nvidia-akmods-build.sh
       - RUN chmod 0755 /usr/local/sbin/nvidia-cdi-ensure.sh
-      - RUN dracut -f
 
   - type: systemd
     system:
