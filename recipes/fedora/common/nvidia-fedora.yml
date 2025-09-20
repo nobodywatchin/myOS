@@ -4,7 +4,6 @@ modules:
     repos:
       files:
         - https://negativo17.org/repos/fedora-nvidia.repo
-        - https://nvidia.github.io/libnvidia-container/stable/rpm/nvidia-container-toolkit.repo
     install:
       packages:
         - akmod-nvidia
@@ -15,8 +14,3 @@ modules:
         - nvidia-modprobe
         - nvidia-persistenced
         - libnvidia-ml
-        # NVIDIA Container Toolkit (pin if you want; or drop =… to float)
-        - nvidia-container-toolkit-1.17.8-1
-        - nvidia-container-toolkit-base-1.17.8-1
-        - libnvidia-container-tools-1.17.8-1
-        - libnvidia-container1-1.17.8-1

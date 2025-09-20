@@ -9,6 +9,12 @@ modules:
         - nvidia-libXNVCtrl
         - nvidia-libXNVCtrl-devel
   
+  - type: containerfile
+    snippets:
+      - RUN curl -s -L https://nvidia.github.io/libnvidia-container/stable/rpm/nvidia-container-toolkit.repo | tee /etc/yum.repos.d/nvidia-container-toolkit.repo
+      - RUN dnf config-manager --set-disabled libnvidia-container libnvidia-container-experimental nvidia-container-runtime nvidia-container-toolkit
+      - RUN dnf -y --enablerepo="libnvidia-container,nvidia-container-toolkit" install nvidia-container-toolkit 
+  
   - type: files
     files:
       - source: nvidia 
@@ -17,11 +23,13 @@ modules:
   - type: containerfile
     snippets:
       - RUN chmod 0755 /usr/local/sbin/nvidia-akmods-build.sh
+      - RUN chmod 0755 /usr/local/sbin/nvidia-cdi-ensure.sh
   
   - type: systemd
     system:
       enabled:
       - nvidia-akmods-load.service
+      - nvidia-cdi-ensure.service
 
   - type: kargs
     kargs:
