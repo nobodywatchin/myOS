@@ -2,6 +2,9 @@
 modules:
   - type: soar
     additional-repos: true
+  - type: brew
+    nofile-limits: true 
+    brew-analytics: false 
   - type: dnf
     remove:
       packages:
