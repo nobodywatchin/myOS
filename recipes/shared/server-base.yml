@@ -1,6 +1,7 @@
 ---
 modules:
   - type: soar
+    additional-repos: true
   - type: dnf
     remove:
       packages:
