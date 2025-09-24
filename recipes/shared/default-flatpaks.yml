@@ -42,9 +42,6 @@ modules:
     files:
       - source: flatpak
         destination: /
-  - type: script
-    scripts:
-      - flatpak-blocklist.sh
   - type: containerfile
     snippets:
       - RUN chmod 0755 /usr/local/sbin/apply-flatpak-blocklist.sh
@@ -52,4 +49,3 @@ modules:
     system:
       enabled:
         - flatpak-hide-org-system.service
-        - flatpak-apply-user-filter.service
