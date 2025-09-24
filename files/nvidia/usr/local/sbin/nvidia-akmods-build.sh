@@ -4,10 +4,15 @@
 # Purpose: Prefer loading pre-staged NVIDIA kmods for the running kernel; if stale/missing,
 #          build akmods, stage them under /var/lib/nvidia-kmods/$KVER, and then load.
 # Notes:
-#   - Flatpak-first, immutable-friendly: builds to cache; installs staged .ko into a private root.
-#   - Handles driver upgrades (EVR mismatch) and kernel upgrades (KVER mismatch).
-#   - Tries to unload nouveau; sets DRM modeset=1/fbdev=1 for Wayland stability.
-#   - Safe to run at boot (before graphical.target) or on demand.
+#   - Detects if an NVIDIA GPU is present; exits immediately if not.
+#   - Uses pre-staged NVIDIA kernel modules under /var/lib/nvidia-kmods/$KVER when valid.
+#   - Detects driver upgrades (EVR mismatch) or stale modules and rebuilds them with akmods.
+#   - Signs modules automatically if Secure Boot is enabled and keys are available.
+#   - Fails with clear instructions if Secure Boot is enabled but signing cannot be done (unless bypassed).
+#   - Unloads nouveau if present, applies SELinux labels, and mirrors modprobe options into the staged root.
+#   - Creates /dev/nvidia* device nodes with correct permissions if they are missing.
+#   - Concurrency lock prevents multiple runs from racing at boot or on demand.
+#   - Safe to run manually or as a systemd unit before the display manager/graphical.target.
 
 set -Eeuo pipefail
 
