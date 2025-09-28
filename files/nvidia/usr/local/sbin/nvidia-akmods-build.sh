@@ -57,18 +57,32 @@ exec 9>"${LOCK}"
 flock -n 9 || fail "Another nvidia-akmods run is in progress."
 
 # ---------------- PRE-FLIGHT CHECKS ------------------------------------------
-# Skip on hosts/VMs without an NVIDIA GPU to avoid wasted work
-if command -v lspci >/dev/null 2>&1; then
-  if ! lspci -nn | grep -qiE '(^|\s)(3d controller|vga compatible controller):.*NVIDIA'; then
-    log "No NVIDIA GPU detected; nothing to do."
-    exit 0
+# Robust NVIDIA GPU detection (works with iGPU+dGPU/eGPU)
+_has_nvidia_gpu() {
+  if command -v lspci >/dev/null 2>&1; then
+    # Any NVIDIA device with a display/3D class (0300 VGA or 0302 3D)
+    if lspci -n -d 10de: | awk '{print $2}' | grep -qiE '^0300:|^0302:'; then
+      return 0
+    fi
   fi
-else
-  # Fallback: check vendor 0x10de in sysfs
-  if ! grep -qi '^0x10de$' /sys/bus/pci/devices/*/vendor 2>/dev/null; then
-    log "No NVIDIA GPU detected (sysfs); nothing to do."
-    exit 0
-  fi
+  # Sysfs fallback: vendor 0x10de and class 0x03xxxx
+  for d in /sys/bus/pci/devices/*; do
+    [[ -f "$d/vendor" && -f "$d/class" ]] || continue
+    v="$(cat "$d/vendor" 2>/dev/null)"
+    c="$(cat "$d/class"  2>/dev/null)"
+    if [[ "$v" == "0x10de" && "$c" == 0x03* ]]; then
+      return 0
+    fi
+  done
+  return 1
+}
+
+# Skip if no NVIDIA GPU detected
+if ! _has_nvidia_gpu; then
+  log "No NVIDIA GPU detected; nothing to do."
+  # Helpful debug if lspci exists
+  command -v lspci >/dev/null 2>&1 && lspci -nn | grep -i nvidia || true
+  exit 0
 fi
 
 # Ensure hard dependencies exist (rpm2cpio, cpio, xz for extracting cache RPMs, etc.)
