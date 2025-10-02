@@ -3,4 +3,4 @@ import '/usr/share/myos/just/update.just'
 import '/usr/share/myos/just/rebase.just'
 
 default:
-  just --list
+  myos --list
