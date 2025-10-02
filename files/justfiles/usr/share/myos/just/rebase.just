@@ -1,6 +1,3 @@
-REGISTRY := default(env_var("REGISTRY"), "ghcr.io")
-OWNER    := default(env_var("OWNER"), "nobodywatchin")
-
 set shell := ["bash", "-eu", "-o", "pipefail", "-c"]
 
 rebase:
@@ -19,7 +16,7 @@ rebase:
 
     test -n "$sel" || { echo "No image selected"; exit 1; }
 
-    ref="{{REGISTRY}}/{{OWNER}}/${sel}"
+    ref="ghcr.io/nobodywatchin/${sel}"
     echo "Selected: $ref"
     echo "Executing: sudo bootc switch $ref"
     sudo bootc switch "$ref"
