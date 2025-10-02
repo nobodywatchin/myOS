@@ -1,0 +1,10 @@
+#!/bin/sh
+
+JUSTFILE="/usr/share/myos/just/index.just"
+
+if [ ! -f "$JUSTFILE" ]; then
+  echo "myos: justfile not found at $JUSTFILE" >&2
+  exit 1
+fi
+
+exec /usr/bin/just --justfile "$JUSTFILE" "$@"

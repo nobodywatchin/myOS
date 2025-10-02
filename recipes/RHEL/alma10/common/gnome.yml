@@ -43,6 +43,8 @@ modules:
         - pciutils
         - pinentry-gnome3
         - plymouth
+        - plymouth-system-theme
+        - plymouth-plugin-script
         - polkit
         - psacct
         - qt6-qtbase
@@ -173,8 +175,6 @@ modules:
 
         # --- Desktop niceties
         - wl-clipboard
-        # (plymouth comes from the group already)
-        - plymouth-system-theme
         - flatpak
 
         # --- Systemd extras
