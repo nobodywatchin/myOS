@@ -1,5 +1,5 @@
-REGISTRY := env_var("REGISTRY", "ghcr.io")
-OWNER    := env_var("OWNER", "nobodywatchin")
+REGISTRY := default(env_var("REGISTRY"), "ghcr.io")
+OWNER    := default(env_var("OWNER"), "nobodywatchin")
 
 set shell := ["bash", "-eu", "-o", "pipefail", "-c"]
 
