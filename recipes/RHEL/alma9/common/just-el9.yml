@@ -9,4 +9,4 @@ modules:
         destination: /
   - type: containerfile # makes wrapper run as program
     snippets:
-      - RUN chmod 0755 /usr/local/bin/just
+      - RUN chmod 0755 /usr/local/bin/myos
