@@ -1,17 +1,18 @@
-set shell := ["bash", "-eu", "-o", "pipefail", "-c"]
-
 rebase:
+    #!/usr/bin/env bash
+    set -euo pipefail
+
     command -v fzf >/dev/null || { echo "Missing 'fzf'."; exit 1; }
 
     sel="$(
-        printf '%s\n' \
+      printf '%s\n' \
         fedora42:latest \
         fedora42-nvidia:latest \
         alma10:latest \
         alma10-nvidia:latest \
         alma9:latest \
         alma9-nvidia:latest \
-        | fzf --prompt='Select image: '
+      | fzf --prompt='Select image: '
     )"
 
     test -n "$sel" || { echo "No image selected"; exit 1; }

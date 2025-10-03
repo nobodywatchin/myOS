@@ -26,3 +26,15 @@ update-all:
   just update-user
   just update-podman
   just update-firmware
+
+# Update Chooser
+update:
+    #!/usr/bin/env bash
+    set -euo pipefail
+    sel="$(fzf --prompt='Update: ' --height=15 --border --exit-0 \
+          --with-nth=2.. \
+          <<< $'update-system    Update System Flatpaks and OS Image\nupdate-user      Update User Flatpaks and Distrobox Containers\nupdate-podman    Update Podman Containers\nupdate-firmware  Update Firmware\nupdate-all       Update Everything\n')"
+    [[ -n "$sel" ]] || { echo "No selection."; exit 0; }
+    target="${sel%% *}"
+    echo "→ Running: just ${target}"
+    exec just "${target}"
