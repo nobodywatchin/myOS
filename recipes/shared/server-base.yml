@@ -13,6 +13,7 @@ modules:
       install-weak-deps: false
       packages:
         # Core
+        - lshw
         - dnf-plugins-core
         - audit
         - rpm-plugin-audit

@@ -22,10 +22,10 @@ update-firmware:
 
 # Update Everything
 update-all:
-  just update-system
-  just update-user
-  just update-podman
-  just update-firmware
+  myos update-system
+  myos update-user
+  myos update-podman
+  myos update-firmware
 
 # Update Chooser
 update:
@@ -37,4 +37,4 @@ update:
     [[ -n "$sel" ]] || { echo "No selection."; exit 0; }
     target="${sel%% *}"
     echo "→ Running: just ${target}"
-    exec just "${target}"
+    exec myos "${target}"
