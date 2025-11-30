@@ -71,6 +71,7 @@ modules:
         - ifuse
         - libmtp
         - libgphoto2
+        - android-tools
 
         # Icon Theme
         - morewaita-icon-theme
