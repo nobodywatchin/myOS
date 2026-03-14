@@ -66,6 +66,7 @@ modules:
 
         # Apple & Android Device Integrations
         - uxplay
+        - usbmuxd
         - libimobiledevice
         - libimobiledevice-utils
         - libimobiledevice-glue
