@@ -8,6 +8,6 @@ modules:
       packages:
         - nvidia-driver-cuda
         - kmod-nvidia-open-dkms
-        - cuda-runtime-13-1-0
-        - cuda-compat-13-1-3
+        - cuda-runtime
+        - cuda-compat
         - nvidia-container-toolkit
