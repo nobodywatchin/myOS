@@ -1,5 +1,5 @@
 ---
-modules:  
+modules:
   - type: dnf
     repos:
       files:
@@ -8,5 +8,7 @@ modules:
       packages:
         - nvidia-driver-cuda
         - kmod-nvidia-open-dkms
-        - cuda-runtime-13-1-0
+        - cuda-runtime-13-1
+        - libcudnn9-cuda-13
+        - libnccl
         - nvidia-container-toolkit
