@@ -1,37 +1,14 @@
 ---
-modules:
+modules:  
   - type: dnf
     repos:
       files:
-        - https://negativo17.org/repos/epel-nvidia.repo
+        - https://developer.download.nvidia.com/compute/cuda/repos/rhel10/x86_64/cuda-rhel10.repo
     install:
       packages:
-        - akmod-nvidia
-        - nvidia-driver
-        - nvidia-driver-libs
         - nvidia-driver-cuda
-        - nvidia-driver-cuda-libs
-        - nvidia-modprobe
-        - nvidia-persistenced
-        - libnvidia-ml
-  - type: containerfile
-    snippets:
-      - RUN curl -s -L https://nvidia.github.io/libnvidia-container/stable/rpm/nvidia-container-toolkit.repo | tee /etc/yum.repos.d/nvidia-container-toolkit.repo
-      - RUN dnf config-manager --set-disabled "nvidia-container-toolkit"
-      - RUN dnf -y --enablerepo "nvidia-container-toolkit" install nvidia-container-toolkit nvidia-container-toolkit-base libnvidia-container-tools libnvidia-container1
-  
-  - type: files
-    files:
-      - source: nvidia 
-        destination: /
-  
-  - type: containerfile
-    snippets:
-      - RUN chmod 0755 /usr/local/sbin/nvidia-akmods-build.sh
-      - RUN chmod 0755 /usr/local/sbin/nvidia-cdi-ensure.sh
-  
-  - type: systemd
-    system:
-      enabled:
-      - nvidia-akmods-load.service
-      - nvidia-cdi-ensure.service
+        - kmod-nvidia-open-dkms
+        - cuda-runtime-runtime-13-1-0
+        - libcudnn9-cuda-13-0
+        - libnccl
+        - nvidia-container-toolkit

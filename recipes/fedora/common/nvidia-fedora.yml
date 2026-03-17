@@ -3,37 +3,11 @@ modules:
   - type: dnf
     repos:
       files:
-        - https://negativo17.org/repos/fedora-nvidia.repo
+        - https://developer.download.nvidia.com/compute/cuda/repos/fedora42/x86_64/cuda-fedora42.repo
     install:
       packages:
-        - akmod-nvidia
-        - nvidia-driver
-        - nvidia-driver-libs
         - nvidia-driver-cuda
-        - nvidia-driver-cuda-libs
-        - nvidia-modprobe
-        - nvidia-persistenced
-        - libnvidia-ml
-
-  - type: containerfile
-    snippets:
-      - RUN dnf -y install dnf5-plugins
-      - RUN dnf config-manager addrepo --from-repofile=https://nvidia.github.io/libnvidia-container/stable/rpm/nvidia-container-toolkit.repo
-      - RUN dnf config-manager setopt nvidia-container-toolkit.enabled=0
-      - RUN dnf -y --enablerepo=nvidia-container-toolkit install nvidia-container-toolkit nvidia-container-toolkit-base libnvidia-container-tools libnvidia-container1
-
-  - type: files
-    files:
-      - source: nvidia 
-        destination: /
-  
-  - type: containerfile
-    snippets:
-      - RUN chmod 0755 /usr/local/sbin/nvidia-akmods-build.sh
-      - RUN chmod 0755 /usr/local/sbin/nvidia-cdi-ensure.sh
-
-  - type: systemd
-    system:
-      enabled:
-      - nvidia-akmods-load.service
-      - nvidia-cdi-ensure.service
+        - kmod-nvidia-open-dkms
+        - cuda-runtime-13-1-0
+        - cuda-compat-13-1-3
+        - nvidia-container-toolkit
