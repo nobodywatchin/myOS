@@ -1,14 +1,12 @@
 ---
 modules:
   - type: dnf
-    repos:
-      files:
-        - https://developer.download.nvidia.com/compute/cuda/repos/rhel10/x86_64/cuda-rhel10.repo
     install:
       packages:
+        - almalinux-release-nvidia-driver
+  - type: dnf
+    install:
+      packages:
+        - nvidia-open-kmod
+        - nvidia-driver
         - nvidia-driver-cuda
-        - kmod-nvidia-open-dkms
-        - cuda-runtime-13-1
-        - libcudnn9-cuda-13
-        - libnccl
-        - nvidia-container-toolkit
