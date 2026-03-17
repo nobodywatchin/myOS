@@ -11,3 +11,9 @@ modules:
         - cuda-runtime-13-1
         - cuda-compat
         - nvidia-container-toolkit
+  - type: containerfile
+    snippets:
+      - RUN dnf -y install dnf5-plugins
+      - RUN dnf config-manager addrepo --from-repofile=https://nvidia.github.io/libnvidia-container/stable/rpm/nvidia-container-toolkit.repo
+      - RUN dnf config-manager setopt nvidia-container-toolkit.enabled=0
+      - RUN dnf -y --enablerepo=nvidia-container-toolkit install nvidia-container-toolkit nvidia-container-toolkit-base libnvidia-container-tools libnvidia-container1
