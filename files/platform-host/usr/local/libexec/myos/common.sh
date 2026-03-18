@@ -51,6 +51,10 @@ tenant_secret_dir() {
   printf '%s/zone-c/secrets\n' "$(tenant_root "$1")"
 }
 
+tenant_state_dir() {
+  printf '%s/zone-c/state\n' "$(tenant_root "$1")"
+}
+
 ensure_dir() {
   local mode="$1"
   local owner="$2"
@@ -112,6 +116,20 @@ escape_sed() {
   printf '%s' "$1" | sed 's/[|&\\]/\\&/g'
 }
 
+generate_secret_value() {
+  if command -v openssl >/dev/null 2>&1; then
+    openssl rand -hex 32
+    return 0
+  fi
+
+  if command -v python3 >/dev/null 2>&1; then
+    python3 -c 'import secrets; print(secrets.token_hex(32))'
+    return 0
+  fi
+
+  od -An -N32 -tx1 /dev/urandom | tr -d ' \n'
+}
+
 render_template_file() {
   local src="$1"
   local dest="$2"
@@ -121,6 +139,7 @@ render_template_file() {
     -e "s|__TENANT_ROOT__|$(escape_sed "${TENANT_ROOT:-}")|g" \
     -e "s|__TENANT_HOME__|$(escape_sed "${TENANT_HOME:-}")|g" \
     -e "s|__OPENCLAW_PORT__|$(escape_sed "${OPENCLAW_PORT:-}")|g" \
+    -e "s|__OPENCLAW_BRIDGE_PORT__|$(escape_sed "${OPENCLAW_BRIDGE_PORT:-}")|g" \
     -e "s|__BROWSER_PORT__|$(escape_sed "${BROWSER_PORT:-}")|g" \
     -e "s|__PARSER_PORT__|$(escape_sed "${PARSER_PORT:-}")|g" \
     -e "s|__CONTROL_PORT__|$(escape_sed "${CONTROL_PORT:-}")|g" \
@@ -130,6 +149,7 @@ render_template_file() {
     -e "s|__BROWSER_IMAGE__|$(escape_sed "${BROWSER_IMAGE:-}")|g" \
     -e "s|__PARSER_IMAGE__|$(escape_sed "${PARSER_IMAGE:-}")|g" \
     -e "s|__AGENT_IMAGE__|$(escape_sed "${AGENT_IMAGE:-}")|g" \
+    -e "s|__OPENCLAW_GATEWAY_TOKEN__|$(escape_sed "${OPENCLAW_GATEWAY_TOKEN:-}")|g" \
     "$src" > "$dest"
 }
 

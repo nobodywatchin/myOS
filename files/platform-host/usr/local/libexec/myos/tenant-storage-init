@@ -35,8 +35,11 @@ ensure_user "$tenant"
 
 TENANT_ROOT="$(tenant_root "$tenant")"
 TENANT_HOME="$(tenant_home "$tenant")"
+SKEL_README="/srv/tenants/.skel/README.md"
+LEGACY_SKEL_README="/var/srv/tenants/README.md"
 
 ensure_dir 0755 root root "$TENANT_BASE"
+ensure_dir 0755 root root "/srv/tenants/.skel"
 ensure_dir 0750 "$tenant" "$tenant" "$TENANT_ROOT"
 ensure_dir 0750 "$tenant" "$tenant" "$TENANT_HOME"
 ensure_dir 0750 "$tenant" "$tenant" "$(tenant_config_root "$tenant")"
@@ -47,16 +50,24 @@ ensure_dir 0750 "$tenant" "$tenant" "${TENANT_ROOT}/config/dns"
 ensure_dir 0750 "$tenant" "$tenant" "${TENANT_ROOT}/config/rendered"
 ensure_dir 0750 "$tenant" "$tenant" "${TENANT_ROOT}/logs"
 ensure_dir 0750 "$tenant" "$tenant" "${TENANT_ROOT}/quadlets"
-ensure_dir 0750 "$tenant" "$tenant" "${TENANT_ROOT}/zone-a/agent"
-ensure_dir 0750 "$tenant" "$tenant" "${TENANT_ROOT}/zone-a/openclaw"
-ensure_dir 0750 "$tenant" "$tenant" "${TENANT_ROOT}/zone-b/browser"
-ensure_dir 0750 "$tenant" "$tenant" "${TENANT_ROOT}/zone-b/parser"
-ensure_dir 0750 "$tenant" "$tenant" "${TENANT_ROOT}/zone-b/downloads"
 ensure_dir 0750 "$tenant" "$tenant" "${TENANT_ROOT}/zone-c/storage"
 ensure_dir 0700 "$tenant" "$tenant" "${TENANT_ROOT}/zone-c/secrets"
 ensure_dir 0750 "$tenant" "$tenant" "${TENANT_ROOT}/zone-c/state"
 
-write_if_missing 0640 "$tenant" "$tenant" /srv/tenants/.skel/README.md "${TENANT_ROOT}/README.md"
-restorecon_if_available "$TENANT_ROOT"
+if [ ! -e "$SKEL_README" ]; then
+  if [ -e "$LEGACY_SKEL_README" ]; then
+    install -D -m 0644 -o root -g root "$LEGACY_SKEL_README" "$SKEL_README"
+  else
+    cat > "$SKEL_README" <<'EOF_README'
+# Tenant storage root
+
+Each provisioned tenant receives an isolated subtree under `/srv/tenants/<tenant>/`.
+EOF_README
+    chmod 0644 "$SKEL_README"
+  fi
+fi
+
+write_if_missing 0640 "$tenant" "$tenant" "$SKEL_README" "${TENANT_ROOT}/README.md"
+restorecon_if_available "/srv/tenants/.skel" "$TENANT_ROOT"
 
 log "storage scaffold ready for tenant ${tenant} at ${TENANT_ROOT}"

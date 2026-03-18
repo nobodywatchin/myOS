@@ -1,19 +1,23 @@
 [Unit]
-Description=OpenClaw tenant runtime for __TENANT__
+Description=OpenClaw tenant gateway for __TENANT__
 After=network-online.target
 Wants=network-online.target
 
 [Container]
-Pod=openclaw-stack.pod
 Image=__OPENCLAW_IMAGE__
 ContainerName=openclaw-__TENANT__
 AutoUpdate=registry
+UserNS=keep-id
+Network=slirp4netns:allow_host_loopback=true
+PublishPort=127.0.0.1:__OPENCLAW_PORT__:18789
+PublishPort=127.0.0.1:__OPENCLAW_BRIDGE_PORT__:18790
 EnvironmentFile=__TENANT_ROOT__/config/env/ports.env
 EnvironmentFile=__TENANT_ROOT__/config/env/common.env
 EnvironmentFile=__TENANT_ROOT__/config/env/openclaw.env
 EnvironmentFile=__TENANT_ROOT__/zone-c/secrets/openclaw.secrets.env
-Volume=__TENANT_ROOT__/zone-a/openclaw:/var/lib/openclaw:Z,U
-Volume=__TENANT_ROOT__/zone-c/storage:/srv/openclaw-storage:Z,U
+Volume=__TENANT_ROOT__/zone-c/state:/home/node/.openclaw:Z,U
+Volume=__TENANT_ROOT__/zone-c/storage:/home/node/.openclaw/workspace:Z,U
+Volume=__TENANT_ROOT__/logs:/tmp/openclaw:Z,U
 
 [Install]
 WantedBy=default.target

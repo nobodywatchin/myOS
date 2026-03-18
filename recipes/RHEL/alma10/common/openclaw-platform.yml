@@ -27,6 +27,7 @@ modules:
         /etc/myos/proxy/tenants /etc/myos/ramalama /etc/myos/ramalama/models
         /etc/myos/templates /etc/myos/templates/openclaw /etc/myos/tenants
         /srv/models /srv/models/ramalama /srv/tenants /srv/tenants/.skel
+      - RUN install -D -m 0644 /var/srv/tenants/README.md /srv/tenants/.skel/README.md
       - >-
         RUN install -d -m 0755 /usr/local/libexec/myos /var/lib/modelsvc/.config
         /var/lib/modelsvc/.local/share

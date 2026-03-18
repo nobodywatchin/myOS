@@ -51,8 +51,8 @@ cat > "/etc/myos/firewall/rendered/${tenant}.plan" <<EOF_PLAN
 # Shared ingress should terminate on nginx and proxy only:
 #   OpenClaw gateway: http://127.0.0.1:${OPENCLAW_PORT}
 #
-# Browser, parser, and control services stay pod-local by default and are not
-# published on the host unless an operator adds explicit reviewable overrides.
+# The OpenClaw bridge stays on loopback only:
+#   OpenClaw bridge: http://127.0.0.1:${OPENCLAW_BRIDGE_PORT}
 #
 # Future egress controls belong in:
 #   /etc/myos/firewall/tenants/${tenant}.env

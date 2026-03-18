@@ -61,22 +61,25 @@ if [ -f "$(tenant_env_dir "$tenant")/openclaw.env" ]; then
   . "$(tenant_env_dir "$tenant")/openclaw.env"
 fi
 
-if [ -f "$(tenant_env_dir "$tenant")/browser.env" ]; then
-  # shellcheck disable=SC1090
-  . "$(tenant_env_dir "$tenant")/browser.env"
-fi
-
-MODEL_ENDPOINT="${MODEL_ENDPOINT:-http://host.containers.internal:18080}"
 PUBLIC_HOSTNAME="${PUBLIC_HOSTNAME:-${tenant}.example.invalid}"
-OPENCLAW_IMAGE="${OPENCLAW_IMAGE:-registry.example.invalid/openclaw/runtime:stable}"
-BROWSER_IMAGE="${BROWSER_IMAGE:-registry.example.invalid/openclaw/browser-zone:stable}"
-PARSER_IMAGE="${PARSER_IMAGE:-registry.example.invalid/openclaw/parser-zone:stable}"
-AGENT_IMAGE="${AGENT_IMAGE:-registry.example.invalid/openclaw/agent-zone:stable}"
+OPENCLAW_BRIDGE_PORT="${OPENCLAW_BRIDGE_PORT:-${CONTROL_PORT:-}}"
+
+case "${OPENCLAW_IMAGE:-}" in
+  ""|"registry.example.invalid/openclaw/runtime:stable"|"YOUR_REGISTRY/openclaw/runtime:stable")
+    OPENCLAW_IMAGE="ghcr.io/openclaw/openclaw:latest"
+    ;;
+esac
 
 ensure_dir 0750 "$tenant" "$tenant" "${TENANT_HOME}/.config"
 ensure_dir 0750 "$tenant" "$tenant" "${TENANT_HOME}/.config/containers"
 ensure_dir 0750 "$tenant" "$tenant" "${TENANT_HOME}/.config/containers/systemd"
 ensure_dir 0750 "$tenant" "$tenant" "${TENANT_ROOT}/config/rendered"
+
+rm -f \
+  "${TENANT_HOME}/.config/containers/systemd/openclaw-stack.pod" \
+  "${TENANT_HOME}/.config/containers/systemd/browser-zone.container" \
+  "${TENANT_HOME}/.config/containers/systemd/zone-a-agent.container" \
+  "${TENANT_HOME}/.config/containers/systemd/zone-b-parser.container"
 
 find "${TEMPLATE_BASE}/quadlets" -maxdepth 1 -type f \( -name '*.pod' -o -name '*.container' \) | sort | while read -r template; do
   target="${TENANT_HOME}/.config/containers/systemd/$(basename "$template")"

@@ -1,7 +1,7 @@
-# Trust zones
+# Deployment shape
 
-The tenant template tree assumes three trust zones.
+The tenant template tree now runs a single rootless OpenClaw gateway container.
 
-- Zone A: trusted control-plane and agent services
-- Zone B: hostile-input browser and parsing workloads
-- Zone C: storage and secrets kept separate from execution paths
+- `zone-c/state/` holds the OpenClaw config tree mounted at `/home/node/.openclaw`.
+- `zone-c/storage/` holds the persistent workspace mounted at `/home/node/.openclaw/workspace`.
+- `zone-c/secrets/` stays outside the config tree for host-managed env files.
