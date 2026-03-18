@@ -109,7 +109,7 @@ ensure_subid_range() {
 }
 
 escape_sed() {
-  printf '%s' "$1" | sed 's/[\\/&]/\\\\&/g'
+  printf '%s' "$1" | sed 's/[|&\\]/\\&/g'
 }
 
 render_template_file() {
@@ -117,19 +117,19 @@ render_template_file() {
   local dest="$2"
 
   sed \
-    -e "s/__TENANT__/$(escape_sed "${TENANT}")/g" \
-    -e "s/__TENANT_ROOT__/$(escape_sed "${TENANT_ROOT}")/g" \
-    -e "s/__TENANT_HOME__/$(escape_sed "${TENANT_HOME}")/g" \
-    -e "s/__OPENCLAW_PORT__/$(escape_sed "${OPENCLAW_PORT}")/g" \
-    -e "s/__BROWSER_PORT__/$(escape_sed "${BROWSER_PORT}")/g" \
-    -e "s/__PARSER_PORT__/$(escape_sed "${PARSER_PORT}")/g" \
-    -e "s/__CONTROL_PORT__/$(escape_sed "${CONTROL_PORT}")/g" \
-    -e "s/__MODEL_ENDPOINT__/$(escape_sed "${MODEL_ENDPOINT}")/g" \
-    -e "s/__PUBLIC_HOSTNAME__/$(escape_sed "${PUBLIC_HOSTNAME}")/g" \
-    -e "s/__OPENCLAW_IMAGE__/$(escape_sed "${OPENCLAW_IMAGE}")/g" \
-    -e "s/__BROWSER_IMAGE__/$(escape_sed "${BROWSER_IMAGE}")/g" \
-    -e "s/__PARSER_IMAGE__/$(escape_sed "${PARSER_IMAGE}")/g" \
-    -e "s/__AGENT_IMAGE__/$(escape_sed "${AGENT_IMAGE}")/g" \
+    -e "s|__TENANT__|$(escape_sed "${TENANT:-}")|g" \
+    -e "s|__TENANT_ROOT__|$(escape_sed "${TENANT_ROOT:-}")|g" \
+    -e "s|__TENANT_HOME__|$(escape_sed "${TENANT_HOME:-}")|g" \
+    -e "s|__OPENCLAW_PORT__|$(escape_sed "${OPENCLAW_PORT:-}")|g" \
+    -e "s|__BROWSER_PORT__|$(escape_sed "${BROWSER_PORT:-}")|g" \
+    -e "s|__PARSER_PORT__|$(escape_sed "${PARSER_PORT:-}")|g" \
+    -e "s|__CONTROL_PORT__|$(escape_sed "${CONTROL_PORT:-}")|g" \
+    -e "s|__MODEL_ENDPOINT__|$(escape_sed "${MODEL_ENDPOINT:-}")|g" \
+    -e "s|__PUBLIC_HOSTNAME__|$(escape_sed "${PUBLIC_HOSTNAME:-}")|g" \
+    -e "s|__OPENCLAW_IMAGE__|$(escape_sed "${OPENCLAW_IMAGE:-}")|g" \
+    -e "s|__BROWSER_IMAGE__|$(escape_sed "${BROWSER_IMAGE:-}")|g" \
+    -e "s|__PARSER_IMAGE__|$(escape_sed "${PARSER_IMAGE:-}")|g" \
+    -e "s|__AGENT_IMAGE__|$(escape_sed "${AGENT_IMAGE:-}")|g" \
     "$src" > "$dest"
 }
 
