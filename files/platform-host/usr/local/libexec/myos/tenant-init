@@ -1,0 +1,70 @@
+#!/usr/bin/env bash
+set -Eeuo pipefail
+
+. /usr/local/libexec/myos/common.sh
+
+usage() {
+  cat <<'USAGE'
+Usage: tenant-init --tenant NAME [--enable-linger] [--force-quadlets]
+
+Create a tenant user, storage scaffold, placeholder secrets, localhost port
+allocations, and inert rootless Quadlets for later OpenClaw deployment.
+USAGE
+}
+
+tenant=""
+enable_linger=0
+force_quadlets=0
+
+while [ "$#" -gt 0 ]; do
+  case "$1" in
+    --tenant)
+      tenant="${2:-}"
+      shift 2
+      ;;
+    --enable-linger)
+      enable_linger=1
+      shift
+      ;;
+    --force-quadlets)
+      force_quadlets=1
+      shift
+      ;;
+    -h|--help)
+      usage
+      exit 0
+      ;;
+    *)
+      die "unknown argument: $1"
+      ;;
+  esac
+done
+
+require_root
+validate_tenant "$tenant"
+
+ensure_user "$tenant"
+ensure_subid_range /etc/subuid "$tenant"
+ensure_subid_range /etc/subgid "$tenant"
+
+if [ "$enable_linger" -eq 1 ]; then
+  if loginctl enable-linger "$tenant" >/dev/null 2>&1; then
+    log "enabled lingering for ${tenant}"
+  else
+    warn "failed to enable lingering for ${tenant}"
+  fi
+fi
+
+/usr/local/libexec/myos/tenant-storage-init --tenant "$tenant"
+/usr/local/libexec/myos/tenant-port-allocate --tenant "$tenant"
+/usr/local/libexec/myos/tenant-secrets-init --tenant "$tenant"
+
+if [ "$force_quadlets" -eq 1 ]; then
+  /usr/local/libexec/myos/tenant-quadlet-install --tenant "$tenant" --force
+else
+  /usr/local/libexec/myos/tenant-quadlet-install --tenant "$tenant"
+fi
+
+/usr/local/libexec/myos/tenant-firewall-apply --tenant "$tenant"
+
+log "tenant ${tenant} is scaffolded; no OpenClaw workloads were started"

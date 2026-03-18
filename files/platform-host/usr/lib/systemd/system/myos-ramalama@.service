@@ -1,0 +1,30 @@
+[Unit]
+Description=myOS shared RamaLama inference service for %i
+Documentation=file:/etc/myos/ramalama/README.md
+Wants=network-online.target
+After=network-online.target
+ConditionPathExists=/etc/myos/ramalama/models/%i.env
+
+[Service]
+Type=simple
+User=modelsvc
+Group=modelsvc
+WorkingDirectory=/var/lib/modelsvc
+Environment=HOME=/var/lib/modelsvc
+Environment=XDG_CONFIG_HOME=/var/lib/modelsvc/.config
+Environment=XDG_DATA_HOME=/var/lib/modelsvc/.local/share
+Environment=XDG_RUNTIME_DIR=/run/myos-modelsvc
+EnvironmentFile=/etc/myos/ramalama/models/%i.env
+RuntimeDirectory=myos-modelsvc
+RuntimeDirectoryMode=0700
+ExecStart=/usr/local/libexec/myos/ramalama-serve %i
+Restart=on-failure
+RestartSec=5s
+NoNewPrivileges=yes
+PrivateTmp=yes
+ProtectSystem=full
+ProtectHome=true
+ReadWritePaths=/var/lib/modelsvc /srv/models /etc/myos/ramalama /run/myos-modelsvc
+
+[Install]
+WantedBy=multi-user.target

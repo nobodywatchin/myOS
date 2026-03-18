@@ -1,0 +1,87 @@
+#!/usr/bin/env bash
+set -Eeuo pipefail
+
+. /usr/local/libexec/myos/common.sh
+
+usage() {
+  cat <<'USAGE'
+Usage: tenant-quadlet-install --tenant NAME [--force]
+
+Render inert rootless Quadlet files into the tenant home directory.
+USAGE
+}
+
+tenant=""
+force=0
+
+while [ "$#" -gt 0 ]; do
+  case "$1" in
+    --tenant)
+      tenant="${2:-}"
+      shift 2
+      ;;
+    --force)
+      force=1
+      shift
+      ;;
+    -h|--help)
+      usage
+      exit 0
+      ;;
+    *)
+      die "unknown argument: $1"
+      ;;
+  esac
+done
+
+require_root
+validate_tenant "$tenant"
+getent passwd "$tenant" >/dev/null 2>&1 || die "tenant user ${tenant} does not exist yet"
+
+TENANT="$tenant"
+TENANT_ROOT="$(tenant_root "$tenant")"
+TENANT_HOME="$(tenant_home "$tenant")"
+
+if [ ! -f "$(tenant_env_dir "$tenant")/ports.env" ]; then
+  /usr/local/libexec/myos/tenant-port-allocate --tenant "$tenant"
+fi
+
+# shellcheck disable=SC1090
+. "$(tenant_env_dir "$tenant")/ports.env"
+
+MODEL_ENDPOINT="${MODEL_ENDPOINT:-http://127.0.0.1:18080}"
+PUBLIC_HOSTNAME="${PUBLIC_HOSTNAME:-${tenant}.example.invalid}"
+
+ensure_dir 0750 "$tenant" "$tenant" "${TENANT_HOME}/.config"
+ensure_dir 0750 "$tenant" "$tenant" "${TENANT_HOME}/.config/containers"
+ensure_dir 0750 "$tenant" "$tenant" "${TENANT_HOME}/.config/containers/systemd"
+ensure_dir 0750 "$tenant" "$tenant" "${TENANT_ROOT}/config/rendered"
+
+/usr/local/libexec/myos/tenant-secrets-init --tenant "$tenant"
+
+for template in "${TEMPLATE_BASE}/quadlets/"*.container; do
+  target="${TENANT_HOME}/.config/containers/systemd/$(basename "$template")"
+  if [ "$force" -eq 0 ] && [ -e "$target" ]; then
+    continue
+  fi
+
+  render_template_file "$template" "$target"
+  chown "$tenant:$tenant" "$target"
+  chmod 0640 "$target"
+done
+
+proxy_target="/etc/myos/proxy/tenants/${tenant}.conf.example"
+if [ "$force" -eq 1 ] || [ ! -e "$proxy_target" ]; then
+  render_template_file "${TEMPLATE_BASE}/proxy/tenant-route.nginx.conf.example" "$proxy_target"
+  chmod 0644 "$proxy_target"
+fi
+
+restorecon_if_available "${TENANT_HOME}/.config/containers/systemd" "${TENANT_ROOT}/config/rendered" "$proxy_target"
+
+if try_user_systemctl "$tenant" daemon-reload; then
+  log "reloaded user systemd for ${tenant}"
+else
+  warn "could not reach the user systemd instance for ${tenant}; run systemctl --user daemon-reload after enabling linger or logging in"
+fi
+
+log "rendered OpenClaw tenant Quadlets for ${tenant}"

@@ -1,0 +1,52 @@
+#!/usr/bin/env bash
+set -Eeuo pipefail
+
+. /usr/local/libexec/myos/common.sh
+
+instance="${1:-default}"
+config="/etc/myos/ramalama/models/${instance}.env"
+
+[ -f "$config" ] || die "missing RamaLama instance config: $config"
+command -v ramalama >/dev/null 2>&1 || die "ramalama is not installed in this image variant"
+
+# shellcheck disable=SC1090
+. "$config"
+
+: "${MODEL_REF:?MODEL_REF must be set in $config}"
+
+RAMALAMA_NAME="${RAMALAMA_NAME:-myos-${instance}}"
+RAMALAMA_PORT="${RAMALAMA_PORT:-18080}"
+RAMALAMA_HOST="${RAMALAMA_HOST:-127.0.0.1}"
+RAMALAMA_WEBUI="${RAMALAMA_WEBUI:-off}"
+
+export HOME="${HOME:-/var/lib/modelsvc}"
+export XDG_CONFIG_HOME="${XDG_CONFIG_HOME:-${HOME}/.config}"
+export XDG_DATA_HOME="${XDG_DATA_HOME:-${HOME}/.local/share}"
+export XDG_RUNTIME_DIR="${XDG_RUNTIME_DIR:-/run/myos-modelsvc}"
+
+install -d -m 0750 "${HOME}" "${XDG_CONFIG_HOME}" "${XDG_DATA_HOME}" /srv/models/ramalama
+
+help_text="$(ramalama serve --help 2>&1 || true)"
+bind_args=()
+webui_args=()
+
+if printf '%s' "$help_text" | grep -q -- '--host'; then
+  bind_args=(--host "$RAMALAMA_HOST")
+elif printf '%s' "$help_text" | grep -q -- '--address'; then
+  bind_args=(--address "$RAMALAMA_HOST")
+elif printf '%s' "$help_text" | grep -q -- '--listen'; then
+  bind_args=(--listen "$RAMALAMA_HOST")
+elif [ "${RAMALAMA_ALLOW_WIDE_BIND:-0}" != "1" ]; then
+  die "ramalama serve does not advertise a host binding flag on this release; refusing to start without RAMALAMA_ALLOW_WIDE_BIND=1"
+fi
+
+if printf '%s' "$help_text" | grep -q -- '--webui'; then
+  webui_args=(--webui "$RAMALAMA_WEBUI")
+fi
+
+exec ramalama serve \
+  "${bind_args[@]}" \
+  "${webui_args[@]}" \
+  --name "$RAMALAMA_NAME" \
+  --port "$RAMALAMA_PORT" \
+  "$MODEL_REF"

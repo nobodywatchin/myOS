@@ -1,0 +1,62 @@
+#!/usr/bin/env bash
+set -Eeuo pipefail
+
+. /usr/local/libexec/myos/common.sh
+
+usage() {
+  cat <<'USAGE'
+Usage: tenant-storage-init --tenant NAME
+
+Create the host storage layout for a tenant without enabling any workloads.
+USAGE
+}
+
+tenant=""
+
+while [ "$#" -gt 0 ]; do
+  case "$1" in
+    --tenant)
+      tenant="${2:-}"
+      shift 2
+      ;;
+    -h|--help)
+      usage
+      exit 0
+      ;;
+    *)
+      die "unknown argument: $1"
+      ;;
+  esac
+done
+
+require_root
+validate_tenant "$tenant"
+ensure_user "$tenant"
+
+TENANT_ROOT="$(tenant_root "$tenant")"
+TENANT_HOME="$(tenant_home "$tenant")"
+
+ensure_dir 0755 root root "$TENANT_BASE"
+ensure_dir 0750 "$tenant" "$tenant" "$TENANT_ROOT"
+ensure_dir 0750 "$tenant" "$tenant" "$TENANT_HOME"
+ensure_dir 0750 "$tenant" "$tenant" "$(tenant_config_root "$tenant")"
+ensure_dir 0750 "$tenant" "$tenant" "$(tenant_env_dir "$tenant")"
+ensure_dir 0750 "$tenant" "$tenant" "${TENANT_ROOT}/config/proxy"
+ensure_dir 0750 "$tenant" "$tenant" "${TENANT_ROOT}/config/firewall"
+ensure_dir 0750 "$tenant" "$tenant" "${TENANT_ROOT}/config/dns"
+ensure_dir 0750 "$tenant" "$tenant" "${TENANT_ROOT}/config/rendered"
+ensure_dir 0750 "$tenant" "$tenant" "${TENANT_ROOT}/logs"
+ensure_dir 0750 "$tenant" "$tenant" "${TENANT_ROOT}/quadlets"
+ensure_dir 0750 "$tenant" "$tenant" "${TENANT_ROOT}/zone-a/agent"
+ensure_dir 0750 "$tenant" "$tenant" "${TENANT_ROOT}/zone-a/openclaw"
+ensure_dir 0750 "$tenant" "$tenant" "${TENANT_ROOT}/zone-b/browser"
+ensure_dir 0750 "$tenant" "$tenant" "${TENANT_ROOT}/zone-b/parser"
+ensure_dir 0750 "$tenant" "$tenant" "${TENANT_ROOT}/zone-b/downloads"
+ensure_dir 0750 "$tenant" "$tenant" "${TENANT_ROOT}/zone-c/storage"
+ensure_dir 0700 "$tenant" "$tenant" "${TENANT_ROOT}/zone-c/secrets"
+ensure_dir 0750 "$tenant" "$tenant" "${TENANT_ROOT}/zone-c/state"
+
+write_if_missing 0640 "$tenant" "$tenant" /srv/tenants/.skel/README.md "${TENANT_ROOT}/README.md"
+restorecon_if_available "$TENANT_ROOT"
+
+log "storage scaffold ready for tenant ${tenant} at ${TENANT_ROOT}"
