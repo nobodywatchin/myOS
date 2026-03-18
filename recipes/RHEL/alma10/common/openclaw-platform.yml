@@ -8,8 +8,12 @@ modules:
 
   - type: files
     files:
-      - source: platform-host
-        destination: /
+      - source: platform-host/etc
+        destination: /etc
+      - source: platform-host/usr
+        destination: /usr
+      - source: platform-host/var
+        destination: /var
 
   - type: containerfile
     snippets:
