@@ -34,19 +34,12 @@ require_root
 validate_tenant "$tenant"
 getent passwd "$tenant" >/dev/null 2>&1 || die "tenant user ${tenant} does not exist yet"
 
-TENANT="$tenant"
-TENANT_ROOT="$(tenant_root "$tenant")"
-TENANT_HOME="$(tenant_home "$tenant")"
-
 if [ ! -f "$(tenant_env_dir "$tenant")/ports.env" ]; then
   /usr/local/libexec/myos/tenant-port-allocate --tenant "$tenant"
 fi
 
 # shellcheck disable=SC1090
 . "$(tenant_env_dir "$tenant")/ports.env"
-
-MODEL_ENDPOINT="${MODEL_ENDPOINT:-http://127.0.0.1:18080}"
-PUBLIC_HOSTNAME="${PUBLIC_HOSTNAME:-${tenant}.example.invalid}"
 
 ensure_dir 0755 root root "/etc/myos/firewall/rendered"
 write_if_missing 0640 root root "/etc/myos/firewall/tenant-egress.env.example" "/etc/myos/firewall/tenants/${tenant}.env"
@@ -55,10 +48,11 @@ cat > "/etc/myos/firewall/rendered/${tenant}.plan" <<EOF_PLAN
 # myOS tenant firewall scaffold for ${tenant}
 #
 # No public tenant ports are opened by default.
-# Shared ingress should terminate on nginx and proxy to:
-#   OpenClaw: http://127.0.0.1:${OPENCLAW_PORT}
-#   Browser zone: http://127.0.0.1:${BROWSER_PORT}
-#   Parser zone: http://127.0.0.1:${PARSER_PORT}
+# Shared ingress should terminate on nginx and proxy only:
+#   OpenClaw gateway: http://127.0.0.1:${OPENCLAW_PORT}
+#
+# Browser, parser, and control services stay pod-local by default and are not
+# published on the host unless an operator adds explicit reviewable overrides.
 #
 # Future egress controls belong in:
 #   /etc/myos/firewall/tenants/${tenant}.env

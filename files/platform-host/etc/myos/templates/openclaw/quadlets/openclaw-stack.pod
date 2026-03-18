@@ -1,0 +1,12 @@
+[Unit]
+Description=OpenClaw tenant pod for __TENANT__
+After=network-online.target
+Wants=network-online.target
+
+[Pod]
+PodName=openclaw-__TENANT__
+PublishPort=127.0.0.1:__OPENCLAW_PORT__:8080
+Network=slirp4netns:allow_host_loopback=true
+
+[Install]
+WantedBy=default.target

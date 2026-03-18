@@ -4,17 +4,16 @@ After=network-online.target
 Wants=network-online.target
 
 [Container]
-Image=registry.example.invalid/openclaw/runtime:stable
+Pod=openclaw-stack.pod
+Image=__OPENCLAW_IMAGE__
 ContainerName=openclaw-__TENANT__
 AutoUpdate=registry
 EnvironmentFile=__TENANT_ROOT__/config/env/ports.env
 EnvironmentFile=__TENANT_ROOT__/config/env/common.env
 EnvironmentFile=__TENANT_ROOT__/config/env/openclaw.env
 EnvironmentFile=__TENANT_ROOT__/zone-c/secrets/openclaw.secrets.env
-PublishPort=127.0.0.1:__OPENCLAW_PORT__:8080
 Volume=__TENANT_ROOT__/zone-a/openclaw:/var/lib/openclaw:Z,U
 Volume=__TENANT_ROOT__/zone-c/storage:/srv/openclaw-storage:Z,U
-Network=slirp4netns:allow_host_loopback=true
 
 [Install]
 WantedBy=default.target

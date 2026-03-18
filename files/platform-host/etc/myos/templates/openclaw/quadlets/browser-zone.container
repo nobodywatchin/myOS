@@ -4,19 +4,17 @@ After=network-online.target
 Wants=network-online.target
 
 [Container]
-Image=registry.example.invalid/openclaw/browser-zone:stable
+Pod=openclaw-stack.pod
+Image=__BROWSER_IMAGE__
 ContainerName=browser-zone-__TENANT__
 AutoUpdate=registry
 EnvironmentFile=__TENANT_ROOT__/config/env/ports.env
 EnvironmentFile=__TENANT_ROOT__/config/env/common.env
 EnvironmentFile=__TENANT_ROOT__/config/env/browser.env
 EnvironmentFile=__TENANT_ROOT__/zone-c/secrets/browser.secrets.env
-PublishPort=127.0.0.1:__BROWSER_PORT__:3000
-PublishPort=127.0.0.1:__CONTROL_PORT__:8090
 Volume=__TENANT_ROOT__/zone-b/browser:/srv/browser-profile:Z,U
 Volume=__TENANT_ROOT__/zone-b/downloads:/srv/browser-downloads:Z,U
 Volume=__TENANT_ROOT__/zone-c/storage:/srv/openclaw-storage:Z,U
-Network=slirp4netns:allow_host_loopback=true
 
 [Install]
 WantedBy=default.target

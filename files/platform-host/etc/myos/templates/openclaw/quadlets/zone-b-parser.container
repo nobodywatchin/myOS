@@ -4,16 +4,15 @@ After=network-online.target
 Wants=network-online.target
 
 [Container]
-Image=registry.example.invalid/openclaw/parser-zone:stable
+Pod=openclaw-stack.pod
+Image=__PARSER_IMAGE__
 ContainerName=zone-b-parser-__TENANT__
 AutoUpdate=registry
 EnvironmentFile=__TENANT_ROOT__/config/env/ports.env
 EnvironmentFile=__TENANT_ROOT__/config/env/browser.env
-PublishPort=127.0.0.1:__PARSER_PORT__:8081
 Volume=__TENANT_ROOT__/zone-b/parser:/srv/parser:Z,U
 Volume=__TENANT_ROOT__/zone-b/downloads:/srv/parser-downloads:Z,U
 Volume=__TENANT_ROOT__/zone-c/storage:/srv/openclaw-storage:Z,U
-Network=slirp4netns:allow_host_loopback=true
 
 [Install]
 WantedBy=default.target
