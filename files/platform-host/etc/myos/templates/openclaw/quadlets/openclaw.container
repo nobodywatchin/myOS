@@ -8,6 +8,7 @@ Image=__OPENCLAW_IMAGE__
 ContainerName=openclaw-__TENANT__
 AutoUpdate=registry
 UserNS=keep-id
+SecurityLabelDisable=true
 Network=slirp4netns:allow_host_loopback=true
 PublishPort=127.0.0.1:__OPENCLAW_PORT__:18789
 PublishPort=127.0.0.1:__OPENCLAW_BRIDGE_PORT__:18790
@@ -15,9 +16,12 @@ EnvironmentFile=__TENANT_ROOT__/config/env/ports.env
 EnvironmentFile=__TENANT_ROOT__/config/env/common.env
 EnvironmentFile=__TENANT_ROOT__/config/env/openclaw.env
 EnvironmentFile=__TENANT_ROOT__/zone-c/secrets/openclaw.secrets.env
-Volume=__TENANT_ROOT__/zone-c/state:/home/node/.openclaw:Z,U
-Volume=__TENANT_ROOT__/zone-c/storage:/home/node/.openclaw/workspace:Z,U
-Volume=__TENANT_ROOT__/logs:/tmp/openclaw:Z,U
+Volume=__TENANT_ROOT__/zone-c/state:/home/node/.openclaw:Z
+Volume=__TENANT_ROOT__/zone-c/storage:/home/node/.openclaw/workspace:Z
+Volume=__TENANT_ROOT__/logs:/tmp/openclaw:Z
+
+[Service]
+TimeoutStartSec=15min
 
 [Install]
 WantedBy=default.target

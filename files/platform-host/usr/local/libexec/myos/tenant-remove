@@ -83,7 +83,7 @@ if getent passwd "$tenant" >/dev/null 2>&1; then
 fi
 
 if [ "$purge_storage" -eq 1 ]; then
-  rm -rf "$(tenant_root "$tenant")"
+  rm -rf "$(tenant_root "$tenant")" "$(tenant_podman_root "$tenant")"
 fi
 
 if [ "$purge_user" -eq 1 ] && getent passwd "$tenant" >/dev/null 2>&1; then

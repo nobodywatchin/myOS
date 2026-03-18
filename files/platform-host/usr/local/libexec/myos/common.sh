@@ -55,6 +55,14 @@ tenant_state_dir() {
   printf '%s/zone-c/state\n' "$(tenant_root "$1")"
 }
 
+tenant_podman_root() {
+  printf '/var/tmp/myos-podman/%s\n' "$1"
+}
+
+tenant_podman_graphroot() {
+  printf '%s/storage\n' "$(tenant_podman_root "$1")"
+}
+
 ensure_dir() {
   local mode="$1"
   local owner="$2"
@@ -175,7 +183,19 @@ restorecon_if_available() {
 
 try_user_systemctl() {
   local tenant="$1"
+  local uid
   shift
 
-  runuser -u "$tenant" -- systemctl --user "$@" >/dev/null 2>&1
+  if systemctl --machine "${tenant}@" --user "$@" >/dev/null 2>&1; then
+    return 0
+  fi
+
+  uid="$(id -u "$tenant" 2>/dev/null || true)"
+  [ -n "$uid" ] || return 1
+
+  runuser -u "$tenant" -- env \
+    HOME="$(tenant_home "$tenant")" \
+    XDG_RUNTIME_DIR="/run/user/${uid}" \
+    DBUS_SESSION_BUS_ADDRESS="unix:path=/run/user/${uid}/bus" \
+    systemctl --user "$@" >/dev/null 2>&1
 }

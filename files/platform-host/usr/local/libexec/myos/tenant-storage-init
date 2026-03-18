@@ -35,13 +35,19 @@ ensure_user "$tenant"
 
 TENANT_ROOT="$(tenant_root "$tenant")"
 TENANT_HOME="$(tenant_home "$tenant")"
+TENANT_PODMAN_ROOT="$(tenant_podman_root "$tenant")"
+TENANT_PODMAN_GRAPHROOT="$(tenant_podman_graphroot "$tenant")"
+TENANT_UID="$(id -u "$tenant")"
 SKEL_README="/srv/tenants/.skel/README.md"
 LEGACY_SKEL_README="/var/srv/tenants/README.md"
 
 ensure_dir 0755 root root "$TENANT_BASE"
 ensure_dir 0755 root root "/srv/tenants/.skel"
+ensure_dir 0755 root root "/var/tmp/myos-podman"
 ensure_dir 0750 "$tenant" "$tenant" "$TENANT_ROOT"
 ensure_dir 0750 "$tenant" "$tenant" "$TENANT_HOME"
+ensure_dir 0750 "$tenant" "$tenant" "${TENANT_HOME}/.config"
+ensure_dir 0750 "$tenant" "$tenant" "${TENANT_HOME}/.config/containers"
 ensure_dir 0750 "$tenant" "$tenant" "$(tenant_config_root "$tenant")"
 ensure_dir 0750 "$tenant" "$tenant" "$(tenant_env_dir "$tenant")"
 ensure_dir 0750 "$tenant" "$tenant" "${TENANT_ROOT}/config/proxy"
@@ -53,6 +59,23 @@ ensure_dir 0750 "$tenant" "$tenant" "${TENANT_ROOT}/quadlets"
 ensure_dir 0750 "$tenant" "$tenant" "${TENANT_ROOT}/zone-c/storage"
 ensure_dir 0700 "$tenant" "$tenant" "${TENANT_ROOT}/zone-c/secrets"
 ensure_dir 0750 "$tenant" "$tenant" "${TENANT_ROOT}/zone-c/state"
+ensure_dir 0700 "$tenant" "$tenant" "$TENANT_PODMAN_ROOT"
+ensure_dir 0700 "$tenant" "$tenant" "$TENANT_PODMAN_GRAPHROOT"
+
+if command -v semanage >/dev/null 2>&1; then
+  semanage fcontext -a -e /var/lib/containers /var/tmp/myos-podman >/dev/null 2>&1 || \
+    semanage fcontext -m -e /var/lib/containers /var/tmp/myos-podman >/dev/null 2>&1 || true
+fi
+
+cat > "${TENANT_HOME}/.config/containers/storage.conf" <<EOF_STORAGE
+[storage]
+driver = "overlay"
+runroot = "/run/user/${TENANT_UID}/containers"
+graphroot = "${TENANT_PODMAN_GRAPHROOT}"
+EOF_STORAGE
+
+chown "$tenant:$tenant" "${TENANT_HOME}/.config/containers/storage.conf"
+chmod 0600 "${TENANT_HOME}/.config/containers/storage.conf"
 
 if [ ! -e "$SKEL_README" ]; then
   if [ -e "$LEGACY_SKEL_README" ]; then
@@ -68,6 +91,6 @@ EOF_README
 fi
 
 write_if_missing 0640 "$tenant" "$tenant" "$SKEL_README" "${TENANT_ROOT}/README.md"
-restorecon_if_available "/srv/tenants/.skel" "$TENANT_ROOT"
+restorecon_if_available "/srv/tenants/.skel" "$TENANT_ROOT" "$TENANT_PODMAN_ROOT" "${TENANT_HOME}/.config/containers/storage.conf"
 
 log "storage scaffold ready for tenant ${tenant} at ${TENANT_ROOT}"
