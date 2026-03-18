@@ -41,6 +41,8 @@ getent passwd "$tenant" >/dev/null 2>&1 || die "tenant user ${tenant} does not e
 TENANT="$tenant"
 TENANT_ROOT="$(tenant_root "$tenant")"
 TENANT_HOME="$(tenant_home "$tenant")"
+TENANT_UID="$(id -u "$tenant")"
+TENANT_GID="$(id -g "$tenant")"
 
 if [ ! -f "$(tenant_env_dir "$tenant")/ports.env" ]; then
   /usr/local/libexec/myos/tenant-port-allocate --tenant "$tenant"

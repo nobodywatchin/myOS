@@ -8,6 +8,7 @@ Image=__OPENCLAW_IMAGE__
 ContainerName=openclaw-__TENANT__
 AutoUpdate=registry
 UserNS=keep-id
+User=__TENANT_UID__:__TENANT_GID__
 SecurityLabelDisable=true
 Network=slirp4netns:allow_host_loopback=true
 PublishPort=127.0.0.1:__OPENCLAW_PORT__:18789

@@ -146,6 +146,8 @@ render_template_file() {
     -e "s|__TENANT__|$(escape_sed "${TENANT:-}")|g" \
     -e "s|__TENANT_ROOT__|$(escape_sed "${TENANT_ROOT:-}")|g" \
     -e "s|__TENANT_HOME__|$(escape_sed "${TENANT_HOME:-}")|g" \
+    -e "s|__TENANT_UID__|$(escape_sed "${TENANT_UID:-}")|g" \
+    -e "s|__TENANT_GID__|$(escape_sed "${TENANT_GID:-}")|g" \
     -e "s|__OPENCLAW_PORT__|$(escape_sed "${OPENCLAW_PORT:-}")|g" \
     -e "s|__OPENCLAW_BRIDGE_PORT__|$(escape_sed "${OPENCLAW_BRIDGE_PORT:-}")|g" \
     -e "s|__BROWSER_PORT__|$(escape_sed "${BROWSER_PORT:-}")|g" \
