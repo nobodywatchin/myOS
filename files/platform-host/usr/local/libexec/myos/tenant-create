@@ -79,8 +79,10 @@ fi
 
 if [ "$start_after" -eq 1 ]; then
   /usr/local/libexec/myos/tenant-start --tenant "$tenant"
+  printf 'Dashboard: %s\n' "$(tenant_ui_url "$tenant")"
 else
   log "tenant ${tenant} is ready for secret entry and startup"
   printf 'Next: myos tenant-secret-set --tenant %s --key OPENROUTER_API_KEY\n' "$tenant"
   printf 'Then: myos tenant-start --tenant %s\n' "$tenant"
+  printf 'Then: myos tenant-dashboard --tenant %s --no-open\n' "$tenant"
 fi

@@ -6,6 +6,7 @@ TENANT_BASE="${TENANT_BASE:-/srv/tenants}"
 TEMPLATE_BASE="${TEMPLATE_BASE:-${MYOS_ETC}/templates/openclaw}"
 PORT_STATE_FILE="${PORT_STATE_FILE:-${MYOS_ETC}/tenants/ports.state}"
 PORT_LOCK_DIR="${PORT_LOCK_DIR:-/run/myos-port-allocate.lock}"
+DEFAULT_OPENCLAW_IMAGE="${DEFAULT_OPENCLAW_IMAGE:-ghcr.io/openclaw/openclaw:2026.3.13-1}"
 
 log() {
   printf '[myos] %s\n' "$*"
@@ -265,6 +266,82 @@ run_tenant_podman() {
   run_as_tenant_login "$tenant" podman "$@"
 }
 
+run_tenant_container_exec() {
+  local tenant="$1"
+  local container
+  local -a args
+  shift
+
+  container="$(tenant_container_name "$tenant")"
+  try_user_systemctl "$tenant" is-active openclaw.service || die "openclaw.service is not active for ${tenant}"
+  run_tenant_podman "$tenant" inspect "$container" >/dev/null 2>&1 || die "container ${container} is not running for ${tenant}"
+
+  args=(exec)
+  if [ -t 0 ] && [ -t 1 ]; then
+    args+=(-it)
+  else
+    args+=(-i)
+  fi
+
+  args+=(
+    --env HOME=/home/node
+    --env OPENCLAW_STATE_DIR=/home/node/.openclaw
+    --env OPENCLAW_CONFIG_PATH=/home/node/.openclaw/openclaw.json
+    --workdir /home/node
+    "$container"
+  )
+
+  run_tenant_podman "$tenant" "${args[@]}" "$@"
+}
+
+run_tenant_openclaw() {
+  local tenant="$1"
+  shift
+
+  run_tenant_container_exec "$tenant" openclaw "$@"
+}
+
+tenant_openclaw_image() {
+  env_value_from_file "$(tenant_env_dir "$1")/openclaw.env" OPENCLAW_IMAGE 2>/dev/null || printf '%s\n' "$DEFAULT_OPENCLAW_IMAGE"
+}
+
+run_tenant_openclaw_cli() {
+  local tenant="$1"
+  local image uid gid
+  local -a args
+  shift
+
+  image="$(tenant_openclaw_image "$tenant")"
+  uid="$(id -u "$tenant")"
+  gid="$(id -g "$tenant")"
+
+  args=(run --rm --security-opt label=disable --userns keep-id --user "${uid}:${gid}")
+  if [ -t 0 ] && [ -t 1 ]; then
+    args+=(-it)
+  else
+    args+=(-i)
+  fi
+
+  args+=(
+    --env HOME=/home/node
+    --env OPENCLAW_STATE_DIR=/home/node/.openclaw
+    --env OPENCLAW_CONFIG_PATH=/home/node/.openclaw/openclaw.json
+    --env OPENCLAW_GATEWAY_PORT=18789
+    --env-file "$(tenant_env_dir "$tenant")/ports.env"
+    --env-file "$(tenant_env_dir "$tenant")/common.env"
+    --env-file "$(tenant_env_dir "$tenant")/openclaw.env"
+    --env-file "$(tenant_secret_file "$tenant")"
+    --workdir /home/node
+    -v "$(tenant_root "$tenant")/zone-c/state:/home/node/.openclaw:Z"
+    -v "$(tenant_root "$tenant")/zone-c/storage:/home/node/.openclaw/workspace:Z"
+    -v "$(tenant_root "$tenant")/logs:/tmp/openclaw:Z"
+    "$image"
+    openclaw
+  )
+
+  run_tenant_podman "$tenant" "${args[@]}" "$@"
+}
+
 env_value_from_file() {
   local file="$1"
   local key="$2"
@@ -345,11 +422,15 @@ normalize_bool() {
   esac
 }
 
+tenant_gateway_port() {
+  env_value_from_file "$(tenant_env_dir "$1")/ports.env" OPENCLAW_PORT 2>/dev/null
+}
+
 tenant_ui_url() {
   local tenant="$1"
   local port
 
-  port="$(env_value_from_file "$(tenant_env_dir "$tenant")/ports.env" OPENCLAW_UI_PORT 2>/dev/null || true)"
+  port="$(tenant_gateway_port "$tenant" || true)"
   [ -n "$port" ] || return 1
   printf 'http://127.0.0.1:%s/\n' "$port"
 }
@@ -358,7 +439,33 @@ tenant_gateway_ws_url() {
   local tenant="$1"
   local port
 
-  port="$(env_value_from_file "$(tenant_env_dir "$tenant")/ports.env" OPENCLAW_PORT 2>/dev/null || true)"
+  port="$(tenant_gateway_port "$tenant" || true)"
   [ -n "$port" ] || return 1
   printf 'ws://127.0.0.1:%s\n' "$port"
+}
+
+tenant_primary_model_from_config() {
+  local config_file
+
+  config_file="$(tenant_config_file "$1")"
+  [ -f "$config_file" ] || return 1
+  python3 - "$config_file" <<'PYTHON'
+import json
+import sys
+
+try:
+    with open(sys.argv[1], 'r', encoding='utf-8') as handle:
+        data = json.load(handle)
+except Exception:
+    raise SystemExit(1)
+
+model = (
+    data.get('agents', {})
+        .get('defaults', {})
+        .get('model', {})
+        .get('primary', '')
+)
+if isinstance(model, str) and model.strip():
+    print(model.strip())
+PYTHON
 }

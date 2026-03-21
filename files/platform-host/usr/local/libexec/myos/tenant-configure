@@ -8,17 +8,17 @@ usage() {
   cat <<'USAGE'
 Usage: tenant-configure --tenant NAME [options]
 
-Manage the operator-facing tenant settings and regenerate the rendered
-OpenClaw config.
+Manage the operator-facing tenant settings while keeping openclaw.json as the
+runtime source of truth.
 
 Options:
-  --model MODEL                Set the default agent model reference.
+  --model MODEL                Set agents.defaults.model.primary.
   --public-hostname HOST       Set the public hostname metadata.
   --image IMAGE                Set the pinned OpenClaw image reference.
-  --gateway-mode MODE          Set gateway.mode in the rendered config.
+  --gateway-mode MODE          Set gateway.mode.
   --ui-auth MODE               strict or insecure.
-  --set-origin ORIGIN          Add an extra allowed UI origin.
-  --clear-extra-origins        Remove all non-localhost UI origins.
+  --set-origin ORIGIN          Add an extra allowed Control UI origin.
+  --clear-extra-origins        Remove all non-loopback Control UI origins.
   --restart                    Reconcile and restart the tenant service.
   --no-restart                 Only rewrite config and rendered files.
 USAGE
@@ -94,29 +94,88 @@ fi
 require_root
 validate_tenant "$tenant"
 getent passwd "$tenant" >/dev/null 2>&1 || die "tenant user ${tenant} does not exist yet"
-
 /usr/local/libexec/myos/tenant-secrets-init --tenant "$tenant"
 
 common_env="$(tenant_env_dir "$tenant")/common.env"
 openclaw_env="$(tenant_env_dir "$tenant")/openclaw.env"
+config_file="$(tenant_config_file "$tenant")"
+openclaw_port="$(tenant_gateway_port "$tenant")"
 
-current_model="$(env_value_from_file "$openclaw_env" OPENCLAW_MODEL_PRIMARY 2>/dev/null || true)"
 current_public_hostname="$(env_value_from_file "$common_env" PUBLIC_HOSTNAME 2>/dev/null || true)"
 current_image="$(env_value_from_file "$openclaw_env" OPENCLAW_IMAGE 2>/dev/null || true)"
-current_gateway_mode="$(env_value_from_file "$openclaw_env" OPENCLAW_GATEWAY_MODE 2>/dev/null || true)"
-current_ui_insecure="$(env_value_from_file "$openclaw_env" OPENCLAW_UI_ALLOW_INSECURE_AUTH 2>/dev/null || true)"
-current_extra_origins="$(env_value_from_file "$openclaw_env" OPENCLAW_CONTROL_UI_EXTRA_ORIGINS 2>/dev/null || true)"
+readarray -t config_values < <(python3 - "$config_file" "$openclaw_port" <<'PYTHON'
+import json
+import sys
+from pathlib import Path
+
+config_path = Path(sys.argv[1])
+port = sys.argv[2]
+default_model = 'openrouter/anthropic/claude-sonnet-4-5'
+default_mode = 'local'
+default_insecure = 'false'
+default_origins = [
+    f'http://127.0.0.1:{port}',
+    f'http://localhost:{port}',
+]
+
+model = default_model
+mode = default_mode
+allow_insecure = default_insecure
+extra_origins = []
+
+try:
+    with config_path.open('r', encoding='utf-8') as handle:
+        data = json.load(handle)
+except Exception:
+    data = {}
+
+if isinstance(data, dict):
+    gateway = data.get('gateway')
+    if isinstance(gateway, dict):
+        value = gateway.get('mode')
+        if isinstance(value, str) and value.strip():
+            mode = value.strip()
+        control_ui = gateway.get('controlUi')
+        if isinstance(control_ui, dict):
+            allow = control_ui.get('allowInsecureAuth')
+            if isinstance(allow, bool):
+                allow_insecure = 'true' if allow else 'false'
+            origins = control_ui.get('allowedOrigins')
+            if isinstance(origins, list):
+                for origin in origins:
+                    if isinstance(origin, str) and origin not in default_origins and origin not in extra_origins:
+                        extra_origins.append(origin)
+    agents = data.get('agents')
+    if isinstance(agents, dict):
+        defaults = agents.get('defaults')
+        if isinstance(defaults, dict):
+            model_cfg = defaults.get('model')
+            if isinstance(model_cfg, dict):
+                value = model_cfg.get('primary')
+                if isinstance(value, str) and value.strip():
+                    model = value.strip()
+
+print(model)
+print(mode)
+print(allow_insecure)
+print(','.join(extra_origins))
+PYTHON
+)
+current_model="${config_values[0]:-openrouter/anthropic/claude-sonnet-4-5}"
+current_gateway_mode="${config_values[1]:-local}"
+current_ui_insecure="${config_values[2]:-false}"
+current_extra_origins="${config_values[3]:-}"
 
 if [ -t 0 ] && [ -z "$model$image$public_hostname$gateway_mode$ui_auth_mode" ] && [ "${#set_origins[@]}" -eq 0 ] && [ "$clear_extra_origins" -eq 0 ]; then
-  printf 'Model [%s]: ' "${current_model:-openrouter/anthropic/claude-sonnet-4-5}"
+  printf 'Model [%s]: ' "${current_model}"
   read -r model
   printf 'Public hostname [%s]: ' "${current_public_hostname:-${tenant}.example.invalid}"
   read -r public_hostname
-  printf 'Image [%s]: ' "${current_image:-ghcr.io/openclaw/openclaw:2026.3.13-1}"
+  printf 'Image [%s]: ' "${current_image:-$DEFAULT_OPENCLAW_IMAGE}"
   read -r image
-  printf 'Gateway mode [%s]: ' "${current_gateway_mode:-local}"
+  printf 'Gateway mode [%s]: ' "${current_gateway_mode}"
   read -r gateway_mode
-  printf 'UI auth mode (strict/insecure) [%s]: ' "$( [ "$(normalize_bool "${current_ui_insecure:-false}")" = true ] && printf 'insecure' || printf 'strict' )"
+  printf 'UI auth mode (strict/insecure) [%s]: ' "$( [ "$(normalize_bool "$current_ui_insecure")" = true ] && printf 'insecure' || printf 'strict' )"
   read -r ui_auth_mode
   printf 'Extra UI origins (comma-separated) [%s]: ' "$current_extra_origins"
   read -r extra_origin_input
@@ -126,14 +185,14 @@ if [ -t 0 ] && [ -z "$model$image$public_hostname$gateway_mode$ui_auth_mode" ] &
   fi
 fi
 
-model="${model:-${current_model:-openrouter/anthropic/claude-sonnet-4-5}}"
+model="${model:-$current_model}"
 public_hostname="${public_hostname:-${current_public_hostname:-${tenant}.example.invalid}}"
-image="${image:-${current_image:-ghcr.io/openclaw/openclaw:2026.3.13-1}}"
-gateway_mode="${gateway_mode:-${current_gateway_mode:-local}}"
+image="${image:-${current_image:-$DEFAULT_OPENCLAW_IMAGE}}"
+gateway_mode="${gateway_mode:-$current_gateway_mode}"
 
 case "${ui_auth_mode:-}" in
   "")
-    ui_auth_value="$(normalize_bool "${current_ui_insecure:-false}")"
+    ui_auth_value="$(normalize_bool "$current_ui_insecure")"
     ;;
   strict)
     ui_auth_value=false
@@ -158,14 +217,84 @@ done
 set_env_value "$common_env" TENANT_NAME "$tenant"
 set_env_value "$common_env" PUBLIC_HOSTNAME "$public_hostname"
 set_env_value "$openclaw_env" OPENCLAW_IMAGE "$image"
-set_env_value "$openclaw_env" OPENCLAW_MODEL_PRIMARY "$model"
-set_env_value "$openclaw_env" OPENCLAW_GATEWAY_MODE "$gateway_mode"
-set_env_value "$openclaw_env" OPENCLAW_UI_ALLOW_INSECURE_AUTH "$ui_auth_value"
-set_env_value "$openclaw_env" OPENCLAW_CONTROL_UI_EXTRA_ORIGINS "$extra_origins"
-
 chown "$tenant:$tenant" "$common_env" "$openclaw_env"
 chmod 0640 "$common_env" "$openclaw_env"
 restorecon_if_available "$common_env" "$openclaw_env"
+
+python3 - "$config_file" "$openclaw_port" "$gateway_mode" "$ui_auth_value" "$model" "$extra_origins" <<'PYTHON'
+import json
+import sys
+from pathlib import Path
+
+config_path = Path(sys.argv[1])
+port = sys.argv[2]
+gateway_mode = sys.argv[3]
+allow_insecure = sys.argv[4] == 'true'
+model = sys.argv[5]
+extra_csv = sys.argv[6]
+default_origins = [
+    f'http://127.0.0.1:{port}',
+    f'http://localhost:{port}',
+]
+origins = list(default_origins)
+for token in extra_csv.split(','):
+    origin = token.strip()
+    if origin and origin not in origins:
+        origins.append(origin)
+
+if not config_path.exists():
+    data = {}
+else:
+    try:
+        with config_path.open('r', encoding='utf-8') as handle:
+            data = json.load(handle)
+    except Exception as exc:
+        raise SystemExit(f'openclaw.json is not strict JSON; use the raw editor or tenant-config for manual changes ({exc})')
+
+if not isinstance(data, dict):
+    data = {}
+
+gateway = data.get('gateway')
+if not isinstance(gateway, dict):
+    gateway = {}
+    data['gateway'] = gateway
+
+gateway['mode'] = gateway_mode
+reload_cfg = gateway.get('reload')
+if not isinstance(reload_cfg, dict):
+    reload_cfg = {}
+    gateway['reload'] = reload_cfg
+if not isinstance(reload_cfg.get('mode'), str) or not reload_cfg.get('mode', '').strip():
+    reload_cfg['mode'] = 'hybrid'
+control_ui = gateway.get('controlUi')
+if not isinstance(control_ui, dict):
+    control_ui = {}
+    gateway['controlUi'] = control_ui
+control_ui['allowInsecureAuth'] = allow_insecure
+control_ui['allowedOrigins'] = origins
+
+agents = data.get('agents')
+if not isinstance(agents, dict):
+    agents = {}
+    data['agents'] = agents
+defaults = agents.get('defaults')
+if not isinstance(defaults, dict):
+    defaults = {}
+    agents['defaults'] = defaults
+model_cfg = defaults.get('model')
+if not isinstance(model_cfg, dict):
+    model_cfg = {}
+    defaults['model'] = model_cfg
+model_cfg['primary'] = model
+
+with config_path.open('w', encoding='utf-8') as handle:
+    json.dump(data, handle, indent=2)
+    handle.write('\n')
+PYTHON
+
+chown "$tenant:$tenant" "$config_file"
+chmod 0640 "$config_file"
+restorecon_if_available "$config_file"
 
 service_active=0
 if try_user_systemctl "$tenant" is-active openclaw.service; then
@@ -187,6 +316,4 @@ fi
 /usr/local/libexec/myos/tenant-quadlet-install "${quadlet_args[@]}"
 
 log "updated tenant configuration for ${tenant}"
-if tenant_ui_url "$tenant" >/dev/null 2>&1; then
-  printf 'UI: %s\n' "$(tenant_ui_url "$tenant")"
-fi
+printf 'Dashboard: %s\n' "$(tenant_ui_url "$tenant")"

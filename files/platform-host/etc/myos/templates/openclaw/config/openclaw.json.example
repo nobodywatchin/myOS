@@ -1,10 +1,13 @@
 {
   "gateway": {
     "mode": "local",
+    "reload": {
+      "mode": "hybrid"
+    },
     "controlUi": {
       "allowedOrigins": [
-        "http://127.0.0.1:41006",
-        "http://localhost:41006"
+        "http://127.0.0.1:18789",
+        "http://localhost:18789"
       ],
       "allowInsecureAuth": false
     }

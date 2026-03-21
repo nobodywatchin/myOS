@@ -11,9 +11,7 @@ These files are examples for post-boot tenant provisioning.
 
 By default, each tenant gets:
 
-- a gateway port for CLI and WebSocket access
+- a gateway port that serves both the Control UI and the WebSocket gateway
 - a bridge port for internal gateway bridge traffic
-- a dedicated loopback Control UI port that serves the browser UI through a
-  local proxy
-- a generated `openclaw.json` rendered from tenant env settings rather than
-  hand-edited state files
+- a canonical `zone-c/state/openclaw.json` runtime config that is seeded once and then owned by OpenClaw and the operator
+- myOS-managed host concerns for secrets, ports, storage, Quadlet rendering, and backup/restore

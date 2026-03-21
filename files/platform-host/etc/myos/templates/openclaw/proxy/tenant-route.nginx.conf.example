@@ -1,6 +1,5 @@
 # Promote this file to /etc/myos/proxy/tenants/__TENANT__.conf after review.
-# Browser, parser, and control services stay pod-local by default and are not
-# proxied at the host edge.
+# The OpenClaw gateway serves the dashboard and websocket on the same port.
 server {
     listen 127.0.0.1:8088;
     server_name __PUBLIC_HOSTNAME__;
@@ -9,7 +8,7 @@ server {
     error_log /var/log/nginx/__TENANT__.error.log warn;
 
     location / {
-        proxy_pass http://127.0.0.1:__OPENCLAW_UI_PORT__;
+        proxy_pass http://127.0.0.1:__OPENCLAW_PORT__;
         proxy_http_version 1.1;
         proxy_set_header Host $host;
         proxy_set_header Upgrade $http_upgrade;
@@ -17,5 +16,4 @@ server {
         proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
         proxy_set_header X-Forwarded-Proto $scheme;
     }
-
 }

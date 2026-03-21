@@ -52,7 +52,7 @@ container_name="$(tenant_container_name "$tenant")"
 
 service_state="inactive"
 if try_user_systemctl "$tenant" is-active openclaw.service; then
-  service_state=active
+  service_state="active"
 fi
 
 container_health="unavailable"
@@ -60,22 +60,30 @@ if run_tenant_podman "$tenant" inspect "$container_name" >/dev/null 2>&1; then
   container_health="$(run_tenant_podman "$tenant" inspect -f '{{if .State.Healthcheck}}{{.State.Healthcheck.Status}}{{else}}unknown{{end}}' "$container_name" 2>/dev/null || true)"
 fi
 
+primary_model="$(tenant_primary_model_from_config "$tenant" 2>/dev/null || printf 'unset')"
+public_hostname="$(env_value_from_file "$common_env" PUBLIC_HOSTNAME 2>/dev/null || true)"
+public_hostname="${public_hostname:-${tenant}.example.invalid}"
+
+gateway_token="$(env_value_from_file "$secret_file" OPENCLAW_GATEWAY_TOKEN 2>/dev/null || true)"
+models_status="$(run_tenant_openclaw_cli "$tenant" models status --plain 2>/dev/null || true)"
+
 printf 'Tenant: %s\n' "$tenant"
 printf 'Service: %s\n' "$service_state"
 printf 'Container health: %s\n' "$container_health"
 printf 'Image: %s\n' "$(env_value_from_file "$openclaw_env" OPENCLAW_IMAGE 2>/dev/null || printf 'unset')"
-printf 'Model: %s\n' "$(env_value_from_file "$openclaw_env" OPENCLAW_MODEL_PRIMARY 2>/dev/null || printf 'unset')"
-public_hostname="$(env_value_from_file "$common_env" PUBLIC_HOSTNAME 2>/dev/null || true)"
-public_hostname="${public_hostname:-${tenant}.example.invalid}"
+printf 'Primary model: %s\n' "$primary_model"
 printf 'Public hostname: %s\n' "$public_hostname"
-printf 'UI: %s\n' "$(tenant_ui_url "$tenant" 2>/dev/null || printf 'unavailable')"
-printf 'Gateway: %s\n' "$(tenant_gateway_ws_url "$tenant" 2>/dev/null || printf 'unavailable')"
+printf 'Dashboard: %s\n' "$(tenant_ui_url "$tenant" 2>/dev/null || printf 'unavailable')"
+printf 'Gateway WebSocket: %s\n' "$(tenant_gateway_ws_url "$tenant" 2>/dev/null || printf 'unavailable')"
 printf 'OpenClaw port: %s\n' "$(env_value_from_file "$ports_env" OPENCLAW_PORT 2>/dev/null || printf 'unset')"
 printf 'Bridge port: %s\n' "$(env_value_from_file "$ports_env" OPENCLAW_BRIDGE_PORT 2>/dev/null || printf 'unset')"
-printf 'UI port: %s\n' "$(env_value_from_file "$ports_env" OPENCLAW_UI_PORT 2>/dev/null || printf 'unset')"
-printf 'Gateway token: %s\n' "$(if [ -n "$(env_value_from_file "$secret_file" OPENCLAW_GATEWAY_TOKEN 2>/dev/null || true)" ]; then printf 'configured'; else printf 'missing'; fi)"
+printf 'Gateway token: %s\n' "$(if [ -n "$gateway_token" ]; then printf 'configured'; else printf 'missing'; fi)"
 if [ "$show_token" -eq 1 ]; then
-  printf 'Gateway token value: %s\n' "$(env_value_from_file "$secret_file" OPENCLAW_GATEWAY_TOKEN 2>/dev/null || printf 'missing')"
+  printf 'Gateway token value: %s\n' "${gateway_token:-missing}"
+fi
+
+if [ -n "$models_status" ]; then
+  printf '\nModel status:\n%s\n' "$models_status"
 fi
 
 printf '\nRecent logs:\n'

@@ -8,7 +8,8 @@ usage() {
   cat <<'USAGE'
 Usage: tenant-config-render --tenant NAME
 
-Render the generated OpenClaw config file for a tenant.
+Seed a tenant OpenClaw config if it is missing and ensure the same-port
+loopback dashboard origins are present.
 USAGE
 }
 
@@ -34,7 +35,6 @@ require_root
 validate_tenant "$tenant"
 getent passwd "$tenant" >/dev/null 2>&1 || die "tenant user ${tenant} does not exist yet"
 
-TENANT_ROOT="$(tenant_root "$tenant")"
 TENANT_ENV_DIR="$(tenant_env_dir "$tenant")"
 TENANT_STATE_DIR="$(tenant_state_dir "$tenant")"
 TENANT_CONFIG_FILE="$(tenant_config_file "$tenant")"
@@ -51,62 +51,143 @@ fi
 
 # shellcheck disable=SC1090
 . "${TENANT_ENV_DIR}/ports.env"
-# shellcheck disable=SC1090
-. "${TENANT_ENV_DIR}/common.env"
-# shellcheck disable=SC1090
-. "${TENANT_ENV_DIR}/openclaw.env"
 
-PUBLIC_HOSTNAME="${PUBLIC_HOSTNAME:-${tenant}.example.invalid}"
-TENANT_NAME="${TENANT_NAME:-${tenant}}"
-OPENCLAW_GATEWAY_MODE="${OPENCLAW_GATEWAY_MODE:-local}"
-OPENCLAW_MODEL_PRIMARY="${OPENCLAW_MODEL_PRIMARY:-openrouter/anthropic/claude-sonnet-4-5}"
-OPENCLAW_UI_ALLOW_INSECURE_AUTH="$(normalize_bool "${OPENCLAW_UI_ALLOW_INSECURE_AUTH:-false}")"
-OPENCLAW_CONTROL_UI_EXTRA_ORIGINS="${OPENCLAW_CONTROL_UI_EXTRA_ORIGINS:-}"
-
-export OPENCLAW_GATEWAY_MODE OPENCLAW_MODEL_PRIMARY OPENCLAW_UI_ALLOW_INSECURE_AUTH OPENCLAW_CONTROL_UI_EXTRA_ORIGINS OPENCLAW_UI_PORT PUBLIC_HOSTNAME TENANT_NAME
-
-python3 - "$TENANT_CONFIG_FILE" <<'PYTHON'
+result="$(python3 - "$TENANT_CONFIG_FILE" "$OPENCLAW_PORT" <<'PYTHON'
 import json
-import os
 import sys
+from pathlib import Path
 
-output = sys.argv[1]
-ui_port = os.environ["OPENCLAW_UI_PORT"]
-origins = [
-    f"http://127.0.0.1:{ui_port}",
-    f"http://localhost:{ui_port}",
+output = Path(sys.argv[1])
+port = sys.argv[2]
+default_origins = [
+    f'http://127.0.0.1:{port}',
+    f'http://localhost:{port}',
 ]
-for token in os.environ.get("OPENCLAW_CONTROL_UI_EXTRA_ORIGINS", "").replace("\n", ",").split(","):
-    origin = token.strip()
-    if origin and origin not in origins:
-        origins.append(origin)
-
-config = {
-    "gateway": {
-        "mode": os.environ["OPENCLAW_GATEWAY_MODE"],
-        "controlUi": {
-            "allowedOrigins": origins,
-            "allowInsecureAuth": os.environ["OPENCLAW_UI_ALLOW_INSECURE_AUTH"] == "true",
+default_config = {
+    'gateway': {
+        'mode': 'local',
+        'reload': {'mode': 'hybrid'},
+        'controlUi': {
+            'allowedOrigins': default_origins,
+            'allowInsecureAuth': False,
         },
-    }
-}
-model = os.environ.get("OPENCLAW_MODEL_PRIMARY", "").strip()
-if model:
-    config["agents"] = {
-        "defaults": {
-            "model": {
-                "primary": model,
+    },
+    'agents': {
+        'defaults': {
+            'model': {
+                'primary': 'openrouter/anthropic/claude-sonnet-4-5',
             }
         }
-    }
+    },
+}
 
-with open(output, "w", encoding="utf-8") as handle:
-    json.dump(config, handle, indent=2)
-    handle.write("\n")
+changed = False
+created = False
+
+if not output.exists():
+    config = default_config
+    changed = True
+    created = True
+else:
+    try:
+        with output.open('r', encoding='utf-8') as handle:
+            config = json.load(handle)
+    except Exception:
+        print('preserved-invalid')
+        raise SystemExit(0)
+
+    if not isinstance(config, dict):
+        config = {}
+        changed = True
+
+    gateway = config.get('gateway')
+    if not isinstance(gateway, dict):
+        gateway = {}
+        config['gateway'] = gateway
+        changed = True
+
+    if not isinstance(gateway.get('mode'), str) or not gateway.get('mode', '').strip():
+        gateway['mode'] = 'local'
+        changed = True
+
+    reload_cfg = gateway.get('reload')
+    if not isinstance(reload_cfg, dict):
+        reload_cfg = {'mode': 'hybrid'}
+        gateway['reload'] = reload_cfg
+        changed = True
+    elif not isinstance(reload_cfg.get('mode'), str) or not reload_cfg.get('mode', '').strip():
+        reload_cfg['mode'] = 'hybrid'
+        changed = True
+
+    control_ui = gateway.get('controlUi')
+    if not isinstance(control_ui, dict):
+        control_ui = {}
+        gateway['controlUi'] = control_ui
+        changed = True
+
+    origins = control_ui.get('allowedOrigins')
+    if not isinstance(origins, list):
+        origins = []
+        changed = True
+    for origin in default_origins:
+        if origin not in origins:
+            origins.append(origin)
+            changed = True
+    control_ui['allowedOrigins'] = origins
+
+    if 'allowInsecureAuth' not in control_ui:
+        control_ui['allowInsecureAuth'] = False
+        changed = True
+
+    agents = config.get('agents')
+    if not isinstance(agents, dict):
+        agents = {}
+        config['agents'] = agents
+        changed = True
+
+    defaults = agents.get('defaults')
+    if not isinstance(defaults, dict):
+        defaults = {}
+        agents['defaults'] = defaults
+        changed = True
+
+    model_cfg = defaults.get('model')
+    if not isinstance(model_cfg, dict):
+        model_cfg = {}
+        defaults['model'] = model_cfg
+        changed = True
+
+    if not isinstance(model_cfg.get('primary'), str) or not model_cfg.get('primary', '').strip():
+        model_cfg['primary'] = 'openrouter/anthropic/claude-sonnet-4-5'
+        changed = True
+
+if changed:
+    with output.open('w', encoding='utf-8') as handle:
+        json.dump(config, handle, indent=2)
+        handle.write('\n')
+
+print('created' if created else 'updated' if changed else 'preserved')
 PYTHON
+)"
 
 chown "$tenant:$tenant" "$TENANT_CONFIG_FILE"
 chmod 0640 "$TENANT_CONFIG_FILE"
 restorecon_if_available "$TENANT_CONFIG_FILE"
 
-log "rendered OpenClaw config for ${tenant}"
+case "$result" in
+  created)
+    log "seeded OpenClaw config for ${tenant}"
+    ;;
+  updated)
+    log "updated OpenClaw config defaults for ${tenant}"
+    ;;
+  preserved)
+    log "preserved existing OpenClaw config for ${tenant}"
+    ;;
+  preserved-invalid)
+    warn "preserved existing OpenClaw config for ${tenant}; file is not strict JSON and was left untouched"
+    ;;
+  *)
+    warn "unexpected tenant-config-render result for ${tenant}: ${result}"
+    ;;
+esac
