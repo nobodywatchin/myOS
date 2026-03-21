@@ -225,23 +225,21 @@ function buildUpstreamPath(pathname, search) {
   return `${safePath}${search || ""}`;
 }
 
-function buildProxyHeaders(headers, rewriteOrigin) {
+function buildProxyHeaders(headers) {
   const proxiedHeaders = {};
 
   for (const [name, value] of Object.entries(headers)) {
-    if (value === undefined || name.toLowerCase() === "host") {
-      continue;
-    }
-
-    if (rewriteOrigin && name.toLowerCase() === "origin") {
-      proxiedHeaders[name] = `http://${gatewayHost}:${gatewayPort}`;
+    if (value === undefined) {
       continue;
     }
 
     proxiedHeaders[name] = value;
   }
 
-  proxiedHeaders.host = `${gatewayHost}:${gatewayPort}`;
+  if (!proxiedHeaders.host) {
+    proxiedHeaders.host = `${gatewayHost}:${gatewayPort}`;
+  }
+
   return proxiedHeaders;
 }
 
@@ -249,7 +247,7 @@ function proxyHttp(req, res, pathname, search) {
   const upstreamPath = buildUpstreamPath(pathname, search);
   const proxyReq = http.request(
     {
-      headers: buildProxyHeaders(req.headers, true),
+      headers: buildProxyHeaders(req.headers),
       host: gatewayHost,
       method: req.method,
       path: upstreamPath,
@@ -272,7 +270,7 @@ function proxyUpgrade(req, socket, head) {
   const url = new URL(req.url || "/", "http://localhost");
   const upstream = net.connect(gatewayPort, gatewayHost, () => {
     const lines = [`GET ${buildUpstreamPath(url.pathname, url.search)} HTTP/${req.httpVersion}`];
-    const headers = buildProxyHeaders(req.headers, true);
+    const headers = buildProxyHeaders(req.headers);
 
     headers.Connection = "Upgrade";
     headers.Upgrade = req.headers.upgrade || "websocket";

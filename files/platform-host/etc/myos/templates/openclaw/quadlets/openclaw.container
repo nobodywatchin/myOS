@@ -18,6 +18,9 @@ EnvironmentFile=__TENANT_ROOT__/config/env/ports.env
 EnvironmentFile=__TENANT_ROOT__/config/env/common.env
 EnvironmentFile=__TENANT_ROOT__/config/env/openclaw.env
 EnvironmentFile=__TENANT_ROOT__/zone-c/secrets/openclaw.secrets.env
+Environment=HOME=/home/node
+Environment=OPENCLAW_STATE_DIR=/home/node/.openclaw
+Environment=OPENCLAW_CONFIG_PATH=/home/node/.openclaw/openclaw.json
 Environment=OPENCLAW_GATEWAY_PORT=18789
 Environment=OPENCLAW_UI_PORT=18080
 Volume=__TENANT_ROOT__/zone-c/state:/home/node/.openclaw:Z

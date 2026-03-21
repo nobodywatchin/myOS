@@ -11,6 +11,11 @@ trap 'cleanup; exit 0' INT TERM HUP
 
 cd /app
 
+export HOME="${HOME:-/home/node}"
+export OPENCLAW_STATE_DIR="${OPENCLAW_STATE_DIR:-${HOME}/.openclaw}"
+export OPENCLAW_CONFIG_PATH="${OPENCLAW_CONFIG_PATH:-${OPENCLAW_STATE_DIR}/openclaw.json}"
+mkdir -p "${OPENCLAW_STATE_DIR}" "${OPENCLAW_STATE_DIR}/workspace" /tmp/openclaw
+
 node openclaw.mjs gateway --allow-unconfigured &
 gateway_pid=$!
 
