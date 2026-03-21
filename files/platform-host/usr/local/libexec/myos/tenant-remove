@@ -1,7 +1,8 @@
 #!/usr/bin/env bash
 set -Eeuo pipefail
 
-. /usr/local/libexec/myos/common.sh
+COMMON_SH="${MYOS_COMMON_SH:-/usr/local/libexec/myos/common.sh}"
+. "$COMMON_SH"
 
 usage() {
   cat <<'USAGE'
@@ -55,7 +56,7 @@ validate_tenant "$tenant"
 [ "$confirmed" -eq 1 ] || die "tenant-remove requires --yes"
 
 if getent passwd "$tenant" >/dev/null 2>&1; then
-  try_user_systemctl "$tenant" disable --now openclaw.service openclaw-stack-pod.service browser-zone.service zone-a-agent.service zone-b-parser.service || true
+  try_user_systemctl "$tenant" disable --now openclaw.service || true
 fi
 
 if [ "$disable_linger" -eq 1 ]; then
@@ -76,10 +77,6 @@ fi
 if getent passwd "$tenant" >/dev/null 2>&1; then
   rm -f \
     "$(tenant_home "$tenant")/.config/containers/systemd/openclaw.container" \
-    "$(tenant_home "$tenant")/.config/containers/systemd/openclaw-stack.pod" \
-    "$(tenant_home "$tenant")/.config/containers/systemd/browser-zone.container" \
-    "$(tenant_home "$tenant")/.config/containers/systemd/zone-a-agent.container" \
-    "$(tenant_home "$tenant")/.config/containers/systemd/zone-b-parser.container" \
     "$(tenant_rendered_dir "$tenant")/openclaw-start.sh" \
     "$(tenant_rendered_dir "$tenant")/openclaw-ui-server.mjs"
 fi

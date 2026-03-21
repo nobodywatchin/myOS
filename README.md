@@ -21,6 +21,22 @@ myOS was created to offer a user-friendly yet powerful operating system that emb
 
 myOS works out of the box with minimal setup, allowing users to focus on their tasks without unnecessary distractions.
 
+# Tenant Operations
+
+The supported OpenClaw operator workflow is exposed through the `myos` just wrapper instead of hand-editing tenant files under `/srv/tenants`.
+
+Common flows:
+
+```bash
+myos tenant-create --tenant demo
+myos tenant-secret-set --tenant demo --key OPENROUTER_API_KEY
+myos tenant-configure --tenant demo --model openrouter/anthropic/claude-sonnet-4-5
+myos tenant-start --tenant demo
+myos tenant-status --tenant demo
+```
+
+For interactive use, `myos tenant` opens an `fzf` chooser for the same command surface.
+
 # Customization
 
 If you want to add your own customizations on top of myOS, you are advised strongly against forking. Instead, create a repo for your own image by using the [BlueBuild template](https://github.com/blue-build/template), then change your `base-image` to a myOS image. This will allow you to apply your customizations to myOS in a concise and maintainable way, without the need to constantly sync with upstream. 
@@ -71,7 +87,6 @@ sudo podman run --rm -it --privileged --pull=newer \
   ghcr.io/nobodywatchin/alma10:latest
 rm -f "$TMP"
 ```
-
 
 # Images
 ### AlmaLinux

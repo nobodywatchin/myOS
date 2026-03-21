@@ -1,0 +1,216 @@
+#!/usr/bin/env bash
+set -Eeuo pipefail
+
+COMMON_SH="${MYOS_COMMON_SH:-/usr/local/libexec/myos/common.sh}"
+. "$COMMON_SH"
+
+usage() {
+  cat <<'USAGE'
+Usage: tenant-validate --tenant NAME [--require-running]
+
+Run preflight and runtime checks for a tenant.
+USAGE
+}
+
+pass() {
+  printf '[PASS] %s\n' "$*"
+}
+
+note() {
+  printf '[INFO] %s\n' "$*"
+}
+
+check_warn() {
+  printf '[WARN] %s\n' "$*"
+  warnings=$((warnings + 1))
+}
+
+check_fail() {
+  printf '[FAIL] %s\n' "$*"
+  failures=$((failures + 1))
+}
+
+required_secret_for_model() {
+  case "$1" in
+    openrouter/*) printf 'OPENROUTER_API_KEY\n' ;;
+    openai/*) printf 'OPENAI_API_KEY\n' ;;
+    anthropic/*) printf 'ANTHROPIC_API_KEY\n' ;;
+    groq/*) printf 'GROQ_API_KEY\n' ;;
+    *) printf '\n' ;;
+  esac
+}
+
+tenant=""
+require_running=0
+failures=0
+warnings=0
+
+while [ "$#" -gt 0 ]; do
+  case "$1" in
+    --tenant)
+      tenant="${2:-}"
+      shift 2
+      ;;
+    --require-running)
+      require_running=1
+      shift
+      ;;
+    -h|--help)
+      usage
+      exit 0
+      ;;
+    *)
+      die "unknown argument: $1"
+      ;;
+  esac
+done
+
+require_root
+validate_tenant "$tenant"
+
+if getent passwd "$tenant" >/dev/null 2>&1; then
+  pass "tenant user ${tenant} exists"
+else
+  check_fail "tenant user ${tenant} does not exist"
+fi
+
+home="$(tenant_home "$tenant")"
+state_dir="$(tenant_state_dir "$tenant")"
+storage_dir="$(tenant_root "$tenant")/zone-c/storage"
+secret_file="$(tenant_secret_file "$tenant")"
+config_file="$(tenant_config_file "$tenant")"
+openclaw_env="$(tenant_env_dir "$tenant")/openclaw.env"
+common_env="$(tenant_env_dir "$tenant")/common.env"
+ports_env="$(tenant_env_dir "$tenant")/ports.env"
+rendered_dir="$(tenant_rendered_dir "$tenant")"
+graphroot="$(tenant_podman_graphroot "$tenant")"
+container_name="$(tenant_container_name "$tenant")"
+
+for path in "$home" "$state_dir" "$storage_dir" "$graphroot"; do
+  if [ -d "$path" ]; then
+    pass "path present: $path"
+  else
+    check_fail "missing directory: $path"
+  fi
+done
+
+for path in "$ports_env" "$common_env" "$openclaw_env" "$secret_file" "$config_file" "$(tenant_home "$tenant")/.config/containers/systemd/openclaw.container" "$rendered_dir/openclaw-start.sh" "$rendered_dir/openclaw-ui-server.mjs"; do
+  if [ -f "$path" ]; then
+    pass "file present: $path"
+  else
+    check_fail "missing file: $path"
+  fi
+done
+
+if [ -f "$home/.config/containers/storage.conf" ]; then
+  if grep -q "graphroot = \"${graphroot}\"" "$home/.config/containers/storage.conf"; then
+    pass "tenant Podman graphroot is pinned to ${graphroot}"
+  else
+    check_fail "storage.conf does not point at ${graphroot}"
+  fi
+else
+  check_fail "missing storage.conf under tenant home"
+fi
+
+if [ -f "$secret_file" ]; then
+  gateway_token="$(env_value_from_file "$secret_file" OPENCLAW_GATEWAY_TOKEN 2>/dev/null || true)"
+  if [ -n "$gateway_token" ]; then
+    pass "gateway token is configured"
+  else
+    check_fail "gateway token is missing"
+  fi
+fi
+
+if [ -f "$config_file" ]; then
+  if python3 -m json.tool "$config_file" >/dev/null 2>&1; then
+    pass "rendered OpenClaw config is valid JSON"
+  else
+    check_fail "rendered OpenClaw config is invalid JSON"
+  fi
+fi
+
+model="$(env_value_from_file "$openclaw_env" OPENCLAW_MODEL_PRIMARY 2>/dev/null || true)"
+required_secret="$(required_secret_for_model "$model")"
+if [ -n "$required_secret" ]; then
+  provider_value="$(env_value_from_file "$secret_file" "$required_secret" 2>/dev/null || true)"
+  if [ -n "$provider_value" ]; then
+    pass "required provider secret ${required_secret} is configured for ${model}"
+  else
+    check_fail "required provider secret ${required_secret} is missing for ${model}"
+  fi
+else
+  check_warn "could not infer a required provider secret from model ${model:-<unset>}"
+fi
+
+if loginctl show-user "$tenant" -p Linger --value 2>/dev/null | grep -qx yes; then
+  pass "linger is enabled for ${tenant}"
+else
+  check_warn "linger is not enabled for ${tenant}"
+fi
+
+if try_user_systemctl "$tenant" show-environment; then
+  pass "tenant user systemd is reachable"
+else
+  check_fail "tenant user systemd is not reachable"
+fi
+
+if command -v getenforce >/dev/null 2>&1 && [ "$(getenforce)" = Enforcing ]; then
+  if grep -q '^SecurityLabelDisable=true$' "$(tenant_home "$tenant")/.config/containers/systemd/openclaw.container" 2>/dev/null; then
+    check_warn "SELinux compatibility mode is enabled via SecurityLabelDisable=true"
+  fi
+fi
+
+service_active=0
+if try_user_systemctl "$tenant" is-active openclaw.service; then
+  service_active=1
+  pass "openclaw.service is active"
+else
+  if [ "$require_running" -eq 1 ]; then
+    check_fail "openclaw.service is not active"
+  else
+    note "openclaw.service is not active; skipping live checks"
+  fi
+fi
+
+if [ "$service_active" -eq 1 ]; then
+  if run_tenant_podman "$tenant" inspect "$container_name" >/dev/null 2>&1; then
+    health="$(run_tenant_podman "$tenant" inspect -f '{{if .State.Healthcheck}}{{.State.Healthcheck.Status}}{{else}}unknown{{end}}' "$container_name" 2>/dev/null || true)"
+    status="$(run_tenant_podman "$tenant" inspect -f '{{.State.Status}}' "$container_name" 2>/dev/null || true)"
+    [ "$status" = running ] && pass "container ${container_name} is running" || check_fail "container ${container_name} state is ${status:-unknown}"
+    case "$health" in
+      healthy|unknown)
+        pass "container health is ${health}"
+        ;;
+      *)
+        check_fail "container health is ${health:-unavailable}"
+        ;;
+    esac
+  else
+    check_fail "container ${container_name} is not present"
+  fi
+
+  openclaw_port="$(env_value_from_file "$ports_env" OPENCLAW_PORT 2>/dev/null || true)"
+  bridge_port="$(env_value_from_file "$ports_env" OPENCLAW_BRIDGE_PORT 2>/dev/null || true)"
+  ui_port="$(env_value_from_file "$ports_env" OPENCLAW_UI_PORT 2>/dev/null || true)"
+
+  for port in "$openclaw_port" "$bridge_port" "$ui_port"; do
+    if [ -n "$port" ] && ss -Hltn 2>/dev/null | awk '{print $4}' | grep -Eq "(^|[:\]])${port}$"; then
+      pass "port ${port} is listening"
+    else
+      check_fail "port ${port:-<unset>} is not listening"
+    fi
+  done
+
+  if [ -n "$ui_port" ] && curl -fsS --max-time 5 "http://127.0.0.1:${ui_port}/__openclaw/control-ui-config.json" >/dev/null 2>&1; then
+    pass "UI proxy responds on ${ui_port}"
+  else
+    check_fail "UI proxy is not responding on ${ui_port:-<unset>}"
+  fi
+fi
+
+printf 'UI: %s\n' "$(tenant_ui_url "$tenant" 2>/dev/null || printf 'unavailable')"
+printf 'Gateway: %s\n' "$(tenant_gateway_ws_url "$tenant" 2>/dev/null || printf 'unavailable')"
+
+if [ "$failures" -gt 0 ]; then
+  exit 1
+fi

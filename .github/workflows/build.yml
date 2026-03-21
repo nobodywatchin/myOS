@@ -15,6 +15,20 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.ref || github.run_id }}
   cancel-in-progress: true
 jobs:
+  validate-tenant-cli:
+    name: Validate tenant CLI
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Check tenant scripts and templates
+        run: |
+          set -euo pipefail
+          find files/platform-host/usr/local/libexec/myos -type f -print0 | xargs -0 -n1 bash -n
+          bash -n files/platform-host/etc/myos/templates/openclaw/scripts/openclaw-start.sh
+          node --check files/platform-host/etc/myos/templates/openclaw/scripts/openclaw-ui-server.mjs
+          python3 -m json.tool files/platform-host/etc/myos/templates/openclaw/config/openclaw.json.example >/dev/null
+          grep -q "import '/usr/share/myos/just/tenant.just'" files/justfiles/usr/share/myos/just/index.just
+
   alma10:
     name: Alma 10
     runs-on: ubuntu-latest

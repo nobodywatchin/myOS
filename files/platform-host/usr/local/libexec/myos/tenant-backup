@@ -1,0 +1,70 @@
+#!/usr/bin/env bash
+set -Eeuo pipefail
+
+COMMON_SH="${MYOS_COMMON_SH:-/usr/local/libexec/myos/common.sh}"
+. "$COMMON_SH"
+
+usage() {
+  cat <<'USAGE'
+Usage: tenant-backup --tenant NAME [--output PATH]
+
+Create a tenant backup archive containing env, secret, state, and workspace
+content.
+USAGE
+}
+
+tenant=""
+output=""
+
+while [ "$#" -gt 0 ]; do
+  case "$1" in
+    --tenant)
+      tenant="${2:-}"
+      shift 2
+      ;;
+    --output)
+      output="${2:-}"
+      shift 2
+      ;;
+    -h|--help)
+      usage
+      exit 0
+      ;;
+    *)
+      die "unknown argument: $1"
+      ;;
+  esac
+done
+
+if [ -z "$tenant" ] && [ -t 0 ]; then
+  printf 'Tenant name: '
+  read -r tenant
+fi
+
+require_root
+validate_tenant "$tenant"
+getent passwd "$tenant" >/dev/null 2>&1 || die "tenant user ${tenant} does not exist yet"
+
+if [ -z "$output" ]; then
+  output="/tmp/${tenant}-openclaw-$(date +%Y%m%d%H%M%S).tar.gz"
+fi
+
+was_running=0
+if try_user_systemctl "$tenant" is-active openclaw.service; then
+  was_running=1
+  run_user_systemctl "$tenant" stop openclaw.service
+fi
+
+tar -C "$(tenant_root "$tenant")" -czf "$output" \
+  config/env \
+  zone-c/secrets \
+  zone-c/state \
+  zone-c/storage \
+  README.md
+
+if [ "$was_running" -eq 1 ]; then
+  /usr/local/libexec/myos/tenant-start --tenant "$tenant"
+fi
+
+log "created tenant backup at ${output}"
+printf '%s\n' "$output"

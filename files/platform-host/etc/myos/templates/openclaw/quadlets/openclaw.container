@@ -32,6 +32,11 @@ Exec=sh /tmp/openclaw-start.sh
 
 [Service]
 TimeoutStartSec=15min
+Restart=on-failure
+RestartSec=5s
+MemoryMax=__OPENCLAW_MEMORY_MAX__
+CPUQuota=__OPENCLAW_CPU_QUOTA__
+TasksMax=__OPENCLAW_TASKS_MAX__
 
 [Install]
 WantedBy=default.target

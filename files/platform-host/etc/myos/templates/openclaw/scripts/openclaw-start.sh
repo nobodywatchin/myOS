@@ -16,7 +16,7 @@ export OPENCLAW_STATE_DIR="${OPENCLAW_STATE_DIR:-${HOME}/.openclaw}"
 export OPENCLAW_CONFIG_PATH="${OPENCLAW_CONFIG_PATH:-${OPENCLAW_STATE_DIR}/openclaw.json}"
 mkdir -p "${OPENCLAW_STATE_DIR}" "${OPENCLAW_STATE_DIR}/workspace" /tmp/openclaw
 
-node openclaw.mjs gateway --allow-unconfigured &
+node openclaw.mjs gateway &
 gateway_pid=$!
 
 node /tmp/openclaw-ui-server.mjs &

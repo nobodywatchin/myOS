@@ -1,0 +1,192 @@
+#!/usr/bin/env bash
+set -Eeuo pipefail
+
+COMMON_SH="${MYOS_COMMON_SH:-/usr/local/libexec/myos/common.sh}"
+. "$COMMON_SH"
+
+usage() {
+  cat <<'USAGE'
+Usage: tenant-configure --tenant NAME [options]
+
+Manage the operator-facing tenant settings and regenerate the rendered
+OpenClaw config.
+
+Options:
+  --model MODEL                Set the default agent model reference.
+  --public-hostname HOST       Set the public hostname metadata.
+  --image IMAGE                Set the pinned OpenClaw image reference.
+  --gateway-mode MODE          Set gateway.mode in the rendered config.
+  --ui-auth MODE               strict or insecure.
+  --set-origin ORIGIN          Add an extra allowed UI origin.
+  --clear-extra-origins        Remove all non-localhost UI origins.
+  --restart                    Reconcile and restart the tenant service.
+  --no-restart                 Only rewrite config and rendered files.
+USAGE
+}
+
+tenant=""
+model=""
+public_hostname=""
+image=""
+gateway_mode=""
+ui_auth_mode=""
+clear_extra_origins=0
+restart_mode="auto"
+set_origins=()
+
+while [ "$#" -gt 0 ]; do
+  case "$1" in
+    --tenant)
+      tenant="${2:-}"
+      shift 2
+      ;;
+    --model)
+      model="${2:-}"
+      shift 2
+      ;;
+    --public-hostname)
+      public_hostname="${2:-}"
+      shift 2
+      ;;
+    --image)
+      image="${2:-}"
+      shift 2
+      ;;
+    --gateway-mode)
+      gateway_mode="${2:-}"
+      shift 2
+      ;;
+    --ui-auth)
+      ui_auth_mode="${2:-}"
+      shift 2
+      ;;
+    --set-origin)
+      set_origins+=("${2:-}")
+      shift 2
+      ;;
+    --clear-extra-origins)
+      clear_extra_origins=1
+      shift
+      ;;
+    --restart)
+      restart_mode="yes"
+      shift
+      ;;
+    --no-restart)
+      restart_mode="no"
+      shift
+      ;;
+    -h|--help)
+      usage
+      exit 0
+      ;;
+    *)
+      die "unknown argument: $1"
+      ;;
+  esac
+done
+
+if [ -z "$tenant" ] && [ -t 0 ]; then
+  printf 'Tenant name: '
+  read -r tenant
+fi
+
+require_root
+validate_tenant "$tenant"
+getent passwd "$tenant" >/dev/null 2>&1 || die "tenant user ${tenant} does not exist yet"
+
+/usr/local/libexec/myos/tenant-secrets-init --tenant "$tenant"
+
+common_env="$(tenant_env_dir "$tenant")/common.env"
+openclaw_env="$(tenant_env_dir "$tenant")/openclaw.env"
+
+current_model="$(env_value_from_file "$openclaw_env" OPENCLAW_MODEL_PRIMARY 2>/dev/null || true)"
+current_public_hostname="$(env_value_from_file "$common_env" PUBLIC_HOSTNAME 2>/dev/null || true)"
+current_image="$(env_value_from_file "$openclaw_env" OPENCLAW_IMAGE 2>/dev/null || true)"
+current_gateway_mode="$(env_value_from_file "$openclaw_env" OPENCLAW_GATEWAY_MODE 2>/dev/null || true)"
+current_ui_insecure="$(env_value_from_file "$openclaw_env" OPENCLAW_UI_ALLOW_INSECURE_AUTH 2>/dev/null || true)"
+current_extra_origins="$(env_value_from_file "$openclaw_env" OPENCLAW_CONTROL_UI_EXTRA_ORIGINS 2>/dev/null || true)"
+
+if [ -t 0 ] && [ -z "$model$image$public_hostname$gateway_mode$ui_auth_mode" ] && [ "${#set_origins[@]}" -eq 0 ] && [ "$clear_extra_origins" -eq 0 ]; then
+  printf 'Model [%s]: ' "${current_model:-openrouter/anthropic/claude-sonnet-4-5}"
+  read -r model
+  printf 'Public hostname [%s]: ' "${current_public_hostname:-${tenant}.example.invalid}"
+  read -r public_hostname
+  printf 'Image [%s]: ' "${current_image:-ghcr.io/openclaw/openclaw:2026.3.13-1}"
+  read -r image
+  printf 'Gateway mode [%s]: ' "${current_gateway_mode:-local}"
+  read -r gateway_mode
+  printf 'UI auth mode (strict/insecure) [%s]: ' "$( [ "$(normalize_bool "${current_ui_insecure:-false}")" = true ] && printf 'insecure' || printf 'strict' )"
+  read -r ui_auth_mode
+  printf 'Extra UI origins (comma-separated) [%s]: ' "$current_extra_origins"
+  read -r extra_origin_input
+  if [ -n "$extra_origin_input" ]; then
+    IFS=',' read -r -a set_origins <<< "$extra_origin_input"
+    clear_extra_origins=1
+  fi
+fi
+
+model="${model:-${current_model:-openrouter/anthropic/claude-sonnet-4-5}}"
+public_hostname="${public_hostname:-${current_public_hostname:-${tenant}.example.invalid}}"
+image="${image:-${current_image:-ghcr.io/openclaw/openclaw:2026.3.13-1}}"
+gateway_mode="${gateway_mode:-${current_gateway_mode:-local}}"
+
+case "${ui_auth_mode:-}" in
+  "")
+    ui_auth_value="$(normalize_bool "${current_ui_insecure:-false}")"
+    ;;
+  strict)
+    ui_auth_value=false
+    ;;
+  insecure)
+    ui_auth_value=true
+    ;;
+  *)
+    die "ui auth mode must be strict or insecure"
+    ;;
+esac
+
+extra_origins="$current_extra_origins"
+if [ "$clear_extra_origins" -eq 1 ]; then
+  extra_origins=""
+fi
+for origin in "${set_origins[@]}"; do
+  [ -n "$origin" ] || continue
+  extra_origins="$(append_unique_csv_item "$extra_origins" "$origin")"
+done
+
+set_env_value "$common_env" TENANT_NAME "$tenant"
+set_env_value "$common_env" PUBLIC_HOSTNAME "$public_hostname"
+set_env_value "$openclaw_env" OPENCLAW_IMAGE "$image"
+set_env_value "$openclaw_env" OPENCLAW_MODEL_PRIMARY "$model"
+set_env_value "$openclaw_env" OPENCLAW_GATEWAY_MODE "$gateway_mode"
+set_env_value "$openclaw_env" OPENCLAW_UI_ALLOW_INSECURE_AUTH "$ui_auth_value"
+set_env_value "$openclaw_env" OPENCLAW_CONTROL_UI_EXTRA_ORIGINS "$extra_origins"
+
+chown "$tenant:$tenant" "$common_env" "$openclaw_env"
+chmod 0640 "$common_env" "$openclaw_env"
+restorecon_if_available "$common_env" "$openclaw_env"
+
+service_active=0
+if try_user_systemctl "$tenant" is-active openclaw.service; then
+  service_active=1
+fi
+
+if [ "$restart_mode" = auto ]; then
+  if [ "$service_active" -eq 1 ]; then
+    restart_mode=yes
+  else
+    restart_mode=no
+  fi
+fi
+
+quadlet_args=(--tenant "$tenant" --force)
+if [ "$restart_mode" = yes ]; then
+  quadlet_args+=(--restart --validate)
+fi
+/usr/local/libexec/myos/tenant-quadlet-install "${quadlet_args[@]}"
+
+log "updated tenant configuration for ${tenant}"
+if tenant_ui_url "$tenant" >/dev/null 2>&1; then
+  printf 'UI: %s\n' "$(tenant_ui_url "$tenant")"
+fi

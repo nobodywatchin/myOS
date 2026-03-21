@@ -1,0 +1,78 @@
+#!/usr/bin/env bash
+set -Eeuo pipefail
+
+COMMON_SH="${MYOS_COMMON_SH:-/usr/local/libexec/myos/common.sh}"
+. "$COMMON_SH"
+
+usage() {
+  cat <<'USAGE'
+Usage: tenant-restore --tenant NAME --input PATH [--start]
+
+Restore a tenant backup archive into the tenant storage tree.
+USAGE
+}
+
+tenant=""
+input=""
+start_after=0
+
+while [ "$#" -gt 0 ]; do
+  case "$1" in
+    --tenant)
+      tenant="${2:-}"
+      shift 2
+      ;;
+    --input)
+      input="${2:-}"
+      shift 2
+      ;;
+    --start)
+      start_after=1
+      shift
+      ;;
+    -h|--help)
+      usage
+      exit 0
+      ;;
+    *)
+      die "unknown argument: $1"
+      ;;
+  esac
+done
+
+if [ -z "$tenant" ] && [ -t 0 ]; then
+  printf 'Tenant name: '
+  read -r tenant
+fi
+
+require_root
+validate_tenant "$tenant"
+[ -f "$input" ] || die "backup archive not found: ${input:-<empty>}"
+
+if ! getent passwd "$tenant" >/dev/null 2>&1; then
+  /usr/local/libexec/myos/tenant-init --tenant "$tenant" --enable-linger --force-quadlets
+fi
+
+if try_user_systemctl "$tenant" is-active openclaw.service; then
+  run_user_systemctl "$tenant" stop openclaw.service
+fi
+
+tar -C "$(tenant_root "$tenant")" -xzf "$input"
+chown -R "$tenant:$tenant" \
+  "$(tenant_env_dir "$tenant")" \
+  "$(tenant_secret_dir "$tenant")" \
+  "$(tenant_state_dir "$tenant")" \
+  "$(tenant_root "$tenant")/zone-c/storage"
+restorecon_if_available \
+  "$(tenant_env_dir "$tenant")" \
+  "$(tenant_secret_dir "$tenant")" \
+  "$(tenant_state_dir "$tenant")" \
+  "$(tenant_root "$tenant")/zone-c/storage"
+
+/usr/local/libexec/myos/tenant-quadlet-install --tenant "$tenant" --force
+
+if [ "$start_after" -eq 1 ]; then
+  /usr/local/libexec/myos/tenant-start --tenant "$tenant"
+fi
+
+log "restored tenant backup for ${tenant} from ${input}"

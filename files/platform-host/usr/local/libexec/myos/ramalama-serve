@@ -1,7 +1,8 @@
 #!/usr/bin/env bash
 set -Eeuo pipefail
 
-. /usr/local/libexec/myos/common.sh
+COMMON_SH="${MYOS_COMMON_SH:-/usr/local/libexec/myos/common.sh}"
+. "$COMMON_SH"
 
 instance="${1:-default}"
 config="/etc/myos/ramalama/models/${instance}.env"

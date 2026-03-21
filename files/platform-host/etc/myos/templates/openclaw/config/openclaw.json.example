@@ -1,5 +1,19 @@
 {
   "gateway": {
-    "mode": "local"
+    "mode": "local",
+    "controlUi": {
+      "allowedOrigins": [
+        "http://127.0.0.1:41006",
+        "http://localhost:41006"
+      ],
+      "allowInsecureAuth": false
+    }
+  },
+  "agents": {
+    "defaults": {
+      "model": {
+        "primary": "openrouter/anthropic/claude-sonnet-4-5"
+      }
+    }
   }
 }

@@ -1,0 +1,112 @@
+#!/usr/bin/env bash
+set -Eeuo pipefail
+
+COMMON_SH="${MYOS_COMMON_SH:-/usr/local/libexec/myos/common.sh}"
+. "$COMMON_SH"
+
+usage() {
+  cat <<'USAGE'
+Usage: tenant-config-render --tenant NAME
+
+Render the generated OpenClaw config file for a tenant.
+USAGE
+}
+
+tenant=""
+
+while [ "$#" -gt 0 ]; do
+  case "$1" in
+    --tenant)
+      tenant="${2:-}"
+      shift 2
+      ;;
+    -h|--help)
+      usage
+      exit 0
+      ;;
+    *)
+      die "unknown argument: $1"
+      ;;
+  esac
+done
+
+require_root
+validate_tenant "$tenant"
+getent passwd "$tenant" >/dev/null 2>&1 || die "tenant user ${tenant} does not exist yet"
+
+TENANT_ROOT="$(tenant_root "$tenant")"
+TENANT_ENV_DIR="$(tenant_env_dir "$tenant")"
+TENANT_STATE_DIR="$(tenant_state_dir "$tenant")"
+TENANT_CONFIG_FILE="$(tenant_config_file "$tenant")"
+
+ensure_dir 0750 "$tenant" "$tenant" "$TENANT_ENV_DIR"
+ensure_dir 0750 "$tenant" "$tenant" "$TENANT_STATE_DIR"
+
+write_if_missing 0640 "$tenant" "$tenant" "${TEMPLATE_BASE}/env/common.env.example" "${TENANT_ENV_DIR}/common.env"
+write_if_missing 0640 "$tenant" "$tenant" "${TEMPLATE_BASE}/env/openclaw.env.example" "${TENANT_ENV_DIR}/openclaw.env"
+
+if [ ! -f "${TENANT_ENV_DIR}/ports.env" ]; then
+  /usr/local/libexec/myos/tenant-port-allocate --tenant "$tenant"
+fi
+
+# shellcheck disable=SC1090
+. "${TENANT_ENV_DIR}/ports.env"
+# shellcheck disable=SC1090
+. "${TENANT_ENV_DIR}/common.env"
+# shellcheck disable=SC1090
+. "${TENANT_ENV_DIR}/openclaw.env"
+
+PUBLIC_HOSTNAME="${PUBLIC_HOSTNAME:-${tenant}.example.invalid}"
+TENANT_NAME="${TENANT_NAME:-${tenant}}"
+OPENCLAW_GATEWAY_MODE="${OPENCLAW_GATEWAY_MODE:-local}"
+OPENCLAW_MODEL_PRIMARY="${OPENCLAW_MODEL_PRIMARY:-openrouter/anthropic/claude-sonnet-4-5}"
+OPENCLAW_UI_ALLOW_INSECURE_AUTH="$(normalize_bool "${OPENCLAW_UI_ALLOW_INSECURE_AUTH:-false}")"
+OPENCLAW_CONTROL_UI_EXTRA_ORIGINS="${OPENCLAW_CONTROL_UI_EXTRA_ORIGINS:-}"
+
+export OPENCLAW_GATEWAY_MODE OPENCLAW_MODEL_PRIMARY OPENCLAW_UI_ALLOW_INSECURE_AUTH OPENCLAW_CONTROL_UI_EXTRA_ORIGINS OPENCLAW_UI_PORT PUBLIC_HOSTNAME TENANT_NAME
+
+python3 - "$TENANT_CONFIG_FILE" <<'PYTHON'
+import json
+import os
+import sys
+
+output = sys.argv[1]
+ui_port = os.environ["OPENCLAW_UI_PORT"]
+origins = [
+    f"http://127.0.0.1:{ui_port}",
+    f"http://localhost:{ui_port}",
+]
+for token in os.environ.get("OPENCLAW_CONTROL_UI_EXTRA_ORIGINS", "").replace("\n", ",").split(","):
+    origin = token.strip()
+    if origin and origin not in origins:
+        origins.append(origin)
+
+config = {
+    "gateway": {
+        "mode": os.environ["OPENCLAW_GATEWAY_MODE"],
+        "controlUi": {
+            "allowedOrigins": origins,
+            "allowInsecureAuth": os.environ["OPENCLAW_UI_ALLOW_INSECURE_AUTH"] == "true",
+        },
+    }
+}
+model = os.environ.get("OPENCLAW_MODEL_PRIMARY", "").strip()
+if model:
+    config["agents"] = {
+        "defaults": {
+            "model": {
+                "primary": model,
+            }
+        }
+    }
+
+with open(output, "w", encoding="utf-8") as handle:
+    json.dump(config, handle, indent=2)
+    handle.write("\n")
+PYTHON
+
+chown "$tenant:$tenant" "$TENANT_CONFIG_FILE"
+chmod 0640 "$TENANT_CONFIG_FILE"
+restorecon_if_available "$TENANT_CONFIG_FILE"
+
+log "rendered OpenClaw config for ${tenant}"

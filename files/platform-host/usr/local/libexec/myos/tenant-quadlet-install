@@ -1,18 +1,22 @@
 #!/usr/bin/env bash
 set -Eeuo pipefail
 
-. /usr/local/libexec/myos/common.sh
+COMMON_SH="${MYOS_COMMON_SH:-/usr/local/libexec/myos/common.sh}"
+. "$COMMON_SH"
 
 usage() {
   cat <<'USAGE'
-Usage: tenant-quadlet-install --tenant NAME [--force]
+Usage: tenant-quadlet-install --tenant NAME [--force] [--restart] [--validate]
 
-Render inert rootless Quadlet files into the tenant home directory.
+Render rootless Quadlet files into the tenant home directory and optionally
+reconcile the running tenant service.
 USAGE
 }
 
 tenant=""
 force=0
+restart_service=0
+validate_after=0
 
 while [ "$#" -gt 0 ]; do
   case "$1" in
@@ -22,6 +26,14 @@ while [ "$#" -gt 0 ]; do
       ;;
     --force)
       force=1
+      shift
+      ;;
+    --restart)
+      restart_service=1
+      shift
+      ;;
+    --validate)
+      validate_after=1
       shift
       ;;
     -h|--help)
@@ -50,26 +62,24 @@ if [ ! -f "$(tenant_env_dir "$tenant")/ports.env" ]; then
 fi
 
 /usr/local/libexec/myos/tenant-secrets-init --tenant "$tenant"
+/usr/local/libexec/myos/tenant-config-render --tenant "$tenant"
 
 # shellcheck disable=SC1090
 . "$(tenant_env_dir "$tenant")/ports.env"
-
-if [ -f "$(tenant_env_dir "$tenant")/common.env" ]; then
-  # shellcheck disable=SC1090
-  . "$(tenant_env_dir "$tenant")/common.env"
-fi
-
-if [ -f "$(tenant_env_dir "$tenant")/openclaw.env" ]; then
-  # shellcheck disable=SC1090
-  . "$(tenant_env_dir "$tenant")/openclaw.env"
-fi
+# shellcheck disable=SC1090
+. "$(tenant_env_dir "$tenant")/common.env"
+# shellcheck disable=SC1090
+. "$(tenant_env_dir "$tenant")/openclaw.env"
 
 PUBLIC_HOSTNAME="${PUBLIC_HOSTNAME:-${tenant}.example.invalid}"
 OPENCLAW_BRIDGE_PORT="${OPENCLAW_BRIDGE_PORT:-${CONTROL_PORT:-}}"
+OPENCLAW_MEMORY_MAX="${OPENCLAW_MEMORY_MAX:-4G}"
+OPENCLAW_CPU_QUOTA="${OPENCLAW_CPU_QUOTA:-200%}"
+OPENCLAW_TASKS_MAX="${OPENCLAW_TASKS_MAX:-512}"
 
 case "${OPENCLAW_IMAGE:-}" in
-  ""|"registry.example.invalid/openclaw/runtime:stable"|"YOUR_REGISTRY/openclaw/runtime:stable")
-    OPENCLAW_IMAGE="ghcr.io/openclaw/openclaw:latest"
+  ""|"registry.example.invalid/openclaw/runtime:stable"|"YOUR_REGISTRY/openclaw/runtime:stable"|"ghcr.io/openclaw/openclaw:latest")
+    OPENCLAW_IMAGE="ghcr.io/openclaw/openclaw:2026.3.13-1"
     ;;
 esac
 
@@ -117,7 +127,24 @@ restorecon_if_available "${TENANT_HOME}/.config/containers/systemd" "${TENANT_RE
 if try_user_systemctl "$tenant" daemon-reload; then
   log "reloaded user systemd for ${tenant}"
 else
-  warn "could not reach the user systemd instance for ${tenant}; run systemctl --user daemon-reload after enabling linger or logging in"
+  if [ "$restart_service" -eq 1 ] || [ "$validate_after" -eq 1 ]; then
+    systemctl start "user@${TENANT_UID}.service"
+    run_user_systemctl "$tenant" daemon-reload
+    log "reloaded user systemd for ${tenant}"
+  else
+    warn "could not reach the user systemd instance for ${tenant}; run systemctl --user daemon-reload after enabling linger or logging in"
+  fi
+fi
+
+if [ "$restart_service" -eq 1 ]; then
+  systemctl start "user@${TENANT_UID}.service"
+  run_user_systemctl "$tenant" reset-failed openclaw.service || true
+  run_user_systemctl "$tenant" restart openclaw.service
+  log "restarted OpenClaw service for ${tenant}"
 fi
 
 log "rendered OpenClaw tenant Quadlets for ${tenant}"
+
+if [ "$validate_after" -eq 1 ]; then
+  /usr/local/libexec/myos/tenant-validate --tenant "$tenant" --require-running
+fi

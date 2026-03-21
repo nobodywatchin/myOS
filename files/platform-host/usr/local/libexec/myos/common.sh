@@ -29,6 +29,12 @@ validate_tenant() {
 
   [[ -n "$tenant" ]] || die "tenant name is required"
   [[ "$tenant" =~ ^[a-z][a-z0-9-]{1,31}$ ]] || die "tenant names must match ^[a-z][a-z0-9-]{1,31}$"
+
+  case "$tenant" in
+    root|modelsvc)
+      die "tenant name ${tenant} is reserved"
+      ;;
+  esac
 }
 
 tenant_root() {
@@ -55,8 +61,20 @@ tenant_secret_dir() {
   printf '%s/zone-c/secrets\n' "$(tenant_root "$1")"
 }
 
+tenant_secret_file() {
+  printf '%s/openclaw.secrets.env\n' "$(tenant_secret_dir "$1")"
+}
+
 tenant_state_dir() {
   printf '%s/zone-c/state\n' "$(tenant_root "$1")"
+}
+
+tenant_config_file() {
+  printf '%s/openclaw.json\n' "$(tenant_state_dir "$1")"
+}
+
+tenant_container_name() {
+  printf 'openclaw-%s\n' "$1"
 }
 
 tenant_podman_root() {
@@ -78,18 +96,30 @@ ensure_dir() {
 
 ensure_user() {
   local tenant="$1"
-  local home
+  local home passwd_entry existing_gecos existing_home existing_shell
 
   install -d -m 0755 "$TENANT_BASE"
   home="$(tenant_home "$tenant")"
+  passwd_entry="$(getent passwd "$tenant" 2>/dev/null || true)"
 
-  if ! getent passwd "$tenant" >/dev/null 2>&1; then
+  if [ -z "$passwd_entry" ]; then
     useradd \
       --create-home \
       --home-dir "$home" \
       --shell /usr/sbin/nologin \
       --comment "myOS OpenClaw tenant ${tenant}" \
       "$tenant"
+  else
+    IFS=: read -r _ _ _ _ existing_gecos existing_home existing_shell <<< "$passwd_entry"
+    [ "$existing_home" = "$home" ] || die "existing user ${tenant} is not managed under ${home}"
+    [ "$existing_shell" = "/usr/sbin/nologin" ] || die "existing user ${tenant} is not a managed tenant account"
+    case "$existing_gecos" in
+      "myOS OpenClaw tenant ${tenant}"|myOS\ OpenClaw\ tenant*)
+        ;;
+      *)
+        die "existing user ${tenant} does not look like a managed tenant account"
+        ;;
+    esac
   fi
 
   ensure_dir 0750 "$tenant" "$tenant" "$home"
@@ -165,6 +195,9 @@ render_template_file() {
     -e "s|__PARSER_IMAGE__|$(escape_sed "${PARSER_IMAGE:-}")|g" \
     -e "s|__AGENT_IMAGE__|$(escape_sed "${AGENT_IMAGE:-}")|g" \
     -e "s|__OPENCLAW_GATEWAY_TOKEN__|$(escape_sed "${OPENCLAW_GATEWAY_TOKEN:-}")|g" \
+    -e "s|__OPENCLAW_MEMORY_MAX__|$(escape_sed "${OPENCLAW_MEMORY_MAX:-}")|g" \
+    -e "s|__OPENCLAW_CPU_QUOTA__|$(escape_sed "${OPENCLAW_CPU_QUOTA:-}")|g" \
+    -e "s|__OPENCLAW_TASKS_MAX__|$(escape_sed "${OPENCLAW_TASKS_MAX:-}")|g" \
     "$src" > "$dest"
 }
 
@@ -188,14 +221,14 @@ restorecon_if_available() {
   fi
 }
 
-try_user_systemctl() {
+tenant_runtime_dir() {
+  printf '/run/user/%s\n' "$(id -u "$1")"
+}
+
+run_as_tenant_login() {
   local tenant="$1"
   local uid
   shift
-
-  if systemctl --machine "${tenant}@" --user "$@" >/dev/null 2>&1; then
-    return 0
-  fi
 
   uid="$(id -u "$tenant" 2>/dev/null || true)"
   [ -n "$uid" ] || return 1
@@ -204,5 +237,128 @@ try_user_systemctl() {
     HOME="$(tenant_home "$tenant")" \
     XDG_RUNTIME_DIR="/run/user/${uid}" \
     DBUS_SESSION_BUS_ADDRESS="unix:path=/run/user/${uid}/bus" \
-    systemctl --user "$@" >/dev/null 2>&1
+    sh -lc 'cd "$HOME" && exec "$@"' sh "$@"
+}
+
+run_user_systemctl() {
+  local tenant="$1"
+  shift
+
+  if systemctl --machine "${tenant}@" --user "$@"; then
+    return 0
+  fi
+
+  run_as_tenant_login "$tenant" systemctl --user "$@"
+}
+
+try_user_systemctl() {
+  local tenant="$1"
+  shift
+
+  run_user_systemctl "$tenant" "$@" >/dev/null 2>&1
+}
+
+run_tenant_podman() {
+  local tenant="$1"
+  shift
+
+  run_as_tenant_login "$tenant" podman "$@"
+}
+
+env_value_from_file() {
+  local file="$1"
+  local key="$2"
+
+  [ -f "$file" ] || return 1
+  awk -F= -v key="$key" '
+    $1 == key {
+      sub(/^[^=]*=/, "", $0)
+      print $0
+      found = 1
+      exit
+    }
+    END { exit(found ? 0 : 1) }
+  ' "$file"
+}
+
+set_env_value() {
+  local file="$1"
+  local key="$2"
+  local value="$3"
+  local tmp found=0 line
+
+  mkdir -p "$(dirname "$file")"
+  tmp="$(mktemp)"
+
+  if [ -f "$file" ]; then
+    while IFS= read -r line || [ -n "$line" ]; do
+      if [[ "$line" == "${key}="* ]]; then
+        printf '%s=%s\n' "$key" "$value" >> "$tmp"
+        found=1
+      else
+        printf '%s\n' "$line" >> "$tmp"
+      fi
+    done < "$file"
+  fi
+
+  if [ "$found" -eq 0 ]; then
+    printf '%s=%s\n' "$key" "$value" >> "$tmp"
+  fi
+
+  cat "$tmp" > "$file"
+  rm -f "$tmp"
+}
+
+append_unique_csv_item() {
+  local current="$1"
+  local item="$2"
+  local cleaned=""
+  local part
+  local -a parts=()
+
+  IFS=',' read -r -a parts <<< "${current:-}"
+  for part in "${parts[@]}"; do
+    part="${part#"${part%%[![:space:]]*}"}"
+    part="${part%"${part##*[![:space:]]}"}"
+    [ -n "$part" ] || continue
+    if [ "$part" = "$item" ]; then
+      printf '%s\n' "$current"
+      return 0
+    fi
+    cleaned="${cleaned:+${cleaned},}${part}"
+  done
+
+  printf '%s\n' "${cleaned:+${cleaned},}${item}"
+}
+
+normalize_bool() {
+  case "${1:-}" in
+    1|true|TRUE|yes|YES|on|ON)
+      printf 'true\n'
+      ;;
+    0|false|FALSE|no|NO|off|OFF|"")
+      printf 'false\n'
+      ;;
+    *)
+      die "expected a boolean value, got: ${1:-}"
+      ;;
+  esac
+}
+
+tenant_ui_url() {
+  local tenant="$1"
+  local port
+
+  port="$(env_value_from_file "$(tenant_env_dir "$tenant")/ports.env" OPENCLAW_UI_PORT 2>/dev/null || true)"
+  [ -n "$port" ] || return 1
+  printf 'http://127.0.0.1:%s/\n' "$port"
+}
+
+tenant_gateway_ws_url() {
+  local tenant="$1"
+  local port
+
+  port="$(env_value_from_file "$(tenant_env_dir "$tenant")/ports.env" OPENCLAW_PORT 2>/dev/null || true)"
+  [ -n "$port" ] || return 1
+  printf 'ws://127.0.0.1:%s\n' "$port"
 }
