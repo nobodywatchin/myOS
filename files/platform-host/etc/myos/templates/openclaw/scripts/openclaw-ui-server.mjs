@@ -272,6 +272,8 @@ function proxyUpgrade(req, socket, head) {
     const lines = [`GET ${buildUpstreamPath(url.pathname, url.search)} HTTP/${req.httpVersion}`];
     const headers = buildProxyHeaders(req.headers);
 
+    delete headers.connection;
+    delete headers.upgrade;
     headers.Connection = "Upgrade";
     headers.Upgrade = req.headers.upgrade || "websocket";
 
