@@ -79,7 +79,9 @@ if getent passwd "$tenant" >/dev/null 2>&1; then
     "$(tenant_home "$tenant")/.config/containers/systemd/openclaw-stack.pod" \
     "$(tenant_home "$tenant")/.config/containers/systemd/browser-zone.container" \
     "$(tenant_home "$tenant")/.config/containers/systemd/zone-a-agent.container" \
-    "$(tenant_home "$tenant")/.config/containers/systemd/zone-b-parser.container"
+    "$(tenant_home "$tenant")/.config/containers/systemd/zone-b-parser.container" \
+    "$(tenant_rendered_dir "$tenant")/openclaw-start.sh" \
+    "$(tenant_rendered_dir "$tenant")/openclaw-ui-server.mjs"
 fi
 
 if [ "$purge_storage" -eq 1 ]; then

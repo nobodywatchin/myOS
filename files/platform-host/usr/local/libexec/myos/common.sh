@@ -47,6 +47,10 @@ tenant_env_dir() {
   printf '%s/env\n' "$(tenant_config_root "$1")"
 }
 
+tenant_rendered_dir() {
+  printf '%s/rendered\n' "$(tenant_config_root "$1")"
+}
+
 tenant_secret_dir() {
   printf '%s/zone-c/secrets\n' "$(tenant_root "$1")"
 }
@@ -150,6 +154,7 @@ render_template_file() {
     -e "s|__TENANT_GID__|$(escape_sed "${TENANT_GID:-}")|g" \
     -e "s|__OPENCLAW_PORT__|$(escape_sed "${OPENCLAW_PORT:-}")|g" \
     -e "s|__OPENCLAW_BRIDGE_PORT__|$(escape_sed "${OPENCLAW_BRIDGE_PORT:-}")|g" \
+    -e "s|__OPENCLAW_UI_PORT__|$(escape_sed "${OPENCLAW_UI_PORT:-}")|g" \
     -e "s|__BROWSER_PORT__|$(escape_sed "${BROWSER_PORT:-}")|g" \
     -e "s|__PARSER_PORT__|$(escape_sed "${PARSER_PORT:-}")|g" \
     -e "s|__CONTROL_PORT__|$(escape_sed "${CONTROL_PORT:-}")|g" \

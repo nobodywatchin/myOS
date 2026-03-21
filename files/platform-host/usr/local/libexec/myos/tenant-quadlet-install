@@ -41,6 +41,7 @@ getent passwd "$tenant" >/dev/null 2>&1 || die "tenant user ${tenant} does not e
 TENANT="$tenant"
 TENANT_ROOT="$(tenant_root "$tenant")"
 TENANT_HOME="$(tenant_home "$tenant")"
+TENANT_RENDERED_DIR="$(tenant_rendered_dir "$tenant")"
 TENANT_UID="$(id -u "$tenant")"
 TENANT_GID="$(id -g "$tenant")"
 
@@ -75,7 +76,7 @@ esac
 ensure_dir 0750 "$tenant" "$tenant" "${TENANT_HOME}/.config"
 ensure_dir 0750 "$tenant" "$tenant" "${TENANT_HOME}/.config/containers"
 ensure_dir 0750 "$tenant" "$tenant" "${TENANT_HOME}/.config/containers/systemd"
-ensure_dir 0750 "$tenant" "$tenant" "${TENANT_ROOT}/config/rendered"
+ensure_dir 0750 "$tenant" "$tenant" "${TENANT_RENDERED_DIR}"
 
 rm -f \
   "${TENANT_HOME}/.config/containers/systemd/openclaw-stack.pod" \
@@ -94,13 +95,24 @@ find "${TEMPLATE_BASE}/quadlets" -maxdepth 1 -type f \( -name '*.pod' -o -name '
   chmod 0640 "$target"
 done
 
+find "${TEMPLATE_BASE}/scripts" -maxdepth 1 -type f | sort | while read -r template; do
+  target="${TENANT_RENDERED_DIR}/$(basename "$template")"
+  if [ "$force" -eq 0 ] && [ -e "$target" ]; then
+    continue
+  fi
+
+  render_template_file "$template" "$target"
+  chown "$tenant:$tenant" "$target"
+  chmod 0640 "$target"
+done
+
 proxy_target="/etc/myos/proxy/tenants/${tenant}.conf.example"
 if [ "$force" -eq 1 ] || [ ! -e "$proxy_target" ]; then
   render_template_file "${TEMPLATE_BASE}/proxy/tenant-route.nginx.conf.example" "$proxy_target"
   chmod 0644 "$proxy_target"
 fi
 
-restorecon_if_available "${TENANT_HOME}/.config/containers/systemd" "${TENANT_ROOT}/config/rendered" "$proxy_target"
+restorecon_if_available "${TENANT_HOME}/.config/containers/systemd" "${TENANT_RENDERED_DIR}" "$proxy_target"
 
 if try_user_systemctl "$tenant" daemon-reload; then
   log "reloaded user systemd for ${tenant}"
