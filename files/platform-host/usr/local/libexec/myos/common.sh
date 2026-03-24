@@ -847,7 +847,7 @@ if not changed:
     print('unchanged')
     raise SystemExit(0)
 
-config_path.write_text(json.dumps(data, indent=2) + '\\n', encoding='utf-8')
+config_path.write_text(json.dumps(data, indent=2) + '\n', encoding='utf-8')
 print('changed')
 PYTHON
 )" || return 1
