@@ -28,6 +28,7 @@ jobs:
           node --check files/platform-host/etc/myos/templates/openclaw/scripts/openclaw-ui-server.mjs
           python3 -m json.tool files/platform-host/etc/myos/templates/openclaw/config/openclaw.json.example >/dev/null
           grep -q "import '/usr/share/myos/just/tenant.just'" files/justfiles/usr/share/myos/just/index.just
+          grep -q '^tenant-list ' files/justfiles/usr/share/myos/just/tenant.just
           grep -q '^tenant-dashboard ' files/justfiles/usr/share/myos/just/tenant.just
           grep -q '^tenant-config ' files/justfiles/usr/share/myos/just/tenant.just
           grep -q '^tenant-models ' files/justfiles/usr/share/myos/just/tenant.just
