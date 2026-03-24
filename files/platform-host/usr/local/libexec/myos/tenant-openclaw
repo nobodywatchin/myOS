@@ -45,6 +45,33 @@ require_root
 validate_tenant "$tenant"
 getent passwd "$tenant" >/dev/null 2>&1 || die "tenant user ${tenant} does not exist yet"
 
+if [ "$1" = qr ] && [ "$(tenant_tailscale_exposure "$tenant" 2>/dev/null || printf 'off')" = serve ]; then
+  qr_needs_sync=1
+  for arg in "$@"; do
+    case "$arg" in
+      --url|--public-url|--token)
+        qr_needs_sync=0
+        ;;
+    esac
+  done
+
+  if [ "$qr_needs_sync" -eq 1 ]; then
+    origin="$(tenant_tailscale_origin "$tenant" 2>/dev/null || true)"
+    public_url="$(tenant_tailscale_http_url "$tenant" 2>/dev/null || true)"
+    old_origin="$(tenant_tailscale_last_origin "$tenant" 2>/dev/null || true)"
+    remove_csv=""
+
+    [ -n "$origin" ] || die "Tailscale exposure is enabled for ${tenant}, but the host Tailscale origin is unavailable"
+    [ -n "$public_url" ] || die "Tailscale exposure is enabled for ${tenant}, but the pairing public URL is unavailable"
+
+    if [ -n "$old_origin" ] && [ "$old_origin" != "$origin" ]; then
+      remove_csv="$old_origin"
+    fi
+
+    tenant_sync_control_ui_origins "$tenant" "$origin" "$remove_csv" "$public_url" || die "failed to update the managed Tailscale pairing URL for ${tenant}"
+  fi
+fi
+
 if [ "$1" = gateway ]; then
   run_tenant_openclaw "$tenant" "$@"
 else

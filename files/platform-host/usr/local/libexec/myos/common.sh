@@ -694,17 +694,54 @@ raise SystemExit(0 if isinstance(data, list) and origin in data else 1)
 PYTHON
 }
 
+tenant_device_pair_public_url() {
+  local tenant="$1"
+  local config_file
+
+  config_file="$(tenant_config_file "$tenant")"
+  [ -f "$config_file" ] || return 1
+
+  python3 - "$config_file" <<'PYTHON'
+import json
+import sys
+from pathlib import Path
+
+config_path = Path(sys.argv[1])
+
+try:
+    data = json.loads(config_path.read_text(encoding='utf-8'))
+except Exception:
+    raise SystemExit(1)
+
+value = (
+    data.get('plugins', {})
+        .get('entries', {})
+        .get('device-pair', {})
+        .get('config', {})
+        .get('publicUrl', '')
+)
+
+if isinstance(value, str) and value.strip():
+    print(value.strip())
+    raise SystemExit(0)
+
+raise SystemExit(1)
+PYTHON
+}
+
 tenant_sync_control_ui_origins() {
   local tenant="$1"
   local add_origin="${2:-}"
   local remove_csv="${3:-}"
+  local set_public_url="${4:-}"
+  local clear_public_url_csv="${5:-}"
   local config_file
   local changed
 
   config_file="$(tenant_config_file "$tenant")"
   [ -f "$config_file" ] || return 1
 
-  changed="$(python3 - "$config_file" "$add_origin" "$remove_csv" <<'PYTHON'
+  changed="$(python3 - "$config_file" "$add_origin" "$remove_csv" "$set_public_url" "$clear_public_url_csv" <<'PYTHON'
 import json
 import sys
 from pathlib import Path
@@ -712,7 +749,10 @@ from pathlib import Path
 config_path = Path(sys.argv[1])
 add_origin = sys.argv[2].strip()
 remove_csv = sys.argv[3]
+set_public_url = sys.argv[4].strip()
+clear_public_url_csv = sys.argv[5]
 remove = {item.strip() for item in remove_csv.split(',') if item.strip()}
+clear_public_urls = {item.strip() for item in clear_public_url_csv.split(',') if item.strip()}
 
 try:
     data = json.loads(config_path.read_text(encoding='utf-8'))
@@ -733,12 +773,13 @@ if not isinstance(control_ui, dict):
     gateway['controlUi'] = control_ui
 
 origins = control_ui.get('allowedOrigins')
+source_origins = origins if isinstance(origins, list) else []
 if not isinstance(origins, list):
     origins = []
 
 out = []
 seen = set()
-for item in origins:
+for item in source_origins:
     if not isinstance(item, str):
         continue
     if item in remove:
@@ -751,13 +792,62 @@ for item in origins:
 if add_origin and add_origin not in seen:
     out.append(add_origin)
 
-if out == origins:
+changed = out != source_origins
+control_ui['allowedOrigins'] = out
+
+plugins = data.get('plugins')
+if not isinstance(plugins, dict):
+    plugins = {}
+    data['plugins'] = plugins
+
+entries = plugins.get('entries')
+if not isinstance(entries, dict):
+    entries = {}
+    plugins['entries'] = entries
+
+device_pair = entries.get('device-pair')
+if not isinstance(device_pair, dict):
+    device_pair = {}
+    entries['device-pair'] = device_pair
+
+plugin_config = device_pair.get('config')
+if not isinstance(plugin_config, dict):
+    plugin_config = {}
+    device_pair['config'] = plugin_config
+
+current_public_url = plugin_config.get('publicUrl')
+if not isinstance(current_public_url, str):
+    current_public_url = ''
+
+if set_public_url:
+    if current_public_url != set_public_url:
+        plugin_config['publicUrl'] = set_public_url
+        changed = True
+else:
+    should_remove_public_url = False
+    if current_public_url:
+        if clear_public_urls:
+            should_remove_public_url = current_public_url in clear_public_urls
+        else:
+            should_remove_public_url = True
+    if should_remove_public_url:
+        plugin_config.pop('publicUrl', None)
+        changed = True
+
+    if not plugin_config:
+        device_pair.pop('config', None)
+    if not device_pair:
+        entries.pop('device-pair', None)
+    if not entries:
+        plugins.pop('entries', None)
+    if not plugins:
+        data.pop('plugins', None)
+
+if not changed:
     print('unchanged')
     raise SystemExit(0)
 
-control_ui['allowedOrigins'] = out
-config_path.write_text(json.dumps(data, indent=2) + '
-', encoding='utf-8')
+config_path.write_text(json.dumps(data, indent=2) + '\\n', encoding='utf-8')
 print('changed')
 PYTHON
 )" || return 1

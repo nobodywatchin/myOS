@@ -16,3 +16,4 @@ By default, each tenant gets:
 - a canonical `zone-c/state/openclaw.json` runtime config that is seeded once and then owned by OpenClaw and the operator
 - myOS-managed host concerns for secrets, ports, storage, Quadlet rendering, backup/restore, and optional host-level Tailscale Serve exposure
 - loopback-first local access; nginx routes remain a separate future ingress path, while host-managed Tailscale publishes the tenant gateway directly when enabled
+- when host-managed Tailscale is enabled, myOS also writes `plugins.entries.device-pair.config.publicUrl` so plain `openclaw qr` uses the same canonical HTTPS tenant URL

@@ -42,7 +42,7 @@ require_running_service() {
 reconcile_one() {
   local tenant="$1"
   local quiet="${2:-0}"
-  local dns port target origin old_origin remove_csv=""
+  local dns port target origin public_url old_origin remove_csv=""
 
   ensure_tenant_ready "$tenant"
   [ "$(tenant_tailscale_exposure "$tenant")" = serve ] || {
@@ -55,6 +55,7 @@ reconcile_one() {
   port="$(tenant_gateway_port "$tenant")"
   target="http://127.0.0.1:${port}"
   origin="https://${dns}:${port}"
+  public_url="$(tenant_tailscale_http_url "$tenant")"
   old_origin="$(tenant_tailscale_last_origin "$tenant")"
   if [ -n "$old_origin" ] && [ "$old_origin" != "$origin" ]; then
     remove_csv="$old_origin"
@@ -62,9 +63,9 @@ reconcile_one() {
 
   tenant_control_ui_allowed_origins_json "$tenant" >/dev/null
   tailscale serve --bg --https="$port" "$target" >/dev/null
-  if ! tenant_sync_control_ui_origins "$tenant" "$origin" "$remove_csv"; then
+  if ! tenant_sync_control_ui_origins "$tenant" "$origin" "$remove_csv" "$public_url"; then
     tailscale serve --https="$port" off >/dev/null 2>&1 || true
-    die "failed to update gateway.controlUi.allowedOrigins for ${tenant}"
+    die "failed to update gateway.controlUi.allowedOrigins and device-pair publicUrl for ${tenant}"
   fi
 
   persist_tailscale_metadata "$tenant" serve "$origin"
@@ -75,12 +76,14 @@ reconcile_one() {
 ' "$(tenant_tailscale_http_url "$tenant")"
     printf 'Gateway: %s
 ' "$(tenant_tailscale_ws_url "$tenant")"
+    printf 'Pairing URL: %s
+' "$public_url"
   fi
 }
 
 status_one() {
   local tenant="$1"
-  local exposure dns http_url ws_url port target mapping
+  local exposure dns http_url ws_url port target mapping configured_pairing_url
 
   ensure_tenant_ready "$tenant"
   exposure="$(tenant_tailscale_exposure "$tenant")"
@@ -89,6 +92,7 @@ status_one() {
   dns="$(tailscale_self_dns_name 2>/dev/null || true)"
   http_url="$(tenant_tailscale_http_url "$tenant" 2>/dev/null || printf 'unavailable')"
   ws_url="$(tenant_tailscale_ws_url "$tenant" 2>/dev/null || printf 'unavailable')"
+  configured_pairing_url="$(tenant_device_pair_public_url "$tenant" 2>/dev/null || printf '')"
   mapping="unavailable"
   if [ -n "$port" ] && [ -n "$target" ] && tailscale_serve_has_mapping "$port" "$target" 2>/dev/null; then
     mapping="configured"
@@ -108,6 +112,8 @@ status_one() {
 ' "${dns:-unavailable}"
   printf 'Stored origin: %s
 ' "$(tenant_tailscale_last_origin "$tenant" || printf '')"
+  printf 'Configured pairing URL: %s
+' "${configured_pairing_url:-unset}"
   if [ "$exposure" = serve ]; then
     printf 'Dashboard: %s
 ' "$http_url"
@@ -155,6 +161,7 @@ enable_one() {
 disable_one() {
   local tenant="$1"
   local port old_origin current_origin="" remove_csv=""
+  local old_public_url="" current_public_url="" remove_public_url_csv=""
 
   ensure_tenant_ready "$tenant"
   [ "$(tenant_tailscale_exposure "$tenant")" = serve ] || {
@@ -165,6 +172,8 @@ disable_one() {
   port="$(tenant_gateway_port "$tenant")"
   old_origin="$(tenant_tailscale_last_origin "$tenant")"
   current_origin="$(tenant_tailscale_origin "$tenant" 2>/dev/null || true)"
+  old_public_url="$(tenant_device_pair_public_url "$tenant" 2>/dev/null || true)"
+  current_public_url="$(tenant_tailscale_http_url "$tenant" 2>/dev/null || true)"
 
   if [ -n "$old_origin" ]; then
     remove_csv="$old_origin"
@@ -173,7 +182,14 @@ disable_one() {
     remove_csv="${remove_csv:+${remove_csv},}${current_origin}"
   fi
 
-  tenant_sync_control_ui_origins "$tenant" "" "$remove_csv" >/dev/null || die "failed to remove the managed Tailscale origin for ${tenant}"
+  if [ -n "$old_public_url" ]; then
+    remove_public_url_csv="$old_public_url"
+  fi
+  if [ -n "$current_public_url" ] && [ "$current_public_url" != "$old_public_url" ]; then
+    remove_public_url_csv="${remove_public_url_csv:+${remove_public_url_csv},}${current_public_url}"
+  fi
+
+  tenant_sync_control_ui_origins "$tenant" "" "$remove_csv" "" "$remove_public_url_csv" >/dev/null || die "failed to remove the managed Tailscale origin or pairing URL for ${tenant}"
   tailscale_installed || die "tailscale CLI is not installed on the host"
   tailscale_service_active || die "tailscaled.service is not active on the host"
   tailscale serve --https="$port" off >/dev/null
@@ -183,19 +199,13 @@ disable_one() {
 
 qr_one() {
   local tenant="$1"
-  local http_url ws_url token
 
   ensure_tenant_ready "$tenant"
   [ "$(tenant_tailscale_exposure "$tenant")" = serve ] || die "enable Tailscale exposure for ${tenant} before generating a pairing QR"
   require_running_service "$tenant"
   reconcile_one "$tenant" 1
 
-  http_url="$(tenant_tailscale_http_url "$tenant")"
-  ws_url="$(tenant_tailscale_ws_url "$tenant")"
-  token="$(env_value_from_file "$(tenant_secret_file "$tenant")" OPENCLAW_GATEWAY_TOKEN 2>/dev/null || true)"
-  [ -n "$token" ] || die "gateway token is not configured for ${tenant}"
-
-  run_tenant_openclaw_cli "$tenant" qr --url "$ws_url" --public-url "$http_url" --token "$token"
+  run_tenant_openclaw_cli "$tenant" qr
 }
 
 reconcile_all() {

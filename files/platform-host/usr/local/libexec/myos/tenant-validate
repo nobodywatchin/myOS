@@ -245,13 +245,21 @@ if [ "$tailscale_exposure" = serve ]; then
 
   if [ "$service_active" -eq 1 ] && [ -n "$tailscale_dns" ] && [ -n "$openclaw_port" ]; then
     tailscale_origin="https://${tailscale_dns}:${openclaw_port}"
+    tailscale_pairing_url="${tailscale_origin}/"
     if tenant_control_ui_has_origin "$tenant" "$tailscale_origin"; then
       pass "tailscale Control UI origin ${tailscale_origin} is configured"
     else
       check_fail "tailscale Control UI origin ${tailscale_origin} is missing from openclaw.json"
     fi
+
+    configured_pairing_url="$(tenant_device_pair_public_url "$tenant" 2>/dev/null || true)"
+    if [ "$configured_pairing_url" = "$tailscale_pairing_url" ]; then
+      pass "device-pair publicUrl is configured as ${tailscale_pairing_url}"
+    else
+      check_fail "device-pair publicUrl is ${configured_pairing_url:-unset}, expected ${tailscale_pairing_url}"
+    fi
   elif [ -n "$tailscale_dns" ] && [ -n "$openclaw_port" ]; then
-    note "tenant service is inactive; deferring live Tailscale origin verification until after start"
+    note "tenant service is inactive; deferring live Tailscale origin and pairing URL verification until after start"
   fi
 
   if [ "$service_active" -eq 1 ] && [ -n "$openclaw_port" ] && tailscale_serve_has_mapping "$openclaw_port" "http://127.0.0.1:${openclaw_port}"; then
@@ -273,6 +281,8 @@ if [ "$tailscale_exposure" = serve ]; then
   printf 'Tailscale gateway: %s
 ' "$(tenant_tailscale_ws_url "$tenant" 2>/dev/null || printf 'unavailable')"
 fi
+printf 'Pairing public URL: %s
+' "$(tenant_device_pair_public_url "$tenant" 2>/dev/null || printf 'unconfigured')"
 
 if [ "$failures" -gt 0 ]; then
   exit 1

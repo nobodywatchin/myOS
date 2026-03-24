@@ -81,6 +81,7 @@ public_hostname="$(env_value_from_file "$common_env" PUBLIC_HOSTNAME 2>/dev/null
 public_hostname="${public_hostname:-${tenant}.example.invalid}"
 
 gateway_token="$(env_value_from_file "$secret_file" OPENCLAW_GATEWAY_TOKEN 2>/dev/null || true)"
+pairing_public_url="$(tenant_device_pair_public_url "$tenant" 2>/dev/null || true)"
 models_status="$(run_tenant_openclaw_cli "$tenant" models status --plain 2>/dev/null || true)"
 
 printf 'Tenant: %s
@@ -105,6 +106,8 @@ printf 'Bridge port: %s
 ' "${bridge_port:-unset}"
 printf 'Gateway token: %s
 ' "$(if [ -n "$gateway_token" ]; then printf 'configured'; else printf 'missing'; fi)"
+printf 'Pairing public URL: %s
+' "${pairing_public_url:-unset}"
 if [ "$show_token" -eq 1 ]; then
   printf 'Gateway token value: %s
 ' "${gateway_token:-missing}"
@@ -118,7 +121,7 @@ if [ "$tailscale_exposure" = serve ]; then
 ' "$tailscale_ws"
   printf 'Tailscale mapping: %s
 ' "$tailscale_mapping"
-  printf 'Pairing hint: myos tenant-tailscale qr --tenant %s
+  printf 'Pairing hint: myos tenant-openclaw --tenant %s qr
 ' "$tenant"
 fi
 

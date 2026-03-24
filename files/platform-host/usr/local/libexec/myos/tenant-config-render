@@ -201,3 +201,17 @@ case "$result" in
     warn "unexpected tenant-config-render result for ${tenant}: ${result}"
     ;;
 esac
+
+if [ "$(tenant_tailscale_exposure "$tenant")" = serve ]; then
+  tailscale_origin="$(tenant_tailscale_origin "$tenant" 2>/dev/null || true)"
+  tailscale_public_url="$(tenant_tailscale_http_url "$tenant" 2>/dev/null || true)"
+  previous_tailscale_origin="$(tenant_tailscale_last_origin "$tenant" 2>/dev/null || true)"
+  remove_csv=""
+
+  if [ -n "$tailscale_origin" ] && [ -n "$tailscale_public_url" ]; then
+    if [ -n "$previous_tailscale_origin" ] && [ "$previous_tailscale_origin" != "$tailscale_origin" ]; then
+      remove_csv="$previous_tailscale_origin"
+    fi
+    tenant_sync_control_ui_origins "$tenant" "$tailscale_origin" "$remove_csv" "$tailscale_public_url" >/dev/null 2>&1 || true
+  fi
+fi
