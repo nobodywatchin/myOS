@@ -505,12 +505,16 @@ tailscale_self_dns_name() {
   local status
 
   status="$(tailscale_status_json 2>/dev/null)" || return 1
-  printf '%s' "$status" | python3 - <<'PYTHON'
+  STATUS_JSON="$status" python3 - <<'PYTHON'
 import json
-import sys
+import os
+
+raw = os.environ.get('STATUS_JSON', '').strip()
+if not raw:
+    raise SystemExit(1)
 
 try:
-    data = json.load(sys.stdin)
+    data = json.loads(raw)
 except Exception:
     raise SystemExit(1)
 
@@ -586,15 +590,19 @@ tailscale_serve_has_mapping() {
   local status
 
   status="$(tailscale_serve_status_json 2>/dev/null)" || return 1
-  printf '%s' "$status" | python3 - "$port" "$target" <<'PYTHON'
+  STATUS_JSON="$status" python3 - "$port" "$target" <<'PYTHON'
 import json
+import os
 import sys
 
 port = str(sys.argv[1])
 target = sys.argv[2]
+raw = os.environ.get('STATUS_JSON', '').strip()
+if not raw:
+    raise SystemExit(1)
 
 try:
-    data = json.load(sys.stdin)
+    data = json.loads(raw)
 except Exception:
     raise SystemExit(1)
 
@@ -631,12 +639,11 @@ tenant_control_ui_allowed_origins_json() {
     return 0
   fi
 
-  printf '%s
-' "$output" | python3 - <<'PYTHON'
+  ALLOWED_ORIGINS_JSON="$output" python3 - <<'PYTHON'
 import json
-import sys
+import os
 
-raw = sys.stdin.read().strip()
+raw = os.environ.get('ALLOWED_ORIGINS_JSON', '').strip()
 if not raw:
     print('[]')
     raise SystemExit(0)
@@ -660,14 +667,18 @@ tenant_control_ui_has_origin() {
   local origins
 
   origins="$(tenant_control_ui_allowed_origins_json "$tenant")"
-  printf '%s
-' "$origins" | python3 - "$origin" <<'PYTHON'
+  ALLOWED_ORIGINS_JSON="$origins" python3 - "$origin" <<'PYTHON'
 import json
+import os
 import sys
 
 origin = sys.argv[1]
+raw = os.environ.get('ALLOWED_ORIGINS_JSON', '').strip()
+if not raw:
+    raise SystemExit(1)
+
 try:
-    data = json.load(sys.stdin)
+    data = json.loads(raw)
 except Exception:
     raise SystemExit(1)
 
@@ -682,17 +693,18 @@ tenant_sync_control_ui_origins() {
   local current updated
 
   current="$(tenant_control_ui_allowed_origins_json "$tenant")"
-  updated="$(printf '%s
-' "$current" | python3 - "$add_origin" "$remove_csv" <<'PYTHON'
+  updated="$(ALLOWED_ORIGINS_JSON="$current" python3 - "$add_origin" "$remove_csv" <<'PYTHON'
 import json
+import os
 import sys
 
 add_origin = sys.argv[1].strip()
 remove_csv = sys.argv[2]
 remove = {item.strip() for item in remove_csv.split(',') if item.strip()}
+raw = os.environ.get('ALLOWED_ORIGINS_JSON', '').strip()
 
 try:
-    data = json.load(sys.stdin)
+    data = json.loads(raw) if raw else []
 except Exception:
     data = []
 

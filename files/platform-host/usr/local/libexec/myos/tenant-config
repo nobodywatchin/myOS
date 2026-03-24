@@ -110,12 +110,16 @@ case "$subcommand" in
     [ -n "$raw" ] || die "provide --raw JSON5, --file PATH, or stdin content for ${subcommand}"
 
     get_payload="$(run_tenant_openclaw "$tenant" gateway call config.get --params '{}' --json 2>/dev/null)" || die "failed to fetch the live config hash; make sure openclaw.service is running"
-    base_hash="$(printf '%s' "$get_payload" | python3 - <<'PYTHON'
+    base_hash="$(GET_PAYLOAD_JSON="$get_payload" python3 - <<'PYTHON'
 import json
-import sys
+import os
+
+raw = os.environ.get('GET_PAYLOAD_JSON', '').strip()
+if not raw:
+    raise SystemExit(1)
 
 try:
-    data = json.load(sys.stdin)
+    data = json.loads(raw)
 except Exception:
     raise SystemExit(1)
 
