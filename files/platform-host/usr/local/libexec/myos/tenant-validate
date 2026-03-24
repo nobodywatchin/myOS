@@ -116,10 +116,13 @@ for path in "$ports_env" "$common_env" "$openclaw_env" "$secret_file" "$config_f
 done
 
 if [ -f "$home/.config/containers/storage.conf" ]; then
-  if grep -q "graphroot = "${graphroot}"" "$home/.config/containers/storage.conf"; then
+  storage_graphroot="$(awk -F= '/^[[:space:]]*graphroot[[:space:]]*=/{gsub(/^[[:space:]]+|[[:space:]]+$/, "", $2); gsub(/^"|"$/, "", $2); print $2; exit}' "$home/.config/containers/storage.conf" 2>/dev/null || true)"
+  if [ "$storage_graphroot" = "$graphroot" ]; then
     pass "tenant Podman graphroot is pinned to ${graphroot}"
+  elif [ -n "$storage_graphroot" ]; then
+    check_fail "storage.conf points at ${storage_graphroot}, expected ${graphroot}"
   else
-    check_fail "storage.conf does not point at ${graphroot}"
+    check_fail "storage.conf does not declare graphroot ${graphroot}"
   fi
 else
   check_fail "missing storage.conf under tenant home"
