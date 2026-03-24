@@ -615,11 +615,15 @@ def has_target(node):
         return any(has_target(item) for item in node)
     return False
 
+def matches_port(value):
+    text = str(value)
+    return text == port or text.endswith(f":{port}") or text.endswith(f"]:{port}")
+
 def contains_port(node):
     if isinstance(node, dict):
-        if any(str(k) == port or str(v) == port for k, v in node.items()) and has_target(node):
+        if any(matches_port(k) or matches_port(v) for k, v in node.items()) and has_target(node):
             return True
-        return any(contains_port(v) for v in node.values())
+        return any(contains_port(k) or contains_port(v) for k, v in node.items())
     if isinstance(node, list):
         return any(contains_port(item) for item in node)
     return False
@@ -630,32 +634,36 @@ PYTHON
 
 tenant_control_ui_allowed_origins_json() {
   local tenant="$1"
-  local output
+  local config_file
 
-  output="$(run_tenant_openclaw_cli "$tenant" config get gateway.controlUi.allowedOrigins --strict-json 2>/dev/null || true)"
-  if [ -z "$output" ]; then
+  config_file="$(tenant_config_file "$tenant")"
+  if [ ! -f "$config_file" ]; then
     printf '[]
 '
     return 0
   fi
 
-  ALLOWED_ORIGINS_JSON="$output" python3 - <<'PYTHON'
+  python3 - "$config_file" <<'PYTHON'
 import json
-import os
+import sys
+from pathlib import Path
 
-raw = os.environ.get('ALLOWED_ORIGINS_JSON', '').strip()
-if not raw:
-    print('[]')
-    raise SystemExit(0)
+config_path = Path(sys.argv[1])
 
 try:
-    data = json.loads(raw)
+    data = json.loads(config_path.read_text(encoding='utf-8'))
 except Exception:
     print('[]')
     raise SystemExit(0)
 
-if isinstance(data, list):
-    print(json.dumps(data, separators=(',', ':')))
+origins = (
+    data.get('gateway', {})
+        .get('controlUi', {})
+        .get('allowedOrigins', [])
+)
+if isinstance(origins, list):
+    cleaned = [item for item in origins if isinstance(item, str)]
+    print(json.dumps(cleaned, separators=(',', ':')))
 else:
     print('[]')
 PYTHON
@@ -690,30 +698,47 @@ tenant_sync_control_ui_origins() {
   local tenant="$1"
   local add_origin="${2:-}"
   local remove_csv="${3:-}"
-  local current updated
+  local config_file
+  local changed
 
-  current="$(tenant_control_ui_allowed_origins_json "$tenant")"
-  updated="$(ALLOWED_ORIGINS_JSON="$current" python3 - "$add_origin" "$remove_csv" <<'PYTHON'
+  config_file="$(tenant_config_file "$tenant")"
+  [ -f "$config_file" ] || return 1
+
+  changed="$(python3 - "$config_file" "$add_origin" "$remove_csv" <<'PYTHON'
 import json
-import os
 import sys
+from pathlib import Path
 
-add_origin = sys.argv[1].strip()
-remove_csv = sys.argv[2]
+config_path = Path(sys.argv[1])
+add_origin = sys.argv[2].strip()
+remove_csv = sys.argv[3]
 remove = {item.strip() for item in remove_csv.split(',') if item.strip()}
-raw = os.environ.get('ALLOWED_ORIGINS_JSON', '').strip()
 
 try:
-    data = json.loads(raw) if raw else []
+    data = json.loads(config_path.read_text(encoding='utf-8'))
 except Exception:
-    data = []
+    raise SystemExit(1)
 
-if not isinstance(data, list):
-    data = []
+if not isinstance(data, dict):
+    data = {}
+
+gateway = data.get('gateway')
+if not isinstance(gateway, dict):
+    gateway = {}
+    data['gateway'] = gateway
+
+control_ui = gateway.get('controlUi')
+if not isinstance(control_ui, dict):
+    control_ui = {}
+    gateway['controlUi'] = control_ui
+
+origins = control_ui.get('allowedOrigins')
+if not isinstance(origins, list):
+    origins = []
 
 out = []
 seen = set()
-for item in data:
+for item in origins:
     if not isinstance(item, str):
         continue
     if item in remove:
@@ -726,9 +751,22 @@ for item in data:
 if add_origin and add_origin not in seen:
     out.append(add_origin)
 
-print(json.dumps(out, separators=(',', ':')))
+if out == origins:
+    print('unchanged')
+    raise SystemExit(0)
+
+control_ui['allowedOrigins'] = out
+config_path.write_text(json.dumps(data, indent=2) + '
+', encoding='utf-8')
+print('changed')
 PYTHON
 )" || return 1
 
-  run_tenant_openclaw_cli "$tenant" config set gateway.controlUi.allowedOrigins "$updated" --strict-json >/dev/null
+  if [ "$changed" = "unchanged" ]; then
+    return 0
+  fi
+
+  chown "$tenant:$tenant" "$config_file"
+  chmod 0640 "$config_file"
+  restorecon_if_available "$config_file"
 }

@@ -12,7 +12,7 @@ Docs-aligned config helpers for a tenant OpenClaw runtime.
 
 Examples:
   tenant-config --tenant oc-demo get agents.defaults.model.primary
-  tenant-config --tenant oc-demo set agents.defaults.imageMaxDimensionPx 800 --strict-json
+  tenant-config --tenant oc-demo set agents.defaults.imageMaxDimensionPx 800
   tenant-config --tenant oc-demo show
   tenant-config --tenant oc-demo patch --raw '{ gateway: { controlUi: { allowInsecureAuth: false } } }'
 USAGE

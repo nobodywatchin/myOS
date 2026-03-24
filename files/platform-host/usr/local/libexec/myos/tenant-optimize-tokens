@@ -77,9 +77,9 @@ if [ -z "$primary_model" ]; then
 fi
 primary_model="${primary_model:-openrouter/anthropic/claude-sonnet-4-5}"
 
-/usr/local/libexec/myos/tenant-config --tenant "$tenant" set agents.defaults.imageMaxDimensionPx "$image_max_dimension_px" --strict-json
-/usr/local/libexec/myos/tenant-config --tenant "$tenant" set agents.defaults.contextPruning.mode '"cache-ttl"' --strict-json
-/usr/local/libexec/myos/tenant-config --tenant "$tenant" set "agents.defaults.models[\"${primary_model}\"].params.cacheRetention" "\"${cache_retention}\"" --strict-json
+/usr/local/libexec/myos/tenant-config --tenant "$tenant" set agents.defaults.imageMaxDimensionPx "$image_max_dimension_px"
+/usr/local/libexec/myos/tenant-config --tenant "$tenant" set agents.defaults.contextPruning.mode '"cache-ttl"'
+/usr/local/libexec/myos/tenant-config --tenant "$tenant" set "agents.defaults.models[\"${primary_model}\"].params.cacheRetention" "\"${cache_retention}\""
 
 if [ "$restart_after" -eq 1 ]; then
   /usr/local/libexec/myos/tenant-restart --tenant "$tenant"

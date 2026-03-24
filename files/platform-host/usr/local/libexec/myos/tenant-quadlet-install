@@ -105,7 +105,7 @@ find "${TEMPLATE_BASE}/quadlets" -maxdepth 1 -type f \( -name '*.pod' -o -name '
   chmod 0640 "$target"
 done
 
-find "${TEMPLATE_BASE}/scripts" -maxdepth 1 -type f ! -name 'openclaw-ui-server.mjs' | sort | while read -r template; do
+find "${TEMPLATE_BASE}/scripts" -maxdepth 1 -type f | sort | while read -r template; do
   target="${TENANT_RENDERED_DIR}/$(basename "$template")"
   if [ "$force" -eq 0 ] && [ -e "$target" ]; then
     continue
@@ -115,8 +115,6 @@ find "${TEMPLATE_BASE}/scripts" -maxdepth 1 -type f ! -name 'openclaw-ui-server.
   chown "$tenant:$tenant" "$target"
   chmod 0640 "$target"
 done
-rm -f "${TENANT_RENDERED_DIR}/openclaw-ui-server.mjs"
-
 proxy_target="/etc/myos/proxy/tenants/${tenant}.conf.example"
 if [ "$force" -eq 1 ] || [ ! -e "$proxy_target" ]; then
   render_template_file "${TEMPLATE_BASE}/proxy/tenant-route.nginx.conf.example" "$proxy_target"
