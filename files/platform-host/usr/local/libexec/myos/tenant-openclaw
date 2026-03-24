@@ -72,7 +72,7 @@ if [ "$1" = qr ] && [ "$(tenant_tailscale_exposure "$tenant" 2>/dev/null || prin
   fi
 fi
 
-if [ "$1" = gateway ]; then
+if [ "$1" = gateway ] || [ "$1" = devices ]; then
   run_tenant_openclaw "$tenant" "$@"
 else
   run_tenant_openclaw_cli "$tenant" "$@"
