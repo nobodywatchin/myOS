@@ -1,83 +1,100 @@
+[positional-arguments]
 tenant-create *args:
     #!/usr/bin/env bash
     set -euo pipefail
     exec sudo /usr/local/libexec/myos/tenant-create "$@"
 
+[positional-arguments]
 tenant-configure *args:
     #!/usr/bin/env bash
     set -euo pipefail
     exec sudo /usr/local/libexec/myos/tenant-configure "$@"
 
+[positional-arguments]
 tenant-dashboard *args:
     #!/usr/bin/env bash
     set -euo pipefail
     exec sudo /usr/local/libexec/myos/tenant-dashboard "$@"
 
+[positional-arguments]
 tenant-config *args:
     #!/usr/bin/env bash
     set -euo pipefail
     exec sudo /usr/local/libexec/myos/tenant-config "$@"
 
+[positional-arguments]
 tenant-models *args:
     #!/usr/bin/env bash
     set -euo pipefail
     exec sudo /usr/local/libexec/myos/tenant-models "$@"
 
+[positional-arguments]
 tenant-openclaw *args:
     #!/usr/bin/env bash
     set -euo pipefail
     exec sudo /usr/local/libexec/myos/tenant-openclaw "$@"
 
+[positional-arguments]
 tenant-optimize-tokens *args:
     #!/usr/bin/env bash
     set -euo pipefail
     exec sudo /usr/local/libexec/myos/tenant-optimize-tokens "$@"
 
+[positional-arguments]
 tenant-secret-set *args:
     #!/usr/bin/env bash
     set -euo pipefail
     exec sudo /usr/local/libexec/myos/tenant-secret-set "$@"
 
+[positional-arguments]
 tenant-secret-import *args:
     #!/usr/bin/env bash
     set -euo pipefail
     exec sudo /usr/local/libexec/myos/tenant-secret-import "$@"
 
+[positional-arguments]
 tenant-start *args:
     #!/usr/bin/env bash
     set -euo pipefail
     exec sudo /usr/local/libexec/myos/tenant-start "$@"
 
+[positional-arguments]
 tenant-stop *args:
     #!/usr/bin/env bash
     set -euo pipefail
     exec sudo /usr/local/libexec/myos/tenant-stop "$@"
 
+[positional-arguments]
 tenant-restart *args:
     #!/usr/bin/env bash
     set -euo pipefail
     exec sudo /usr/local/libexec/myos/tenant-restart "$@"
 
+[positional-arguments]
 tenant-status *args:
     #!/usr/bin/env bash
     set -euo pipefail
     exec sudo /usr/local/libexec/myos/tenant-status "$@"
 
+[positional-arguments]
 tenant-validate *args:
     #!/usr/bin/env bash
     set -euo pipefail
     exec sudo /usr/local/libexec/myos/tenant-validate "$@"
 
+[positional-arguments]
 tenant-backup *args:
     #!/usr/bin/env bash
     set -euo pipefail
     exec sudo /usr/local/libexec/myos/tenant-backup "$@"
 
+[positional-arguments]
 tenant-restore *args:
     #!/usr/bin/env bash
     set -euo pipefail
     exec sudo /usr/local/libexec/myos/tenant-restore "$@"
 
+[positional-arguments]
 tenant-remove *args:
     #!/usr/bin/env bash
     set -euo pipefail
