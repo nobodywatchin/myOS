@@ -49,6 +49,22 @@ common_env="$(tenant_env_dir "$tenant")/common.env"
 openclaw_env="$(tenant_env_dir "$tenant")/openclaw.env"
 secret_file="$(tenant_secret_file "$tenant")"
 container_name="$(tenant_container_name "$tenant")"
+openclaw_port="$(env_value_from_file "$ports_env" OPENCLAW_PORT 2>/dev/null || true)"
+bridge_port="$(env_value_from_file "$ports_env" OPENCLAW_BRIDGE_PORT 2>/dev/null || true)"
+
+tailscale_exposure="$(tenant_tailscale_exposure "$tenant")"
+tailscale_dashboard="disabled"
+tailscale_ws="disabled"
+tailscale_mapping="disabled"
+if [ "$tailscale_exposure" = serve ]; then
+  tailscale_dashboard="$(tenant_tailscale_http_url "$tenant" 2>/dev/null || printf 'unavailable')"
+  tailscale_ws="$(tenant_tailscale_ws_url "$tenant" 2>/dev/null || printf 'unavailable')"
+  if [ -n "$openclaw_port" ] && tailscale_serve_has_mapping "$openclaw_port" "http://127.0.0.1:${openclaw_port}" 2>/dev/null; then
+    tailscale_mapping="configured"
+  else
+    tailscale_mapping="missing"
+  fi
+fi
 
 service_state="inactive"
 if try_user_systemctl "$tenant" is-active openclaw.service; then
@@ -67,24 +83,54 @@ public_hostname="${public_hostname:-${tenant}.example.invalid}"
 gateway_token="$(env_value_from_file "$secret_file" OPENCLAW_GATEWAY_TOKEN 2>/dev/null || true)"
 models_status="$(run_tenant_openclaw_cli "$tenant" models status --plain 2>/dev/null || true)"
 
-printf 'Tenant: %s\n' "$tenant"
-printf 'Service: %s\n' "$service_state"
-printf 'Container health: %s\n' "$container_health"
-printf 'Image: %s\n' "$(env_value_from_file "$openclaw_env" OPENCLAW_IMAGE 2>/dev/null || printf 'unset')"
-printf 'Primary model: %s\n' "$primary_model"
-printf 'Public hostname: %s\n' "$public_hostname"
-printf 'Dashboard: %s\n' "$(tenant_ui_url "$tenant" 2>/dev/null || printf 'unavailable')"
-printf 'Gateway WebSocket: %s\n' "$(tenant_gateway_ws_url "$tenant" 2>/dev/null || printf 'unavailable')"
-printf 'OpenClaw port: %s\n' "$(env_value_from_file "$ports_env" OPENCLAW_PORT 2>/dev/null || printf 'unset')"
-printf 'Bridge port: %s\n' "$(env_value_from_file "$ports_env" OPENCLAW_BRIDGE_PORT 2>/dev/null || printf 'unset')"
-printf 'Gateway token: %s\n' "$(if [ -n "$gateway_token" ]; then printf 'configured'; else printf 'missing'; fi)"
+printf 'Tenant: %s
+' "$tenant"
+printf 'Service: %s
+' "$service_state"
+printf 'Container health: %s
+' "$container_health"
+printf 'Image: %s
+' "$(env_value_from_file "$openclaw_env" OPENCLAW_IMAGE 2>/dev/null || printf 'unset')"
+printf 'Primary model: %s
+' "$primary_model"
+printf 'Public hostname: %s
+' "$public_hostname"
+printf 'Dashboard: %s
+' "$(tenant_ui_url "$tenant" 2>/dev/null || printf 'unavailable')"
+printf 'Gateway WebSocket: %s
+' "$(tenant_gateway_ws_url "$tenant" 2>/dev/null || printf 'unavailable')"
+printf 'OpenClaw port: %s
+' "${openclaw_port:-unset}"
+printf 'Bridge port: %s
+' "${bridge_port:-unset}"
+printf 'Gateway token: %s
+' "$(if [ -n "$gateway_token" ]; then printf 'configured'; else printf 'missing'; fi)"
 if [ "$show_token" -eq 1 ]; then
-  printf 'Gateway token value: %s\n' "${gateway_token:-missing}"
+  printf 'Gateway token value: %s
+' "${gateway_token:-missing}"
+fi
+printf 'Tailscale exposure: %s
+' "$tailscale_exposure"
+if [ "$tailscale_exposure" = serve ]; then
+  printf 'Tailscale dashboard: %s
+' "$tailscale_dashboard"
+  printf 'Tailscale WebSocket: %s
+' "$tailscale_ws"
+  printf 'Tailscale mapping: %s
+' "$tailscale_mapping"
+  printf 'Pairing hint: myos tenant-tailscale qr --tenant %s
+' "$tenant"
 fi
 
 if [ -n "$models_status" ]; then
-  printf '\nModel status:\n%s\n' "$models_status"
+  printf '
+Model status:
+%s
+' "$models_status"
 fi
 
-printf '\nRecent logs:\n'
-run_tenant_podman "$tenant" logs --tail 10 "$container_name" 2>/dev/null || printf 'No container logs available.\n'
+printf '
+Recent logs:
+'
+run_tenant_podman "$tenant" logs --tail 10 "$container_name" 2>/dev/null || printf 'No container logs available.
+'

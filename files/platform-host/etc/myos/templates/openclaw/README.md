@@ -14,4 +14,5 @@ By default, each tenant gets:
 - a gateway port that serves both the Control UI and the WebSocket gateway
 - a bridge port for internal gateway bridge traffic
 - a canonical `zone-c/state/openclaw.json` runtime config that is seeded once and then owned by OpenClaw and the operator
-- myOS-managed host concerns for secrets, ports, storage, Quadlet rendering, and backup/restore
+- myOS-managed host concerns for secrets, ports, storage, Quadlet rendering, backup/restore, and optional host-level Tailscale Serve exposure
+- loopback-first local access; nginx routes remain a separate future ingress path, while host-managed Tailscale publishes the tenant gateway directly when enabled

@@ -39,3 +39,6 @@ require_root
 validate_tenant "$tenant"
 /usr/local/libexec/myos/tenant-validate --tenant "$tenant"
 /usr/local/libexec/myos/tenant-quadlet-install --tenant "$tenant" --force --restart --validate
+if [ "$(tenant_tailscale_exposure "$tenant")" = serve ]; then
+  /usr/local/libexec/myos/tenant-tailscale reconcile --tenant "$tenant"
+fi

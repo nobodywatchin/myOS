@@ -68,6 +68,12 @@ set_env_value "$common_env" TENANT_NAME "$tenant"
 if [ -z "$(env_value_from_file "$common_env" PUBLIC_HOSTNAME 2>/dev/null || true)" ]; then
   set_env_value "$common_env" PUBLIC_HOSTNAME "${tenant}.example.invalid"
 fi
+if [ -z "$(env_value_from_file "$common_env" TAILSCALE_EXPOSURE 2>/dev/null || true)" ]; then
+  set_env_value "$common_env" TAILSCALE_EXPOSURE off
+fi
+if ! grep -q '^TAILSCALE_LAST_ORIGIN=' "$common_env" 2>/dev/null; then
+  set_env_value "$common_env" TAILSCALE_LAST_ORIGIN ""
+fi
 chown "$tenant:$tenant" "$common_env"
 chmod 0640 "$common_env"
 restorecon_if_available "$common_env"
@@ -79,10 +85,16 @@ fi
 
 if [ "$start_after" -eq 1 ]; then
   /usr/local/libexec/myos/tenant-start --tenant "$tenant"
-  printf 'Dashboard: %s\n' "$(tenant_ui_url "$tenant")"
+  printf 'Dashboard: %s
+' "$(tenant_ui_url "$tenant")"
 else
   log "tenant ${tenant} is ready for secret entry and startup"
-  printf 'Next: myos tenant-secret-set --tenant %s --key OPENROUTER_API_KEY\n' "$tenant"
-  printf 'Then: myos tenant-start --tenant %s\n' "$tenant"
-  printf 'Then: myos tenant-dashboard --tenant %s --no-open\n' "$tenant"
+  printf 'Next: myos tenant-secret-set --tenant %s --key OPENROUTER_API_KEY
+' "$tenant"
+  printf 'Then: myos tenant-start --tenant %s
+' "$tenant"
+  printf 'Optional: myos tenant-tailscale enable --tenant %s
+' "$tenant"
+  printf 'Then: myos tenant-dashboard --tenant %s --no-open
+' "$tenant"
 fi

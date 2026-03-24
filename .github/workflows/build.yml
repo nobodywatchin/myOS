@@ -33,6 +33,7 @@ jobs:
           grep -q '^tenant-models ' files/justfiles/usr/share/myos/just/tenant.just
           grep -q '^tenant-openclaw ' files/justfiles/usr/share/myos/just/tenant.just
           grep -q '^tenant-optimize-tokens ' files/justfiles/usr/share/myos/just/tenant.just
+          grep -q '^tenant-tailscale ' files/justfiles/usr/share/myos/just/tenant.just
 
   alma10:
     name: Alma 10

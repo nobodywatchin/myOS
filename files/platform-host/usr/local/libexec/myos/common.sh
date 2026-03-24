@@ -469,3 +469,254 @@ if isinstance(model, str) and model.strip():
     print(model.strip())
 PYTHON
 }
+
+
+
+tenant_common_env_file() {
+  printf '%s/common.env
+' "$(tenant_env_dir "$1")"
+}
+
+tenant_tailscale_exposure() {
+  local value
+
+  value="$(env_value_from_file "$(tenant_common_env_file "$1")" TAILSCALE_EXPOSURE 2>/dev/null || true)"
+  printf '%s
+' "${value:-off}"
+}
+
+tenant_tailscale_last_origin() {
+  env_value_from_file "$(tenant_common_env_file "$1")" TAILSCALE_LAST_ORIGIN 2>/dev/null || true
+}
+
+tailscale_installed() {
+  command -v tailscale >/dev/null 2>&1
+}
+
+tailscale_service_active() {
+  systemctl is-active --quiet tailscaled.service
+}
+
+tailscale_status_json() {
+  tailscale status --json
+}
+
+tailscale_self_dns_name() {
+  local status
+
+  status="$(tailscale_status_json 2>/dev/null)" || return 1
+  printf '%s' "$status" | python3 - <<'PYTHON'
+import json
+import sys
+
+try:
+    data = json.load(sys.stdin)
+except Exception:
+    raise SystemExit(1)
+
+self_info = data.get('Self') if isinstance(data, dict) else None
+if not isinstance(self_info, dict):
+    raise SystemExit(1)
+
+dns_name = self_info.get('DNSName')
+if not isinstance(dns_name, str) or not dns_name.strip():
+    raise SystemExit(1)
+
+print(dns_name.rstrip('.'))
+PYTHON
+}
+
+tailscale_require_ready() {
+  local dns
+
+  tailscale_installed || die "tailscale CLI is not installed on the host"
+  tailscale_service_active || die "tailscaled.service is not active on the host"
+  dns="$(tailscale_self_dns_name 2>/dev/null || true)"
+  [ -n "$dns" ] || die "tailscale is not logged in or does not have a MagicDNS name yet"
+  printf '%s
+' "$dns"
+}
+
+tenant_tailscale_origin() {
+  local tenant="$1"
+  local dns port
+
+  dns="$(tailscale_self_dns_name 2>/dev/null)" || return 1
+  port="$(tenant_gateway_port "$tenant" || true)"
+  [ -n "$port" ] || return 1
+  printf 'https://%s:%s
+' "$dns" "$port"
+}
+
+tenant_tailscale_http_url() {
+  local origin
+
+  origin="$(tenant_tailscale_origin "$1" 2>/dev/null)" || return 1
+  printf '%s/
+' "$origin"
+}
+
+tenant_tailscale_ws_url() {
+  local tenant="$1"
+  local dns port
+
+  dns="$(tailscale_self_dns_name 2>/dev/null)" || return 1
+  port="$(tenant_gateway_port "$tenant" || true)"
+  [ -n "$port" ] || return 1
+  printf 'wss://%s:%s/
+' "$dns" "$port"
+}
+
+tenant_tailscale_target() {
+  local port
+
+  port="$(tenant_gateway_port "$1" || true)"
+  [ -n "$port" ] || return 1
+  printf 'http://127.0.0.1:%s
+' "$port"
+}
+
+tailscale_serve_status_json() {
+  tailscale serve status --json
+}
+
+tailscale_serve_has_mapping() {
+  local port="$1"
+  local target="$2"
+  local status
+
+  status="$(tailscale_serve_status_json 2>/dev/null)" || return 1
+  printf '%s' "$status" | python3 - "$port" "$target" <<'PYTHON'
+import json
+import sys
+
+port = str(sys.argv[1])
+target = sys.argv[2]
+
+try:
+    data = json.load(sys.stdin)
+except Exception:
+    raise SystemExit(1)
+
+def has_target(node):
+    if isinstance(node, str):
+        return target in node
+    if isinstance(node, dict):
+        return any(has_target(k) or has_target(v) for k, v in node.items())
+    if isinstance(node, list):
+        return any(has_target(item) for item in node)
+    return False
+
+def contains_port(node):
+    if isinstance(node, dict):
+        if any(str(k) == port or str(v) == port for k, v in node.items()) and has_target(node):
+            return True
+        return any(contains_port(v) for v in node.values())
+    if isinstance(node, list):
+        return any(contains_port(item) for item in node)
+    return False
+
+raise SystemExit(0 if contains_port(data) else 1)
+PYTHON
+}
+
+tenant_control_ui_allowed_origins_json() {
+  local tenant="$1"
+  local output
+
+  output="$(run_tenant_openclaw_cli "$tenant" config get gateway.controlUi.allowedOrigins --strict-json 2>/dev/null || true)"
+  if [ -z "$output" ]; then
+    printf '[]
+'
+    return 0
+  fi
+
+  printf '%s
+' "$output" | python3 - <<'PYTHON'
+import json
+import sys
+
+raw = sys.stdin.read().strip()
+if not raw:
+    print('[]')
+    raise SystemExit(0)
+
+try:
+    data = json.loads(raw)
+except Exception:
+    print('[]')
+    raise SystemExit(0)
+
+if isinstance(data, list):
+    print(json.dumps(data, separators=(',', ':')))
+else:
+    print('[]')
+PYTHON
+}
+
+tenant_control_ui_has_origin() {
+  local tenant="$1"
+  local origin="$2"
+  local origins
+
+  origins="$(tenant_control_ui_allowed_origins_json "$tenant")"
+  printf '%s
+' "$origins" | python3 - "$origin" <<'PYTHON'
+import json
+import sys
+
+origin = sys.argv[1]
+try:
+    data = json.load(sys.stdin)
+except Exception:
+    raise SystemExit(1)
+
+raise SystemExit(0 if isinstance(data, list) and origin in data else 1)
+PYTHON
+}
+
+tenant_sync_control_ui_origins() {
+  local tenant="$1"
+  local add_origin="${2:-}"
+  local remove_csv="${3:-}"
+  local current updated
+
+  current="$(tenant_control_ui_allowed_origins_json "$tenant")"
+  updated="$(printf '%s
+' "$current" | python3 - "$add_origin" "$remove_csv" <<'PYTHON'
+import json
+import sys
+
+add_origin = sys.argv[1].strip()
+remove_csv = sys.argv[2]
+remove = {item.strip() for item in remove_csv.split(',') if item.strip()}
+
+try:
+    data = json.load(sys.stdin)
+except Exception:
+    data = []
+
+if not isinstance(data, list):
+    data = []
+
+out = []
+seen = set()
+for item in data:
+    if not isinstance(item, str):
+        continue
+    if item in remove:
+        continue
+    if item in seen:
+        continue
+    seen.add(item)
+    out.append(item)
+
+if add_origin and add_origin not in seen:
+    out.append(add_origin)
+
+print(json.dumps(out, separators=(',', ':')))
+PYTHON
+)" || return 1
+
+  run_tenant_openclaw_cli "$tenant" config set gateway.controlUi.allowedOrigins "$updated" --strict-json >/dev/null
+}

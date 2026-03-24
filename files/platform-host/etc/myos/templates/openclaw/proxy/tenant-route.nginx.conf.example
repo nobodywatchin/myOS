@@ -1,5 +1,7 @@
 # Promote this file to /etc/myos/proxy/tenants/__TENANT__.conf after review.
 # The OpenClaw gateway serves the dashboard and websocket on the same port.
+# Host-managed Tailscale Serve bypasses nginx by default; this file is for a
+# separate reviewed ingress path when you want host nginx in front of the tenant.
 server {
     listen 127.0.0.1:8088;
     server_name __PUBLIC_HOSTNAME__;

@@ -13,30 +13,39 @@ USAGE
 }
 
 pass() {
-  printf '[PASS] %s\n' "$*"
+  printf '[PASS] %s
+' "$*"
 }
 
 note() {
-  printf '[INFO] %s\n' "$*"
+  printf '[INFO] %s
+' "$*"
 }
 
 check_warn() {
-  printf '[WARN] %s\n' "$*"
+  printf '[WARN] %s
+' "$*"
   warnings=$((warnings + 1))
 }
 
 check_fail() {
-  printf '[FAIL] %s\n' "$*"
+  printf '[FAIL] %s
+' "$*"
   failures=$((failures + 1))
 }
 
 required_secret_for_model() {
   case "$1" in
-    openrouter/*) printf 'OPENROUTER_API_KEY\n' ;;
-    openai/*) printf 'OPENAI_API_KEY\n' ;;
-    anthropic/*) printf 'ANTHROPIC_API_KEY\n' ;;
-    groq/*) printf 'GROQ_API_KEY\n' ;;
-    *) printf '\n' ;;
+    openrouter/*) printf 'OPENROUTER_API_KEY
+' ;;
+    openai/*) printf 'OPENAI_API_KEY
+' ;;
+    anthropic/*) printf 'ANTHROPIC_API_KEY
+' ;;
+    groq/*) printf 'GROQ_API_KEY
+' ;;
+    *) printf '
+' ;;
   esac
 }
 
@@ -86,6 +95,9 @@ rendered_dir="$(tenant_rendered_dir "$tenant")"
 graphroot="$(tenant_podman_graphroot "$tenant")"
 container_name="$(tenant_container_name "$tenant")"
 rendered_unit="$(tenant_home "$tenant")/.config/containers/systemd/openclaw.container"
+openclaw_port="$(env_value_from_file "$ports_env" OPENCLAW_PORT 2>/dev/null || true)"
+bridge_port="$(env_value_from_file "$ports_env" OPENCLAW_BRIDGE_PORT 2>/dev/null || true)"
+tailscale_exposure="$(tenant_tailscale_exposure "$tenant")"
 
 for path in "$home" "$state_dir" "$storage_dir" "$graphroot"; do
   if [ -d "$path" ]; then
@@ -104,7 +116,7 @@ for path in "$ports_env" "$common_env" "$openclaw_env" "$secret_file" "$config_f
 done
 
 if [ -f "$home/.config/containers/storage.conf" ]; then
-  if grep -q "graphroot = \"${graphroot}\"" "$home/.config/containers/storage.conf"; then
+  if grep -q "graphroot = "${graphroot}"" "$home/.config/containers/storage.conf"; then
     pass "tenant Podman graphroot is pinned to ${graphroot}"
   else
     check_fail "storage.conf does not point at ${graphroot}"
@@ -126,7 +138,8 @@ config_validate_output="$(run_tenant_openclaw_cli "$tenant" config validate --js
 if run_tenant_openclaw_cli "$tenant" config validate --json >/dev/null 2>&1; then
   pass "OpenClaw config validates successfully"
 else
-  check_fail "OpenClaw config validation failed: $(printf '%s\n' "$config_validate_output" | tail -n 1)"
+  check_fail "OpenClaw config validation failed: $(printf '%s
+' "$config_validate_output" | tail -n 1)"
 fi
 
 model="$(tenant_primary_model_from_config "$tenant" 2>/dev/null || true)"
@@ -192,9 +205,6 @@ if [ "$service_active" -eq 1 ]; then
     check_fail "container ${container_name} is not present"
   fi
 
-  openclaw_port="$(env_value_from_file "$ports_env" OPENCLAW_PORT 2>/dev/null || true)"
-  bridge_port="$(env_value_from_file "$ports_env" OPENCLAW_BRIDGE_PORT 2>/dev/null || true)"
-
   for port in "$openclaw_port" "$bridge_port"; do
     if [ -n "$port" ] && ss -Hltn 2>/dev/null | awk '{print $4}' | grep -Eq "(^|[:\]])${port}$"; then
       pass "port ${port} is listening"
@@ -210,8 +220,56 @@ if [ "$service_active" -eq 1 ]; then
   fi
 fi
 
-printf 'Dashboard: %s\n' "$(tenant_ui_url "$tenant" 2>/dev/null || printf 'unavailable')"
-printf 'Gateway: %s\n' "$(tenant_gateway_ws_url "$tenant" 2>/dev/null || printf 'unavailable')"
+if [ "$tailscale_exposure" = serve ]; then
+  if tailscale_installed; then
+    pass "tailscale CLI is installed"
+  else
+    check_fail "tailscale CLI is not installed on the host"
+  fi
+
+  if tailscale_service_active; then
+    pass "tailscaled.service is active"
+  else
+    check_fail "tailscaled.service is not active"
+  fi
+
+  tailscale_dns="$(tailscale_self_dns_name 2>/dev/null || true)"
+  if [ -n "$tailscale_dns" ]; then
+    pass "tailscale node is logged in as ${tailscale_dns}"
+  else
+    check_fail "tailscale is not logged in or does not have a MagicDNS name"
+  fi
+
+  if [ "$service_active" -eq 1 ] && [ -n "$tailscale_dns" ] && [ -n "$openclaw_port" ]; then
+    tailscale_origin="https://${tailscale_dns}:${openclaw_port}"
+    if tenant_control_ui_has_origin "$tenant" "$tailscale_origin"; then
+      pass "tailscale Control UI origin ${tailscale_origin} is configured"
+    else
+      check_fail "tailscale Control UI origin ${tailscale_origin} is missing from openclaw.json"
+    fi
+  elif [ -n "$tailscale_dns" ] && [ -n "$openclaw_port" ]; then
+    note "tenant service is inactive; deferring live Tailscale origin verification until after start"
+  fi
+
+  if [ "$service_active" -eq 1 ] && [ -n "$openclaw_port" ] && tailscale_serve_has_mapping "$openclaw_port" "http://127.0.0.1:${openclaw_port}"; then
+    pass "tailscale serve maps ${openclaw_port} to the tenant gateway"
+  elif [ "$service_active" -eq 1 ]; then
+    check_fail "tailscale serve is missing the expected mapping for ${openclaw_port:-<unset>}"
+  else
+    note "tenant service is inactive; deferring live Tailscale serve verification until after start"
+  fi
+fi
+
+printf 'Dashboard: %s
+' "$(tenant_ui_url "$tenant" 2>/dev/null || printf 'unavailable')"
+printf 'Gateway: %s
+' "$(tenant_gateway_ws_url "$tenant" 2>/dev/null || printf 'unavailable')"
+if [ "$tailscale_exposure" = serve ]; then
+  printf 'Tailscale dashboard: %s
+' "$(tenant_tailscale_http_url "$tenant" 2>/dev/null || printf 'unavailable')"
+  printf 'Tailscale gateway: %s
+' "$(tenant_tailscale_ws_url "$tenant" 2>/dev/null || printf 'unavailable')"
+fi
 
 if [ "$failures" -gt 0 ]; then
   exit 1

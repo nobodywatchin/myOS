@@ -45,6 +45,16 @@ ensure_dir 0750 "$tenant" "$tenant" "$TENANT_STATE_DIR"
 write_if_missing 0640 "$tenant" "$tenant" "${TEMPLATE_BASE}/env/common.env.example" "${TENANT_ENV_DIR}/common.env"
 write_if_missing 0640 "$tenant" "$tenant" "${TEMPLATE_BASE}/env/openclaw.env.example" "${TENANT_ENV_DIR}/openclaw.env"
 
+if [ -z "$(env_value_from_file "${TENANT_ENV_DIR}/common.env" TAILSCALE_EXPOSURE 2>/dev/null || true)" ]; then
+  set_env_value "${TENANT_ENV_DIR}/common.env" TAILSCALE_EXPOSURE off
+fi
+if ! grep -q '^TAILSCALE_LAST_ORIGIN=' "${TENANT_ENV_DIR}/common.env" 2>/dev/null; then
+  set_env_value "${TENANT_ENV_DIR}/common.env" TAILSCALE_LAST_ORIGIN ""
+fi
+chown "$tenant:$tenant" "${TENANT_ENV_DIR}/common.env" "${TENANT_ENV_DIR}/openclaw.env"
+chmod 0640 "${TENANT_ENV_DIR}/common.env" "${TENANT_ENV_DIR}/openclaw.env"
+restorecon_if_available "${TENANT_ENV_DIR}/common.env" "${TENANT_ENV_DIR}/openclaw.env"
+
 if [ ! -f "${TENANT_ENV_DIR}/ports.env" ]; then
   /usr/local/libexec/myos/tenant-port-allocate --tenant "$tenant"
 fi

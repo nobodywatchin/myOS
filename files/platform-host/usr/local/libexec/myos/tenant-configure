@@ -100,16 +100,18 @@ common_env="$(tenant_env_dir "$tenant")/common.env"
 openclaw_env="$(tenant_env_dir "$tenant")/openclaw.env"
 config_file="$(tenant_config_file "$tenant")"
 openclaw_port="$(tenant_gateway_port "$tenant")"
+tailscale_origin="$(tenant_tailscale_last_origin "$tenant")"
 
 current_public_hostname="$(env_value_from_file "$common_env" PUBLIC_HOSTNAME 2>/dev/null || true)"
 current_image="$(env_value_from_file "$openclaw_env" OPENCLAW_IMAGE 2>/dev/null || true)"
-readarray -t config_values < <(python3 - "$config_file" "$openclaw_port" <<'PYTHON'
+readarray -t config_values < <(python3 - "$config_file" "$openclaw_port" "$tailscale_origin" <<'PYTHON'
 import json
 import sys
 from pathlib import Path
 
 config_path = Path(sys.argv[1])
 port = sys.argv[2]
+tailscale_origin = sys.argv[3]
 default_model = 'openrouter/anthropic/claude-sonnet-4-5'
 default_mode = 'local'
 default_insecure = 'false'
@@ -143,8 +145,11 @@ if isinstance(data, dict):
             origins = control_ui.get('allowedOrigins')
             if isinstance(origins, list):
                 for origin in origins:
-                    if isinstance(origin, str) and origin not in default_origins and origin not in extra_origins:
-                        extra_origins.append(origin)
+                    if not isinstance(origin, str):
+                        continue
+                    if origin in default_origins or origin == tailscale_origin or origin in extra_origins:
+                        continue
+                    extra_origins.append(origin)
     agents = data.get('agents')
     if isinstance(agents, dict):
         defaults = agents.get('defaults')
@@ -221,7 +226,7 @@ chown "$tenant:$tenant" "$common_env" "$openclaw_env"
 chmod 0640 "$common_env" "$openclaw_env"
 restorecon_if_available "$common_env" "$openclaw_env"
 
-python3 - "$config_file" "$openclaw_port" "$gateway_mode" "$ui_auth_value" "$model" "$extra_origins" <<'PYTHON'
+python3 - "$config_file" "$openclaw_port" "$gateway_mode" "$ui_auth_value" "$model" "$extra_origins" "$tailscale_origin" <<'PYTHON'
 import json
 import sys
 from pathlib import Path
@@ -232,11 +237,14 @@ gateway_mode = sys.argv[3]
 allow_insecure = sys.argv[4] == 'true'
 model = sys.argv[5]
 extra_csv = sys.argv[6]
+tailscale_origin = sys.argv[7]
 default_origins = [
     f'http://127.0.0.1:{port}',
     f'http://localhost:{port}',
 ]
 origins = list(default_origins)
+if tailscale_origin and tailscale_origin not in origins:
+    origins.append(tailscale_origin)
 for token in extra_csv.split(','):
     origin = token.strip()
     if origin and origin not in origins:
