@@ -1,10 +1,10 @@
 <p align="center">
-  <a href="https://github.com/nobodywatchin/myOS">
-    <img src="/files/logos/usr/share/pixmaps/fedora-logo.png" href="https://github.com/nobodywatchin/myOS" width=360 />
+  <a href="https://github.com/myos-dev/myOS">
+    <img src="/files/logos/usr/share/pixmaps/fedora-logo.png" href="https://github.com/myos-dev/myOS" width=360 />
   </a>
 </p>
 
-# myOS &nbsp; [![bluebuild build badge](https://github.com/nobodywatchin/myOS/actions/workflows/build.yml/badge.svg)](https://github.com/nobodywatchin/myOS/actions/workflows/build.yml)
+# myOS &nbsp; [![bluebuild build badge](https://github.com/myos-dev/myOS/actions/workflows/build.yml/badge.svg)](https://github.com/myos-dev/myOS/actions/workflows/build.yml)
 
 myOS is an opinionated all-purpose operating system dedicated to progress, freedom, and ease-of-use.
 
@@ -47,8 +47,8 @@ The [Red Hat](https://docs.redhat.com/en/documentation/red_hat_enterprise_linux/
 
 ```bash
 TMP=$(mktemp) && \
-curl -fsSL https://raw.githubusercontent.com/nobodywatchin/myOS/stable/image.toml -o "$TMP" && \
-sudo podman pull ghcr.io/nobodywatchin/alma10:latest && \
+curl -fsSL https://raw.githubusercontent.com/myos-dev/myOS/stable/image.toml -o "$TMP" && \
+sudo podman pull ghcr.io/myos-dev/alma10:latest && \
 sudo podman pull quay.io/centos-bootc/bootc-image-builder:latest && \
 sudo podman run --rm -it --privileged --pull=newer \
   --security-opt label=type:unconfined_t \
@@ -61,7 +61,7 @@ sudo podman run --rm -it --privileged --pull=newer \
   --progress verbose \
   --use-librepo=false \
   --config /config.toml \
-  ghcr.io/nobodywatchin/alma10:latest
+  ghcr.io/myos-dev/alma10:latest
 rm -f "$TMP"
 
 ```
@@ -70,8 +70,8 @@ rm -f "$TMP"
 
 ```bash
 TMP=$(mktemp) && \
-curl -fsSL https://raw.githubusercontent.com/nobodywatchin/myOS/stable/iso.toml -o "$TMP" && \
-sudo podman pull ghcr.io/nobodywatchin/alma10:latest && \
+curl -fsSL https://raw.githubusercontent.com/myos-dev/myOS/stable/iso.toml -o "$TMP" && \
+sudo podman pull ghcr.io/myos-dev/alma10:latest && \
 sudo podman pull quay.io/centos-bootc/bootc-image-builder:latest && \
 sudo podman run --rm -it --privileged --pull=newer \
   --security-opt label=type:unconfined_t \
@@ -84,20 +84,6 @@ sudo podman run --rm -it --privileged --pull=newer \
   --progress verbose \
   --use-librepo=false \
   --config /config.toml \
-  ghcr.io/nobodywatchin/alma10:latest
+  ghcr.io/myos-dev/alma10:latest
 rm -f "$TMP"
 ```
-
-# Images
-### AlmaLinux
-- `alma10`
-- `alma10-nvidia`
-- `alma9`
-- `alma9-nvidia`
-### CentOS 
-- 
-### Fedora
-- `fedora42`
-- `fedora42-nvidia`
-## Experimental [NOT YET RECOMMENDED]
-- 
