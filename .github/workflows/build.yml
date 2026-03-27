@@ -85,28 +85,3 @@ jobs:
           pr_event_number: ${{ github.event.number }}
           rechunk: true
           maximize_build_space: true
-
-  fedora:
-    name: Fedora 42
-    runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      packages: write
-      id-token: write
-    strategy:
-      fail-fast: false # stop GH from cancelling all matrix builds if one fails
-      matrix:
-        recipe:
-          - /fedora/fedora42.yml
-          - /fedora/fedora42-nvidia.yml
-    steps:
-      # the build is fully handled by the reusable github action
-      - name: Fedora 42
-        uses: blue-build/github-action@v1.11
-        with:
-          recipe: ${{ matrix.recipe }}
-          cosign_private_key: ${{ secrets.SIGNING_SECRET }}
-          registry_token: ${{ github.token }}
-          pr_event_number: ${{ github.event.number }}
-          rechunk: true
-          maximize_build_space: true

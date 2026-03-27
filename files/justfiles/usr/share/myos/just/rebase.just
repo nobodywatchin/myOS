@@ -6,8 +6,6 @@ rebase:
 
     sel="$(
       printf '%s\n' \
-        fedora42:latest \
-        fedora42-nvidia:latest \
         alma10:latest \
         alma10-nvidia:latest \
         alma9:latest \

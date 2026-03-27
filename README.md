@@ -1,6 +1,6 @@
 <p align="center">
   <a href="https://github.com/myos-dev/myOS">
-    <img src="/files/logos/usr/share/pixmaps/fedora-logo.png" href="https://github.com/myos-dev/myOS" width=360 />
+    <img src="/files/logos/usr/share/pixmaps/system-logo-white.png" href="https://github.com/myos-dev/myOS" width=360 />
   </a>
 </p>
 
@@ -10,10 +10,7 @@ myOS is an opinionated all-purpose operating system dedicated to progress, freed
 
 # How it's made
 
-This repo uses [BlueBuild](https://blue-build.org/) to generate operating system images, building on top of the following bootc images:
-[Almalinux](https://quay.io/repository/almalinuxorg/almalinux-bootc?tab=tags), 
-[CentOS](https://quay.io/repository/centos-bootc/centos-bootc?tab=tags), and 
-[Fedora](https://quay.io/repository/fedora/fedora-bootc?tab=tags)
+This repo uses [BlueBuild](https://blue-build.org/) to generate operating system images on top of [AlmaLinux bootc](https://quay.io/repository/almalinuxorg/almalinux-bootc?tab=tags).
 
 # Vision
 
