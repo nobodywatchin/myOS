@@ -95,8 +95,6 @@ modules:
 
   - type: systemd
     system:
-      enabled:
-        - tailscaled.service
       disabled:
         - rpm-ostree-countme.service
         - rpm-ostree-countme.timer
