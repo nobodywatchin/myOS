@@ -1,22 +1,59 @@
 <p align="center">
   <a href="https://github.com/myos-dev/myOS">
-    <img src="/files/logos/usr/share/pixmaps/system-logo-white.png" href="https://github.com/myos-dev/myOS" width=360 />
+    <img src="files/base/branding/usr/share/pixmaps/system-logo-white.png" href="https://github.com/myos-dev/myOS" width=360 />
   </a>
 </p>
 
 # myOS &nbsp; [![bluebuild build badge](https://github.com/myos-dev/myOS/actions/workflows/build.yml/badge.svg)](https://github.com/myos-dev/myOS/actions/workflows/build.yml)
 
-myOS is an opinionated all-purpose operating system dedicated to progress, freedom, and ease-of-use.
+myOS is an opinionated BootC image ecosystem organized around a small shared core, clear per-distro layers, and workstation products that stay easy to extend.
 
-# How it's made
+# Image Progression
 
-This repo uses [BlueBuild](https://blue-build.org/) to generate operating system images on top of [AlmaLinux bootc](https://quay.io/repository/almalinuxorg/almalinux-bootc?tab=tags).
+Both Alma 9 and Alma 10 now follow the same product path:
 
-# Vision
+- `core-minimal-alma9` / `core-minimal-alma10`
+- `core-minimal-alma9-nvidia` / `core-minimal-alma10-nvidia`
+- `core-full-alma9` / `core-full-alma10`
+- `core-full-alma9-nvidia` / `core-full-alma10-nvidia`
+- `workstation-alma9` / `workstation-alma10`
+- `workstation-alma9-nvidia` / `workstation-alma10-nvidia`
 
-myOS was created to offer a user-friendly yet powerful operating system that embraces open-source principles while providing a cohesive and polished experience. 
+`core-full-*` is the single full base tier now. It includes the AI runtime, tenant commands, and OpenClaw host scaffolding, so there is no separate `ai` versus `agent` image family anymore.
 
-myOS works out of the box with minimal setup, allowing users to focus on their tasks without unnecessary distractions.
+# Repo Layout
+
+```text
+recipes/
+  images/
+    core/
+    workstation/
+  layers/
+    shared/
+    alma9/
+    alma10/
+    features/
+
+files/
+  base/
+  workstation/
+  agent/
+  dnf/
+  justfiles/
+```
+
+- `recipes/images` contains only buildable images.
+- `recipes/layers/shared` contains the small shared building blocks: `core-base`, `core-full`, `workstation-base`, `nvidia`, and `nvidia-workstation`.
+- `recipes/layers/alma9` and `recipes/layers/alma10` keep version differences explicit without spreading them across lots of tiny files.
+- `files/base`, `files/workstation`, and `files/agent` mirror those concerns in the payloads.
+
+Kubernetes is still available as the opt-in feature layer at [`recipes/layers/features/kubernetes-cli.yml`](recipes/layers/features/kubernetes-cli.yml).
+
+The full architecture and migration notes live in [`docs/image-architecture.md`](docs/image-architecture.md).
+
+# Build Flow
+
+The workflow now publishes full core images before workstation builds run. Workstation recipes use `ghcr.io/myos-dev/core-full-*` as their base image, so the published workstation tags reflect the latest published full core tags.
 
 # Tenant Operations
 
@@ -32,20 +69,22 @@ myos tenant-start --tenant demo
 myos tenant-status --tenant demo
 ```
 
-For interactive use, `myos tenant` opens an `fzf` chooser for the same command surface.
+Generic `myos` commands live in the shared core. Tenant commands are layered into the `core-full-*` and workstation images for both distros.
 
-# Customization
+# Adding Images
 
-If you want to add your own customizations on top of myOS, you are advised strongly against forking. Instead, create a repo for your own image by using the [BlueBuild template](https://github.com/blue-build/template), then change your `base-image` to a myOS image. This will allow you to apply your customizations to myOS in a concise and maintainable way, without the need to constantly sync with upstream. 
-
-The [Red Hat](https://docs.redhat.com/en/documentation/red_hat_enterprise_linux/9/html/using_image_mode_for_rhel_to_build_deploy_and_manage_operating_systems/deploying-the-rhel-bootc-images_using-image-mode-for-rhel-to-build-deploy-and-manage-operating-systems#building-and-launching-configured-images_deploying-the-rhel-bootc-images) and [OSBuild](https://osbuild.org/docs/bootc/) documentation on building bootc images is quite in-depth if you want to tinker. 
+1. Start from the smallest core image that matches the image's job.
+2. Use `core-full-*` when the image needs AI, tenant, or OpenClaw host features.
+3. Use `nvidia.yml` for core/server NVIDIA support and add `nvidia-workstation.yml` only for workstation-specific NVIDIA extras.
+4. Add workstation layers only for actual workstation products.
+5. Keep optional capabilities in `recipes/layers/features/` instead of silently growing every image.
 
 # Building as a VM
 
 ```bash
 TMP=$(mktemp) && \
 curl -fsSL https://raw.githubusercontent.com/myos-dev/myOS/stable/image.toml -o "$TMP" && \
-sudo podman pull ghcr.io/myos-dev/alma10:latest && \
+sudo podman pull ghcr.io/myos-dev/workstation-alma10:latest && \
 sudo podman pull quay.io/centos-bootc/bootc-image-builder:latest && \
 sudo podman run --rm -it --privileged --pull=newer \
   --security-opt label=type:unconfined_t \
@@ -58,9 +97,8 @@ sudo podman run --rm -it --privileged --pull=newer \
   --progress verbose \
   --use-librepo=false \
   --config /config.toml \
-  ghcr.io/myos-dev/alma10:latest
+  ghcr.io/myos-dev/workstation-alma10:latest
 rm -f "$TMP"
-
 ```
 
 # Building ISO File
@@ -68,7 +106,7 @@ rm -f "$TMP"
 ```bash
 TMP=$(mktemp) && \
 curl -fsSL https://raw.githubusercontent.com/myos-dev/myOS/stable/iso.toml -o "$TMP" && \
-sudo podman pull ghcr.io/myos-dev/alma10:latest && \
+sudo podman pull ghcr.io/myos-dev/workstation-alma10:latest && \
 sudo podman pull quay.io/centos-bootc/bootc-image-builder:latest && \
 sudo podman run --rm -it --privileged --pull=newer \
   --security-opt label=type:unconfined_t \
@@ -81,6 +119,6 @@ sudo podman run --rm -it --privileged --pull=newer \
   --progress verbose \
   --use-librepo=false \
   --config /config.toml \
-  ghcr.io/myos-dev/alma10:latest
+  ghcr.io/myos-dev/workstation-alma10:latest
 rm -f "$TMP"
 ```

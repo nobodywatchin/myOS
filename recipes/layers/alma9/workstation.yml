@@ -1,0 +1,167 @@
+---
+modules:
+  - type: dnf
+    repos:
+      keys:
+        - https://download1.rpmfusion.org/free/el/RPM-GPG-KEY-rpmfusion-free-el-9
+        - https://download1.rpmfusion.org/nonfree/el/RPM-GPG-KEY-rpmfusion-nonfree-el-9
+    install:
+      packages:
+        - https://mirrors.rpmfusion.org/free/el/rpmfusion-free-release-9.noarch.rpm
+        - https://mirrors.rpmfusion.org/nonfree/el/rpmfusion-nonfree-release-9.noarch.rpm
+
+  - type: dnf
+    install:
+      install-weak-deps: false
+      packages:
+        - akmods
+        - akmod-wl
+        - broadcom-wl
+        - kernel-headers
+        - gcc
+        - make
+        - binutils
+        - elfutils-libelf-devel
+        - bc
+        - patch
+        - wpa_supplicant
+        - rfkill
+        - iw
+        - mokutil
+        - perl
+
+  - type: files
+    files:
+      - source: workstation/wl
+        destination: /
+
+  - type: containerfile
+    snippets:
+      - RUN chmod 0755 /usr/local/sbin/wl-akmods-build.sh
+      - RUN chmod 0755 /usr/local/sbin/needs-wl.sh
+      - RUN semanage fcontext -a -t modules_object_t '/var/lib/wl-mount(/.*)?'
+      - RUN restorecon -Rv /var/lib/wl-mount
+      - RUN rm -f /etc/yum.repos.d/rpmfusion-*.repo
+
+  - type: systemd
+    system:
+      enabled:
+        - wl-akmods-load.service
+
+  - type: dnf
+    repos:
+      cleanup: true
+      copr:
+        - trixieua/morewaita-icon-theme
+    remove:
+      packages:
+        - vim-minimal
+    group-install:
+      packages:
+        - Workstation product core
+    install:
+      install-weak-deps: false
+      packages:
+        - morewaita-icon-theme
+        - vim-enhanced
+        - pipewire
+        - pipewire-alsa
+        - pipewire-pulseaudio
+        - pipewire-jack-audio-connection-kit
+        - pipewire-utils
+        - wireplumber
+        - gstreamer1-plugins-base
+        - gstreamer1-plugins-good
+        - gstreamer1-plugins-bad-free
+        - gstreamer1-plugins-bad-free-libs
+        - alsa-ucm
+        - alsa-utils
+        - pavucontrol
+        - dejavu-sans-fonts
+        - dejavu-sans-mono-fonts
+        - dejavu-serif-fonts
+        - google-noto-sans-arabic-fonts
+        - google-noto-sans-hebrew-fonts
+        - google-noto-sans-devanagari-fonts
+        - google-noto-cjk-fonts-common
+        - google-noto-fonts-common
+        - qemu-guest-agent
+        - spice-vdagent
+        - open-vm-tools-desktop
+        - hyperv-daemons
+        - cups
+        - cups-pk-helper
+        - cups-filters
+        - ghostscript
+        - gutenprint
+        - gutenprint-cups
+        - system-config-printer-udev
+        - hplip
+        - libsane-hpaio
+        - sane-backends-drivers-scanners
+        - sane-airscan
+        - NetworkManager-wifi
+        - NetworkManager-bluetooth
+        - NetworkManager-wwan
+        - NetworkManager-adsl
+        - NetworkManager-openvpn
+        - NetworkManager-openconnect
+        - dnsmasq
+        - nftables
+        - ModemManager
+        - ppp
+        - bluez
+        - gvfs-fuse
+        - gvfs-goa
+        - gvfs-gphoto2
+        - gvfs-mtp
+        - gvfs-smb
+        - fwupd
+        - bolt
+        - switcheroo-control
+        - libcamera
+        - libcamera-gstreamer
+        - libcamera-tools
+        - wl-clipboard
+        - plymouth-system-theme
+        - flatpak
+        - systemd-oomd
+        - systemd-container
+        - gnome-color-manager
+        - gnome-disk-utility
+        - gnome-terminal
+        - gnome-terminal-nautilus
+        - gnome-software
+        - nautilus
+        - orca
+        - xdg-user-dirs-gtk
+        - colord
+        - gdm
+        - gnome-shell
+        - gnome-control-center
+        - gnome-settings-daemon
+        - gnome-session
+        - gnome-initial-setup
+        - gnome-remote-desktop
+        - xdg-desktop-portal
+        - xdg-desktop-portal-gnome
+
+  - type: gnome-extensions
+    install:
+      - 3843
+      - 615
+      - 7
+      - 3193
+      - 19
+      - 779
+      - 1460
+      - 1401
+
+  - type: files
+    files:
+      - source: workstation/gnome
+        destination: /
+
+  - type: bling
+    install:
+      - dconf-update-service

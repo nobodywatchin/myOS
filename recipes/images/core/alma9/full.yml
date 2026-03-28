@@ -1,0 +1,12 @@
+---
+# yaml-language-server: $schema=https://schema.blue-build.org/recipe-v1.json
+name: core-full-alma9
+description: Full myOS AlmaLinux 9 core with AI runtime and tenant/OpenClaw platform tooling.
+base-image: quay.io/almalinuxorg/almalinux-bootc
+image-version: 9
+modules:
+  - from-file: layers/shared/core-base.yml
+  - from-file: layers/alma9/core.yml
+  - from-file: layers/shared/core-full.yml
+  - type: initramfs
+  - type: signing

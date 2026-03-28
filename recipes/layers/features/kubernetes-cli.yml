@@ -1,0 +1,9 @@
+---
+modules:
+  - type: dnf
+    repos:
+      files:
+        - kubernetes.repo
+    install:
+      packages:
+        - kubectl

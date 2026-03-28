@@ -1,0 +1,268 @@
+---
+modules:
+  - type: dnf
+    repos:
+      keys:
+        - https://download1.rpmfusion.org/free/el/RPM-GPG-KEY-rpmfusion-free-el-10
+        - https://download1.rpmfusion.org/nonfree/el/RPM-GPG-KEY-rpmfusion-nonfree-el-10
+    install:
+      packages:
+        - https://mirrors.rpmfusion.org/free/el/rpmfusion-free-release-10.noarch.rpm
+        - https://mirrors.rpmfusion.org/nonfree/el/rpmfusion-nonfree-release-10.noarch.rpm
+
+  - type: dnf
+    install:
+      install-weak-deps: false
+      packages:
+        - akmods
+        - akmod-wl
+        - broadcom-wl
+        - kernel-headers
+        - gcc
+        - make
+        - binutils
+        - elfutils-libelf-devel
+        - bc
+        - patch
+        - wpa_supplicant
+        - rfkill
+        - iw
+        - mokutil
+        - perl
+
+  - type: files
+    files:
+      - source: workstation/wl
+        destination: /
+
+  - type: containerfile
+    snippets:
+      - RUN chmod 0755 /usr/local/sbin/wl-akmods-build.sh
+      - RUN chmod 0755 /usr/local/sbin/needs-wl.sh
+      - RUN semanage fcontext -a -t modules_object_t '/var/lib/wl-mount(/.*)?'
+      - RUN restorecon -Rv /var/lib/wl-mount
+      - RUN rm -f /etc/yum.repos.d/rpmfusion-*.repo
+
+  - type: systemd
+    system:
+      enabled:
+        - wl-akmods-load.service
+
+  - type: dnf
+    repos:
+      cleanup: true
+      copr:
+        - jreilly1821/c10s-gnome
+        - trixieua/morewaita-icon-theme
+    remove:
+      packages:
+        - vim-minimal
+    install:
+      install-weak-deps: false
+      packages:
+        - acl
+        - almalinux-release
+        - alsa-sof-firmware
+        - attr
+        - bash-completion
+        - bc
+        - bind-utils
+        - cpio
+        - crontabs
+        - cyrus-sasl-plain
+        - dos2unix
+        - git
+        - glibc-all-langpacks
+        - hunspell
+        - ibus-anthy
+        - ibus-gtk3
+        - ibus-hangul
+        - ibus-libpinyin
+        - ibus-libzhuyin
+        - ibus-m17n
+        - ibus-typing-booster
+        - logrotate
+        - lrzsz
+        - man-pages
+        - mcelog
+        - microcode_ctl
+        - net-tools
+        - nmap-ncat
+        - pciutils
+        - pinentry-gnome3
+        - plymouth
+        - plymouth-system-theme
+        - plymouth-plugin-script
+        - polkit
+        - psacct
+        - qt6-qtbase
+        - qt6-qtbase-gui
+        - qt6-qtdeclarative
+        - realmd
+        - setroubleshoot
+        - sssd
+        - symlinks
+        - telnet
+        - thermald
+        - tree
+        - usbutils
+        - words
+        - bash-color-prompt
+        - vim-enhanced
+        - uxplay
+        - usbmuxd
+        - libimobiledevice
+        - libimobiledevice-utils
+        - libimobiledevice-glue
+        - libusbmuxd
+        - libusbmuxd-utils
+        - libplist
+        - ifuse
+        - libmtp
+        - libgphoto2
+        - morewaita-icon-theme
+        - pipewire
+        - pipewire-alsa
+        - pipewire-pulseaudio
+        - pipewire-jack-audio-connection-kit
+        - pipewire-utils
+        - wireplumber
+        - gstreamer1-plugins-base
+        - gstreamer1-plugins-good
+        - gstreamer1-plugins-bad-free
+        - gstreamer1-plugins-bad-free-libs
+        - alsa-ucm
+        - alsa-utils
+        - pavucontrol
+        - dejavu-sans-fonts
+        - dejavu-sans-mono-fonts
+        - dejavu-serif-fonts
+        - jetbrains-mono-fonts-all
+        - google-noto-sans-arabic-fonts
+        - google-noto-sans-hebrew-fonts
+        - google-noto-sans-devanagari-fonts
+        - google-noto-sans-cjk-fonts
+        - qemu-guest-agent
+        - spice-vdagent
+        - open-vm-tools-desktop
+        - hyperv-daemons
+        - cups
+        - cups-pk-helper
+        - cups-filters
+        - ghostscript
+        - gutenprint
+        - gutenprint-cups
+        - system-config-printer-udev
+        - hplip
+        - libsane-hpaio
+        - sane-backends-drivers-scanners
+        - sane-airscan
+        - NetworkManager-wifi
+        - NetworkManager-bluetooth
+        - NetworkManager-wwan
+        - NetworkManager-adsl
+        - NetworkManager-openvpn
+        - NetworkManager-openconnect
+        - dnsmasq
+        - nftables
+        - ModemManager
+        - ppp
+        - bluez
+        - bluez-cups
+        - hidapi
+        - brcmfmac-firmware
+        - atheros-firmware
+        - tiwilink-firmware
+        - realtek-firmware
+        - nxpwireless-firmware
+        - mt7xxx-firmware
+        - iwlwifi-dvm-firmware
+        - iwlwifi-mvm-firmware
+        - iwlegacy-firmware
+        - libertas-firmware
+        - gvfs
+        - gvfs-fuse
+        - gvfs-goa
+        - gvfs-gphoto2
+        - gvfs-mtp
+        - gvfs-smb
+        - fwupd
+        - bolt
+        - switcheroo-control
+        - powertop
+        - tuned-ppd
+        - libcamera
+        - libcamera-v4l2
+        - libcamera-gstreamer
+        - libcamera-tools
+        - wl-clipboard
+        - flatpak
+        - systemd-oomd
+        - systemd-container
+        - gnome-color-manager
+        - gnome-disk-utility
+        - ptyxis
+        - nautilus
+        - orca
+        - xdg-user-dirs-gtk
+        - colord
+        - baobab
+        - gdm
+        - gnome-shell
+        - gnome-control-center
+        - gnome-settings-daemon
+        - gnome-session
+        - gnome-initial-setup
+        - gnome-remote-desktop
+        - xdg-desktop-portal
+        - xdg-desktop-portal-gnome
+        - gnome-software
+    replace:
+      - from-repo: copr:copr.fedorainfracloud.org:jreilly1821:c10s-gnome
+        packages:
+          - glib2
+          - gdm
+          - gnome-shell
+          - gnome-control-center
+          - gnome-settings-daemon
+          - gnome-session
+          - gnome-initial-setup
+          - gnome-remote-desktop
+          - xdg-desktop-portal
+          - xdg-desktop-portal-gnome
+
+  - type: gnome-extensions
+    install:
+      - 3843
+      - 615
+      - 517
+      - 7
+      - 6139
+      - 3193
+      - 7065
+      - 7535
+      - 19
+      - 779
+      - 1460
+      - 6580
+      - 1401
+      - 6051
+      - 8243
+
+  - type: files
+    files:
+      - source: workstation/gnome
+        destination: /
+
+  - type: bling
+    install:
+      - dconf-update-service
+
+  - type: kargs
+    kargs:
+      - mem_sleep_default=s2idle
+      - amdgpu.si_support=1
+      - amdgpu.cik_support=1
+      - radeon.si_support=0
+      - radeon.cik_support=0
+      - modprobe.blacklist=radeon

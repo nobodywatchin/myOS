@@ -1,0 +1,11 @@
+---
+# yaml-language-server: $schema=https://schema.blue-build.org/recipe-v1.json
+name: core-minimal-alma9
+description: Minimal myOS AlmaLinux 9 BootC base with podman, just, tailscale, and basic system tooling.
+base-image: quay.io/almalinuxorg/almalinux-bootc
+image-version: 9
+modules:
+  - from-file: layers/shared/core-base.yml
+  - from-file: layers/alma9/core.yml
+  - type: initramfs
+  - type: signing

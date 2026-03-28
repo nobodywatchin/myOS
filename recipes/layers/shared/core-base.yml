@@ -1,0 +1,114 @@
+---
+modules:
+  - type: brew
+    nofile-limits: true
+    brew-analytics: false
+
+  - type: dnf
+    install:
+      packages:
+        - epel-release
+
+  - type: containerfile
+    snippets:
+      - RUN dnf -y config-manager --set-enabled crb
+
+  - type: dnf
+    remove:
+      packages:
+        - subscription-manager
+    install:
+      install-weak-deps: false
+      packages:
+        - lshw
+        - dnf-plugins-core
+        - audit
+        - rpm-plugin-audit
+        - basesystem
+        - bash
+        - coreutils
+        - crypto-policies
+        - crypto-policies-scripts
+        - dnf
+        - e2fsprogs
+        - filesystem
+        - glibc
+        - ca-certificates
+        - hostname
+        - irqbalance
+        - kbd
+        - less
+        - ncurses
+        - policycoreutils
+        - procps-ng
+        - rootfiles
+        - rpm
+        - selinux-policy-targeted
+        - setup
+        - shadow-utils
+        - sudo
+        - systemd
+        - systemd-udev
+        - util-linux
+        - xfsprogs
+        - curl
+        - iproute
+        - iputils
+        - NetworkManager
+        - openssh-server
+        - p11-kit
+        - chrony
+        - dosfstools
+        - lvm2
+        - sg3_utils
+        - sg3_utils-libs
+        - dbus
+        - python3-libselinux
+        - linux-firmware
+        - system-reinstall-bootc
+        - fastfetch
+        - fzf
+        - NetworkManager-tui
+        - podman
+        - podman-docker
+        - podman-compose
+        - container-selinux
+        - conntrack-tools
+        - skopeo
+        - buildah
+        - distrobox
+        - fuse-overlayfs
+        - slirp4netns
+        - openssh-clients
+        - policycoreutils-python-utils
+        - vim-minimal
+        - bzip2
+        - file
+        - gnupg2
+        - mailcap
+        - rsync
+        - tar
+        - unzip
+        - wget
+        - which
+        - zip
+
+  - type: systemd
+    system:
+      enabled:
+        - tailscaled.service
+      disabled:
+        - rpm-ostree-countme.service
+        - rpm-ostree-countme.timer
+        - akmods-keygen@akmods-keygen.service
+
+  - type: files
+    files:
+      - source: base/branding
+        destination: /
+
+  - type: os-release
+    properties:
+      NAME: myOS
+      PRETTY_NAME: myOS
+      VENDOR_NAME: myOS

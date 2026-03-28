@@ -1,0 +1,24 @@
+---
+modules:
+  - type: containerfile
+    snippets:
+      - RUN ln -s /usr/bin/dnf /usr/bin/dnf4 || true
+  - type: dnf
+    install:
+      packages:
+        - mlocate
+  - type: containerfile
+    snippets:
+      - RUN dnf config-manager --add-repo https://pkgs.tailscale.com/stable/rhel/9/tailscale.repo
+      - RUN dnf config-manager --set-disabled "tailscale-stable"
+      - RUN dnf -y --enablerepo "tailscale-stable" install tailscale
+  - type: script
+    scripts:
+      - just-el9.sh
+  - type: files
+    files:
+      - source: justfiles
+        destination: /
+  - type: containerfile
+    snippets:
+      - RUN chmod 0755 /usr/local/bin/myos

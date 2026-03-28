@@ -1,0 +1,95 @@
+---
+modules:
+  - type: dnf
+    install:
+      install-weak-deps: false
+      packages:
+        - ethtool
+        - iproute-tc
+        - dracut-network
+        - mtr
+        - tcpdump
+        - traceroute
+        - iptables
+        - socat
+        - cryptsetup
+        - mdadm
+        - quota
+        - rdma-core
+        - nvmetcli
+        - blktrace
+        - bpftool
+        - tuned
+        - nvme-cli
+        - cifs-utils
+        - nfs-utils
+        - libvirt
+        - libvirt-daemon-config-network
+        - libvirt-daemon-driver-network
+        - virt-what
+        - cockpit
+        - cockpit-ostree
+        - cockpit-files
+        - cockpit-storaged
+        - cockpit-podman
+        - cockpit-machines
+        - rsyslog
+        - lsof
+        - sos
+        - smartmontools
+        - strace
+        - rasdaemon
+        - time
+        - parted
+        - kernel-tools
+        - firewalld
+
+  - type: containerfile
+    snippets:
+      - RUN rm -f /usr/share/flatpak/remotes.d/*.flatpakrepo || true
+      - RUN rm -f /etc/flatpak/remotes.d/*.flatpakrepo || true
+
+  - type: default-flatpaks
+    configurations:
+      - scope: user
+        notify: false
+        repo:
+          url: https://dl.flathub.org/repo/flathub.flatpakrepo
+          name: flathub
+          title: Flathub (user)
+      - scope: system
+        notify: false
+        repo:
+          url: https://dl.flathub.org/repo/flathub.flatpakrepo
+          name: org-system
+          title: Flathub (system, managed)
+        install:
+          - com.github.marhkb.Pods
+          - io.github.dvlv.boxbuddyrs
+          - com.github.tchx84.Flatseal
+          - io.github.giantpinkrobots.flatsweep
+          - it.mijorus.gearlever
+          - com.usebottles.bottles
+          - net.nokyan.Resources
+          - com.mattjakeman.ExtensionManager
+          - io.github.flattool.Warehouse
+          - io.github.flattool.Ignition
+          - org.gnome.Epiphany
+          - org.gnome.TextEditor
+          - org.gnome.Calculator
+          - org.gnome.Loupe
+          - org.gnome.Decibels
+          - org.gnome.Showtime
+          - org.gnome.FileRoller
+          - org.gnome.Firmware
+          - org.gnome.Logs
+
+  - type: files
+    files:
+      - source: workstation/flatpak
+        destination: /
+
+  - type: systemd
+    system:
+      enabled:
+        - flatpak-hide-org-system.service

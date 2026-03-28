@@ -1,0 +1,11 @@
+---
+# yaml-language-server: $schema=https://schema.blue-build.org/recipe-v1.json
+name: workstation-alma10
+description: myOS AlmaLinux 10 workstation layered on the published full core image.
+base-image: ghcr.io/myos-dev/core-full-alma10
+image-version: latest
+modules:
+  - from-file: layers/shared/workstation-base.yml
+  - from-file: layers/alma10/workstation.yml
+  - type: initramfs
+  - type: signing
