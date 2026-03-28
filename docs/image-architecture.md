@@ -44,6 +44,7 @@ recipes/
       workstation.yml
     alma10/
       core.yml
+      core-full.yml
       workstation.yml
     features/
       kubernetes-cli.yml
@@ -59,12 +60,13 @@ Both Alma 9 and Alma 10 now expose the same build path:
 - `core-full-*-nvidia`
 - workstation images on top of `core-full-*`
 
-`core-full-*` is the single feature-complete base tier. It includes the AI runtime, tenant tooling, and OpenClaw host scaffolding for both distros.
+`core-full-*` is the single feature-complete base tier. It includes tenant tooling, Cockpit admin services, and OpenClaw host scaffolding for both distros. Alma 10 adds RamaLama through a distro-specific full layer; Alma 9 keeps the same platform layout without the packaged RamaLama runtime.
 
 ## Layer Responsibilities
 
 - `recipes/layers/shared/core-base.yml`: base system, podman/runtime tooling, branding, and shared service defaults
-- `recipes/layers/shared/core-full.yml`: ramalama, nginx, cockpit admin tooling, tenant CLI, and OpenClaw host scaffolding
+- `recipes/layers/shared/core-full.yml`: shared full-core admin services, tenant CLI, and OpenClaw host scaffolding
+- `recipes/layers/alma10/core-full.yml`: Alma 10-only RamaLama runtime package
 - `recipes/layers/shared/workstation-base.yml`: shared workstation diagnostics, network/storage extras, and Flatpak defaults
 - `recipes/layers/shared/nvidia.yml`: NVIDIA repo enablement, driver stack, container toolkit, and core boot args
 - `recipes/layers/shared/nvidia-workstation.yml`: workstation-only NVIDIA userspace extras and display-oriented kernel args
@@ -107,9 +109,10 @@ Assumptions used in this simplification:
 - there is no practical value in a separate `core-ai-*` layer of published images right now
 - `core-full-*` is the right default parent for workstations
 - base NVIDIA images should stay leaner than workstation NVIDIA images
+- Alma 9 should keep the full tenant/OpenClaw platform layout even without a bundled RamaLama package
 
 Manual review still recommended for:
 
-- whether `ramalama` resolves cleanly on Alma 9 in your actual build environment
+- whether Alma 9 should eventually gain an alternate AI runtime source or remain model-host-runtime-free
 - whether the published `latest` core tags are the right workstation base tags for your PR workflow expectations
 - whether future headless/server products should start from `core-minimal-*` or `core-full-*`

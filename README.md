@@ -19,7 +19,7 @@ Both Alma 9 and Alma 10 now follow the same product path:
 - `workstation-alma9` / `workstation-alma10`
 - `workstation-alma9-nvidia` / `workstation-alma10-nvidia`
 
-`core-full-*` is the single full base tier now. It includes the AI runtime, Cockpit admin tooling, tenant commands, and OpenClaw host scaffolding, so there is no separate `ai` versus `agent` image family anymore.
+`core-full-*` is the single full base tier now. It includes tenant commands, Cockpit admin tooling, and OpenClaw host scaffolding for both distros. RamaLama is added in the Alma 10 full images, while Alma 9 keeps the same platform layout without the packaged RamaLama runtime.
 
 # Repo Layout
 
@@ -74,10 +74,11 @@ Generic `myos` commands live in the shared core. Tenant commands are layered int
 # Adding Images
 
 1. Start from the smallest core image that matches the image's job.
-2. Use `core-full-*` when the image needs AI, tenant, or OpenClaw host features.
-3. Use `nvidia.yml` for core/server NVIDIA support and add `nvidia-workstation.yml` only for workstation-specific NVIDIA extras.
-4. Add workstation layers only for actual workstation products.
-5. Keep optional capabilities in `recipes/layers/features/` instead of silently growing every image.
+2. Use `core-full-*` when the image needs tenant or OpenClaw host features.
+3. Treat RamaLama as an Alma 10 full-core add-on until Alma 9 has a supported package source.
+4. Use `nvidia.yml` for core/server NVIDIA support and add `nvidia-workstation.yml` only for workstation-specific NVIDIA extras.
+5. Add workstation layers only for actual workstation products.
+6. Keep optional capabilities in `recipes/layers/features/` instead of silently growing every image.
 
 # Building as a VM
 
