@@ -129,6 +129,7 @@ modules:
         - gnome-terminal
         - gnome-terminal-nautilus
         - gnome-software
+        - gnome-logs
         - nautilus
         - orca
         - xdg-user-dirs-gtk
@@ -142,6 +143,18 @@ modules:
         - gnome-remote-desktop
         - xdg-desktop-portal
         - xdg-desktop-portal-gnome
+
+  - type: default-flatpaks
+    configurations:
+      - scope: system
+        notify: false
+        repo:
+          url: https://dl.flathub.org/repo/flathub.flatpakrepo
+          name: org-system
+          title: Flathub (system, managed)
+        install:
+          - org.gnome.TextEditor
+          - org.gnome.Loupe
 
   - type: gnome-extensions
     install:

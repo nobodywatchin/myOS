@@ -34,11 +34,7 @@ modules:
         - kernel-tools
         - firewalld
         - flatseal
-        - gnome-firmware
-        - gnome-logs
-        - gnome-text-editor
         - gnome-calculator
-        - loupe
 
   - type: containerfile
     snippets:
@@ -73,6 +69,7 @@ modules:
           - org.gnome.Decibels
           - org.gnome.Showtime
           - org.gnome.FileRoller
+          - org.gnome.Firmware
 
   - type: files
     files:

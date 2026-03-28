@@ -197,6 +197,8 @@ modules:
         - systemd-container
         - gnome-color-manager
         - gnome-disk-utility
+        - gnome-text-editor
+        - loupe
         - ptyxis
         - nautilus
         - orca
@@ -226,6 +228,17 @@ modules:
           - gnome-remote-desktop
           - xdg-desktop-portal
           - xdg-desktop-portal-gnome
+
+  - type: default-flatpaks
+    configurations:
+      - scope: system
+        notify: false
+        repo:
+          url: https://dl.flathub.org/repo/flathub.flatpakrepo
+          name: org-system
+          title: Flathub (system, managed)
+        install:
+          - org.gnome.Logs
 
   - type: gnome-extensions
     install:
