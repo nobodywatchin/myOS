@@ -33,6 +33,12 @@ modules:
         - parted
         - kernel-tools
         - firewalld
+        - flatseal
+        - gnome-firmware
+        - gnome-logs
+        - gnome-text-editor
+        - gnome-calculator
+        - loupe
 
   - type: containerfile
     snippets:
@@ -56,7 +62,6 @@ modules:
         install:
           - com.github.marhkb.Pods
           - io.github.dvlv.boxbuddyrs
-          - com.github.tchx84.Flatseal
           - io.github.giantpinkrobots.flatsweep
           - it.mijorus.gearlever
           - com.usebottles.bottles
@@ -65,14 +70,9 @@ modules:
           - io.github.flattool.Warehouse
           - io.github.flattool.Ignition
           - org.gnome.Epiphany
-          - org.gnome.TextEditor
-          - org.gnome.Calculator
-          - org.gnome.Loupe
           - org.gnome.Decibels
           - org.gnome.Showtime
           - org.gnome.FileRoller
-          - org.gnome.Firmware
-          - org.gnome.Logs
 
   - type: files
     files:
