@@ -19,7 +19,7 @@ Both Alma 9 and Alma 10 now follow the same product path:
 - `workstation-alma9` / `workstation-alma10`
 - `workstation-alma9-nvidia` / `workstation-alma10-nvidia`
 
-`core-full-*` is the single full base tier now. It includes the AI runtime, tenant commands, and OpenClaw host scaffolding, so there is no separate `ai` versus `agent` image family anymore.
+`core-full-*` is the single full base tier now. It includes the AI runtime, Cockpit admin tooling, tenant commands, and OpenClaw host scaffolding, so there is no separate `ai` versus `agent` image family anymore.
 
 # Repo Layout
 

@@ -39,8 +39,9 @@ modules:
     snippets:
       - RUN chmod 0755 /usr/local/sbin/wl-akmods-build.sh
       - RUN chmod 0755 /usr/local/sbin/needs-wl.sh
-      - RUN semanage fcontext -a -t modules_object_t '/var/lib/wl-mount(/.*)?'
-      - RUN restorecon -Rv /var/lib/wl-mount
+      - RUN install -d -m 0755 /var/lib/wl-kmods
+      - RUN semanage fcontext -a -t modules_object_t '/var/lib/wl-kmods(/.*)?'
+      - RUN restorecon -Rv /var/lib/wl-kmods
       - RUN rm -f /etc/yum.repos.d/rpmfusion-*.repo
 
   - type: systemd
@@ -109,7 +110,6 @@ modules:
         - words
         - bash-color-prompt
         - vim-enhanced
-        - uxplay
         - usbmuxd
         - libimobiledevice
         - libimobiledevice-utils
@@ -142,10 +142,6 @@ modules:
         - google-noto-sans-hebrew-fonts
         - google-noto-sans-devanagari-fonts
         - google-noto-sans-cjk-fonts
-        - qemu-guest-agent
-        - spice-vdagent
-        - open-vm-tools-desktop
-        - hyperv-daemons
         - cups
         - cups-pk-helper
         - cups-filters

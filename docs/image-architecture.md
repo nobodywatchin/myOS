@@ -64,8 +64,8 @@ Both Alma 9 and Alma 10 now expose the same build path:
 ## Layer Responsibilities
 
 - `recipes/layers/shared/core-base.yml`: base system, podman/runtime tooling, branding, and shared service defaults
-- `recipes/layers/shared/core-full.yml`: ramalama, nginx, tenant CLI, and OpenClaw host scaffolding
-- `recipes/layers/shared/workstation-base.yml`: shared workstation/admin extras and Flatpak defaults
+- `recipes/layers/shared/core-full.yml`: ramalama, nginx, cockpit admin tooling, tenant CLI, and OpenClaw host scaffolding
+- `recipes/layers/shared/workstation-base.yml`: shared workstation diagnostics, network/storage extras, and Flatpak defaults
 - `recipes/layers/shared/nvidia.yml`: NVIDIA repo enablement, driver stack, container toolkit, and core boot args
 - `recipes/layers/shared/nvidia-workstation.yml`: workstation-only NVIDIA userspace extras and display-oriented kernel args
 - `recipes/layers/alma9/core.yml` and `recipes/layers/alma10/core.yml`: distro-specific package, tailscale, and just setup

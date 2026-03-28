@@ -7,7 +7,6 @@ modules:
         - libnvidia-cfg
         - nvidia-settings
         - nvidia-libXNVCtrl
-        - nvidia-libXNVCtrl-devel
 
   - type: kargs
     kargs:

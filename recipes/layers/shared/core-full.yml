@@ -6,6 +6,11 @@ modules:
       packages:
         - ramalama
         - nginx
+        - cockpit
+        - cockpit-ostree
+        - cockpit-files
+        - cockpit-storaged
+        - cockpit-podman
 
   - type: files
     files:
