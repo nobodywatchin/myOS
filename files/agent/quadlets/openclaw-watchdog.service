@@ -1,0 +1,10 @@
+[Unit]
+Description=OpenClaw Watchdog - restarts primary agent only if it is not active
+After=openclaw.service
+BindsTo=openclaw.service
+
+[Service]
+Type=simple
+ExecStart=/usr/bin/bash -lc 'while true; do if ! systemctl --user is-active --quiet openclaw.service; then echo "OpenClaw is not active - restarting it now" | systemd-cat -t openclaw-watchdog -p warning; systemctl --user restart openclaw.service; fi; sleep 30; done'
+Restart=always
+RestartSec=10s
