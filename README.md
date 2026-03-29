@@ -10,7 +10,7 @@ myOS is an opinionated BootC image ecosystem organized around a small shared cor
 
 # Image Progression
 
-Both Alma 9 and Alma 10 now follow the same product path:
+Both Alma 9 and 10 follow the same product path:
 
 - `core-minimal-alma9` / `core-minimal-alma10`
 - `core-minimal-alma9-nvidia` / `core-minimal-alma10-nvidia`
@@ -19,7 +19,8 @@ Both Alma 9 and Alma 10 now follow the same product path:
 - `workstation-alma9` / `workstation-alma10`
 - `workstation-alma9-nvidia` / `workstation-alma10-nvidia`
 
-`core-full-*` is the single full base tier now. It includes tenant commands, Cockpit admin tooling, and OpenClaw host scaffolding for both distros. RamaLama is added in the Alma 10 full images, while Alma 9 keeps the same platform layout without the packaged RamaLama runtime.
+`core-full-*` is the single full base tier. It includes tenant commands, Cockpit admin tooling, and OpenClaw host scaffolding for both distros. 
+RamaLama is added in the Alma 10 full images, while Alma 9 keeps the same platform layout without the packaged RamaLama runtime.
 
 # Repo Layout
 
