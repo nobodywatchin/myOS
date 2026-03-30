@@ -1,0 +1,66 @@
+#!/usr/bin/env bash
+set -Eeuo pipefail
+
+COMMON_SH="${MYOS_COMMON_SH:-/usr/local/libexec/myos/common.sh}"
+. "$COMMON_SH"
+
+print_inactive_error() {
+  cat >&2 <<'EOF'
+openclaw: OpenClaw runtime is not running for this user.
+Start it with: openquad start
+Check status with: openquad status
+EOF
+}
+
+print_unavailable_error() {
+  cat >&2 <<'EOF'
+openclaw: OpenClaw runtime is unavailable.
+Check it with: openquad doctor
+EOF
+}
+
+service_name="$(openclaw_user_service_name)"
+container_name="$(openclaw_user_container_name)"
+
+if ! command -v podman >/dev/null 2>&1 || ! command -v systemctl >/dev/null 2>&1; then
+  print_unavailable_error
+  exit 1
+fi
+
+if ! try_current_user_systemctl show-environment; then
+  print_unavailable_error
+  exit 1
+fi
+
+if ! openclaw_user_service_installed; then
+  print_unavailable_error
+  exit 1
+fi
+
+if ! try_current_user_systemctl is-active "$service_name"; then
+  print_inactive_error
+  exit 1
+fi
+
+if [ "$(podman inspect -f '{{.State.Running}}' "$container_name" 2>/dev/null || true)" != true ]; then
+  print_unavailable_error
+  exit 1
+fi
+
+exec_args=(exec)
+if [ -t 0 ] && [ -t 1 ]; then
+  exec_args+=(-it)
+else
+  exec_args+=(-i)
+fi
+
+exec_args+=(
+  --env HOME=/home/node
+  --env OPENCLAW_STATE_DIR=/home/node/.openclaw
+  --env OPENCLAW_CONFIG_PATH=/home/node/.openclaw/openclaw.json
+  --workdir /home/node
+  "$container_name"
+  openclaw
+)
+
+exec podman "${exec_args[@]}" "$@"

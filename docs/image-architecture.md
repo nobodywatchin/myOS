@@ -60,14 +60,14 @@ Both Alma 9 and Alma 10 now expose the same build path:
 - `core-full-*-nvidia`
 - workstation images on top of `core-full-*`
 
-`core-full-*` is the single feature-complete base tier. It includes dedicated tenant tooling, persistent-user enrollment commands, Cockpit admin services, and OpenClaw platform-host scaffolding for both distros. Alma 10 adds RamaLama through a distro-specific full layer; Alma 9 keeps the same platform layout without the packaged RamaLama runtime.
+`core-full-*` is the single feature-complete base tier. It includes dedicated tenant tooling, persistent-user enrollment commands, Cockpit admin services, and OpenClaw platform-host scaffolding for both distros. That shared OpenClaw scaffolding now includes the host-side `openclaw` and `openquad` wrappers plus the baseline per-user rootless Quadlet template. Alma 10 adds RamaLama through a distro-specific full layer; Alma 9 keeps the same platform layout without the packaged RamaLama runtime.
 
 ## Layer Responsibilities
 
 - `recipes/layers/shared/core-base.yml`: base system, podman/runtime tooling, branding, shared service defaults, and the disabled stock bootc auto-apply timer
 - `recipes/layers/shared/core-full.yml`: shared full-core admin services, dedicated tenant CLI, persistent-user enrollment tooling, and OpenClaw platform-host scaffolding
 - `recipes/layers/alma10/core-full.yml`: Alma 10-only RamaLama runtime package
-- `recipes/layers/shared/workstation-base.yml`: shared workstation diagnostics, network/storage extras, Flatpak defaults, and the session-bound desktop OpenClaw helper
+- `recipes/layers/shared/workstation-base.yml`: shared workstation diagnostics, network/storage extras, and Flatpak defaults
 - `recipes/layers/shared/nvidia.yml`: NVIDIA repo enablement, driver stack, container toolkit, and core boot args
 - `recipes/layers/shared/nvidia-workstation.yml`: workstation-only NVIDIA userspace extras and display-oriented kernel args
 - `recipes/layers/alma9/core.yml` and `recipes/layers/alma10/core.yml`: distro-specific package, tailscale, and just setup
@@ -86,8 +86,8 @@ The build workflow is ordered so workstation images wait for the full core image
 
 The layering now mirrors the rootless workload split.
 
-- `core-full-*` carries the persistent or background plane: dedicated tenant-account OpenClaw tooling, the persistent-user enrollment commands, template buckets under `/etc/myos/templates/apps/` and `/etc/myos/templates/persistent-users/`, and the shared `/var/tmp/myos-podman` rootless storage location.
-- `workstation-*` adds the session-bound desktop OpenClaw helper through `/etc/skel` and `graphical-session.target`, keeping that behavior out of the server-oriented full-core images.
+- `core-full-*` carries the persistent or background plane: dedicated tenant-account OpenClaw tooling, the persistent-user enrollment commands, the `openclaw` and `openquad` host wrappers, template buckets under `/etc/myos/templates/apps/` and `/etc/myos/templates/persistent-users/`, and the shared `/var/tmp/myos-podman` rootless storage location.
+- `workstation-*` now reuses that same shared per-user OpenClaw runtime model instead of adding a separate session-bound helper through `/etc/skel`.
 - `core-base.yml` disables the stock `bootc-fetch-apply-updates.*` units so update activation remains an explicit operator action across the image family.
 
 ## Migration Summary

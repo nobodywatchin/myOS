@@ -22,6 +22,20 @@ Both Alma 9 and 10 follow the same product path:
 `core-full-*` is the single full base tier. It includes tenant commands, persistent-user enrollment tooling, Cockpit admin services, and OpenClaw platform-host scaffolding for both distros.
 RamaLama is added in the Alma 10 full images, while Alma 9 keeps the same platform layout without the packaged RamaLama runtime.
 
+For per-user OpenClaw on `core-full-*` and workstation images, the split is explicit:
+
+- `openclaw` is the workload CLI that forwards into the already-running per-user runtime.
+- `openquad` manages the rootless per-user `openclaw.service` Quadlet runtime.
+
+Typical flow:
+
+```bash
+openquad start
+openclaw chat
+openquad status
+openquad doctor
+```
+
 # Repo Layout
 
 ```text
@@ -61,7 +75,7 @@ The workflow now publishes full core images before workstation builds run. Works
 myOS keeps two rootless planes:
 
 - persistent or background rootless services for dedicated tenant accounts and explicitly enrolled login users with lingering
-- desktop or session rootless services for workstation-only helpers bound to `graphical-session.target`
+- desktop or session rootless services for workstation-only helpers that are separate from the per-user OpenClaw runtime
 
 See [`docs/rootless-persistence.md`](docs/rootless-persistence.md) for the full model, including owner-only versus per-user baseline units and the supported self-service Quadlet path.
 

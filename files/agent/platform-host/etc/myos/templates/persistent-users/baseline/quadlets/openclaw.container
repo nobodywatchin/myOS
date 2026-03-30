@@ -1,0 +1,27 @@
+[Unit]
+Description=OpenClaw Runtime (per-user)
+
+[Container]
+Image=__OPENCLAW_IMAGE__
+ContainerName=openclaw
+NoNewPrivileges=true
+DropCapability=ALL
+ReadOnly=true
+Tmpfs=/tmp:size=512M,mode=1777
+Network=slirp4netns
+Environment=HOME=/home/node
+Environment=OPENCLAW_STATE_DIR=/home/node/.openclaw
+Environment=OPENCLAW_CONFIG_PATH=/home/node/.openclaw/openclaw.json
+WorkingDir=/home/node
+Volume=%h/.config/myos:/home/node/.config/myos:rw
+Volume=%h/.local/share/openclaw:/home/node/.openclaw:rw
+Volume=%h/.local/state/openclaw/logs:/tmp/openclaw:rw
+Exec=openclaw gateway
+
+[Service]
+Restart=on-failure
+RestartSec=5s
+TimeoutStartSec=120
+
+[Install]
+WantedBy=default.target

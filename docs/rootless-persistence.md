@@ -32,23 +32,29 @@ The template tree is now explicit.
 - `/etc/myos/templates/persistent-users/baseline/quadlets/`: per-user baseline rootless services for every enrolled user.
 - `/etc/myos/templates/persistent-users/owner/quadlets/`: rootless services that belong only to the selected owner.
 
-myOS ships the persistent-user baseline and owner buckets empty by default.
-That is deliberate.
+The OpenClaw runtime now lives in the baseline bucket so every enrolled user
+gets their own separate instance.
 
 - The framework exists on every `core-full-*` image and anything built from it.
-- Actual baseline or owner services are an image or deployment policy decision.
-- If you add baseline units, each enrolled user gets their own separate instance.
+- If you add more baseline units, each enrolled user gets their own separate instance.
 - If you need one machine-wide shared singleton, use a system unit instead.
 
-## Session-Bound Desktop Units
+## Per-User OpenClaw Runtime
 
-The desktop-side OpenClaw helper under `files/agent/quadlets/` remains session-bound.
+OpenClaw now follows the persistent-user plane instead of the old desktop
+session plane.
 
-- `openclaw.container` is tied to `graphical-session.target`.
-- `openclaw-watchdog.service` is also tied to `graphical-session.target` and only exists to keep that session unit running while the session is active.
-- These units are shipped only through workstation layering now, not the shared `core-full` layer.
+- `openclaw` is the thin host-side workload CLI. It only execs into the already-running per-user container.
+- `openquad` is the runtime control plane. It owns `start`, `stop`, `restart`, `status`, `logs`, `doctor`, `inspect`, and `version`.
+- The per-user runtime is shipped as `openclaw.container` under `/etc/myos/templates/persistent-users/baseline/quadlets/`.
+- Enrollment copies that Quadlet into `~/.config/containers/systemd/` and enables `openclaw.service` against `default.target`.
+- The container stays rootless, per-user, and quadlet-backed.
 
-That keeps server-oriented full images free from surprise desktop behavior.
+The wrapper boundary is intentional.
+
+- `openclaw` does not auto-start the runtime.
+- `openclaw` does not manage service lifecycle.
+- If the runtime is missing or inactive, `openclaw` sends the user to `openquad`.
 
 ## Admin Enrollment Flow
 
@@ -119,8 +125,32 @@ service or Quadlet.
 `/etc/skel` is no longer used to opt every new user into persistent hosting.
 
 - Persistent hosting is an explicit admin action through `myos persistent-user-enroll`.
-- Workstation images still use `/etc/skel` for session-bound desktop conveniences.
-- The session-bound OpenClaw watchdog is wired into `graphical-session.target`, not `default.target`.
+- Workstation images can still use `/etc/skel` for desktop conveniences, but the OpenClaw runtime is no longer injected there.
+- The OpenClaw runtime now comes from the persistent-user baseline template bucket and is tied to `default.target`.
+
+## OpenClaw Workflow
+
+Admin setup:
+
+```bash
+myos persistent-user-enroll --user alice
+```
+
+User workflow:
+
+```bash
+openquad start
+openclaw chat
+```
+
+Useful runtime commands:
+
+```bash
+openquad status
+openquad doctor
+openquad logs
+openclaw run file.md
+```
 
 ## bootc Update Policy
 
@@ -142,6 +172,6 @@ That means:
 4. Log in as another user and confirm the `alice` background unit is still running.
 5. Enroll a second user and confirm the baseline service becomes a separate per-user instance rather than a shared singleton.
 6. Confirm a non-enrolled user does not have lingering enabled and does not receive the admin-managed baseline Quadlet files.
-7. On a workstation image, log in graphically and confirm the desktop-side `openclaw.service` starts with the session and stops when the graphical session ends.
+7. On an enrolled user account, run `openquad start`, confirm `systemctl --user status openclaw.service` is active, then verify `openclaw chat` runs without starting the runtime implicitly.
 8. On any image, confirm `systemctl is-enabled bootc-fetch-apply-updates.timer` reports disabled and that OS updates still stage correctly through `myos update-system`.
 9. For the tenant path, run `myos tenant-validate --tenant <name>` to verify the existing dedicated OpenClaw tenant flow still renders Quadlets and uses the persistent/background plane.

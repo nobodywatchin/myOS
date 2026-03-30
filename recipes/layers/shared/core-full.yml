@@ -75,7 +75,7 @@ modules:
         fi
 
       - RUN chown -R modelsvc:modelsvc /var/lib/modelsvc /srv/models/ramalama
-      - RUN chmod 0755 /usr/local/libexec/myos/* /usr/local/bin/myos
+      - RUN chmod 0755 /usr/local/libexec/myos/* /usr/local/bin/myos /usr/local/bin/openclaw /usr/local/bin/openquad
 
       - >-
         RUN chmod 0644 \

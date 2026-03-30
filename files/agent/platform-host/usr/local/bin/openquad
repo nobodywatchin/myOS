@@ -1,0 +1,287 @@
+#!/usr/bin/env bash
+set -Eeuo pipefail
+
+COMMON_SH="${MYOS_COMMON_SH:-/usr/local/libexec/myos/common.sh}"
+. "$COMMON_SH"
+
+usage() {
+  cat <<'USAGE'
+Usage: openquad <command>
+
+Commands:
+  start
+  stop
+  restart
+  status
+  logs
+  doctor
+  inspect
+  version
+USAGE
+}
+
+ok() {
+  printf '[ok] %s\n' "$*"
+}
+
+warn_status() {
+  printf '[warn] %s\n' "$*"
+}
+
+fail_status() {
+  printf '[fail] %s\n' "$*"
+  doctor_failures=$((doctor_failures + 1))
+}
+
+service_name="$(openclaw_user_service_name)"
+container_name="$(openclaw_user_container_name)"
+quadlet_path="$(openclaw_user_quadlet_path)"
+
+service_manager_available() {
+  try_current_user_systemctl show-environment
+}
+
+service_enabled_state() {
+  current_user_systemctl is-enabled "$service_name" 2>/dev/null || true
+}
+
+service_active_state() {
+  current_user_systemctl is-active "$service_name" 2>/dev/null || true
+}
+
+container_state() {
+  podman inspect -f '{{.State.Status}}' "$container_name" 2>/dev/null || true
+}
+
+container_exists() {
+  podman inspect "$container_name" >/dev/null 2>&1
+}
+
+container_image() {
+  podman inspect -f '{{.ImageName}}' "$container_name" 2>/dev/null || openclaw_user_image_from_quadlet 2>/dev/null || true
+}
+
+inner_openclaw_version() {
+  if ! container_exists; then
+    return 1
+  fi
+
+  podman exec "$container_name" openclaw --version 2>/dev/null | head -n 1
+}
+
+require_runtime_installed() {
+  if [ -f "$quadlet_path" ]; then
+    return 0
+  fi
+
+  printf 'openquad: OpenClaw runtime is unavailable for this user.\n' >&2
+  printf 'Check it with: openquad doctor\n' >&2
+  exit 1
+}
+
+show_status() {
+  local enabled_state active_state current_container_state image version
+
+  enabled_state="$(service_enabled_state)"
+  active_state="$(service_active_state)"
+  current_container_state="$(container_state)"
+  image="$(container_image)"
+  version="$(inner_openclaw_version || true)"
+
+  printf 'User: %s\n' "$(id -un)"
+  printf 'Service: %s (%s)\n' "$service_name" "${active_state:-unknown}"
+  printf 'Enabled: %s\n' "${enabled_state:-unknown}"
+  printf 'Container: %s\n' "${current_container_state:-missing}"
+  printf 'Image: %s\n' "${image:-unset}"
+  printf 'OpenClaw: %s\n' "${version:-unavailable}"
+  printf 'Quadlet: %s\n' "$quadlet_path"
+  printf 'Config dir: %s\n' "$(openclaw_user_config_dir)"
+  printf 'State dir: %s\n' "$(openclaw_user_state_dir)"
+  printf 'Logs dir: %s\n' "$(openclaw_user_logs_dir)"
+}
+
+show_inspect() {
+  local fragment_path image version
+
+  fragment_path="$(current_user_systemctl show -p FragmentPath --value "$service_name" 2>/dev/null || true)"
+  image="$(container_image)"
+  version="$(inner_openclaw_version || true)"
+
+  printf 'user=%s\n' "$(id -un)"
+  printf 'service=%s\n' "$service_name"
+  printf 'quadlet=%s\n' "$quadlet_path"
+  printf 'fragment=%s\n' "${fragment_path:-unavailable}"
+  printf 'container=%s\n' "$container_name"
+  printf 'image=%s\n' "${image:-unset}"
+  printf 'openclaw_version=%s\n' "${version:-unavailable}"
+  printf 'config_dir=%s\n' "$(openclaw_user_config_dir)"
+  printf 'state_dir=%s\n' "$(openclaw_user_state_dir)"
+  printf 'workspace_dir=%s\n' "$(openclaw_user_workspace_dir)"
+  printf 'logs_dir=%s\n' "$(openclaw_user_logs_dir)"
+}
+
+run_doctor() {
+  local enabled_state active_state current_container_state image version
+
+  doctor_failures=0
+
+  if command -v systemctl >/dev/null 2>&1; then
+    ok "systemctl is installed"
+  else
+    fail_status "systemctl is not installed"
+  fi
+
+  if command -v podman >/dev/null 2>&1; then
+    ok "podman is installed"
+  else
+    fail_status "podman is not installed"
+  fi
+
+  if service_manager_available; then
+    ok "user systemd manager available"
+  else
+    fail_status "user systemd manager unavailable"
+  fi
+
+  if [ -f "$quadlet_path" ]; then
+    ok "${service_name} installed"
+  else
+    fail_status "missing ${quadlet_path}"
+  fi
+
+  if command -v loginctl >/dev/null 2>&1 && loginctl show-user "$(id -un)" -p Linger --value 2>/dev/null | grep -qx yes; then
+    ok "linger enabled"
+  else
+    warn_status "linger not enabled"
+  fi
+
+  enabled_state="$(service_enabled_state)"
+  case "$enabled_state" in
+    enabled)
+      ok "service enabled"
+      ;;
+    static|disabled|masked|generated|indirect|linked|linked-runtime|transient)
+      warn_status "service enablement is ${enabled_state}"
+      ;;
+    *)
+      warn_status "service enablement is unavailable"
+      ;;
+  esac
+
+  active_state="$(service_active_state)"
+  if [ "$active_state" = active ]; then
+    ok "service running"
+  else
+    warn_status "service not running"
+  fi
+
+  current_container_state="$(container_state)"
+  if [ "$current_container_state" = running ]; then
+    ok "container state is ${current_container_state}"
+  elif [ -n "$current_container_state" ]; then
+    warn_status "container state is ${current_container_state}"
+  else
+    warn_status "container missing"
+  fi
+
+  image="$(container_image)"
+  if [ -n "$image" ]; then
+    ok "image resolved: ${image}"
+  else
+    warn_status "runtime image could not be resolved"
+  fi
+
+  for runtime_dir in "$(openclaw_user_config_dir)" "$(openclaw_user_state_dir)" "$(openclaw_user_logs_dir)"; do
+    if [ -d "$runtime_dir" ]; then
+      ok "directory present: ${runtime_dir}"
+    else
+      warn_status "directory missing: ${runtime_dir}"
+      continue
+    fi
+
+    if [ -w "$runtime_dir" ]; then
+      ok "directory writable: ${runtime_dir}"
+    else
+      fail_status "directory not writable: ${runtime_dir}"
+    fi
+  done
+
+  if container_exists; then
+    if podman exec "$container_name" sh -lc 'command -v openclaw' >/dev/null 2>&1; then
+      ok "inner OpenClaw binary present"
+    else
+      fail_status "inner OpenClaw binary missing"
+    fi
+
+    version="$(inner_openclaw_version || true)"
+    if [ -n "$version" ]; then
+      ok "inner OpenClaw version: ${version}"
+    else
+      warn_status "inner OpenClaw version unavailable"
+    fi
+  else
+    warn_status "skipping inner OpenClaw checks because the container is unavailable"
+  fi
+
+  if [ "$doctor_failures" -gt 0 ]; then
+    exit 1
+  fi
+}
+
+command_name="${1:-}"
+[ "$#" -gt 0 ] && shift || true
+
+case "$command_name" in
+  start)
+    require_runtime_installed
+    ensure_openclaw_user_runtime_dirs
+    current_user_systemctl daemon-reload
+    current_user_systemctl reset-failed "$service_name" >/dev/null 2>&1 || true
+    exec current_user_systemctl start "$service_name"
+    ;;
+  stop)
+    require_runtime_installed
+    exec current_user_systemctl stop "$service_name"
+    ;;
+  restart)
+    require_runtime_installed
+    ensure_openclaw_user_runtime_dirs
+    current_user_systemctl daemon-reload
+    current_user_systemctl reset-failed "$service_name" >/dev/null 2>&1 || true
+    exec current_user_systemctl restart "$service_name"
+    ;;
+  status)
+    require_runtime_installed
+    show_status
+    ;;
+  logs)
+    require_runtime_installed
+    exec journalctl --user -u "$service_name" -n 50 -e "$@"
+    ;;
+  doctor)
+    run_doctor
+    ;;
+  inspect)
+    require_runtime_installed
+    show_inspect
+    ;;
+  version)
+    printf 'openquad %s\n' "$OPENQUAD_WRAPPER_VERSION"
+    image="$(container_image)"
+    if [ -n "${image:-}" ]; then
+      printf 'image %s\n' "$image"
+    fi
+    version="$(inner_openclaw_version || true)"
+    if [ -n "$version" ]; then
+      printf '%s\n' "$version"
+    fi
+    ;;
+  ""|-h|--help|help)
+    usage
+    ;;
+  *)
+    printf 'openquad: unknown command: %s\n' "$command_name" >&2
+    usage >&2
+    exit 1
+    ;;
+esac

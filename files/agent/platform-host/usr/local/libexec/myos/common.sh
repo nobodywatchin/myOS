@@ -9,6 +9,10 @@ PERSISTENT_USER_STATE_BASE="${PERSISTENT_USER_STATE_BASE:-${MYOS_ETC}/persistent
 PORT_STATE_FILE="${PORT_STATE_FILE:-${MYOS_ETC}/tenants/ports.state}"
 PORT_LOCK_DIR="${PORT_LOCK_DIR:-/run/myos-port-allocate.lock}"
 DEFAULT_OPENCLAW_IMAGE="${DEFAULT_OPENCLAW_IMAGE:-ghcr.io/openclaw/openclaw:2026.3.13-1}"
+OPENCLAW_USER_SERVICE_NAME="${OPENCLAW_USER_SERVICE_NAME:-openclaw.service}"
+OPENCLAW_USER_CONTAINER_NAME="${OPENCLAW_USER_CONTAINER_NAME:-openclaw}"
+OPENCLAW_USER_QUADLET_NAME="${OPENCLAW_USER_QUADLET_NAME:-openclaw.container}"
+OPENQUAD_WRAPPER_VERSION="${OPENQUAD_WRAPPER_VERSION:-1.0.0}"
 
 log() {
   printf '[myos] %s\n' "$*"
@@ -98,6 +102,74 @@ account_quadlet_dir() {
 
 account_systemd_user_dir() {
   printf '%s/.config/systemd/user\n' "$(account_home "$1")"
+}
+
+current_user_quadlet_dir() {
+  printf '%s/containers/systemd\n' "${XDG_CONFIG_HOME:-${HOME}/.config}"
+}
+
+openclaw_user_quadlet_path() {
+  printf '%s/%s\n' "$(current_user_quadlet_dir)" "$OPENCLAW_USER_QUADLET_NAME"
+}
+
+openclaw_user_service_name() {
+  printf '%s\n' "$OPENCLAW_USER_SERVICE_NAME"
+}
+
+openclaw_user_container_name() {
+  printf '%s\n' "$OPENCLAW_USER_CONTAINER_NAME"
+}
+
+openclaw_user_config_dir() {
+  printf '%s/.config/myos\n' "$HOME"
+}
+
+openclaw_user_state_dir() {
+  printf '%s/.local/share/openclaw\n' "$HOME"
+}
+
+openclaw_user_workspace_dir() {
+  printf '%s/workspace\n' "$(openclaw_user_state_dir)"
+}
+
+openclaw_user_logs_dir() {
+  printf '%s/.local/state/openclaw/logs\n' "$HOME"
+}
+
+ensure_openclaw_user_runtime_dirs() {
+  mkdir -p \
+    "$(current_user_quadlet_dir)" \
+    "$(openclaw_user_config_dir)" \
+    "$(openclaw_user_state_dir)" \
+    "$(openclaw_user_workspace_dir)" \
+    "$(openclaw_user_logs_dir)"
+}
+
+current_user_systemctl() {
+  systemctl --user "$@"
+}
+
+try_current_user_systemctl() {
+  current_user_systemctl "$@" >/dev/null 2>&1
+}
+
+openclaw_user_service_installed() {
+  [ -f "$(openclaw_user_quadlet_path)" ]
+}
+
+openclaw_user_image_from_quadlet() {
+  local quadlet
+
+  quadlet="$(openclaw_user_quadlet_path)"
+  [ -f "$quadlet" ] || return 1
+
+  awk -F= '
+    $1 == "Image" {
+      sub(/^[^=]*=/, "", $0)
+      print $0
+      exit
+    }
+  ' "$quadlet"
 }
 
 persistent_user_template_dir() {

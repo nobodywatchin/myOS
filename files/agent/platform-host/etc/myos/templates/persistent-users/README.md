@@ -14,4 +14,5 @@ Important rules:
 - Prefer `%h`, `%u`, `%U`, `%t`, and other user-aware specifiers over hardcoded paths.
 - Avoid fixed shared host ports in baseline units unless you parameterize them outside the template.
 - If a workload should be shared once per machine, it belongs in a system unit rather than here.
-- myOS ships these buckets empty by default. Adding files here defines the baseline or owner policy for that image or deployment.
+- myOS can ship shared baseline policy here. This repo now includes the per-user OpenClaw runtime in `baseline/quadlets/`.
+- Adding files here defines the baseline or owner policy for that image or deployment.

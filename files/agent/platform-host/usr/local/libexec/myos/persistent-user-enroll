@@ -119,6 +119,7 @@ reconcile_role() {
       ACCOUNT_HOME="$home" \
       ACCOUNT_UID="$uid" \
       ACCOUNT_GID="$gid" \
+      OPENCLAW_IMAGE="$DEFAULT_OPENCLAW_IMAGE" \
         render_template_file "$template" "$target"
       chown "$user:$user" "$target"
       chmod 0640 "$target"

@@ -40,13 +40,6 @@ modules:
     snippets:
       - RUN rm -f /usr/share/flatpak/remotes.d/*.flatpakrepo || true
       - RUN rm -f /etc/flatpak/remotes.d/*.flatpakrepo || true
-      - >-
-        RUN install -d -m 0755 \
-          /etc/skel/.config/containers/systemd \
-          /etc/skel/.config/systemd/user/graphical-session.target.wants
-      - >-
-        RUN ln -sfn ../../../containers/systemd/openclaw-watchdog.service \
-          /etc/skel/.config/systemd/user/graphical-session.target.wants/openclaw-watchdog.service
 
   - type: default-flatpaks
     configurations:
@@ -82,8 +75,6 @@ modules:
     files:
       - source: workstation/flatpak
         destination: /
-      - source: agent/quadlets
-        destination: /etc/skel/.config/containers/systemd
 
   - type: systemd
     system:
