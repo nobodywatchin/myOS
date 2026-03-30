@@ -20,6 +20,8 @@ modules:
 
   - type: files
     files:
+      - source: base/runtime
+        destination: /
       - source: justfiles
         destination: /
 

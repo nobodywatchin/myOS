@@ -95,7 +95,6 @@ modules:
         - plymouth-system-theme
         - plymouth-plugin-script
         - polkit
-        - psacct
         - qt6-qtbase
         - qt6-qtbase-gui
         - qt6-qtdeclarative
