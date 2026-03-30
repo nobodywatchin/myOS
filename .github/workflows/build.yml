@@ -22,9 +22,9 @@ jobs:
         run: |
           set -euo pipefail
           find files/agent/platform-host/usr/local/libexec/myos -type f -print0 | xargs -0 -n1 bash -n
-          bash -n files/agent/platform-host/etc/myos/templates/openclaw/scripts/openclaw-start.sh
-          node --check files/agent/platform-host/etc/myos/templates/openclaw/scripts/openclaw-ui-server.mjs
-          python3 -m json.tool files/agent/platform-host/etc/myos/templates/openclaw/config/openclaw.json.example >/dev/null
+          bash -n files/agent/platform-host/etc/myos/templates/apps/openclaw/scripts/openclaw-start.sh
+          node --check files/agent/platform-host/etc/myos/templates/apps/openclaw/scripts/openclaw-ui-server.mjs
+          python3 -m json.tool files/agent/platform-host/etc/myos/templates/apps/openclaw/config/openclaw.json.example >/dev/null
           grep -q "import '/usr/share/myos/just/rebase.just'" files/justfiles/usr/share/myos/just/index.just
           grep -q "import '/usr/share/myos/just/tenant.just'" files/agent/justfiles/usr/share/myos/just/index.just
           grep -q '^tenant-list ' files/agent/justfiles/usr/share/myos/just/tenant.just
@@ -37,6 +37,8 @@ jobs:
 
   minimal-core-images:
     name: Minimal Core Images
+    needs:
+      - validate-tenant-cli
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -63,6 +65,8 @@ jobs:
 
   full-core-alma9:
     name: Full Core Alma 9
+    needs:
+      - validate-tenant-cli
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -81,6 +85,8 @@ jobs:
 
   full-core-alma9-nvidia:
     name: Full Core Alma 9 NVIDIA
+    needs:
+      - validate-tenant-cli
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -99,6 +105,8 @@ jobs:
 
   full-core-alma10:
     name: Full Core Alma 10
+    needs:
+      - validate-tenant-cli
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -117,6 +125,8 @@ jobs:
 
   full-core-alma10-nvidia:
     name: Full Core Alma 10 NVIDIA
+    needs:
+      - validate-tenant-cli
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -136,6 +146,7 @@ jobs:
   workstation-alma9:
     name: Workstation Alma 9
     needs:
+      - validate-tenant-cli
       - full-core-alma9
     runs-on: ubuntu-latest
     permissions:
@@ -156,6 +167,7 @@ jobs:
   workstation-alma9-nvidia:
     name: Workstation Alma 9 NVIDIA
     needs:
+      - validate-tenant-cli
       - full-core-alma9-nvidia
     runs-on: ubuntu-latest
     permissions:
@@ -176,6 +188,7 @@ jobs:
   workstation-alma10:
     name: Workstation Alma 10
     needs:
+      - validate-tenant-cli
       - full-core-alma10
     runs-on: ubuntu-latest
     permissions:
@@ -196,6 +209,7 @@ jobs:
   workstation-alma10-nvidia:
     name: Workstation Alma 10 NVIDIA
     needs:
+      - validate-tenant-cli
       - full-core-alma10-nvidia
     runs-on: ubuntu-latest
     permissions:
