@@ -5,4 +5,5 @@ modules:
   - type: containerfile
     snippets:
       - RUN dnf -y module reset nvidia-driver
-      - RUN dnf -y module install nvidia-driver:latest/default
+      - RUN dnf -y module enable nvidia-driver:580
+      - RUN dnf -y install nvidia-driver nvidia-driver-cuda

@@ -77,7 +77,7 @@ Both Alma 9 and Alma 10 now expose the same build path:
 - `recipes/layers/shared/workstation-base.yml`: shared workstation diagnostics, network/storage extras, and Flatpak defaults
 - `recipes/layers/shared/nvidia-common.yml`: NVIDIA repo enablement, container toolkit, and core boot args shared by both streams
 - `recipes/layers/shared/nvidia-open.yml`: open-kmod NVIDIA driver path for newer supported GPUs
-- `recipes/layers/alma9/nvidia-legacy.yml`: Alma 9 proprietary legacy path installed through the non-DKMS `nvidia-driver:latest` module stream so userspace and prebuilt `kmod-nvidia-*` providers stay aligned
+- `recipes/layers/alma9/nvidia-legacy.yml`: Alma 9 proprietary older-GPU AI path pinned to `nvidia-driver:580`, using `module enable` plus package install so EL9 resolves kernel-version-specific prebuilt `kmod-nvidia-*` providers instead of DKMS
 - `recipes/layers/shared/nvidia-workstation.yml`: workstation-only NVIDIA userspace extras and display-oriented kernel args
 - `recipes/layers/alma9/core.yml` and `recipes/layers/alma10/core.yml`: distro-specific package, tailscale, and just setup
 - `recipes/layers/alma9/workstation.yml` and `recipes/layers/alma10/workstation.yml`: distro-specific workstation packaging
@@ -125,8 +125,15 @@ Current core image set:
 Stream guidance:
 
 - choose `-nvidia-open` for newer GPUs that work with the open kernel module path
-- choose Alma 9 `-nvidia-legacy` when the proprietary prebuilt kernel module path is required, especially for Maxwell-, Pascal-, and similar legacy-supported hardware
+- choose Alma 9 `-nvidia-legacy` for the older-GPU AI host lane when the proprietary prebuilt kernel module path is required, especially for Maxwell-, Pascal-, and similar legacy-supported hardware
 - Alma 10 support in myOS is `-nvidia-open`
+
+Legacy AI guidance:
+
+- Alma 9 `-nvidia-legacy` keeps the host on the proprietary NVIDIA `580` driver branch and expects EL9 prebuilt kernel modules rather than DKMS.
+- The host driver branch and the AI userspace stack are separate decisions; keep the host pinned to R580 even when application containers or virtual environments move independently.
+- For Maxwell-, Pascal-, and similar legacy-supported GPUs, start with CUDA 12.6-class userspace stacks such as PyTorch `cu126` rather than assuming CUDA 13-era examples are the right default.
+- The repo verification path should fail if the Alma 9 legacy stream ever resolves only to DKMS packages.
 
 ## Review Points
 

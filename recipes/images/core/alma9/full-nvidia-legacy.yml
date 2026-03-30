@@ -1,7 +1,7 @@
 ---
 # yaml-language-server: $schema=https://schema.blue-build.org/recipe-v1.json
 name: core-full-alma9-nvidia-legacy
-description: Full myOS AlmaLinux 9 core with tenant tooling, shared admin services, and proprietary NVIDIA kernel modules.
+description: Full myOS AlmaLinux 9 core for older-GPU AI hosts with tenant tooling, shared admin services, and pinned proprietary NVIDIA 580 prebuilt kernel modules.
 base-image: quay.io/almalinuxorg/almalinux-bootc
 image-version: 9
 modules:

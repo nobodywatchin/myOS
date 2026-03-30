@@ -35,10 +35,20 @@ jobs:
           grep -q '^tenant-optimize-tokens ' files/agent/justfiles/usr/share/myos/just/tenant.just
           grep -q '^tenant-tailscale ' files/agent/justfiles/usr/share/myos/just/tenant.just
 
+  validate-alma9-nvidia-legacy:
+    name: Validate Alma 9 NVIDIA Legacy
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - name: Verify Alma 9 NVIDIA legacy stream
+        shell: pwsh
+        run: ./scripts/verify-alma9-nvidia-legacy.ps1
+
   minimal-core-images:
     name: Minimal Core Images (${{ matrix.name }})
     needs:
       - validate-tenant-cli
+      - validate-alma9-nvidia-legacy
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -73,6 +83,7 @@ jobs:
     name: Full Core Images (${{ matrix.name }})
     needs:
       - validate-tenant-cli
+      - validate-alma9-nvidia-legacy
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -107,6 +118,7 @@ jobs:
     name: Workstation Images (${{ matrix.name }})
     needs:
       - validate-tenant-cli
+      - validate-alma9-nvidia-legacy
       - full-core-images
     runs-on: ubuntu-latest
     permissions:

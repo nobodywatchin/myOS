@@ -1,7 +1,7 @@
 ---
 # yaml-language-server: $schema=https://schema.blue-build.org/recipe-v1.json
 name: core-minimal-alma9-nvidia-legacy
-description: Minimal myOS AlmaLinux 9 BootC base with proprietary NVIDIA kernel modules and container tooling.
+description: Minimal myOS AlmaLinux 9 BootC base for older-GPU AI hosts with pinned proprietary NVIDIA 580 prebuilt kernel modules and container tooling.
 base-image: quay.io/almalinuxorg/almalinux-bootc
 image-version: 9
 modules:

@@ -25,8 +25,10 @@ Both Alma 9 and 10 follow the same product path:
 NVIDIA streams are explicit:
 
 - `-nvidia-open` uses the open kernel module path and is the default fit for newer supported GPUs.
-- Alma 9 `-nvidia-legacy` uses the supported proprietary/prebuilt-kmod path for hardware that does not behave cleanly on the open path, especially Maxwell-, Pascal-, and similar legacy-supported GPUs.
+- Alma 9 `-nvidia-legacy` is the older-GPU AI host lane. It pins the proprietary `nvidia-driver:580` stream and expects kernel-version-specific prebuilt `kmod-nvidia-*` packages on EL9 for Maxwell-, Pascal-, and similar legacy-supported GPUs.
 - Alma 10 support in myOS is `-nvidia-open`.
+
+For the legacy AI lane, keep the host driver and the AI userspace stack as separate decisions. The host stays on the pinned R580 proprietary branch, while older-GPU AI workloads should start from CUDA 12.6-class userspace stacks, such as PyTorch `cu126`, instead of assuming newer CUDA 13-era examples are the safest default for Maxwell/Pascal-class hardware.
 
 `core-full-*` is the single full base tier. It includes tenant commands, persistent-user enrollment tooling, Cockpit admin services, and OpenClaw platform-host scaffolding for both distros.
 RamaLama is added in the Alma 10 full images, while Alma 9 keeps the same platform layout without the packaged RamaLama runtime.
@@ -121,7 +123,7 @@ Generic `myos` commands live in the shared core. Tenant commands and persistent-
 1. Start from the smallest core image that matches the image's job.
 2. Use `core-full-*` when the image needs tenant or OpenClaw host features.
 3. Treat RamaLama as an Alma 10 full-core add-on until Alma 9 has a supported package source.
-4. Use `nvidia-open.yml` for shared core/server NVIDIA support, `alma9/nvidia-legacy.yml` only for the EL9 proprietary legacy path, and `nvidia-workstation.yml` only for workstation-specific NVIDIA extras.
+4. Use `nvidia-open.yml` for shared core/server NVIDIA support, `alma9/nvidia-legacy.yml` only for the EL9 proprietary R580 older-GPU AI path, and `nvidia-workstation.yml` only for workstation-specific NVIDIA extras.
 5. Add workstation layers only for actual workstation products.
 6. Keep optional capabilities in `recipes/layers/features/` instead of silently growing every image.
 
@@ -147,7 +149,7 @@ sudo podman run --rm -it --privileged --pull=newer \
 rm -f "$TMP"
 ```
 
-The old single-stream `*-nvidia` image names were replaced by explicit `*-nvidia-open` images, with Alma 9 also retaining `*-nvidia-legacy` for the supported proprietary path.
+The old single-stream `*-nvidia` image names were replaced by explicit `*-nvidia-open` images, with Alma 9 also retaining `*-nvidia-legacy` for the supported proprietary older-GPU AI path.
 
 # Building ISO File
 
