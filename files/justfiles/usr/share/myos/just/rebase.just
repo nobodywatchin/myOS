@@ -19,4 +19,4 @@ rebase:
     echo "Selected: $ref"
     echo "Executing: sudo bootc switch $ref"
     sudo bootc switch "$ref"
-    echo "Done. Reboot when ready."
+    echo "bootc auto-apply is disabled in myOS; reboot when you are ready to activate the new image."

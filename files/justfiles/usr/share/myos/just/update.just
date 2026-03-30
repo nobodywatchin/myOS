@@ -2,7 +2,7 @@
 update-system:
   sudo flatpak update --system -y
   sudo bootc upgrade
-  @echo "Reboot to apply system updates"
+  @echo "bootc auto-apply is disabled in myOS; reboot during your maintenance window to activate the staged image update"
 
 # Update User Flatpaks and Distrobox Containers
 update-user:

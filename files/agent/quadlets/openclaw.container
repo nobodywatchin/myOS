@@ -2,6 +2,7 @@
 Description=OpenClaw Primary Agent (per-user)
 After=graphical-session.target
 Requires=graphical-session.target
+PartOf=graphical-session.target
 
 [Container]
 # TODO: pin to a stable tag later (e.g. :stable)
@@ -40,3 +41,6 @@ Environment=OPENCLAW_GITHUB_TOKEN_FILE=/run/secrets/gh-token
 Restart=always
 RestartSec=5s
 TimeoutStartSec=120
+
+[Install]
+WantedBy=graphical-session.target

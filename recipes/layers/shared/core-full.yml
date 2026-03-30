@@ -22,12 +22,6 @@ modules:
       - source: agent/justfiles
         destination: /
 
-      # Static core Quadlet + watchdog ships with the image
-      # Primary OpenClaw auto-starts on login for AI/workstation images
-      # The dynamic tenant system remains fully available for extra instances
-      - source: agent/quadlets
-        destination: /etc/skel/.config/containers/systemd
-
   - type: containerfile
     snippets:
       - >-
@@ -39,18 +33,20 @@ modules:
         RUN install -d -m 0755 \
           /etc/myos /etc/myos/dns /etc/myos/firewall \
           /etc/myos/firewall/rendered /etc/myos/firewall/tenants \
+          /etc/myos/persistent-users /etc/myos/persistent-users/users \
           /etc/myos/proxy /etc/myos/proxy/tenants \
           /etc/myos/ramalama /etc/myos/ramalama/models \
-          /etc/myos/templates /etc/myos/templates/openclaw /etc/myos/tenants \
+          /etc/myos/templates /etc/myos/templates/apps \
+          /etc/myos/templates/apps/openclaw \
+          /etc/myos/templates/persistent-users \
+          /etc/myos/templates/persistent-users/baseline \
+          /etc/myos/templates/persistent-users/baseline/quadlets \
+          /etc/myos/templates/persistent-users/owner \
+          /etc/myos/templates/persistent-users/owner/quadlets \
+          /etc/myos/tenants \
           /srv/models /srv/models/ramalama \
           /srv/tenants /srv/tenants/.skel \
-          /var/tmp/myos-podman \
-          /etc/skel/.config/containers/systemd \
-          /etc/skel/.config/systemd/user/default.target.wants
-
-      - >-
-        RUN ln -sfn ../../../containers/systemd/openclaw-watchdog.service \
-          /etc/skel/.config/systemd/user/default.target.wants/openclaw-watchdog.service
+          /var/tmp/myos-podman
 
       - RUN install -D -m 0644 /var/srv/tenants/README.md /srv/tenants/.skel/README.md
 

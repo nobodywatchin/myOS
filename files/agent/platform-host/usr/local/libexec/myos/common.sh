@@ -3,7 +3,9 @@ set -Eeuo pipefail
 
 MYOS_ETC="${MYOS_ETC:-/etc/myos}"
 TENANT_BASE="${TENANT_BASE:-/srv/tenants}"
-TEMPLATE_BASE="${TEMPLATE_BASE:-${MYOS_ETC}/templates/openclaw}"
+TEMPLATE_BASE="${TEMPLATE_BASE:-${MYOS_ETC}/templates/apps/openclaw}"
+PERSISTENT_USER_TEMPLATE_BASE="${PERSISTENT_USER_TEMPLATE_BASE:-${MYOS_ETC}/templates/persistent-users}"
+PERSISTENT_USER_STATE_BASE="${PERSISTENT_USER_STATE_BASE:-${MYOS_ETC}/persistent-users}"
 PORT_STATE_FILE="${PORT_STATE_FILE:-${MYOS_ETC}/tenants/ports.state}"
 PORT_LOCK_DIR="${PORT_LOCK_DIR:-/run/myos-port-allocate.lock}"
 DEFAULT_OPENCLAW_IMAGE="${DEFAULT_OPENCLAW_IMAGE:-ghcr.io/openclaw/openclaw:2026.3.13-1}"
@@ -86,6 +88,38 @@ tenant_podman_graphroot() {
   printf '%s/storage\n' "$(tenant_podman_root "$1")"
 }
 
+account_home() {
+  getent passwd "$1" 2>/dev/null | awk -F: 'NR == 1 { print $6 }'
+}
+
+account_quadlet_dir() {
+  printf '%s/.config/containers/systemd\n' "$(account_home "$1")"
+}
+
+account_systemd_user_dir() {
+  printf '%s/.config/systemd/user\n' "$(account_home "$1")"
+}
+
+persistent_user_template_dir() {
+  printf '%s/%s/quadlets\n' "$PERSISTENT_USER_TEMPLATE_BASE" "$1"
+}
+
+persistent_user_state_dir() {
+  printf '%s/users/%s\n' "$PERSISTENT_USER_STATE_BASE" "$1"
+}
+
+persistent_user_role_files_file() {
+  printf '%s/%s.files\n' "$(persistent_user_state_dir "$1")" "$2"
+}
+
+persistent_user_role_units_file() {
+  printf '%s/%s.units\n' "$(persistent_user_state_dir "$1")" "$2"
+}
+
+persistent_user_owner_file() {
+  printf '%s/owner.conf\n' "$PERSISTENT_USER_STATE_BASE"
+}
+
 ensure_dir() {
   local mode="$1"
   local owner="$2"
@@ -124,6 +158,18 @@ ensure_user() {
   fi
 
   ensure_dir 0750 "$tenant" "$tenant" "$home"
+}
+
+require_existing_account() {
+  local account="${1:-}"
+  local home
+
+  [ -n "$account" ] || die "user name is required"
+  getent passwd "$account" >/dev/null 2>&1 || die "user ${account} does not exist"
+
+  home="$(account_home "$account")"
+  [ -n "$home" ] || die "user ${account} does not have a home directory"
+  [ -d "$home" ] || die "user ${account} home directory ${home} is missing"
 }
 
 next_subid_start() {
@@ -178,6 +224,11 @@ render_template_file() {
   local dest="$2"
 
   sed \
+    -e "s|__ACCOUNT__|$(escape_sed "${ACCOUNT:-${TENANT:-}}")|g" \
+    -e "s|__ACCOUNT_HOME__|$(escape_sed "${ACCOUNT_HOME:-${TENANT_HOME:-}}")|g" \
+    -e "s|__ACCOUNT_UID__|$(escape_sed "${ACCOUNT_UID:-${TENANT_UID:-}}")|g" \
+    -e "s|__ACCOUNT_GID__|$(escape_sed "${ACCOUNT_GID:-${TENANT_GID:-}}")|g" \
+    -e "s|__USER__|$(escape_sed "${ACCOUNT:-${TENANT:-}}")|g" \
     -e "s|__TENANT__|$(escape_sed "${TENANT:-}")|g" \
     -e "s|__TENANT_ROOT__|$(escape_sed "${TENANT_ROOT:-}")|g" \
     -e "s|__TENANT_HOME__|$(escape_sed "${TENANT_HOME:-}")|g" \
@@ -216,6 +267,45 @@ write_if_missing() {
   install -D -m "$mode" -o "$owner" -g "$group" "$src" "$dest"
 }
 
+list_managed_unit_templates() {
+  local dir="$1"
+
+  [ -d "$dir" ] || return 0
+
+  find "$dir" -maxdepth 1 -type f \
+    \( \
+      -name '*.build' -o \
+      -name '*.container' -o \
+      -name '*.image' -o \
+      -name '*.kube' -o \
+      -name '*.network' -o \
+      -name '*.pod' -o \
+      -name '*.service' -o \
+      -name '*.socket' -o \
+      -name '*.target' -o \
+      -name '*.timer' -o \
+      -name '*.volume' \
+    \) | sort
+}
+
+managed_service_unit_name_from_template() {
+  local name
+
+  name="$(basename "$1")"
+
+  case "$name" in
+    *.build|*.container|*.image|*.kube|*.pod)
+      printf '%s.service\n' "${name%.*}"
+      ;;
+    *.service|*.socket|*.target|*.timer)
+      printf '%s\n' "$name"
+      ;;
+    *)
+      return 1
+      ;;
+  esac
+}
+
 restorecon_if_available() {
   if command -v restorecon >/dev/null 2>&1; then
     restorecon -RF "$@" >/dev/null 2>&1 || true
@@ -228,14 +318,17 @@ tenant_runtime_dir() {
 
 run_as_tenant_login() {
   local tenant="$1"
-  local uid
+  local uid home
   shift
 
   uid="$(id -u "$tenant" 2>/dev/null || true)"
   [ -n "$uid" ] || return 1
 
+  home="$(account_home "$tenant")"
+  [ -n "$home" ] || return 1
+
   runuser -u "$tenant" -- env \
-    HOME="$(tenant_home "$tenant")" \
+    HOME="$home" \
     XDG_RUNTIME_DIR="/run/user/${uid}" \
     DBUS_SESSION_BUS_ADDRESS="unix:path=/run/user/${uid}/bus" \
     sh -lc 'cd "$HOME" && exec "$@"' sh "$@"
@@ -340,6 +433,34 @@ run_tenant_openclaw_cli() {
   )
 
   run_tenant_podman "$tenant" "${args[@]}" "$@"
+}
+
+persistent_user_owner() {
+  env_value_from_file "$(persistent_user_owner_file)" OWNER_USER 2>/dev/null || true
+}
+
+persistent_user_is_owner() {
+  local account="$1"
+
+  [ "$(persistent_user_owner 2>/dev/null || true)" = "$account" ]
+}
+
+set_persistent_user_owner() {
+  local account="${1:-}"
+  local owner_file
+
+  owner_file="$(persistent_user_owner_file)"
+  ensure_dir 0755 root root "$PERSISTENT_USER_STATE_BASE"
+
+  if [ -n "$account" ]; then
+    require_existing_account "$account"
+    set_env_value "$owner_file" OWNER_USER "$account"
+    chown root:root "$owner_file"
+    chmod 0644 "$owner_file"
+    restorecon_if_available "$owner_file"
+  else
+    rm -f "$owner_file"
+  fi
 }
 
 env_value_from_file() {

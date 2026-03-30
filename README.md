@@ -19,7 +19,7 @@ Both Alma 9 and 10 follow the same product path:
 - `workstation-alma9` / `workstation-alma10`
 - `workstation-alma9-nvidia` / `workstation-alma10-nvidia`
 
-`core-full-*` is the single full base tier. It includes tenant commands, Cockpit admin tooling, and OpenClaw host scaffolding for both distros. 
+`core-full-*` is the single full base tier. It includes tenant commands, persistent-user enrollment tooling, Cockpit admin services, and OpenClaw platform-host scaffolding for both distros.
 RamaLama is added in the Alma 10 full images, while Alma 9 keeps the same platform layout without the packaged RamaLama runtime.
 
 # Repo Layout
@@ -50,17 +50,30 @@ files/
 
 Kubernetes is still available as the opt-in feature layer at [`recipes/layers/features/kubernetes-cli.yml`](recipes/layers/features/kubernetes-cli.yml).
 
-The full architecture and migration notes live in [`docs/image-architecture.md`](docs/image-architecture.md).
+The full architecture and migration notes live in [`docs/image-architecture.md`](docs/image-architecture.md). The rootless persistence model lives in [`docs/rootless-persistence.md`](docs/rootless-persistence.md).
 
 # Build Flow
 
 The workflow now publishes full core images before workstation builds run. Workstation recipes use `ghcr.io/myos-dev/core-full-*` as their base image, so the published workstation tags reflect the latest published full core tags.
 
+# Rootless Service Model
+
+myOS keeps two rootless planes:
+
+- persistent or background rootless services for dedicated tenant accounts and explicitly enrolled login users with lingering
+- desktop or session rootless services for workstation-only helpers bound to `graphical-session.target`
+
+See [`docs/rootless-persistence.md`](docs/rootless-persistence.md) for the full model, including owner-only versus per-user baseline units and the supported self-service Quadlet path.
+
+# Update Flow
+
+myOS disables the stock `bootc-fetch-apply-updates.service` and `bootc-fetch-apply-updates.timer` so hosts do not surprise-reboot on their own. Use `myos update-system` or `myos rebase`, then reboot on your own schedule or during a maintenance window.
+
 # Tenant Operations
 
-The supported OpenClaw operator workflow is exposed through the `myos` just wrapper instead of hand-editing tenant files under `/srv/tenants`.
+The supported OpenClaw operator workflow is exposed through the `myos` just wrapper instead of hand-editing tenant files under `/srv/tenants`. That flow remains the dedicated service-account path for persistent background OpenClaw hosting.
 
-Common flows:
+Common tenant flows:
 
 ```bash
 myos tenant-create --tenant demo
@@ -70,7 +83,15 @@ myos tenant-start --tenant demo
 myos tenant-status --tenant demo
 ```
 
-Generic `myos` commands live in the shared core. Tenant commands are layered into the `core-full-*` and workstation images for both distros.
+For persistent login users, use the separate enrollment flow:
+
+```bash
+myos persistent-user-enroll --user alice
+myos persistent-user-set-owner --user alice
+myos persistent-user-install-quadlet --file ./my-api.container --enable
+```
+
+Generic `myos` commands live in the shared core. Tenant commands and persistent-user commands are layered into the `core-full-*` and workstation images for both distros.
 
 # Adding Images
 

@@ -1,0 +1,199 @@
+#!/usr/bin/env bash
+set -Eeuo pipefail
+
+COMMON_SH="${MYOS_COMMON_SH:-/usr/local/libexec/myos/common.sh}"
+. "$COMMON_SH"
+
+usage() {
+  cat <<'USAGE'
+Usage: persistent-user-enroll --user NAME [--owner]
+
+Enable lingering for an existing login user, install the myOS-managed baseline
+persistent Quadlets for that user, and optionally attach the owner-only role.
+USAGE
+}
+
+user=""
+mark_owner=0
+
+while [ "$#" -gt 0 ]; do
+  case "$1" in
+    --user)
+      user="${2:-}"
+      shift 2
+      ;;
+    --owner)
+      mark_owner=1
+      shift
+      ;;
+    -h|--help)
+      usage
+      exit 0
+      ;;
+    *)
+      die "unknown argument: $1"
+      ;;
+  esac
+done
+
+require_root
+require_existing_account "$user"
+
+current_owner="$(persistent_user_owner 2>/dev/null || true)"
+if [ "$mark_owner" -eq 1 ] && [ -n "$current_owner" ] && [ "$current_owner" != "$user" ]; then
+  die "owner role is already assigned to ${current_owner}; run persistent-user-set-owner --user ${user} to transfer it"
+fi
+
+if [ "$mark_owner" -eq 1 ]; then
+  set_persistent_user_owner "$user"
+fi
+
+uid="$(id -u "$user")"
+gid="$(id -g "$user")"
+home="$(account_home "$user")"
+quadlet_dir="$(account_quadlet_dir "$user")"
+systemd_user_dir="$(account_systemd_user_dir "$user")"
+enable_units_file="$(mktemp)"
+disable_units_file="$(mktemp)"
+trap 'rm -f "$enable_units_file" "$disable_units_file"' EXIT
+
+ensure_subid_range /etc/subuid "$user"
+ensure_subid_range /etc/subgid "$user"
+
+if loginctl enable-linger "$user" >/dev/null 2>&1; then
+  log "enabled lingering for ${user}"
+else
+  warn "failed to enable lingering for ${user}"
+fi
+
+ensure_dir 0750 "$user" "$user" "${home}/.config"
+ensure_dir 0750 "$user" "$user" "${home}/.config/containers"
+ensure_dir 0750 "$user" "$user" "$quadlet_dir"
+ensure_dir 0750 "$user" "$user" "$systemd_user_dir"
+ensure_dir 0755 root root "$PERSISTENT_USER_STATE_BASE"
+ensure_dir 0755 root root "${PERSISTENT_USER_STATE_BASE}/users"
+ensure_dir 0755 root root "$(persistent_user_state_dir "$user")"
+
+role_target_managed_elsewhere() {
+  local role="$1"
+  local target="$2"
+  local other_role other_state
+
+  for other_role in baseline owner; do
+    [ "$other_role" = "$role" ] && continue
+    other_state="$(persistent_user_role_files_file "$user" "$other_role")"
+    if grep -Fxq "$target" "$other_state" 2>/dev/null; then
+      return 0
+    fi
+  done
+
+  return 1
+}
+
+reconcile_role() {
+  local role="$1"
+  local template_dir files_state units_state tmp_files tmp_units template target unit stale_path stale_unit
+
+  template_dir="$(persistent_user_template_dir "$role")"
+  files_state="$(persistent_user_role_files_file "$user" "$role")"
+  units_state="$(persistent_user_role_units_file "$user" "$role")"
+  tmp_files="$(mktemp)"
+  tmp_units="$(mktemp)"
+
+  if [ -d "$template_dir" ]; then
+    while IFS= read -r template; do
+      [ -n "$template" ] || continue
+      target="${quadlet_dir}/$(basename "$template")"
+
+      if [ -e "$target" ] && ! grep -Fxq "$target" "$files_state" 2>/dev/null; then
+        if role_target_managed_elsewhere "$role" "$target"; then
+          rm -f "$tmp_files" "$tmp_units"
+          die "managed template collision for ${user}: ${target} is already owned by another myOS role"
+        fi
+
+        rm -f "$tmp_files" "$tmp_units"
+        die "refusing to overwrite existing user-managed file ${target}"
+      fi
+
+      ACCOUNT="$user" \
+      ACCOUNT_HOME="$home" \
+      ACCOUNT_UID="$uid" \
+      ACCOUNT_GID="$gid" \
+        render_template_file "$template" "$target"
+      chown "$user:$user" "$target"
+      chmod 0640 "$target"
+      printf '%s\n' "$target" >> "$tmp_files"
+
+      unit="$(managed_service_unit_name_from_template "$template" 2>/dev/null || true)"
+      if [ -n "$unit" ]; then
+        printf '%s\n' "$unit" >> "$tmp_units"
+      fi
+    done < <(list_managed_unit_templates "$template_dir")
+  fi
+
+  sort -u "$tmp_files" -o "$tmp_files"
+  sort -u "$tmp_units" -o "$tmp_units"
+
+  if [ -f "$files_state" ]; then
+    while IFS= read -r stale_path; do
+      [ -n "$stale_path" ] || continue
+      if ! grep -Fxq "$stale_path" "$tmp_files" 2>/dev/null; then
+        rm -f "$stale_path"
+      fi
+    done < "$files_state"
+  fi
+
+  if [ -f "$units_state" ]; then
+    while IFS= read -r stale_unit; do
+      [ -n "$stale_unit" ] || continue
+      if ! grep -Fxq "$stale_unit" "$tmp_units" 2>/dev/null; then
+        printf '%s\n' "$stale_unit" >> "$disable_units_file"
+      fi
+    done < "$units_state"
+  fi
+
+  cat "$tmp_files" > "$files_state"
+  cat "$tmp_units" > "$units_state"
+  chown root:root "$files_state" "$units_state"
+  chmod 0644 "$files_state" "$units_state"
+  restorecon_if_available "$files_state" "$units_state" "$quadlet_dir"
+
+  if [ -s "$tmp_units" ]; then
+    cat "$tmp_units" >> "$enable_units_file"
+  fi
+
+  rm -f "$tmp_files" "$tmp_units"
+}
+
+reconcile_role baseline
+if persistent_user_is_owner "$user"; then
+  reconcile_role owner
+fi
+
+sort -u "$enable_units_file" -o "$enable_units_file"
+sort -u "$disable_units_file" -o "$disable_units_file"
+
+if ! try_user_systemctl "$user" daemon-reload; then
+  systemctl start "user@${uid}.service"
+fi
+run_user_systemctl "$user" daemon-reload
+
+mapfile -t disable_units < "$disable_units_file"
+if [ "${#disable_units[@]}" -gt 0 ]; then
+  run_user_systemctl "$user" disable --now "${disable_units[@]}" || true
+  run_user_systemctl "$user" daemon-reload
+fi
+
+mapfile -t enable_units < "$enable_units_file"
+if [ "${#enable_units[@]}" -gt 0 ]; then
+  run_user_systemctl "$user" reset-failed "${enable_units[@]}" || true
+  run_user_systemctl "$user" enable --now "${enable_units[@]}"
+else
+  log "no managed persistent units are currently defined for ${user}"
+fi
+
+/usr/local/libexec/myos/persistent-user-validate --user "$user"
+log "persistent hosting is configured for ${user}"
+if persistent_user_is_owner "$user"; then
+  log "owner role is assigned to ${user}"
+fi

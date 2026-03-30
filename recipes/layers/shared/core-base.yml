@@ -99,6 +99,8 @@ modules:
         - rpm-ostree-countme.service
         - rpm-ostree-countme.timer
         - akmods-keygen@akmods-keygen.service
+        - bootc-fetch-apply-updates.service
+        - bootc-fetch-apply-updates.timer
 
   - type: files
     files:
