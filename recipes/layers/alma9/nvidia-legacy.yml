@@ -4,11 +4,5 @@ modules:
 
   - type: containerfile
     snippets:
-      - RUN dnf -y module enable nvidia-driver:latest
-
-  - type: dnf
-    install:
-      packages:
-        - kmod-nvidia
-        - nvidia-driver
-        - nvidia-driver-cuda
+      - RUN dnf -y module reset nvidia-driver
+      - RUN dnf -y module install nvidia-driver:latest/default

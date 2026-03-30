@@ -77,7 +77,7 @@ Both Alma 9 and Alma 10 now expose the same build path:
 - `recipes/layers/shared/workstation-base.yml`: shared workstation diagnostics, network/storage extras, and Flatpak defaults
 - `recipes/layers/shared/nvidia-common.yml`: NVIDIA repo enablement, container toolkit, and core boot args shared by both streams
 - `recipes/layers/shared/nvidia-open.yml`: open-kmod NVIDIA driver path for newer supported GPUs
-- `recipes/layers/alma9/nvidia-legacy.yml`: Alma 9 proprietary legacy path pinned to the non-DKMS `nvidia-driver:latest` module stream and prebuilt `kmod-nvidia-*` providers
+- `recipes/layers/alma9/nvidia-legacy.yml`: Alma 9 proprietary legacy path installed through the non-DKMS `nvidia-driver:latest` module stream so userspace and prebuilt `kmod-nvidia-*` providers stay aligned
 - `recipes/layers/shared/nvidia-workstation.yml`: workstation-only NVIDIA userspace extras and display-oriented kernel args
 - `recipes/layers/alma9/core.yml` and `recipes/layers/alma10/core.yml`: distro-specific package, tailscale, and just setup
 - `recipes/layers/alma9/workstation.yml` and `recipes/layers/alma10/workstation.yml`: distro-specific workstation packaging
