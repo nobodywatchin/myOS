@@ -1,8 +1,8 @@
 ---
 # yaml-language-server: $schema=https://schema.blue-build.org/recipe-v1.json
-name: workstation-alma10-nvidia
-description: myOS AlmaLinux 10 workstation layered on the published full NVIDIA core image with workstation NVIDIA extras.
-base-image: ghcr.io/myos-dev/core-full-alma10-nvidia
+name: workstation-alma10-nvidia-open
+description: myOS AlmaLinux 10 workstation layered on the published full NVIDIA open core image with workstation NVIDIA extras.
+base-image: ghcr.io/myos-dev/core-full-alma10-nvidia-open
 image-version: latest
 modules:
   - from-file: layers/shared/workstation-base.yml

@@ -13,11 +13,20 @@ myOS is an opinionated BootC image ecosystem organized around a small shared cor
 Both Alma 9 and 10 follow the same product path:
 
 - `core-minimal-alma9` / `core-minimal-alma10`
-- `core-minimal-alma9-nvidia` / `core-minimal-alma10-nvidia`
+- `core-minimal-alma9-nvidia-open` / `core-minimal-alma10-nvidia-open`
+- `core-minimal-alma9-nvidia-legacy`
 - `core-full-alma9` / `core-full-alma10`
-- `core-full-alma9-nvidia` / `core-full-alma10-nvidia`
+- `core-full-alma9-nvidia-open` / `core-full-alma10-nvidia-open`
+- `core-full-alma9-nvidia-legacy`
 - `workstation-alma9` / `workstation-alma10`
-- `workstation-alma9-nvidia` / `workstation-alma10-nvidia`
+- `workstation-alma9-nvidia-open` / `workstation-alma10-nvidia-open`
+- `workstation-alma9-nvidia-legacy`
+
+NVIDIA streams are explicit:
+
+- `-nvidia-open` uses the open kernel module path and is the default fit for newer supported GPUs.
+- Alma 9 `-nvidia-legacy` uses the supported proprietary/prebuilt-kmod path for hardware that does not behave cleanly on the open path, especially Maxwell-, Pascal-, and similar legacy-supported GPUs.
+- Alma 10 support in myOS is `-nvidia-open`.
 
 `core-full-*` is the single full base tier. It includes tenant commands, persistent-user enrollment tooling, Cockpit admin services, and OpenClaw platform-host scaffolding for both distros.
 RamaLama is added in the Alma 10 full images, while Alma 9 keeps the same platform layout without the packaged RamaLama runtime.
@@ -58,7 +67,7 @@ files/
 ```
 
 - `recipes/images` contains only buildable images.
-- `recipes/layers/shared` contains the small shared building blocks: `core-base`, `core-full`, `workstation-base`, `nvidia`, and `nvidia-workstation`.
+- `recipes/layers/shared` contains the small shared building blocks: `core-base`, `core-full`, `workstation-base`, `nvidia-common`, `nvidia-open`, and `nvidia-workstation`.
 - `recipes/layers/alma9` and `recipes/layers/alma10` keep version differences explicit without spreading them across lots of tiny files.
 - `files/base`, `files/workstation`, and `files/agent` mirror those concerns in the payloads.
 
@@ -112,7 +121,7 @@ Generic `myos` commands live in the shared core. Tenant commands and persistent-
 1. Start from the smallest core image that matches the image's job.
 2. Use `core-full-*` when the image needs tenant or OpenClaw host features.
 3. Treat RamaLama as an Alma 10 full-core add-on until Alma 9 has a supported package source.
-4. Use `nvidia.yml` for core/server NVIDIA support and add `nvidia-workstation.yml` only for workstation-specific NVIDIA extras.
+4. Use `nvidia-open.yml` for shared core/server NVIDIA support, `alma9/nvidia-legacy.yml` only for the EL9 proprietary legacy path, and `nvidia-workstation.yml` only for workstation-specific NVIDIA extras.
 5. Add workstation layers only for actual workstation products.
 6. Keep optional capabilities in `recipes/layers/features/` instead of silently growing every image.
 
@@ -137,6 +146,8 @@ sudo podman run --rm -it --privileged --pull=newer \
   ghcr.io/myos-dev/workstation-alma10:latest
 rm -f "$TMP"
 ```
+
+The old single-stream `*-nvidia` image names were replaced by explicit `*-nvidia-open` images, with Alma 9 also retaining `*-nvidia-legacy` for the supported proprietary path.
 
 # Building ISO File
 

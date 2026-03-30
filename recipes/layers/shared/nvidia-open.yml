@@ -1,0 +1,10 @@
+---
+modules:
+  - from-file: layers/shared/nvidia-common.yml
+
+  - type: dnf
+    install:
+      packages:
+        - nvidia-open-kmod
+        - nvidia-driver
+        - nvidia-driver-cuda

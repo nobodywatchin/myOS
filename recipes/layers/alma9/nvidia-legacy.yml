@@ -1,0 +1,14 @@
+---
+modules:
+  - from-file: layers/shared/nvidia-common.yml
+
+  - type: containerfile
+    snippets:
+      - RUN dnf -y module enable nvidia-driver:latest
+
+  - type: dnf
+    install:
+      packages:
+        - kmod-nvidia
+        - nvidia-driver
+        - nvidia-driver-cuda

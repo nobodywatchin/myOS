@@ -36,7 +36,7 @@ jobs:
           grep -q '^tenant-tailscale ' files/agent/justfiles/usr/share/myos/just/tenant.just
 
   minimal-core-images:
-    name: Minimal Core Images
+    name: Minimal Core Images (${{ matrix.name }})
     needs:
       - validate-tenant-cli
     runs-on: ubuntu-latest
@@ -47,11 +47,17 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        recipe:
-          - /images/core/alma9/minimal.yml
-          - /images/core/alma9/minimal-nvidia.yml
-          - /images/core/alma10/minimal.yml
-          - /images/core/alma10/minimal-nvidia.yml
+        include:
+          - name: core-minimal-alma9
+            recipe: /images/core/alma9/minimal.yml
+          - name: core-minimal-alma9-nvidia-open
+            recipe: /images/core/alma9/minimal-nvidia-open.yml
+          - name: core-minimal-alma9-nvidia-legacy
+            recipe: /images/core/alma9/minimal-nvidia-legacy.yml
+          - name: core-minimal-alma10
+            recipe: /images/core/alma10/minimal.yml
+          - name: core-minimal-alma10-nvidia-open
+            recipe: /images/core/alma10/minimal-nvidia-open.yml
     steps:
       - name: Build minimal core image
         uses: blue-build/github-action@v1.11
@@ -63,8 +69,8 @@ jobs:
           rechunk: true
           maximize_build_space: true
 
-  full-core-alma9:
-    name: Full Core Alma 9
+  full-core-images:
+    name: Full Core Images (${{ matrix.name }})
     needs:
       - validate-tenant-cli
     runs-on: ubuntu-latest
@@ -72,155 +78,60 @@ jobs:
       contents: read
       packages: write
       id-token: write
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - name: core-full-alma9
+            recipe: /images/core/alma9/full.yml
+          - name: core-full-alma9-nvidia-open
+            recipe: /images/core/alma9/full-nvidia-open.yml
+          - name: core-full-alma9-nvidia-legacy
+            recipe: /images/core/alma9/full-nvidia-legacy.yml
+          - name: core-full-alma10
+            recipe: /images/core/alma10/full.yml
+          - name: core-full-alma10-nvidia-open
+            recipe: /images/core/alma10/full-nvidia-open.yml
     steps:
       - name: Build full core image
         uses: blue-build/github-action@v1.11
         with:
-          recipe: /images/core/alma9/full.yml
+          recipe: ${{ matrix.recipe }}
           cosign_private_key: ${{ secrets.SIGNING_SECRET }}
           registry_token: ${{ github.token }}
           pr_event_number: ${{ github.event.number }}
           rechunk: true
           maximize_build_space: true
 
-  full-core-alma9-nvidia:
-    name: Full Core Alma 9 NVIDIA
+  workstation-images:
+    name: Workstation Images (${{ matrix.name }})
     needs:
       - validate-tenant-cli
+      - full-core-images
     runs-on: ubuntu-latest
     permissions:
       contents: read
       packages: write
       id-token: write
-    steps:
-      - name: Build full core image
-        uses: blue-build/github-action@v1.11
-        with:
-          recipe: /images/core/alma9/full-nvidia.yml
-          cosign_private_key: ${{ secrets.SIGNING_SECRET }}
-          registry_token: ${{ github.token }}
-          pr_event_number: ${{ github.event.number }}
-          rechunk: true
-          maximize_build_space: true
-
-  full-core-alma10:
-    name: Full Core Alma 10
-    needs:
-      - validate-tenant-cli
-    runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      packages: write
-      id-token: write
-    steps:
-      - name: Build full core image
-        uses: blue-build/github-action@v1.11
-        with:
-          recipe: /images/core/alma10/full.yml
-          cosign_private_key: ${{ secrets.SIGNING_SECRET }}
-          registry_token: ${{ github.token }}
-          pr_event_number: ${{ github.event.number }}
-          rechunk: true
-          maximize_build_space: true
-
-  full-core-alma10-nvidia:
-    name: Full Core Alma 10 NVIDIA
-    needs:
-      - validate-tenant-cli
-    runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      packages: write
-      id-token: write
-    steps:
-      - name: Build full core image
-        uses: blue-build/github-action@v1.11
-        with:
-          recipe: /images/core/alma10/full-nvidia.yml
-          cosign_private_key: ${{ secrets.SIGNING_SECRET }}
-          registry_token: ${{ github.token }}
-          pr_event_number: ${{ github.event.number }}
-          rechunk: true
-          maximize_build_space: true
-
-  workstation-alma9:
-    name: Workstation Alma 9
-    needs:
-      - validate-tenant-cli
-      - full-core-alma9
-    runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      packages: write
-      id-token: write
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - name: workstation-alma9
+            recipe: /images/workstation/alma9/workstation.yml
+          - name: workstation-alma9-nvidia-open
+            recipe: /images/workstation/alma9/nvidia-open.yml
+          - name: workstation-alma9-nvidia-legacy
+            recipe: /images/workstation/alma9/nvidia-legacy.yml
+          - name: workstation-alma10
+            recipe: /images/workstation/alma10/workstation.yml
+          - name: workstation-alma10-nvidia-open
+            recipe: /images/workstation/alma10/nvidia-open.yml
     steps:
       - name: Build workstation image
         uses: blue-build/github-action@v1.11
         with:
-          recipe: /images/workstation/alma9/workstation.yml
-          cosign_private_key: ${{ secrets.SIGNING_SECRET }}
-          registry_token: ${{ github.token }}
-          pr_event_number: ${{ github.event.number }}
-          rechunk: true
-          maximize_build_space: true
-
-  workstation-alma9-nvidia:
-    name: Workstation Alma 9 NVIDIA
-    needs:
-      - validate-tenant-cli
-      - full-core-alma9-nvidia
-    runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      packages: write
-      id-token: write
-    steps:
-      - name: Build workstation image
-        uses: blue-build/github-action@v1.11
-        with:
-          recipe: /images/workstation/alma9/nvidia.yml
-          cosign_private_key: ${{ secrets.SIGNING_SECRET }}
-          registry_token: ${{ github.token }}
-          pr_event_number: ${{ github.event.number }}
-          rechunk: true
-          maximize_build_space: true
-
-  workstation-alma10:
-    name: Workstation Alma 10
-    needs:
-      - validate-tenant-cli
-      - full-core-alma10
-    runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      packages: write
-      id-token: write
-    steps:
-      - name: Build workstation image
-        uses: blue-build/github-action@v1.11
-        with:
-          recipe: /images/workstation/alma10/workstation.yml
-          cosign_private_key: ${{ secrets.SIGNING_SECRET }}
-          registry_token: ${{ github.token }}
-          pr_event_number: ${{ github.event.number }}
-          rechunk: true
-          maximize_build_space: true
-
-  workstation-alma10-nvidia:
-    name: Workstation Alma 10 NVIDIA
-    needs:
-      - validate-tenant-cli
-      - full-core-alma10-nvidia
-    runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      packages: write
-      id-token: write
-    steps:
-      - name: Build workstation image
-        uses: blue-build/github-action@v1.11
-        with:
-          recipe: /images/workstation/alma10/nvidia.yml
+          recipe: ${{ matrix.recipe }}
           cosign_private_key: ${{ secrets.SIGNING_SECRET }}
           registry_token: ${{ github.token }}
           pr_event_number: ${{ github.event.number }}

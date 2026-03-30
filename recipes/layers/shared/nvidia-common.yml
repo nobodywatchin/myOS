@@ -5,13 +5,6 @@ modules:
       packages:
         - almalinux-release-nvidia-driver
 
-  - type: dnf
-    install:
-      packages:
-        - nvidia-open-kmod
-        - nvidia-driver
-        - nvidia-driver-cuda
-
   - type: containerfile
     snippets:
       - RUN curl -s -L https://nvidia.github.io/libnvidia-container/stable/rpm/nvidia-container-toolkit.repo | tee /etc/yum.repos.d/nvidia-container-toolkit.repo
