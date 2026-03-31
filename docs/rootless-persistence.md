@@ -99,13 +99,15 @@ The supported self-service location is the standard rootless Quadlet path:
 
 - `~/.config/containers/systemd/`
 
-A user can install and enable their own Quadlet directly, for example:
+A user can install and start their own Quadlet directly, for example:
 
 ```bash
 cp my-api.container ~/.config/containers/systemd/
 systemctl --user daemon-reload
-systemctl --user enable --now my-api.service
+systemctl --user start my-api.service
 ```
+
+For Quadlets, the generator applies the `[Install]` section during generation, so the generated `.service` should be started or restarted directly instead of being enabled with `systemctl enable`.
 
 myOS also ships a small helper:
 

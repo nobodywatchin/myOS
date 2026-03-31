@@ -422,6 +422,21 @@ managed_service_unit_name_from_template() {
   esac
 }
 
+managed_service_unit_requires_explicit_enable() {
+  local name
+
+  name="$(basename "$1")"
+
+  case "$name" in
+    *.service|*.socket|*.target|*.timer)
+      return 0
+      ;;
+    *)
+      return 1
+      ;;
+  esac
+}
+
 restorecon_if_available() {
   if command -v restorecon >/dev/null 2>&1; then
     restorecon -RF "$@" >/dev/null 2>&1 || true

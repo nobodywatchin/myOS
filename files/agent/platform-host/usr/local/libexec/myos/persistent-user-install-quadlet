@@ -72,11 +72,20 @@ systemctl --user daemon-reload
 unit_name="$(managed_service_unit_name_from_template "$target_path" 2>/dev/null || true)"
 if [ "$enable_now" -eq 1 ]; then
   [ -n "$unit_name" ] || die "--enable is only supported for service-capable Quadlet or unit files"
-  systemctl --user enable --now "$unit_name"
-  log "installed and enabled ${unit_name} from ${target_path}"
+  if managed_service_unit_requires_explicit_enable "$target_path"; then
+    systemctl --user enable --now "$unit_name"
+    log "installed and enabled ${unit_name} from ${target_path}"
+  else
+    systemctl --user start "$unit_name"
+    log "installed and started ${unit_name} from ${target_path}"
+  fi
 elif [ -n "$unit_name" ]; then
   log "installed ${target_path}"
-  printf 'Next: systemctl --user enable --now %s\n' "$unit_name"
+  if managed_service_unit_requires_explicit_enable "$target_path"; then
+    printf 'Next: systemctl --user enable --now %s\n' "$unit_name"
+  else
+    printf 'Next: systemctl --user start %s\n' "$unit_name"
+  fi
 else
   log "installed ${target_path}; reload any dependent rootless units as needed"
 fi

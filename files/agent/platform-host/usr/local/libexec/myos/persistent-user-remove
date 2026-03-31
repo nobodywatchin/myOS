@@ -82,7 +82,8 @@ if [ -s "$remove_units_file" ]; then
   fi
 
   mapfile -t remove_units < "$remove_units_file"
-  run_user_systemctl "$user" disable --now "${remove_units[@]}" || true
+  run_user_systemctl "$user" disable "${remove_units[@]}" || true
+  run_user_systemctl "$user" stop "${remove_units[@]}" || true
 fi
 
 if [ -s "$remove_files_file" ]; then

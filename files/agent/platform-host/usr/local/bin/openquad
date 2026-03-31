@@ -264,7 +264,6 @@ case "$command_name" in
     fi
     ensure_openclaw_user_runtime_dirs
     current_user_systemctl daemon-reload
-    current_user_systemctl enable "$service_name" >/dev/null 2>&1 || true
     current_user_systemctl reset-failed "$service_name" >/dev/null 2>&1 || true
     exec current_user_systemctl start "$service_name"
     ;;
@@ -278,7 +277,6 @@ case "$command_name" in
     fi
     ensure_openclaw_user_runtime_dirs
     current_user_systemctl daemon-reload
-    current_user_systemctl enable "$service_name" >/dev/null 2>&1 || true
     current_user_systemctl reset-failed "$service_name" >/dev/null 2>&1 || true
     exec current_user_systemctl restart "$service_name"
     ;;
