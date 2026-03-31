@@ -36,6 +36,7 @@ fail_status() {
 service_name="$(openclaw_user_service_name)"
 container_name="$(openclaw_user_container_name)"
 quadlet_path="$(openclaw_user_quadlet_path)"
+template_path="$(openclaw_user_quadlet_template_path)"
 
 service_manager_available() {
   try_current_user_systemctl show-environment
@@ -69,12 +70,30 @@ inner_openclaw_version() {
   podman exec "$container_name" openclaw --version 2>/dev/null | head -n 1
 }
 
+bootstrap_runtime_if_available() {
+  if openclaw_user_service_installed; then
+    return 0
+  fi
+
+  openclaw_user_quadlet_template_available || return 1
+  install_openclaw_user_quadlet_from_template || return 1
+
+  printf 'Installed %s from %s\n' "$quadlet_path" "$template_path"
+}
+
 require_runtime_installed() {
   if [ -f "$quadlet_path" ]; then
     return 0
   fi
 
-  printf 'openquad: OpenClaw runtime is unavailable for this user.\n' >&2
+  if openclaw_user_quadlet_template_available; then
+    printf 'openquad: OpenClaw runtime is not installed for this user yet.\n' >&2
+    printf 'Install and start it with: openquad start\n' >&2
+  else
+    printf 'openquad: OpenClaw runtime is unavailable for this user.\n' >&2
+    printf 'Missing baseline template: %s\n' "$template_path" >&2
+    printf 'Ask an admin to re-run: myos persistent-user-enroll --user %s\n' "$(id -un)" >&2
+  fi
   printf 'Check it with: openquad doctor\n' >&2
   exit 1
 }
@@ -147,6 +166,13 @@ run_doctor() {
     ok "${service_name} installed"
   else
     fail_status "missing ${quadlet_path}"
+    if openclaw_user_quadlet_template_available; then
+      warn_status "baseline template available: ${template_path}"
+      warn_status "run openquad start to install and enable it for this user"
+    else
+      warn_status "baseline template missing: ${template_path}"
+      warn_status "ask an admin to re-run: myos persistent-user-enroll --user $(id -un)"
+    fi
   fi
 
   if command -v loginctl >/dev/null 2>&1 && loginctl show-user "$(id -un)" -p Linger --value 2>/dev/null | grep -qx yes; then
@@ -233,9 +259,12 @@ command_name="${1:-}"
 
 case "$command_name" in
   start)
-    require_runtime_installed
+    if ! bootstrap_runtime_if_available; then
+      require_runtime_installed
+    fi
     ensure_openclaw_user_runtime_dirs
     current_user_systemctl daemon-reload
+    current_user_systemctl enable "$service_name" >/dev/null 2>&1 || true
     current_user_systemctl reset-failed "$service_name" >/dev/null 2>&1 || true
     exec current_user_systemctl start "$service_name"
     ;;
@@ -244,9 +273,12 @@ case "$command_name" in
     exec current_user_systemctl stop "$service_name"
     ;;
   restart)
-    require_runtime_installed
+    if ! bootstrap_runtime_if_available; then
+      require_runtime_installed
+    fi
     ensure_openclaw_user_runtime_dirs
     current_user_systemctl daemon-reload
+    current_user_systemctl enable "$service_name" >/dev/null 2>&1 || true
     current_user_systemctl reset-failed "$service_name" >/dev/null 2>&1 || true
     exec current_user_systemctl restart "$service_name"
     ;;

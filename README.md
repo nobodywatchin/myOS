@@ -47,6 +47,11 @@ openquad status
 openquad doctor
 ```
 
+On accounts that predate the per-user Quadlet rollout, the first `openquad start`
+will render the shipped `openclaw.container` into
+`~/.config/containers/systemd/`. Lingering across logout still requires
+`myos persistent-user-enroll --user <name>`.
+
 # Repo Layout
 
 ```text

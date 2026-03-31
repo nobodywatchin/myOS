@@ -12,6 +12,14 @@ Check status with: openquad status
 EOF
 }
 
+print_not_installed_error() {
+  cat >&2 <<'EOF'
+openclaw: OpenClaw runtime is not installed for this user yet.
+Install and start it with: openquad start
+Check it with: openquad doctor
+EOF
+}
+
 print_unavailable_error() {
   cat >&2 <<'EOF'
 openclaw: OpenClaw runtime is unavailable.
@@ -33,7 +41,11 @@ if ! try_current_user_systemctl show-environment; then
 fi
 
 if ! openclaw_user_service_installed; then
-  print_unavailable_error
+  if openclaw_user_quadlet_template_available; then
+    print_not_installed_error
+  else
+    print_unavailable_error
+  fi
   exit 1
 fi
 

@@ -112,6 +112,14 @@ openclaw_user_quadlet_path() {
   printf '%s/%s\n' "$(current_user_quadlet_dir)" "$OPENCLAW_USER_QUADLET_NAME"
 }
 
+openclaw_user_quadlet_template_path() {
+  printf '%s/%s\n' "$(persistent_user_template_dir baseline)" "$OPENCLAW_USER_QUADLET_NAME"
+}
+
+openclaw_user_quadlet_template_available() {
+  [ -f "$(openclaw_user_quadlet_template_path)" ]
+}
+
 openclaw_user_service_name() {
   printf '%s\n' "$OPENCLAW_USER_SERVICE_NAME"
 }
@@ -155,6 +163,42 @@ try_current_user_systemctl() {
 
 openclaw_user_service_installed() {
   [ -f "$(openclaw_user_quadlet_path)" ]
+}
+
+render_openclaw_user_quadlet() {
+  local dest="$1"
+  local template image
+
+  template="$(openclaw_user_quadlet_template_path)"
+  [ -f "$template" ] || return 1
+
+  image="${OPENCLAW_IMAGE:-$DEFAULT_OPENCLAW_IMAGE}"
+  ACCOUNT="$(id -un)" \
+  ACCOUNT_HOME="$HOME" \
+  ACCOUNT_UID="$(id -u)" \
+  ACCOUNT_GID="$(id -g)" \
+  OPENCLAW_IMAGE="$image" \
+    render_template_file "$template" "$dest"
+}
+
+install_openclaw_user_quadlet_from_template() {
+  local target tmp
+
+  target="$(openclaw_user_quadlet_path)"
+  [ -f "$target" ] && return 0
+  openclaw_user_quadlet_template_available || return 1
+
+  ensure_openclaw_user_runtime_dirs
+  tmp="$(mktemp)"
+
+  if ! render_openclaw_user_quadlet "$tmp"; then
+    rm -f "$tmp"
+    return 1
+  fi
+
+  install -m 0644 "$tmp" "$target"
+  rm -f "$tmp"
+  restorecon_if_available "$(current_user_quadlet_dir)" "$target"
 }
 
 openclaw_user_image_from_quadlet() {
