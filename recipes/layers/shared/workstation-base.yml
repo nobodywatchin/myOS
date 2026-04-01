@@ -1,5 +1,9 @@
 ---
 modules:
+  - type: brew
+    nofile-limits: true
+    brew-analytics: false
+
   - type: dnf
     install:
       install-weak-deps: false
