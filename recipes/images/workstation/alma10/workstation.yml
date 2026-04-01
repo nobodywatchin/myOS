@@ -6,7 +6,6 @@ base-image: ghcr.io/myos-dev/core-full-alma10
 image-version: latest
 modules:
   - from-file: layers/shared/workstation-base.yml
-  - from-file: layers/shared/amd-workstation.yml
   - from-file: layers/alma10/workstation.yml
   - type: initramfs
   - type: signing
