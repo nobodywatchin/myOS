@@ -186,7 +186,10 @@ run_doctor() {
     enabled)
       ok "service enabled"
       ;;
-    static|disabled|masked|generated|indirect|linked|linked-runtime|transient)
+    generated)
+      ok "service managed as generated Quadlet unit"
+      ;;
+    static|disabled|masked|indirect|linked|linked-runtime|transient)
       warn_status "service enablement is ${enabled_state}"
       ;;
     *)
@@ -265,11 +268,11 @@ case "$command_name" in
     ensure_openclaw_user_runtime_dirs
     current_user_systemctl daemon-reload
     current_user_systemctl reset-failed "$service_name" >/dev/null 2>&1 || true
-    exec current_user_systemctl start "$service_name"
+    current_user_systemctl start "$service_name"
     ;;
   stop)
     require_runtime_installed
-    exec current_user_systemctl stop "$service_name"
+    current_user_systemctl stop "$service_name"
     ;;
   restart)
     if ! bootstrap_runtime_if_available; then
@@ -278,7 +281,7 @@ case "$command_name" in
     ensure_openclaw_user_runtime_dirs
     current_user_systemctl daemon-reload
     current_user_systemctl reset-failed "$service_name" >/dev/null 2>&1 || true
-    exec current_user_systemctl restart "$service_name"
+    current_user_systemctl restart "$service_name"
     ;;
   status)
     require_runtime_installed
