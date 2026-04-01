@@ -7,4 +7,17 @@ if [ ! -f "$JUSTFILE" ]; then
   exit 1
 fi
 
-exec /usr/bin/just --justfile "$JUSTFILE" "$@"
+JUST_BIN=""
+
+if [ -x /usr/bin/just ]; then
+  JUST_BIN="/usr/bin/just"
+elif [ -x /usr/local/bin/just ]; then
+  JUST_BIN="/usr/local/bin/just"
+elif JUST_BIN="$(command -v just 2>/dev/null)"; then
+  :
+else
+  echo "myos: could not find just in /usr/bin, /usr/local/bin, or PATH" >&2
+  exit 1
+fi
+
+exec "$JUST_BIN" --justfile "$JUSTFILE" "$@"
