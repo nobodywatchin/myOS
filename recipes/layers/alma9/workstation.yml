@@ -143,6 +143,7 @@ modules:
         - gnome-remote-desktop
         - xdg-desktop-portal
         - xdg-desktop-portal-gnome
+        - xorg-x11-utils
 
   - type: default-flatpaks
     configurations:
@@ -160,7 +161,6 @@ modules:
     install:
       - 3843
       - 615
-      - 517
       - 7
       - 3193
       - 19
