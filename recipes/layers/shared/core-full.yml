@@ -112,7 +112,7 @@ modules:
         - https://repo.radeon.com/rocm/rocm.gpg.key
     install:
       install-weak-deps: false
-      skip-unavailable: true
+      skip-broken: true
       packages:
         - clinfo
         - repo: rocm
