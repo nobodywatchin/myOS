@@ -1,5 +1,9 @@
 ---
 modules:
+  - type: containerfile
+    snippets:
+      - RUN . /etc/os-release && install -d /etc/dnf/vars && printf '%s\n' "${VERSION_ID%%.*}" > /etc/dnf/vars/releasever_major
+
   - type: dnf
     install:
       install-weak-deps: false
