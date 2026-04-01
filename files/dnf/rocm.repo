@@ -1,0 +1,7 @@
+[rocm]
+name=ROCm latest for EL$releasever_major
+baseurl=https://repo.radeon.com/rocm/el$releasever_major/latest/main
+enabled=1
+gpgcheck=1
+gpgkey=https://repo.radeon.com/rocm/rocm.gpg.key
+priority=50

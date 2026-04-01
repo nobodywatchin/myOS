@@ -96,65 +96,42 @@ modules:
           /var/tmp/myos-podman || true
 
 
+  - type: dnf
+    install:
+      install-weak-deps: false
+      packages:
+        - mesa-vulkan-drivers
+        - vulkan-loader
+        - vulkan-tools
+
+  - type: dnf
+    repos:
+      files:
+        - rocm.repo
+      keys:
+        - https://repo.radeon.com/rocm/rocm.gpg.key
+    install:
+      install-weak-deps: false
+      skip-unavailable: true
+      packages:
+        - clinfo
+        - repo: rocm
+          packages:
+            - amd-smi-lib
+            - rocminfo
+            - rocm-hip-sdk
+            - rocm-ml-sdk
+            - rocm-opencl-sdk
+            - rocm-smi-lib
+
   - type: containerfile
     snippets:
       - >-
         RUN set -eux; \
-          install -d -m 0755 /etc/profile.d /etc/udev/rules.d; \
           getent group video >/dev/null 2>&1 || groupadd --system video; \
           getent group render >/dev/null 2>&1 || groupadd --system render; \
-          printf '%s\n' \
-            'KERNEL=="kfd", GROUP="render", MODE="0660"' \
-            'SUBSYSTEM=="drm", KERNEL=="renderD*", GROUP="render", MODE="0660"' \
-            'SUBSYSTEM=="drm", KERNEL=="card*", GROUP="video", MODE="0660"' \
-            > /etc/udev/rules.d/70-amdgpu.rules; \
-          printf '%s\n' \
-            '#!/bin/sh' \
-            'if [ -d /opt/rocm/bin ]; then' \
-            '  case ":${PATH:-}:" in' \
-            '    *:/opt/rocm/bin:*) ;;' \
-            '    *) PATH="/opt/rocm/bin${PATH:+:${PATH}}" ;;' \
-            '  esac' \
-            'fi' \
-            'export PATH' \
-            > /etc/profile.d/rocm.sh; \
-          chmod 0755 /etc/profile.d/rocm.sh; \
-          dnf -y install --setopt=install_weak_deps=False \
-            mesa-vulkan-drivers \
-            vulkan-loader \
-            vulkan-tools; \
-          arch="$(uname -m)"; \
-          if [ "${arch}" = "x86_64" ]; then \
-            . /etc/os-release; \
-            ALMA_MAJOR_VERSION="${VERSION_ID%%.*}"; \
-            case "${ALMA_MAJOR_VERSION}" in \
-              9|10) ;; \
-              *) echo "Unsupported AlmaLinux major version: ${ALMA_MAJOR_VERSION}" >&2; exit 1 ;; \
-            esac; \
-            printf '%s\n' \
-              '[rocm]' \
-              "name=ROCm latest repository for EL${ALMA_MAJOR_VERSION}" \
-              "baseurl=https://repo.radeon.com/rocm/el${ALMA_MAJOR_VERSION}/latest/main" \
-              'enabled=1' \
-              'priority=50' \
-              'gpgcheck=1' \
-              'gpgkey=https://repo.radeon.com/rocm/rocm.gpg.key' \
-              > /etc/yum.repos.d/rocm.repo; \
-            dnf -y install --setopt=install_weak_deps=False \
-              amd-smi-lib \
-              clinfo \
-              rocminfo \
-              rocm-hip-sdk \
-              rocm-ml-sdk \
-              rocm-opencl-sdk \
-              rocm-smi-lib; \
-            printf '%s\n' /opt/rocm/lib /opt/rocm/lib64 > /etc/ld.so.conf.d/rocm.conf; \
-            ldconfig; \
-          else \
-            printf '%s\n' "Skipping ROCm userspace on unsupported architecture: ${arch}" >&2; \
-          fi; \
-          dnf clean all; \
-          rm -rf /var/cache/dnf
+          ldconfig
+
 
   - type: systemd
     system:
