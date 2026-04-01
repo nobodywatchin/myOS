@@ -1,18 +1,20 @@
 ---
 modules:
-  - type: brew
-    nofile-limits: true # increase nofile limits
-    brew-analytics: false # disable telemetry
-
   - type: dnf
     install:
       install-weak-deps: false
       packages:
+        - gcc
+        - zstd
         - cockpit
         - cockpit-ostree
         - cockpit-files
         - cockpit-storaged
         - cockpit-podman
+
+  - type: brew
+    nofile-limits: true # increase nofile limits
+    brew-analytics: false # disable telemetry
 
   - type: files
     files:

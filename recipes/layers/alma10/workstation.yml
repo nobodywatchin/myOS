@@ -18,7 +18,6 @@ modules:
         - akmod-wl
         - broadcom-wl
         - kernel-headers
-        - gcc
         - make
         - binutils
         - elfutils-libelf-devel
