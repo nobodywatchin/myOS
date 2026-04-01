@@ -6,8 +6,50 @@ update-system:
 
 # Update User Flatpaks and Distrobox Containers
 update-user:
-  flatpak update --user -y
-  distrobox-upgrade --all
+    #!/usr/bin/env bash
+    set -euo pipefail
+
+    repair_distrobox_helper_paths() {
+      local backup_path config config_dir helper needle new_path old_path replacement repaired_any
+
+      config_dir="${XDG_DATA_HOME:-$HOME/.local/share}/containers/storage/overlay-containers"
+      [ -d "$config_dir" ] || return 0
+
+      repaired_any=0
+      while IFS= read -r -d '' config; do
+        backup_path="${config}.myos-distrobox-helper-paths.bak"
+
+        for helper in distrobox-export distrobox-host-exec distrobox-init; do
+          old_path="/usr/sbin/${helper}"
+          new_path="/usr/bin/${helper}"
+          needle=$(printf '"source":"%s"' "$old_path")
+          replacement=$(printf '"source":"%s"' "$new_path")
+          if [ -x "$old_path" ] || [ ! -x "$new_path" ]; then
+            continue
+          fi
+
+          if ! grep -qF "$needle" "$config"; then
+            continue
+          fi
+
+          if [ ! -f "$backup_path" ]; then
+            cp "$config" "$backup_path"
+          fi
+
+          sed -i "s#$needle#$replacement#g" "$config"
+          printf "Repaired stale %s mount in %s\n" "$helper" "$config"
+          repaired_any=1
+        done
+      done < <(find "$config_dir" -path "*/userdata/config.json" -print0)
+
+      if [ "$repaired_any" -eq 1 ]; then
+        echo "Updated stale rootless distrobox helper paths before running upgrades."
+      fi
+    }
+
+    flatpak update --user -y
+    repair_distrobox_helper_paths
+    distrobox-upgrade --all
 
 # Update Podman Containers
 update-podman:

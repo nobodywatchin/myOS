@@ -35,6 +35,7 @@ modules:
         - firewalld
         - flatseal
         - gnome-calculator
+        - vulkan-validationlayers
 
   - type: containerfile
     snippets:

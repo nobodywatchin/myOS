@@ -92,6 +92,15 @@ modules:
         - wget
         - which
         - zip
+  - type: containerfile
+    snippets:
+      - >-
+        RUN for helper in distrobox-export distrobox-host-exec distrobox-init; do \
+          if [ -x "/usr/bin/${helper}" ] && [ ! -e "/usr/sbin/${helper}" ]; then \
+            ln -s "../bin/${helper}" "/usr/sbin/${helper}"; \
+          fi; \
+        done
+
 
   - type: systemd
     system:
