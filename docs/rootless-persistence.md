@@ -144,6 +144,7 @@ User workflow:
 
 ```bash
 openquad start
+openclaw onboard
 openclaw chat
 ```
 

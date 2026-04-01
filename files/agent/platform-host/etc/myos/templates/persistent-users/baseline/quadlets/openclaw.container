@@ -4,6 +4,8 @@ Description=OpenClaw Runtime (per-user)
 [Container]
 Image=__OPENCLAW_IMAGE__
 ContainerName=openclaw
+UserNS=keep-id
+User=__ACCOUNT_UID__:__ACCOUNT_GID__
 NoNewPrivileges=true
 DropCapability=ALL
 ReadOnly=true
@@ -13,10 +15,10 @@ Environment=HOME=/home/node
 Environment=OPENCLAW_STATE_DIR=/home/node/.openclaw
 Environment=OPENCLAW_CONFIG_PATH=/home/node/.openclaw/openclaw.json
 WorkingDir=/home/node
-Volume=%h/.config/myos:/home/node/.config/myos:rw
-Volume=%h/.local/share/openclaw:/home/node/.openclaw:rw
-Volume=%h/.local/state/openclaw/logs:/tmp/openclaw:rw
-Exec=openclaw gateway
+Volume=%h/.config/myos:/home/node/.config/myos:rw,Z
+Volume=%h/.local/share/openclaw:/home/node/.openclaw:rw,Z
+Volume=%h/.local/state/openclaw/logs:/tmp/openclaw:rw,Z
+Exec=openclaw gateway --allow-unconfigured
 
 [Service]
 Restart=on-failure

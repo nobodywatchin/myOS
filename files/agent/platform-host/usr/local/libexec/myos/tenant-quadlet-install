@@ -56,6 +56,30 @@ TENANT_HOME="$(tenant_home "$tenant")"
 TENANT_RENDERED_DIR="$(tenant_rendered_dir "$tenant")"
 TENANT_UID="$(id -u "$tenant")"
 TENANT_GID="$(id -g "$tenant")"
+quadlet_files_changed=0
+
+render_tenant_file_if_needed() {
+  local template="$1"
+  local target="$2"
+  local mode="$3"
+  local owner="$4"
+  local group="$5"
+  local changed_var="$6"
+  local tmp
+
+  tmp="$(mktemp)"
+  render_template_file "$template" "$tmp"
+
+  if [ -e "$target" ] && cmp -s "$tmp" "$target"; then
+    rm -f "$tmp"
+    return 1
+  fi
+
+  install -D -m "$mode" -o "$owner" -g "$group" "$tmp" "$target"
+  rm -f "$tmp"
+  restorecon_if_available "$target"
+  printf -v "$changed_var" 1
+}
 
 if [ ! -f "$(tenant_env_dir "$tenant")/ports.env" ]; then
   /usr/local/libexec/myos/tenant-port-allocate --tenant "$tenant"
@@ -94,51 +118,46 @@ rm -f \
   "${TENANT_HOME}/.config/containers/systemd/zone-a-agent.container" \
   "${TENANT_HOME}/.config/containers/systemd/zone-b-parser.container"
 
-find "${TEMPLATE_BASE}/quadlets" -maxdepth 1 -type f \( -name '*.pod' -o -name '*.container' \) | sort | while read -r template; do
+while read -r template; do
   target="${TENANT_HOME}/.config/containers/systemd/$(basename "$template")"
   if [ "$force" -eq 0 ] && [ -e "$target" ]; then
     continue
   fi
 
-  render_template_file "$template" "$target"
-  chown "$tenant:$tenant" "$target"
-  chmod 0640 "$target"
-done
+  render_tenant_file_if_needed "$template" "$target" 0640 "$tenant" "$tenant" quadlet_files_changed || true
+done < <(find "${TEMPLATE_BASE}/quadlets" -maxdepth 1 -type f \( -name '*.pod' -o -name '*.container' \) | sort)
 
-find "${TEMPLATE_BASE}/scripts" -maxdepth 1 -type f | sort | while read -r template; do
+while read -r template; do
   target="${TENANT_RENDERED_DIR}/$(basename "$template")"
   if [ "$force" -eq 0 ] && [ -e "$target" ]; then
     continue
   fi
 
-  render_template_file "$template" "$target"
-  chown "$tenant:$tenant" "$target"
-  chmod 0640 "$target"
-done
+  render_tenant_file_if_needed "$template" "$target" 0640 "$tenant" "$tenant" _unused_change_flag || true
+done < <(find "${TEMPLATE_BASE}/scripts" -maxdepth 1 -type f | sort)
 proxy_target="/etc/myos/proxy/tenants/${tenant}.conf.example"
 if [ "$force" -eq 1 ] || [ ! -e "$proxy_target" ]; then
-  render_template_file "${TEMPLATE_BASE}/proxy/tenant-route.nginx.conf.example" "$proxy_target"
-  chmod 0644 "$proxy_target"
+  render_tenant_file_if_needed "${TEMPLATE_BASE}/proxy/tenant-route.nginx.conf.example" "$proxy_target" 0644 root root _unused_change_flag || true
 fi
 
-restorecon_if_available "${TENANT_HOME}/.config/containers/systemd" "${TENANT_RENDERED_DIR}" "$proxy_target"
+restorecon_if_available "${TENANT_HOME}/.config/containers/systemd" "${TENANT_RENDERED_DIR}"
 
-if try_user_systemctl "$tenant" daemon-reload; then
-  log "reloaded user systemd for ${tenant}"
-else
-  if [ "$restart_service" -eq 1 ] || [ "$validate_after" -eq 1 ]; then
-    systemctl start "user@${TENANT_UID}.service"
-    run_user_systemctl "$tenant" daemon-reload
+if [ "$quadlet_files_changed" -eq 1 ]; then
+  if try_user_systemctl "$tenant" daemon-reload; then
     log "reloaded user systemd for ${tenant}"
   else
-    warn "could not reach the user systemd instance for ${tenant}; run systemctl --user daemon-reload after enabling linger or logging in"
+    if [ "$restart_service" -eq 1 ] || [ "$validate_after" -eq 1 ]; then
+      systemctl start "user@${TENANT_UID}.service"
+      run_user_systemctl "$tenant" daemon-reload
+      log "reloaded user systemd for ${tenant}"
+    else
+      warn "could not reach the user systemd instance for ${tenant}; run systemctl --user daemon-reload after enabling linger or logging in"
+    fi
   fi
 fi
 
 if [ "$restart_service" -eq 1 ]; then
-  systemctl start "user@${TENANT_UID}.service"
-  run_user_systemctl "$tenant" reset-failed openclaw.service || true
-  run_user_systemctl "$tenant" restart openclaw.service
+  restart_tenant_openclaw_service "$tenant"
   log "restarted OpenClaw service for ${tenant}"
 fi
 

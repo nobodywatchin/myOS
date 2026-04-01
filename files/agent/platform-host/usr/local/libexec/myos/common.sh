@@ -136,6 +136,14 @@ openclaw_user_state_dir() {
   printf '%s/.local/share/openclaw\n' "$HOME"
 }
 
+openclaw_user_config_file() {
+  printf '%s/openclaw.json\n' "$(openclaw_user_state_dir)"
+}
+
+openclaw_user_config_exists() {
+  [ -f "$(openclaw_user_config_file)" ]
+}
+
 openclaw_user_workspace_dir() {
   printf '%s/workspace\n' "$(openclaw_user_state_dir)"
 }
@@ -490,6 +498,35 @@ run_tenant_podman() {
   run_as_tenant_login "$tenant" podman "$@"
 }
 
+tenant_openclaw_service_active() {
+  try_user_systemctl "$1" is-active openclaw.service
+}
+
+tenant_openclaw_container_available() {
+  local tenant="$1"
+
+  run_tenant_podman "$tenant" inspect "$(tenant_container_name "$tenant")" >/dev/null 2>&1
+}
+
+tenant_openclaw_runtime_available() {
+  local tenant="$1"
+
+  tenant_openclaw_service_active "$tenant" || return 1
+  tenant_openclaw_container_available "$tenant"
+}
+
+restart_tenant_openclaw_service() {
+  local tenant="$1"
+  local uid
+
+  uid="$(id -u "$tenant" 2>/dev/null || true)"
+  [ -n "$uid" ] || return 1
+
+  systemctl start "user@${uid}.service"
+  run_user_systemctl "$tenant" reset-failed openclaw.service || true
+  run_user_systemctl "$tenant" restart openclaw.service
+}
+
 run_tenant_container_exec() {
   local tenant="$1"
   local container
@@ -497,8 +534,8 @@ run_tenant_container_exec() {
   shift
 
   container="$(tenant_container_name "$tenant")"
-  try_user_systemctl "$tenant" is-active openclaw.service || die "openclaw.service is not active for ${tenant}"
-  run_tenant_podman "$tenant" inspect "$container" >/dev/null 2>&1 || die "container ${container} is not running for ${tenant}"
+  tenant_openclaw_service_active "$tenant" || die "openclaw.service is not active for ${tenant}"
+  tenant_openclaw_container_available "$tenant" || die "container ${container} is not running for ${tenant}"
 
   args=(exec)
   if [ -t 0 ] && [ -t 1 ]; then
@@ -534,6 +571,11 @@ run_tenant_openclaw_cli() {
   local image uid gid
   local -a args
   shift
+
+  if tenant_openclaw_runtime_available "$tenant"; then
+    run_tenant_openclaw "$tenant" "$@"
+    return
+  fi
 
   image="$(tenant_openclaw_image "$tenant")"
   uid="$(id -u "$tenant")"

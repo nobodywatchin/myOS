@@ -42,6 +42,7 @@ Typical flow:
 
 ```bash
 openquad start
+openclaw onboard
 openclaw chat
 openquad status
 openquad doctor
@@ -51,6 +52,9 @@ On accounts that predate the per-user Quadlet rollout, the first `openquad start
 will render the shipped `openclaw.container` into
 `~/.config/containers/systemd/`. Lingering across logout still requires
 `myos persistent-user-enroll --user <name>`.
+On first-time setups, `openquad start` now leaves the runtime up in a safe
+unconfigured mode so `openclaw onboard` can finish the initial setup without a
+restart loop.
 
 # Repo Layout
 

@@ -170,13 +170,15 @@ current_model="${config_values[0]:-openrouter/anthropic/claude-sonnet-4-5}"
 current_gateway_mode="${config_values[1]:-local}"
 current_ui_insecure="${config_values[2]:-false}"
 current_extra_origins="${config_values[3]:-}"
+current_public_hostname="${current_public_hostname:-${tenant}.example.invalid}"
+current_image="${current_image:-$DEFAULT_OPENCLAW_IMAGE}"
 
 if [ -t 0 ] && [ -z "$model$image$public_hostname$gateway_mode$ui_auth_mode" ] && [ "${#set_origins[@]}" -eq 0 ] && [ "$clear_extra_origins" -eq 0 ]; then
   printf 'Model [%s]: ' "${current_model}"
   read -r model
-  printf 'Public hostname [%s]: ' "${current_public_hostname:-${tenant}.example.invalid}"
+  printf 'Public hostname [%s]: ' "${current_public_hostname}"
   read -r public_hostname
-  printf 'Image [%s]: ' "${current_image:-$DEFAULT_OPENCLAW_IMAGE}"
+  printf 'Image [%s]: ' "${current_image}"
   read -r image
   printf 'Gateway mode [%s]: ' "${current_gateway_mode}"
   read -r gateway_mode
@@ -191,8 +193,8 @@ if [ -t 0 ] && [ -z "$model$image$public_hostname$gateway_mode$ui_auth_mode" ] &
 fi
 
 model="${model:-$current_model}"
-public_hostname="${public_hostname:-${current_public_hostname:-${tenant}.example.invalid}}"
-image="${image:-${current_image:-$DEFAULT_OPENCLAW_IMAGE}}"
+public_hostname="${public_hostname:-$current_public_hostname}"
+image="${image:-$current_image}"
 gateway_mode="${gateway_mode:-$current_gateway_mode}"
 
 case "${ui_auth_mode:-}" in
@@ -304,24 +306,37 @@ chown "$tenant:$tenant" "$config_file"
 chmod 0640 "$config_file"
 restorecon_if_available "$config_file"
 
+image_changed=0
+public_hostname_changed=0
+quadlet_missing=0
+
+[ "$image" = "$current_image" ] || image_changed=1
+[ "$public_hostname" = "$current_public_hostname" ] || public_hostname_changed=1
+[ -f "$(account_quadlet_dir "$tenant")/openclaw.container" ] || quadlet_missing=1
+
 service_active=0
 if try_user_systemctl "$tenant" is-active openclaw.service; then
   service_active=1
 fi
 
 if [ "$restart_mode" = auto ]; then
-  if [ "$service_active" -eq 1 ]; then
+  if [ "$service_active" -eq 1 ] && [ "$image_changed" -eq 1 ]; then
     restart_mode=yes
   else
     restart_mode=no
   fi
 fi
 
-quadlet_args=(--tenant "$tenant" --force)
-if [ "$restart_mode" = yes ]; then
-  quadlet_args+=(--restart --validate)
+if [ "$quadlet_missing" -eq 1 ] || [ "$image_changed" -eq 1 ] || [ "$public_hostname_changed" -eq 1 ]; then
+  quadlet_args=(--tenant "$tenant" --force)
+  if [ "$restart_mode" = yes ]; then
+    quadlet_args+=(--restart --validate)
+  fi
+  /usr/local/libexec/myos/tenant-quadlet-install "${quadlet_args[@]}"
+elif [ "$restart_mode" = yes ]; then
+  restart_tenant_openclaw_service "$tenant"
+  /usr/local/libexec/myos/tenant-validate --tenant "$tenant" --require-running
 fi
-/usr/local/libexec/myos/tenant-quadlet-install "${quadlet_args[@]}"
 
 log "updated tenant configuration for ${tenant}"
 printf 'Dashboard: %s\n' "$(tenant_ui_url "$tenant")"

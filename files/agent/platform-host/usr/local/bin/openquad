@@ -99,13 +99,18 @@ require_runtime_installed() {
 }
 
 show_status() {
-  local enabled_state active_state current_container_state image version
+  local enabled_state active_state current_container_state image version config_state
 
   enabled_state="$(service_enabled_state)"
   active_state="$(service_active_state)"
   current_container_state="$(container_state)"
   image="$(container_image)"
   version="$(inner_openclaw_version || true)"
+  if openclaw_user_config_exists; then
+    config_state="present"
+  else
+    config_state="missing"
+  fi
 
   printf 'User: %s\n' "$(id -un)"
   printf 'Service: %s (%s)\n' "$service_name" "${active_state:-unknown}"
@@ -113,6 +118,7 @@ show_status() {
   printf 'Container: %s\n' "${current_container_state:-missing}"
   printf 'Image: %s\n' "${image:-unset}"
   printf 'OpenClaw: %s\n' "${version:-unavailable}"
+  printf 'Config: %s (%s)\n' "$config_state" "$(openclaw_user_config_file)"
   printf 'Quadlet: %s\n' "$quadlet_path"
   printf 'Config dir: %s\n' "$(openclaw_user_config_dir)"
   printf 'State dir: %s\n' "$(openclaw_user_state_dir)"
@@ -133,6 +139,8 @@ show_inspect() {
   printf 'container=%s\n' "$container_name"
   printf 'image=%s\n' "${image:-unset}"
   printf 'openclaw_version=%s\n' "${version:-unavailable}"
+  printf 'config_file=%s\n' "$(openclaw_user_config_file)"
+  printf 'configured=%s\n' "$(if openclaw_user_config_exists; then printf yes; else printf no; fi)"
   printf 'config_dir=%s\n' "$(openclaw_user_config_dir)"
   printf 'state_dir=%s\n' "$(openclaw_user_state_dir)"
   printf 'workspace_dir=%s\n' "$(openclaw_user_workspace_dir)"
@@ -235,6 +243,13 @@ run_doctor() {
     fi
   done
 
+  if openclaw_user_config_exists; then
+    ok "runtime config present: $(openclaw_user_config_file)"
+  else
+    warn_status "runtime config missing: $(openclaw_user_config_file)"
+    warn_status "finish first-run setup with: openclaw onboard"
+  fi
+
   if container_exists; then
     if podman exec "$container_name" sh -lc 'command -v openclaw' >/dev/null 2>&1; then
       ok "inner OpenClaw binary present"
@@ -269,6 +284,10 @@ case "$command_name" in
     current_user_systemctl daemon-reload
     current_user_systemctl reset-failed "$service_name" >/dev/null 2>&1 || true
     current_user_systemctl start "$service_name"
+    if ! openclaw_user_config_exists; then
+      printf 'openquad: runtime started in first-run mode.\n'
+      printf 'Next: openclaw onboard\n'
+    fi
     ;;
   stop)
     require_runtime_installed
