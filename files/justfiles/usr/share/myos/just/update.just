@@ -47,7 +47,31 @@ update-user:
       fi
     }
 
+    update_homebrew() {
+      local brew_bin brew_owner brew_prefix current_uid
+
+      brew_prefix="/home/linuxbrew/.linuxbrew"
+      brew_bin="${brew_prefix}/bin/brew"
+
+      if [ ! -x "$brew_bin" ]; then
+        return 0
+      fi
+
+      current_uid="$(id -u)"
+      brew_owner="$(stat -c '%u' "$brew_prefix" 2>/dev/null || true)"
+      if [ -n "$brew_owner" ] && [ "$current_uid" != "$brew_owner" ]; then
+        printf "Skipping Homebrew update: %s is owned by UID %s, current UID is %s.\n" \
+          "$brew_prefix" "$brew_owner" "$current_uid"
+        return 0
+      fi
+
+      eval "$("$brew_bin" shellenv)"
+      "$brew_bin" update
+      "$brew_bin" upgrade
+    }
+
     flatpak update --user -y
+    update_homebrew
     repair_distrobox_helper_paths
     distrobox-upgrade --all
 
