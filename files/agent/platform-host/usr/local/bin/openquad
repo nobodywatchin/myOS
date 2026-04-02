@@ -58,6 +58,26 @@ container_exists() {
   podman inspect "$container_name" >/dev/null 2>&1
 }
 
+container_running() {
+  [ "$(podman inspect -f '{{.State.Running}}' "$container_name" 2>/dev/null || true)" = true ]
+}
+
+verify_runtime_started() {
+  if ! try_current_user_systemctl is-active "$service_name"; then
+    printf 'openquad: %s did not reach the active state after startup.\n' "$service_name" >&2
+    printf 'Check it with: openquad doctor\n' >&2
+    printf 'Logs: openquad logs\n' >&2
+    exit 1
+  fi
+
+  if ! container_running; then
+    printf 'openquad: %s started but container %s is not running.\n' "$service_name" "$container_name" >&2
+    printf 'Check it with: openquad doctor\n' >&2
+    printf 'Logs: openquad logs\n' >&2
+    exit 1
+  fi
+}
+
 container_image() {
   podman inspect -f '{{.ImageName}}' "$container_name" 2>/dev/null || openclaw_user_image_from_quadlet 2>/dev/null || true
 }
@@ -285,6 +305,7 @@ case "$command_name" in
     current_user_systemctl daemon-reload
     current_user_systemctl reset-failed "$service_name" >/dev/null 2>&1 || true
     current_user_systemctl start "$service_name"
+    verify_runtime_started
     if ! openclaw_user_config_exists; then
       printf 'openquad: runtime started in first-run mode.\n'
       printf 'Next: openclaw onboard\n'
@@ -302,6 +323,7 @@ case "$command_name" in
     current_user_systemctl daemon-reload
     current_user_systemctl reset-failed "$service_name" >/dev/null 2>&1 || true
     current_user_systemctl restart "$service_name"
+    verify_runtime_started
     ;;
   status)
     require_runtime_installed
