@@ -44,7 +44,6 @@ recipes/
       workstation.yml
     alma10/
       core.yml
-      core-full.yml
       workstation.yml
     features/
       kubernetes-cli.yml
