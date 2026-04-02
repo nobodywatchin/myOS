@@ -48,7 +48,7 @@ update-user:
     }
 
     is_workstation_image() {
-      [ -f /etc/systemd/system/flatpak-hide-org-system.service ]
+      [ -f /etc/profile.d/flatpak-user-default.sh ]
     }
 
     update_homebrew() {

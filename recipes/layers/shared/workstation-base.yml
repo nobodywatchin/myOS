@@ -193,8 +193,3 @@ modules:
     files:
       - source: workstation/flatpak
         destination: /
-
-  - type: systemd
-    system:
-      enabled:
-        - flatpak-hide-org-system.service
