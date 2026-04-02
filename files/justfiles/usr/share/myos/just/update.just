@@ -47,8 +47,16 @@ update-user:
       fi
     }
 
+    is_workstation_image() {
+      [ -f /etc/systemd/system/flatpak-hide-org-system.service ]
+    }
+
     update_homebrew() {
       local brew_bin brew_owner brew_prefix current_uid
+
+      if ! is_workstation_image; then
+        return 0
+      fi
 
       brew_prefix="/home/linuxbrew/.linuxbrew"
       brew_bin="${brew_prefix}/bin/brew"
