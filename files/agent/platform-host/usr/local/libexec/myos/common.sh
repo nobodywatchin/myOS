@@ -531,6 +531,17 @@ restart_tenant_openclaw_service() {
   run_user_systemctl "$tenant" restart openclaw.service
 }
 
+tenant_reconcile_and_restart_openclaw() {
+  local tenant="$1"
+
+  validate_tenant "$tenant"
+  /usr/local/libexec/myos/tenant-validate --tenant "$tenant"
+  /usr/local/libexec/myos/tenant-quadlet-install --tenant "$tenant" --force --restart --validate
+  if [ "$(tenant_tailscale_exposure "$tenant")" = serve ]; then
+    /usr/local/libexec/myos/tenant-tailscale reconcile --tenant "$tenant"
+  fi
+}
+
 run_tenant_container_exec() {
   local tenant="$1"
   local container
