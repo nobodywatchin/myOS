@@ -62,30 +62,40 @@ fi
 # shellcheck disable=SC1090
 . "${TENANT_ENV_DIR}/ports.env"
 
-result="$(python3 - "$TENANT_CONFIG_FILE" "$OPENCLAW_PORT" <<'PYTHON'
+result="$(
+DEFAULT_TENANT_GATEWAY_MODE="$DEFAULT_TENANT_GATEWAY_MODE" \
+DEFAULT_TENANT_GATEWAY_RELOAD_MODE="$DEFAULT_TENANT_GATEWAY_RELOAD_MODE" \
+DEFAULT_TENANT_PRIMARY_MODEL="$DEFAULT_TENANT_PRIMARY_MODEL" \
+DEFAULT_TENANT_ALLOW_INSECURE_AUTH="$DEFAULT_TENANT_ALLOW_INSECURE_AUTH" \
+python3 - "$TENANT_CONFIG_FILE" "$OPENCLAW_PORT" <<'PYTHON'
 import json
+import os
 import sys
 from pathlib import Path
 
 output = Path(sys.argv[1])
 port = sys.argv[2]
+default_gateway_mode = os.environ['DEFAULT_TENANT_GATEWAY_MODE']
+default_reload_mode = os.environ['DEFAULT_TENANT_GATEWAY_RELOAD_MODE']
+default_primary_model = os.environ['DEFAULT_TENANT_PRIMARY_MODEL']
+default_allow_insecure_auth = os.environ['DEFAULT_TENANT_ALLOW_INSECURE_AUTH'].strip().lower() == 'true'
 default_origins = [
     f'http://127.0.0.1:{port}',
     f'http://localhost:{port}',
 ]
 default_config = {
     'gateway': {
-        'mode': 'local',
-        'reload': {'mode': 'hybrid'},
+        'mode': default_gateway_mode,
+        'reload': {'mode': default_reload_mode},
         'controlUi': {
             'allowedOrigins': default_origins,
-            'allowInsecureAuth': False,
+            'allowInsecureAuth': default_allow_insecure_auth,
         },
     },
     'agents': {
         'defaults': {
             'model': {
-                'primary': 'openrouter/anthropic/claude-sonnet-4-5',
+                'primary': default_primary_model,
             }
         }
     },
@@ -117,16 +127,16 @@ else:
         changed = True
 
     if not isinstance(gateway.get('mode'), str) or not gateway.get('mode', '').strip():
-        gateway['mode'] = 'local'
+        gateway['mode'] = default_gateway_mode
         changed = True
 
     reload_cfg = gateway.get('reload')
     if not isinstance(reload_cfg, dict):
-        reload_cfg = {'mode': 'hybrid'}
+        reload_cfg = {'mode': default_reload_mode}
         gateway['reload'] = reload_cfg
         changed = True
     elif not isinstance(reload_cfg.get('mode'), str) or not reload_cfg.get('mode', '').strip():
-        reload_cfg['mode'] = 'hybrid'
+        reload_cfg['mode'] = default_reload_mode
         changed = True
 
     control_ui = gateway.get('controlUi')
@@ -146,7 +156,7 @@ else:
     control_ui['allowedOrigins'] = origins
 
     if 'allowInsecureAuth' not in control_ui:
-        control_ui['allowInsecureAuth'] = False
+        control_ui['allowInsecureAuth'] = default_allow_insecure_auth
         changed = True
 
     agents = config.get('agents')
@@ -168,7 +178,7 @@ else:
         changed = True
 
     if not isinstance(model_cfg.get('primary'), str) or not model_cfg.get('primary', '').strip():
-        model_cfg['primary'] = 'openrouter/anthropic/claude-sonnet-4-5'
+        model_cfg['primary'] = default_primary_model
         changed = True
 
 if changed:
