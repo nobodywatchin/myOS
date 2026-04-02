@@ -59,13 +59,13 @@ Both Alma 9 and Alma 10 now expose the same build path:
 - `core-full-alma9-nvidia-legacy`
 - workstation images on top of `core-full-*`
 
-`core-full-*` is the single feature-complete base tier. It includes dedicated tenant tooling, persistent-user enrollment commands, Cockpit admin services, and OpenClaw platform-host scaffolding for both distros. That shared OpenClaw scaffolding now includes the host-side `openclaw` and `openquad` wrappers plus the baseline per-user rootless Quadlet template. Alma 10 adds RamaLama through a distro-specific full layer; Alma 9 keeps the same platform layout without the packaged RamaLama runtime.
+`core-full-*` is the single feature-complete base tier. It includes dedicated tenant tooling, persistent-user enrollment commands, Cockpit admin services, and OpenClaw platform-host scaffolding for both distros. That shared OpenClaw scaffolding now includes the host-side `openclaw` and `openquad` wrappers plus the baseline per-user rootless Quadlet template. Alma 10 carries RamaLama in its distro-specific core layer; Alma 9 keeps the same platform layout without the packaged RamaLama runtime.
 
 ## Layer Responsibilities
 
 - `recipes/layers/shared/core-base.yml`: earliest shared EL metadata hookup, base system, podman/runtime tooling, shared EL runtime payloads, shared admin/platform-host scaffolding, shared service defaults, and late branding
 - `modules/os-release-meta`: runs first from `core-base`, writing `/usr/share/myos/os-release-meta.env` plus the DNF `releasever_major` and `releasever_minor` vars
-- `recipes/layers/alma10/core-full.yml`: Alma 10-only RamaLama runtime package
+- `recipes/layers/alma10/core.yml`: Alma 10-specific core delta, including the packaged RamaLama runtime
 - `recipes/layers/shared/workstation-base.yml`: shared GNOME desktop baseline, workstation diagnostics, network/storage extras, and Flatpak defaults
 - `recipes/layers/shared/nvidia-common.yml`: NVIDIA repo enablement, container toolkit, and core boot args shared by both streams
 - `recipes/layers/shared/nvidia-open.yml`: open-kmod NVIDIA driver path for newer supported GPUs

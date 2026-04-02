@@ -6,3 +6,4 @@ modules:
       packages:
         - plocate
         - just
+        - ramalama
