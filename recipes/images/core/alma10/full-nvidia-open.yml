@@ -3,7 +3,7 @@
 name: core-full-alma10-nvidia-open
 description: Full myOS AlmaLinux 10 core with RamaLama, tenant tooling, shared admin services, and NVIDIA open kernel modules.
 base-image: quay.io/almalinuxorg/almalinux-bootc
-image-version: 10
+image-version: 10.1
 modules:
   - from-file: layers/shared/core-base.yml
   - from-file: layers/alma10/core.yml
