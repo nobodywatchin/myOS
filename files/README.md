@@ -35,7 +35,7 @@ Current usage in this repo is intentionally small:
 Shared workstation payloads layered by `shared/workstation-base.yml`.
 
 - `workstation/gnome/` for GNOME-session and desktop defaults
-- `workstation/flatpak/` for Flatpak UX helpers and related config
+- `workstation/flatpak/` for Flatpak UX helpers, policy, and the managed-vs-user Flatpak model (`workstation/flatpak/README.md`)
 
 ### `agent/`
 
