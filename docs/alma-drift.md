@@ -1,0 +1,231 @@
+# Alma 9 / Alma 10 Drift Ledger
+
+This document records the AlmaLinux 9 versus AlmaLinux 10 differences that are
+currently intentional.
+
+Default policy:
+
+- if a change is not forced by distro packaging, platform behavior, or driver
+  support, prefer the shared layers
+- if a difference is intentional, keep it explicit in `recipes/layers/alma9/`
+  or `recipes/layers/alma10/` and document it here
+
+The goal is to prevent two failure modes:
+
+1. well-meaning cleanup that removes necessary distro-specific behavior
+2. lazy drift that should have stayed in a shared layer
+
+## Shared baseline that should stay aligned
+
+These are current cross-distro invariants unless a wider design review says
+otherwise:
+
+- `core-full-*` is the single feature-complete core tier
+- `recipes/layers/shared/core-base.yml` is the shared full-core substrate
+- `recipes/layers/shared/workstation-base.yml` is the shared workstation add-on
+- both distros keep the same dedicated tenant-account model
+- both distros keep the same persistent-user enrollment model
+- workstations build from the published `core-full-*` images rather than from
+  AlmaLinux BootC directly
+- myOS remains AI-ready across the core image family; shared ROCm/AI payloads
+  stay in the shared core substrate unless there is a deliberate product change
+- NVIDIA open-stream support stays in the shared `nvidia-open` path for distros
+  that support it
+
+## Current intentional drift
+
+## Core layer
+
+### RamaLama packaging
+
+- **Alma 9:** no packaged RamaLama runtime in `recipes/layers/alma9/core.yml`
+- **Alma 10:** installs `ramalama` in `recipes/layers/alma10/core.yml`
+
+Why it exists:
+
+- Alma 10 currently has the clean packaged runtime path
+- Alma 9 keeps the same surrounding platform layout without pretending the
+  package exists there
+
+Current stance:
+
+- intentional and accepted
+- do not invent a fake Alma 9 parity story without a real source of packages
+
+### `just` acquisition path
+
+- **Alma 9:** uses `scripts/just-el9.sh`
+- **Alma 10:** installs `just` directly from DNF
+
+Why it exists:
+
+- packaging availability differs
+
+Current stance:
+
+- intentional packaging drift only
+- the operator surface should stay the same even if the package source differs
+
+### Locate implementation
+
+- **Alma 9:** installs `mlocate`
+- **Alma 10:** installs `plocate`
+
+Why it exists:
+
+- distro package split differs
+
+Current stance:
+
+- intentional low-level packaging drift
+- no product or UX meaning should be attached to it
+
+### EL9 compatibility shim
+
+- **Alma 9:** creates `/usr/bin/dnf4 -> /usr/bin/dnf`
+- **Alma 10:** no equivalent shim
+
+Why it exists:
+
+- Alma 9 compatibility expectations still exist in some tooling and muscle
+  memory
+
+Current stance:
+
+- keep only while it solves a real EL9 compatibility problem
+- do not copy it into Alma 10 just for symmetry
+
+## Workstation layer
+
+### GNOME stack divergence
+
+- **Alma 9:** keeps a smaller delta around the distro workstation base and uses
+  the `Workstation product core` group plus a focused package list
+- **Alma 10:** uses the `jreilly1821/c10s-gnome` COPR to replace core GNOME
+  packages and carries a larger package delta
+
+Why it exists:
+
+- Alma 10 GNOME 48 packaging reality diverged from Alma 9
+
+Current stance:
+
+- accepted compromise for now
+- do not try to force shared parity by moving the Alma 10 GNOME replacement path
+  into shared layers
+- do not assume the bigger Alma 10 delta means the architecture should split
+  further by default
+
+### Default editor and image-viewer source
+
+- **Alma 9:** adds `org.gnome.TextEditor` and `org.gnome.Loupe` as managed
+  system Flatpaks
+- **Alma 10:** installs `gnome-text-editor` and `loupe` as RPMs
+
+Why it exists:
+
+- packaging and desktop-stack behavior differ
+
+Current stance:
+
+- intentional workstation UX parity via different packaging sources
+- the user-facing goal is similar; the implementation is not
+
+### GNOME extensions set
+
+- **Alma 9:** ships one GNOME extension set
+- **Alma 10:** ships a different, larger GNOME extension set
+
+Why it exists:
+
+- extension compatibility and desktop behavior differ with the GNOME stack
+
+Current stance:
+
+- intentional
+- treat extension IDs as distro- and shell-version-sensitive, not as shared by default
+
+### Extra workstation kernel arguments
+
+- **Alma 9:** no workstation-only kargs in the distro delta
+- **Alma 10:** adds workstation kargs for sleep and legacy AMD GPU handling
+
+Why it exists:
+
+- Alma 10 workstation support currently needs that platform-specific behavior
+
+Current stance:
+
+- intentional until proven unnecessary
+- if a karg becomes required on both distros, move it into the shared layer
+
+## NVIDIA layer
+
+### Legacy proprietary stream
+
+- **Alma 9:** has `recipes/layers/alma9/nvidia-legacy.yml`
+- **Alma 10:** does not currently have a legacy proprietary stream lane
+
+Why it exists:
+
+- older supported GPUs still require the proprietary driver branch and current
+  repo policy keeps that path on Alma 9
+
+Current stance:
+
+- intentional and important
+- Alma 9 legacy must stay pinned to `nvidia-driver:580`
+- Alma 9 legacy must resolve to prebuilt proprietary kmods, not DKMS
+- changes here require rerunning `scripts/verify-alma9-nvidia-legacy.ps1`
+
+### Open stream
+
+- **Alma 9 and Alma 10:** share `recipes/layers/shared/nvidia-open.yml`
+
+Why it matters:
+
+- this is the preferred shared lane for newer supported GPUs
+
+Current stance:
+
+- keep shared unless vendor or distro packaging forces a split
+
+## What should not be “fixed” casually
+
+Do not treat these as obvious cleanup targets without a wider design review:
+
+- RamaLama only being packaged on Alma 10
+- Alma 10 GNOME COPR replacement path
+- Alma 9 legacy NVIDIA being proprietary and pinned to `580`
+- Alma 9 using a `just` bootstrap script while Alma 10 installs the package
+- Alma 9 and Alma 10 using different packaging sources for some workstation apps
+
+They may be ugly, but they are current intentional ugly.
+
+## When to add new drift
+
+Add a new Alma-specific delta only when at least one of these is true:
+
+- the distro package set is genuinely different
+- the service or binary does not exist on both distros
+- GNOME, kernel, or driver behavior differs in a way that changes runtime
+  behavior
+- the vendor support matrix differs by distro
+
+If none of those apply, the default answer should be:
+
+- put the change in `recipes/layers/shared/`
+
+## Review questions for future changes
+
+When adding or editing Alma-specific behavior, answer these questions in the
+review:
+
+1. Why can this not live in a shared layer?
+2. Is this packaging drift, runtime drift, or policy drift?
+3. Is the divergence temporary or open-ended?
+4. What should remain aligned across both distros despite this change?
+5. Does `docs/image-architecture.md`, `docs/runtime-contracts.md`, or this file
+   need an update?
+
+If the answer to question 1 is weak, the change probably belongs in shared.
