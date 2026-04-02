@@ -124,7 +124,22 @@ myos persistent-user-set-owner --user alice
 myos persistent-user-install-quadlet --file ./my-api.container --enable
 ```
 
-Generic `myos` commands live in the shared core. Tenant commands and persistent-user commands are layered into the `core-full-*` and workstation images for both distros.
+For an owner-friendly hosted OpenClaw service that stays on the dedicated tenant
+path and is easy to expose over Tailscale, use the wrapper surface:
+
+```bash
+myos openclaw-host enable --user alice --model openrouter/anthropic/claude-sonnet-4-5
+myos openclaw-host secret-set --key OPENROUTER_API_KEY
+myos openclaw-host start
+myos openclaw-host tailscale enable
+myos openclaw-host qr
+```
+
+That wrapper assigns the selected login user through the persistent-user owner
+role, but it keeps the remotely exposed service on the dedicated `owner-openclaw`
+tenant path instead of trying to repurpose the per-user `openquad` runtime.
+
+Generic `myos` commands live in the shared core. Tenant commands, persistent-user commands, and the owner-host wrapper are layered into the `core-full-*` and workstation images for both distros.
 
 # Adding Images
 

@@ -27,6 +27,7 @@ jobs:
           python3 -m json.tool files/agent/platform-host/etc/myos/templates/apps/openclaw/config/openclaw.json.example >/dev/null
           grep -q "import '/usr/share/myos/just/rebase.just'" files/justfiles/usr/share/myos/just/index.just
           grep -q "import '/usr/share/myos/just/tenant.just'" files/agent/justfiles/usr/share/myos/just/index.just
+          grep -q "import '/usr/share/myos/just/openclaw-host.just'" files/agent/justfiles/usr/share/myos/just/index.just
           grep -q '^tenant-list ' files/agent/justfiles/usr/share/myos/just/tenant.just
           grep -q '^tenant-dashboard ' files/agent/justfiles/usr/share/myos/just/tenant.just
           grep -q '^tenant-config ' files/agent/justfiles/usr/share/myos/just/tenant.just
@@ -34,6 +35,7 @@ jobs:
           grep -q '^tenant-openclaw ' files/agent/justfiles/usr/share/myos/just/tenant.just
           grep -q '^tenant-optimize-tokens ' files/agent/justfiles/usr/share/myos/just/tenant.just
           grep -q '^tenant-tailscale ' files/agent/justfiles/usr/share/myos/just/tenant.just
+          grep -q '^openclaw-host ' files/agent/justfiles/usr/share/myos/just/openclaw-host.just
           bash -n modules/os-release-meta/os-release-meta.sh
 
   validate-alma9-nvidia-legacy:

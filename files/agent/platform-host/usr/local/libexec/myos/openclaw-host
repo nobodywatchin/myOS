@@ -1,0 +1,269 @@
+#!/usr/bin/env bash
+set -Eeuo pipefail
+
+COMMON_SH="${MYOS_COMMON_SH:-/usr/local/libexec/myos/common.sh}"
+. "$COMMON_SH"
+
+usage() {
+  cat <<'USAGE'
+Usage: openclaw-host <command> [options]
+
+Owner-friendly wrapper around the dedicated tenant-hosted OpenClaw service.
+This keeps remote pairing and Tailscale on the tenant path while recording the
+chosen login user through the persistent-user owner role.
+
+Commands:
+  enable --user NAME [--start] [tenant-configure options]
+  status [--show-token]
+  start
+  stop
+  restart
+  dashboard [--no-open]
+  configure [tenant-configure options]
+  config [tenant-config args]
+  models [tenant-models args]
+  qr [openclaw qr args]
+  tailscale [tenant-tailscale args]
+  secret-set [tenant-secret-set args]
+  secret-import [tenant-secret-import args]
+  devices [openclaw devices args]
+  openclaw -- <openclaw args...>
+USAGE
+}
+
+owner_tenant="$(openclaw_owner_tenant_name)"
+
+current_owner_user() {
+  persistent_user_owner 2>/dev/null || true
+}
+
+owner_host_enabled() {
+  local owner
+
+  owner="$(current_owner_user)"
+  [ -n "$owner" ] || return 1
+  getent passwd "$owner_tenant" >/dev/null 2>&1
+}
+
+require_owner_host_enabled() {
+  local owner
+
+  owner="$(current_owner_user)"
+  [ -n "$owner" ] || die "openclaw-host is not enabled yet; run: myos openclaw-host enable --user <login-user>"
+  getent passwd "$owner_tenant" >/dev/null 2>&1 || die "owner-host tenant ${owner_tenant} is missing; run: myos openclaw-host enable --user ${owner}"
+  printf '%s\n' "$owner"
+}
+
+print_owner_header() {
+  local owner="$1"
+
+  printf 'Owner user: %s\n' "$owner"
+  printf 'Hosted tenant: %s\n' "$owner_tenant"
+}
+
+do_enable() {
+  local user=""
+  local start_after=0
+  local -a configure_args
+  local -a create_args
+
+  while [ "$#" -gt 0 ]; do
+    case "$1" in
+      --user)
+        user="${2:-}"
+        shift 2
+        ;;
+      --start)
+        start_after=1
+        shift
+        ;;
+      --model|--public-hostname|--image|--gateway-mode|--ui-auth|--set-origin)
+        configure_args+=("$1" "${2:-}")
+        shift 2
+        ;;
+      --clear-extra-origins)
+        configure_args+=("$1")
+        shift
+        ;;
+      -h|--help)
+        usage
+        exit 0
+        ;;
+      *)
+        die "unknown argument for enable: $1"
+        ;;
+    esac
+  done
+
+  if [ -z "$user" ] && [ -t 0 ]; then
+    printf 'Owner login user: '
+    read -r user
+  fi
+
+  require_root
+  require_existing_account "$user"
+
+  /usr/local/libexec/myos/persistent-user-set-owner --user "$user"
+
+  create_args=(--tenant "$owner_tenant")
+  if [ "$start_after" -eq 1 ]; then
+    create_args+=(--start)
+  fi
+  if [ "${#configure_args[@]}" -gt 0 ]; then
+    create_args+=("${configure_args[@]}")
+  fi
+
+  /usr/local/libexec/myos/tenant-create "${create_args[@]}"
+  log "owner-hosted OpenClaw is assigned to ${user} through tenant ${owner_tenant}"
+}
+
+do_status() {
+  local owner
+
+  require_root
+  owner="$(require_owner_host_enabled)"
+  print_owner_header "$owner"
+  /usr/local/libexec/myos/tenant-status --tenant "$owner_tenant" "$@"
+}
+
+do_start() {
+  require_root
+  require_owner_host_enabled >/dev/null
+  /usr/local/libexec/myos/tenant-start --tenant "$owner_tenant"
+}
+
+do_stop() {
+  require_root
+  require_owner_host_enabled >/dev/null
+  /usr/local/libexec/myos/tenant-stop --tenant "$owner_tenant"
+}
+
+do_restart() {
+  require_root
+  require_owner_host_enabled >/dev/null
+  /usr/local/libexec/myos/tenant-restart --tenant "$owner_tenant"
+}
+
+do_dashboard() {
+  require_root
+  require_owner_host_enabled >/dev/null
+  /usr/local/libexec/myos/tenant-dashboard --tenant "$owner_tenant" "$@"
+}
+
+do_configure() {
+  require_root
+  require_owner_host_enabled >/dev/null
+  /usr/local/libexec/myos/tenant-configure --tenant "$owner_tenant" "$@"
+}
+
+do_config() {
+  require_root
+  require_owner_host_enabled >/dev/null
+  /usr/local/libexec/myos/tenant-config --tenant "$owner_tenant" "$@"
+}
+
+do_models() {
+  require_root
+  require_owner_host_enabled >/dev/null
+  /usr/local/libexec/myos/tenant-models --tenant "$owner_tenant" "$@"
+}
+
+do_qr() {
+  require_root
+  require_owner_host_enabled >/dev/null
+  /usr/local/libexec/myos/tenant-openclaw --tenant "$owner_tenant" -- qr "$@"
+}
+
+do_tailscale() {
+  require_root
+  require_owner_host_enabled >/dev/null
+  /usr/local/libexec/myos/tenant-tailscale "$@" --tenant "$owner_tenant"
+}
+
+do_secret_set() {
+  require_root
+  require_owner_host_enabled >/dev/null
+  /usr/local/libexec/myos/tenant-secret-set --tenant "$owner_tenant" "$@"
+}
+
+do_secret_import() {
+  require_root
+  require_owner_host_enabled >/dev/null
+  /usr/local/libexec/myos/tenant-secret-import --tenant "$owner_tenant" "$@"
+}
+
+do_devices() {
+  require_root
+  require_owner_host_enabled >/dev/null
+  [ "$#" -gt 0 ] || die "provide an OpenClaw devices command (for example: list or approve <requestId>)"
+  /usr/local/libexec/myos/tenant-openclaw --tenant "$owner_tenant" -- devices "$@"
+}
+
+do_openclaw() {
+  require_root
+  require_owner_host_enabled >/dev/null
+
+  if [ "${1:-}" = -- ]; then
+    shift
+  fi
+
+  [ "$#" -gt 0 ] || die "provide an OpenClaw command after openclaw --"
+  /usr/local/libexec/myos/tenant-openclaw --tenant "$owner_tenant" -- "$@"
+}
+
+subcommand="${1:-}"
+[ "$#" -gt 0 ] && shift || true
+
+case "$subcommand" in
+  enable)
+    do_enable "$@"
+    ;;
+  status)
+    do_status "$@"
+    ;;
+  start)
+    do_start "$@"
+    ;;
+  stop)
+    do_stop "$@"
+    ;;
+  restart)
+    do_restart "$@"
+    ;;
+  dashboard)
+    do_dashboard "$@"
+    ;;
+  configure)
+    do_configure "$@"
+    ;;
+  config)
+    do_config "$@"
+    ;;
+  models)
+    do_models "$@"
+    ;;
+  qr)
+    do_qr "$@"
+    ;;
+  tailscale)
+    do_tailscale "$@"
+    ;;
+  secret-set)
+    do_secret_set "$@"
+    ;;
+  secret-import)
+    do_secret_import "$@"
+    ;;
+  devices)
+    do_devices "$@"
+    ;;
+  openclaw)
+    do_openclaw "$@"
+    ;;
+  ""|-h|--help|help)
+    usage
+    ;;
+  *)
+    die "unsupported openclaw-host command: ${subcommand}"
+    ;;
+esac

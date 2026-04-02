@@ -93,6 +93,42 @@ What enrollment does:
 - reloads the user's systemd manager and enables any service-capable units that came from those managed buckets
 - records the managed files and units under `/etc/myos/persistent-users/`
 
+## Owner-Hosted OpenClaw Wrapper
+
+For remote device pairing, Tailscale Serve, and a stable hosted dashboard, myOS
+now exposes an owner-friendly wrapper over the dedicated tenant path:
+
+```bash
+myos openclaw-host enable --user alice
+myos openclaw-host secret-set --key OPENROUTER_API_KEY
+myos openclaw-host start
+myos openclaw-host tailscale enable
+myos openclaw-host qr
+```
+
+That wrapper is intentionally not a third runtime plane.
+
+- It records the selected login user through the existing persistent-user owner role.
+- It provisions and manages a fixed dedicated tenant service account for the hosted gateway.
+- It reuses the tenant-side localhost port publication, host-managed Tailscale Serve integration, and pairing URL wiring.
+- It does not change the per-user `openquad` contract or expose the per-user runtime directly.
+
+Use this wrapper when you want a machine's primary remotely reachable OpenClaw
+service to stay easy to pair and easy to expose over Tailscale. Use the normal
+`openquad` plus `openclaw` workflow when you want a login user's own separate
+local per-user runtime.
+
+Quick smoke test:
+
+```bash
+myos openclaw-host enable --user alice --model openrouter/anthropic/claude-sonnet-4-5
+myos openclaw-host secret-set --key OPENROUTER_API_KEY
+myos openclaw-host start
+myos openclaw-host status
+myos openclaw-host tailscale enable
+myos openclaw-host qr
+```
+
 ## User Self-Service Persistent Quadlets
 
 The supported self-service location is the standard rootless Quadlet path:
@@ -134,10 +170,16 @@ service or Quadlet.
 
 ## OpenClaw Workflow
 
-Admin setup:
+Local per-user runtime setup:
 
 ```bash
 myos persistent-user-enroll --user alice
+```
+
+Remote-friendly hosted setup:
+
+```bash
+myos openclaw-host enable --user alice
 ```
 
 User workflow:
@@ -180,3 +222,4 @@ That means:
 7. On an enrolled user account, run `openquad start`, confirm `systemctl --user status openclaw.service` is active, then verify `openclaw chat` runs without starting the runtime implicitly.
 8. On any image, confirm `systemctl is-enabled bootc-fetch-apply-updates.timer` reports disabled and that OS updates still stage correctly through `myos update-system`.
 9. For the tenant path, run `myos tenant-validate --tenant <name>` to verify the existing dedicated OpenClaw tenant flow still renders Quadlets and uses the persistent/background plane.
+10. For the owner-host wrapper, run `myos openclaw-host enable --user alice`, then confirm `myos openclaw-host status` reports the fixed hosted tenant and that `myos openclaw-host tailscale status` proxies through to the tenant Tailscale state.

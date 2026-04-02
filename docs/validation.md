@@ -61,6 +61,7 @@ current command model:
 ```bash
 grep -q "import '/usr/share/myos/just/rebase.just'" files/justfiles/usr/share/myos/just/index.just
 grep -q "import '/usr/share/myos/just/tenant.just'" files/agent/justfiles/usr/share/myos/just/index.just
+grep -q "import '/usr/share/myos/just/openclaw-host.just'" files/agent/justfiles/usr/share/myos/just/index.just
 grep -q '^tenant-list ' files/agent/justfiles/usr/share/myos/just/tenant.just
 grep -q '^tenant-dashboard ' files/agent/justfiles/usr/share/myos/just/tenant.just
 grep -q '^tenant-config ' files/agent/justfiles/usr/share/myos/just/tenant.just
@@ -68,6 +69,7 @@ grep -q '^tenant-models ' files/agent/justfiles/usr/share/myos/just/tenant.just
 grep -q '^tenant-openclaw ' files/agent/justfiles/usr/share/myos/just/tenant.just
 grep -q '^tenant-optimize-tokens ' files/agent/justfiles/usr/share/myos/just/tenant.just
 grep -q '^tenant-tailscale ' files/agent/justfiles/usr/share/myos/just/tenant.just
+grep -q '^openclaw-host ' files/agent/justfiles/usr/share/myos/just/openclaw-host.just
 ```
 
 ### Optional local parse checks
@@ -209,6 +211,35 @@ If the runtime is intentionally not started yet, at least run:
 ```bash
 myos tenant-validate --tenant demo
 ```
+
+### Owner-host wrapper changes
+
+On a booted image or host, validate the owner-friendly hosted wrapper against the
+fixed dedicated tenant path.
+
+Recommended flow:
+
+```bash
+myos openclaw-host enable --user alice --model openrouter/anthropic/claude-sonnet-4-5
+myos openclaw-host secret-set --key OPENROUTER_API_KEY --value '...'
+myos openclaw-host start
+myos openclaw-host status
+myos openclaw-host tailscale enable
+myos openclaw-host qr
+```
+
+What to inspect:
+
+- `myos persistent-user-validate --user alice` reports that the owner role is assigned to `alice`
+- tenant user `owner-openclaw` exists and remains a dedicated managed service account
+- `/srv/tenants/owner-openclaw/` contains the expected config, state, storage, and secret paths
+- `myos openclaw-host status` reports `Owner user: alice` and `Hosted tenant: owner-openclaw`
+- `openclaw.service` is active for the `owner-openclaw` tenant user after `myos openclaw-host start`
+- `myos openclaw-host tailscale enable` configures host-managed Serve against the hosted tenant loopback port rather than the per-user `openquad` runtime
+- `myos openclaw-host qr` produces the pairing QR through the hosted tenant context
+
+If the model secret is not available yet, stop after `secret-set` and record that
+runtime validation is still pending.
 
 ### Persistent-user runtime changes
 
