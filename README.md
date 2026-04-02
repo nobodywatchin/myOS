@@ -10,11 +10,8 @@ myOS is an opinionated BootC image ecosystem organized around a small shared cor
 
 # Image Progression
 
-Both Alma 9 and 10 follow the same product path:
+Both Alma 9 and 10 now follow one core tier plus workstation products:
 
-- `core-minimal-alma9` / `core-minimal-alma10`
-- `core-minimal-alma9-nvidia-open` / `core-minimal-alma10-nvidia-open`
-- `core-minimal-alma9-nvidia-legacy`
 - `core-full-alma9` / `core-full-alma10`
 - `core-full-alma9-nvidia-open` / `core-full-alma10-nvidia-open`
 - `core-full-alma9-nvidia-legacy`
@@ -78,8 +75,9 @@ files/
 ```
 
 - `recipes/images` contains only buildable images.
-- `recipes/layers/shared` contains the small shared building blocks: `core-base`, `core-full`, `workstation-base`, `nvidia-common`, `nvidia-open`, and `nvidia-workstation`.
+- `recipes/layers/shared` contains the small shared building blocks: `core-base`, `workstation-base`, `nvidia-common`, `nvidia-open`, and `nvidia-workstation`.
 - `recipes/layers/alma9` and `recipes/layers/alma10` keep version differences explicit without spreading them across lots of tiny files.
+- `modules/os-release-meta` runs first from `core-base`, before branding, and is the shared EL metadata source of truth. `core-base` now carries the shared EL Tailscale setup, common runtime payloads, and shared admin/platform-host scaffolding, while `workstation-base` carries the shared GNOME desktop baseline in addition to the broader workstation tooling and Flatpak defaults.
 - `files/base`, `files/workstation`, and `files/agent` mirror those concerns in the payloads.
 
 Kubernetes is still available as the opt-in feature layer at [`recipes/layers/features/kubernetes-cli.yml`](recipes/layers/features/kubernetes-cli.yml).
@@ -129,7 +127,7 @@ Generic `myos` commands live in the shared core. Tenant commands and persistent-
 
 # Adding Images
 
-1. Start from the smallest core image that matches the image's job.
+1. Start from `core-full-*`, which is now the single published core tier.
 2. Use `core-full-*` when the image needs tenant or OpenClaw host features.
 3. Treat RamaLama as an Alma 10 full-core add-on until Alma 9 has a supported package source.
 4. Use `nvidia-open.yml` for shared core/server NVIDIA support, `alma9/nvidia-legacy.yml` only for the EL9 proprietary R580 older-GPU AI path, and `nvidia-workstation.yml` only for workstation-specific NVIDIA extras.

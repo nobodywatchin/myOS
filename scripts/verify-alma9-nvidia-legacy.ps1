@@ -41,7 +41,6 @@ $driverStream = "580"
 $transactions = @(
     [PSCustomObject]@{
         Images = @(
-            "core-minimal-alma9-nvidia-legacy",
             "core-full-alma9-nvidia-legacy"
         )
         Packages = @(

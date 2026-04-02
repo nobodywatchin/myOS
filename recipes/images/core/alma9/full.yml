@@ -7,6 +7,5 @@ image-version: 9
 modules:
   - from-file: layers/shared/core-base.yml
   - from-file: layers/alma9/core.yml
-  - from-file: layers/shared/core-full.yml
   - type: initramfs
   - type: signing

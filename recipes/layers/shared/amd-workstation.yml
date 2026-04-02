@@ -1,8 +1,0 @@
----
-modules:
-  - type: dnf
-    install:
-      install-weak-deps: false
-      skip-broken: true
-      packages:
-        - rocm-developer-tools

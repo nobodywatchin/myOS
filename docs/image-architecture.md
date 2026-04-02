@@ -6,7 +6,7 @@ The repo is intentionally flatter now:
 
 - shared layers for what really is shared
 - one small layer set per Alma version
-- two core tiers per distro: `minimal` and `full`
+- one core tier per distro: `full`
 - NVIDIA split into explicit `open` and `legacy` streams, plus workstation-only extras
 
 ## Repo Tree
@@ -16,15 +16,10 @@ recipes/
   images/
     core/
       alma9/
-        minimal.yml
-        minimal-nvidia-open.yml
-        minimal-nvidia-legacy.yml
         full.yml
         full-nvidia-open.yml
         full-nvidia-legacy.yml
       alma10/
-        minimal.yml
-        minimal-nvidia-open.yml
         full.yml
         full-nvidia-open.yml
     workstation/
@@ -38,7 +33,6 @@ recipes/
   layers/
     shared/
       core-base.yml
-      core-full.yml
       workstation-base.yml
       nvidia-common.yml
       nvidia-open.yml
@@ -59,9 +53,6 @@ recipes/
 
 Both Alma 9 and Alma 10 now expose the same build path:
 
-- `core-minimal-*`
-- `core-minimal-*-nvidia-open`
-- `core-minimal-alma9-nvidia-legacy`
 - `core-full-*`
 - `core-full-*-nvidia-open`
 - `core-full-alma9-nvidia-legacy`
@@ -71,16 +62,16 @@ Both Alma 9 and Alma 10 now expose the same build path:
 
 ## Layer Responsibilities
 
-- `recipes/layers/shared/core-base.yml`: base system, podman/runtime tooling, branding, shared service defaults, and the disabled stock bootc auto-apply timer
-- `recipes/layers/shared/core-full.yml`: shared full-core admin services, dedicated tenant CLI, persistent-user enrollment tooling, and OpenClaw platform-host scaffolding
+- `recipes/layers/shared/core-base.yml`: earliest shared EL metadata hookup, base system, podman/runtime tooling, shared EL runtime payloads, shared admin/platform-host scaffolding, shared service defaults, and late branding
+- `modules/os-release-meta`: runs first from `core-base`, writing `/usr/share/myos/os-release-meta.env` plus the DNF `releasever_major` and `releasever_minor` vars
 - `recipes/layers/alma10/core-full.yml`: Alma 10-only RamaLama runtime package
-- `recipes/layers/shared/workstation-base.yml`: shared workstation diagnostics, network/storage extras, and Flatpak defaults
+- `recipes/layers/shared/workstation-base.yml`: shared GNOME desktop baseline, workstation diagnostics, network/storage extras, and Flatpak defaults
 - `recipes/layers/shared/nvidia-common.yml`: NVIDIA repo enablement, container toolkit, and core boot args shared by both streams
 - `recipes/layers/shared/nvidia-open.yml`: open-kmod NVIDIA driver path for newer supported GPUs
 - `recipes/layers/alma9/nvidia-legacy.yml`: Alma 9 proprietary older-GPU AI path pinned to `nvidia-driver:580`, using `module enable` plus package install so EL9 resolves kernel-version-specific prebuilt `kmod-nvidia-*` providers instead of DKMS
 - `recipes/layers/shared/nvidia-workstation.yml`: workstation-only NVIDIA userspace extras and display-oriented kernel args
-- `recipes/layers/alma9/core.yml` and `recipes/layers/alma10/core.yml`: distro-specific package, tailscale, and just setup
-- `recipes/layers/alma9/workstation.yml` and `recipes/layers/alma10/workstation.yml`: distro-specific workstation packaging
+- `recipes/layers/alma9/core.yml` and `recipes/layers/alma10/core.yml`: distro-specific core deltas only
+- `recipes/layers/alma9/workstation.yml` and `recipes/layers/alma10/workstation.yml`: distro-specific workstation deltas on top of the shared workstation base
 
 ## Build Flow
 
@@ -111,14 +102,9 @@ Workstation short-name mapping is now:
 
 Current core image set:
 
-- `core-minimal-alma9`
-- `core-minimal-alma9-nvidia-open`
-- `core-minimal-alma9-nvidia-legacy`
 - `core-full-alma9`
 - `core-full-alma9-nvidia-open`
 - `core-full-alma9-nvidia-legacy`
-- `core-minimal-alma10`
-- `core-minimal-alma10-nvidia-open`
 - `core-full-alma10`
 - `core-full-alma10-nvidia-open`
 
@@ -149,4 +135,4 @@ Manual review still recommended for:
 
 - whether Alma 9 should eventually gain an alternate AI runtime source or remain model-host-runtime-free
 - whether the published `latest` core tags are the right workstation base tags for your PR workflow expectations
-- whether future headless/server products should start from `core-minimal-*` or `core-full-*`
+- whether future headless/server products should stay on `core-full-*` or eventually reintroduce a slimmer core tier

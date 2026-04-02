@@ -1,35 +1,8 @@
 ---
 modules:
-  - type: containerfile
-    snippets:
-      - >-
-        RUN . /etc/os-release; major="${VERSION_ID%%.*}"; minor="${VERSION_ID#*.}";           [ "${minor}" = "${VERSION_ID}" ] && minor=0;           install -d /etc/dnf/vars;           printf '%s\n' "${major}" > /etc/dnf/vars/releasever_major;           printf '%s\n' "${minor}" > /etc/dnf/vars/releasever_minor
-
   - type: dnf
     install:
       install-weak-deps: false
       packages:
         - plocate
         - just
-
-  - type: containerfile
-    snippets:
-      - RUN dnf config-manager --add-repo https://pkgs.tailscale.com/stable/rhel/10/tailscale.repo
-      - RUN dnf config-manager --set-disabled "tailscale-stable"
-      - RUN dnf -y --enablerepo "tailscale-stable" install tailscale
-
-  - type: systemd
-    system:
-      enabled:
-        - tailscaled.service
-
-  - type: files
-    files:
-      - source: base/runtime
-        destination: /
-      - source: justfiles
-        destination: /
-
-  - type: containerfile
-    snippets:
-      - RUN chmod 0755 /usr/local/bin/myos

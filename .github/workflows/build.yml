@@ -34,6 +34,7 @@ jobs:
           grep -q '^tenant-openclaw ' files/agent/justfiles/usr/share/myos/just/tenant.just
           grep -q '^tenant-optimize-tokens ' files/agent/justfiles/usr/share/myos/just/tenant.just
           grep -q '^tenant-tailscale ' files/agent/justfiles/usr/share/myos/just/tenant.just
+          bash -n modules/os-release-meta/os-release-meta.sh
 
   validate-alma9-nvidia-legacy:
     name: Validate Alma 9 NVIDIA Legacy
@@ -43,42 +44,6 @@ jobs:
       - name: Verify Alma 9 NVIDIA legacy stream
         shell: pwsh
         run: ./scripts/verify-alma9-nvidia-legacy.ps1
-
-  minimal-core-images:
-    name: Minimal Core Images (${{ matrix.name }})
-    needs:
-      - validate-tenant-cli
-      - validate-alma9-nvidia-legacy
-    runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      packages: write
-      id-token: write
-    strategy:
-      fail-fast: false
-      matrix:
-        include:
-          - name: core-minimal-alma9
-            recipe: /images/core/alma9/minimal.yml
-          - name: core-minimal-alma9-nvidia-open
-            recipe: /images/core/alma9/minimal-nvidia-open.yml
-          - name: core-minimal-alma9-nvidia-legacy
-            recipe: /images/core/alma9/minimal-nvidia-legacy.yml
-          - name: core-minimal-alma10
-            recipe: /images/core/alma10/minimal.yml
-          - name: core-minimal-alma10-nvidia-open
-            recipe: /images/core/alma10/minimal-nvidia-open.yml
-    steps:
-      - name: Build minimal core image
-        uses: blue-build/github-action@v1.11
-        with:
-          recipe: ${{ matrix.recipe }}
-          cosign_private_key: ${{ secrets.SIGNING_SECRET }}
-          registry_token: ${{ github.token }}
-          pr_event_number: ${{ github.event.number }}
-          rechunk: true
-          maximize_build_space: true
-
   full-core-images:
     name: Full Core Images (${{ matrix.name }})
     needs:
