@@ -167,7 +167,7 @@ else
   check_warn "linger is not enabled for ${tenant}"
 fi
 
-if try_user_systemctl "$tenant" show-environment; then
+if tenant_systemd_reachable "$tenant"; then
   pass "tenant user systemd is reachable"
 else
   check_fail "tenant user systemd is not reachable"
@@ -180,7 +180,7 @@ if command -v getenforce >/dev/null 2>&1 && [ "$(getenforce)" = Enforcing ]; the
 fi
 
 service_active=0
-if try_user_systemctl "$tenant" is-active openclaw.service; then
+if tenant_service_active "$tenant"; then
   service_active=1
   pass "openclaw.service is active"
 else
@@ -192,9 +192,9 @@ else
 fi
 
 if [ "$service_active" -eq 1 ]; then
-  if run_tenant_podman "$tenant" inspect "$container_name" >/dev/null 2>&1; then
-    health="$(run_tenant_podman "$tenant" inspect -f '{{if .State.Healthcheck}}{{.State.Healthcheck.Status}}{{else}}unknown{{end}}' "$container_name" 2>/dev/null || true)"
-    status="$(run_tenant_podman "$tenant" inspect -f '{{.State.Status}}' "$container_name" 2>/dev/null || true)"
+  if tenant_container_exists "$tenant"; then
+    health="$(tenant_container_health "$tenant" 2>/dev/null || true)"
+    status="$(tenant_container_state "$tenant")"
     [ "$status" = running ] && pass "container ${container_name} is running" || check_fail "container ${container_name} state is ${status:-unknown}"
     case "$health" in
       healthy|unknown)
@@ -216,7 +216,7 @@ if [ "$service_active" -eq 1 ]; then
     fi
   done
 
-  if [ -n "$openclaw_port" ] && curl -fsS --max-time 5 "http://127.0.0.1:${openclaw_port}/__openclaw/control-ui-config.json" >/dev/null 2>&1; then
+  if tenant_dashboard_responding "$tenant"; then
     pass "dashboard endpoint responds on ${openclaw_port}"
   else
     check_fail "dashboard endpoint is not responding on ${openclaw_port:-<unset>}"

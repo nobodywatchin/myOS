@@ -79,15 +79,11 @@ verify_runtime_started() {
 }
 
 container_image() {
-  podman inspect -f '{{.ImageName}}' "$container_name" 2>/dev/null || openclaw_user_image_from_quadlet 2>/dev/null || true
+  user_runtime_container_image
 }
 
 inner_openclaw_version() {
-  if ! container_exists; then
-    return 1
-  fi
-
-  podman exec "$container_name" openclaw --version 2>/dev/null | head -n 1
+  user_runtime_inner_openclaw_version
 }
 
 bootstrap_runtime_if_available() {
