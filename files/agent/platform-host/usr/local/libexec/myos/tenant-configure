@@ -334,14 +334,9 @@ if [ "$restart_mode" = auto ]; then
 fi
 
 if [ "$quadlet_missing" -eq 1 ] || [ "$image_changed" -eq 1 ] || [ "$public_hostname_changed" -eq 1 ]; then
-  quadlet_args=(--tenant "$tenant" --force)
-  if [ "$restart_mode" = yes ]; then
-    quadlet_args+=(--restart --validate)
-  fi
-  /usr/local/libexec/myos/tenant-quadlet-install "${quadlet_args[@]}"
-elif [ "$restart_mode" = yes ]; then
-  restart_tenant_openclaw_service "$tenant"
-  /usr/local/libexec/myos/tenant-validate --tenant "$tenant" --require-running
+  tenant_apply_config_runtime_changes "$tenant" yes "$restart_mode"
+else
+  tenant_apply_config_runtime_changes "$tenant" no "$restart_mode"
 fi
 
 log "updated tenant configuration for ${tenant}"
