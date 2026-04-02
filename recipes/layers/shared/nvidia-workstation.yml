@@ -1,9 +1,5 @@
 ---
 modules:
-  - type: containerfile
-    snippets:
-      - RUN test -x /var/run/rpm-kmod-nvidia-open-modules || (mkdir -p /run && printf '#!/bin/sh\nexit 0\n' > /run/rpm-kmod-nvidia-open-modules && chmod 0755 /run/rpm-kmod-nvidia-open-modules)
-
   - type: dnf
     install:
       packages:
