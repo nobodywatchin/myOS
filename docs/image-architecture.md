@@ -7,6 +7,7 @@ The repo is intentionally flatter now:
 - shared layers for what really is shared
 - one small layer set per Alma version
 - one core tier per distro: `full`
+- `core-base` acts as the shared full-core substrate, with distro-specific full additions layered on where needed
 - NVIDIA split into explicit `open` and `legacy` streams, plus workstation-only extras
 
 ## Repo Tree

@@ -10,7 +10,7 @@ Contents:
 - `scripts/` contains rendered helper entrypoints mounted into tenant services
 - `env/` contains operator-managed runtime and secret defaults
 - `storage/` documents the expected per-tenant layout
-- `trust-zones/` explains how Zone A, B, and C stay separated
+- `trust-zones/` documents the current state, storage, and secret path split for the dedicated tenant runtime
 - `proxy/` contains nginx route examples that stay inactive until promoted
 
 This directory is intentionally separate from `templates/persistent-users/`, which targets real login users rather than dedicated service accounts.

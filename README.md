@@ -6,7 +6,7 @@
 
 # myOS &nbsp; [![bluebuild build badge](https://github.com/myos-dev/myOS/actions/workflows/build.yml/badge.svg)](https://github.com/myos-dev/myOS/actions/workflows/build.yml)
 
-myOS is an opinionated BootC image ecosystem organized around a small shared core, clear per-distro layers, and workstation products that stay easy to extend.
+myOS is an opinionated BootC image ecosystem organized around the shared `core-base` substrate, clear per-distro layers, and workstation products that stay easy to extend.
 
 # Image Progression
 

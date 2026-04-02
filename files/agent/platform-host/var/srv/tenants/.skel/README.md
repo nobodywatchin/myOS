@@ -1,4 +1,4 @@
 # Tenant skeleton
 
-New tenants receive a storage scaffold with separate Zone A, Zone B, and Zone C
-directories, but no live services are started automatically.
+New tenants receive a storage scaffold for the current single-container OpenClaw
+layout, but no live services are started automatically.
