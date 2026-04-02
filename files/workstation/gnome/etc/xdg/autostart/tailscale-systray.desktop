@@ -1,0 +1,8 @@
+[Desktop Entry]
+Type=Application
+Name=Tailscale Systray
+Exec=tailscale systray
+TryExec=tailscale
+OnlyShowIn=GNOME;
+X-GNOME-Autostart-enabled=true
+Terminal=false

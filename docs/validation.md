@@ -291,6 +291,31 @@ If the service start logic changed, also verify that releases lacking an
 advertised host-binding flag still fail closed unless
 `RAMALAMA_ALLOW_WIDE_BIND=1` is set.
 
+### Workstation Tailscale systray changes
+
+On a booted workstation image:
+
+```bash
+systemctl status tailscaled.service --no-pager
+ls -l /etc/xdg/autostart/tailscale-systray.desktop
+sudo tailscale set --operator=alice
+```
+
+Then log into the GNOME session as `alice` and inspect:
+
+- `tailscaled.service` is still active in **system** scope
+- `/etc/xdg/autostart/tailscale-systray.desktop` exists with `Exec=tailscale systray`
+- the GNOME session starts `tailscale systray` for the interactive user
+- the systray can see and manage the system daemon without converting the daemon into a user service
+- `tailscale status` works for the operator user without requiring the daemon itself to move into user scope
+
+If you intentionally leave operator assignment manual, document which account
+should receive:
+
+```bash
+sudo tailscale set --operator=<username>
+```
+
 ### Workstation Flatpak changes
 
 On a booted workstation image:
