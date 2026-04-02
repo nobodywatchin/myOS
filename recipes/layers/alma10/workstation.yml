@@ -82,6 +82,7 @@ modules:
         - powertop
         - tuned-ppd
         - libcamera-v4l2
+        - xorg-x11-xinit
         - gnome-text-editor
         - loupe
         - ptyxis
