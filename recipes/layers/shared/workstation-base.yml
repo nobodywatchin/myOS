@@ -144,6 +144,11 @@ modules:
         - rocm-developer-tools
         - vulkan-validation-layers
 
+  # Keep Homebrew on workstation images only.
+  - type: brew
+    nofile-limits: true # increase nofile limits
+    brew-analytics: false # disable telemetry
+
   # 4) Reset Flatpak remotes and declare shared defaults.
   # Later distro-specific layers may append more `default-flatpaks`
   # configurations; the module adds to the list instead of replacing it.

@@ -138,10 +138,6 @@ modules:
         - cockpit-storaged
         - cockpit-podman
 
-  - type: brew
-    nofile-limits: true # increase nofile limits
-    brew-analytics: false # disable telemetry
-
   - type: files
     files:
       - source: agent/platform-host/etc
