@@ -118,10 +118,11 @@ show_status() {
   printf 'Container: %s\n' "${current_container_state:-missing}"
   printf 'Image: %s\n' "${image:-unset}"
   printf 'OpenClaw: %s\n' "${version:-unavailable}"
-  printf 'Config: %s (%s)\n' "$config_state" "$(openclaw_user_config_file)"
+  printf 'Runtime config: %s (%s)\n' "$config_state" "$(openclaw_user_config_file)"
   printf 'Quadlet: %s\n' "$quadlet_path"
-  printf 'Config dir: %s\n' "$(openclaw_user_config_dir)"
+  printf 'User config dir: %s\n' "$(openclaw_user_config_dir)"
   printf 'State dir: %s\n' "$(openclaw_user_state_dir)"
+  printf 'Workspace dir: %s\n' "$(openclaw_user_workspace_dir)"
   printf 'Logs dir: %s\n' "$(openclaw_user_logs_dir)"
 }
 
@@ -139,9 +140,9 @@ show_inspect() {
   printf 'container=%s\n' "$container_name"
   printf 'image=%s\n' "${image:-unset}"
   printf 'openclaw_version=%s\n' "${version:-unavailable}"
-  printf 'config_file=%s\n' "$(openclaw_user_config_file)"
+  printf 'runtime_config_file=%s\n' "$(openclaw_user_config_file)"
   printf 'configured=%s\n' "$(if openclaw_user_config_exists; then printf yes; else printf no; fi)"
-  printf 'config_dir=%s\n' "$(openclaw_user_config_dir)"
+  printf 'user_config_dir=%s\n' "$(openclaw_user_config_dir)"
   printf 'state_dir=%s\n' "$(openclaw_user_state_dir)"
   printf 'workspace_dir=%s\n' "$(openclaw_user_workspace_dir)"
   printf 'logs_dir=%s\n' "$(openclaw_user_logs_dir)"
@@ -176,7 +177,7 @@ run_doctor() {
     fail_status "missing ${quadlet_path}"
     if openclaw_user_quadlet_template_available; then
       warn_status "baseline template available: ${template_path}"
-      warn_status "run openquad start to install and enable it for this user"
+      warn_status "run openquad start to install it and start the generated user service"
     else
       warn_status "baseline template missing: ${template_path}"
       warn_status "ask an admin to re-run: myos persistent-user-enroll --user $(id -un)"
