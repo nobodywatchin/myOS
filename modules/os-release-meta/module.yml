@@ -1,0 +1,5 @@
+name: os-release-meta
+shortdesc: Derive Enterprise Linux family metadata and DNF releasever vars from the base image.
+example: |
+  type: os-release-meta
+  source: local

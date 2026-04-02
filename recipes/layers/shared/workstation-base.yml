@@ -1,6 +1,10 @@
 ---
 modules:
-
+  # Shared workstation add-on layered on top of published `core-full-*` images.
+  # Keep distro-specific desktop drift in `recipes/layers/alma9/workstation.yml`
+  # and `recipes/layers/alma10/workstation.yml`.
+  #
+  # 1) Shared desktop packages and session services
   - type: dnf
     repos:
       cleanup: true
@@ -91,6 +95,7 @@ modules:
         - xdg-desktop-portal-gnome
         - xdg-user-dirs-gtk
 
+  # 2) Shared GNOME payload and session refresh helpers
   - type: files
     files:
       - source: workstation/gnome
@@ -100,6 +105,7 @@ modules:
     install:
       - dconf-update-service
 
+  # 3) Shared workstation diagnostics, admin tools, and developer utilities
   - type: dnf
     install:
       install-weak-deps: false
@@ -138,6 +144,9 @@ modules:
         - rocm-developer-tools
         - vulkan-validation-layers
 
+  # 4) Reset Flatpak remotes and declare shared defaults.
+  # Later distro-specific layers may append more `default-flatpaks`
+  # configurations; the module adds to the list instead of replacing it.
   - type: containerfile
     snippets:
       - RUN rm -f /usr/share/flatpak/remotes.d/*.flatpakrepo || true
@@ -174,6 +183,7 @@ modules:
           - org.gnome.Firmware
           - org.gnome.Logs
 
+  # 5) Flatpak UX helpers and workstation service defaults
   - type: files
     files:
       - source: workstation/flatpak

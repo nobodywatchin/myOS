@@ -14,6 +14,9 @@ modules:
         - gnome-logs
         - xorg-x11-utils
 
+  # Append Alma 9-specific system Flatpaks on top of the shared workstation
+  # defaults from `shared/workstation-base.yml`; `default-flatpaks`
+  # configurations add to the shared list instead of replacing it.
   - type: default-flatpaks
     configurations:
       - scope: system
