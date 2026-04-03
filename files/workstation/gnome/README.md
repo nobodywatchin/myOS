@@ -74,8 +74,7 @@ that would be the right place to automate `tailscale set --operator=<username>`.
 
 ## Assumptions kept intact
 
-- the existing GNOME Shell Tailscale extension defaults are left unchanged here
-- the existing AppIndicator GNOME extension remains enabled
+- the existing AppIndicator GNOME extension remains enabled for the systray path
 - this change does not alter Tailscale Serve/Funnel host usage for the platform-host tooling
 
 If duplicate Tailscale UI surfaces become a problem, handle that as a separate

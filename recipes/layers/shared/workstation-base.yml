@@ -4,7 +4,7 @@ modules:
   # Keep distro-specific desktop drift in `recipes/layers/alma9/workstation.yml`
   # and `recipes/layers/alma10/workstation.yml`.
   #
-  # 1) Shared desktop packages and session services
+  # Shared desktop packages and session services
   - type: dnf
     repos:
       cleanup: true
@@ -95,7 +95,7 @@ modules:
         - xdg-desktop-portal-gnome
         - xdg-user-dirs-gtk
 
-  # 2) Shared GNOME payload and session refresh helpers
+  # Shared GNOME payload and session refresh helpers
   - type: files
     files:
       - source: workstation/gnome
@@ -105,7 +105,7 @@ modules:
     install:
       - dconf-update-service
 
-  # 3) Shared workstation diagnostics, admin tools, and developer utilities
+  # Shared workstation diagnostics, admin tools, and developer utilities
   - type: dnf
     install:
       install-weak-deps: false
@@ -149,7 +149,7 @@ modules:
     nofile-limits: true # increase nofile limits
     brew-analytics: false # disable telemetry
 
-  # 4) Reset Flatpak remotes and declare shared defaults.
+  # Reset Flatpak remotes and declare shared defaults.
   # Later distro-specific layers may append more `default-flatpaks`
   # configurations; the module adds to the list instead of replacing it.
   - type: containerfile
@@ -188,7 +188,29 @@ modules:
           - org.gnome.Firmware
           - org.gnome.Logs
 
-  # 5) Flatpak UX helpers and workstation service defaults
+  - type: dnf
+    install:
+      install-weak-deps: false
+      packages:
+        - gnome-shell-extension-appindicator
+        - gnome-shell-extension-caffeine
+        - gnome-shell-extension-drive-menu
+        - gnome-shell-extension-just-perfection
+        - gnome-shell-extension-user-theme
+        - gnome-shell-extension-custom-menu
+        - gnome-shell-extension-gesture-inhibitor
+        - gnome-shell-extension-launch-new-instance
+        - gnome-shell-extension-workspace-indicator
+        - gnome-shell-extension-screenshot-window-sizer
+
+  - type: gnome-extensions
+    install:
+      - 3733  # Tiling Assistant
+      - 779   # Clipboard Indicator
+      - 1401  # Bluetooth Quick Connect
+      - 3193  # Blur my Shell
+
+  # Flatpak UX helpers and workstation service defaults
   - type: files
     files:
       - source: workstation/flatpak

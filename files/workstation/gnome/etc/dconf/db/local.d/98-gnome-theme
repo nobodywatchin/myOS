@@ -40,11 +40,5 @@ restore-session=false
 restore-window-size=false
 audible-bell=false
 
-[com/github/stunkymonkey/nautilus-open-any-terminal]
-terminal='ptyxis'
-keybindings=''
-new-tab=true
-flatpak='off'
-
 [org/gtk/settings/file-chooser]
 sort-directories-first=true

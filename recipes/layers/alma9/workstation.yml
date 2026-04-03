@@ -13,6 +13,7 @@ modules:
         - gnome-terminal-nautilus
         - gnome-logs
         - xorg-x11-utils
+        - gnome-shell-extension-sound-output-device-chooser
 
   # Append Alma 9-specific system Flatpaks on top of the shared workstation
   # defaults from `shared/workstation-base.yml`; `default-flatpaks`
@@ -28,14 +29,9 @@ modules:
         install:
           - org.gnome.TextEditor
           - org.gnome.Loupe
+          - app.devsuite.Ptyxis
 
-  - type: gnome-extensions
-    install:
-      - 3843
-      - 615
-      - 7
-      - 3193
-      - 19
-      - 779
-      - 1460
-      - 1401
+  - type: files
+    files:
+      - source: workstation/gnome-alma9
+        destination: /

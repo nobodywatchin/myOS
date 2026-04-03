@@ -1,10 +1,6 @@
 ---
 modules:
   - type: dnf
-    repos:
-      cleanup: true
-      copr:
-        - jreilly1821/c10s-gnome
     install:
       install-weak-deps: false
       packages:
@@ -87,38 +83,16 @@ modules:
         - loupe
         - ptyxis
         - baobab
-    replace:
-      - from-repo: copr:copr.fedorainfracloud.org:jreilly1821:c10s-gnome
-        packages:
-          - glib2
-          - gdm
-          - gnome-shell
-          - gnome-control-center
-          - gnome-settings-daemon
-          - gnome-session
-          - gnome-initial-setup
-          - gnome-remote-desktop
-          - xdg-desktop-portal
-          - xdg-desktop-portal-gnome
-
 
   - type: gnome-extensions
     install:
-      - 3843
-      - 615
-      - 517
-      - 7
-      - 6139
-      - 3193
-      - 7065
-      - 7535
-      - 19
-      - 779
-      - 1460
-      - 6580
-      - 1401
-      - 6051
-      - 8243
+      - 7535 # Accent Icons
+      - 6051 # Quick Web Search
+
+  - type: files
+    files:
+      - source: workstation/gnome-alma10
+        destination: /
 
   - type: kargs
     kargs:

@@ -12,16 +12,8 @@ switch-windows-backward=['<Shift><Alt>Tab']
 [org/gnome/desktop/peripherals/keyboard]
 numlock-state=true
 
-[org/gnome/desktop/peripherals/keyboard]
-numlock-state=true
-
 [org/gnome/desktop/peripherals/touchpad]
 tap-to-click=true
-
-[org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom0]
-binding='<Control><Alt>t'
-command='ptyxis --new-window'
-name='Ptyxis'
 
 [org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom1]
 binding='<Control><Alt>KP_Delete'
@@ -34,7 +26,7 @@ command='flatpak run net.nokyan.Resources'
 name='Resources'
 
 [org/gnome/settings-daemon/plugins/media-keys]
-custom-keybindings=['/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom0/', '/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom1/', '/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom2/']
+custom-keybindings=['/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom1/', '/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom2/']
 
 [org/gnome/nautilus/preferences]
 show-create-link=true
@@ -43,5 +35,5 @@ show-create-link=true
 experimental-features=['variable-refresh-rate', 'scale-monitor-framebuffer']
 
 [org/gnome/desktop/search-providers]
-sort-order=['org.gnome.Settings.desktop', 'org.gnome.Contacts.desktop', 'io.github.kolunmi.Bazaar.desktop', 'com.github.hugolabe.Wike.desktop', 'com.jeffser.Alpaca.desktop', 'org.gnome.Calculator.desktop', 'org.gnome.Nautilus.desktop', 'org.gnome.Epiphany.desktop']
-enabled=['com.jeffser.Alpaca.desktop', 'io.github.kolunmi.Bazaar.desktop', 'org.gnome.Calculator.desktop', 'com.github.hugolabe.Wike.desktop']
+sort-order=['org.gnome.Settings.desktop', 'org.gnome.Contacts.desktop', 'org.gnome.Calculator.desktop', 'org.gnome.Nautilus.desktop', 'org.gnome.Epiphany.desktop']
+enabled=['org.gnome.Calculator.desktop']

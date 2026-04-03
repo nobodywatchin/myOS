@@ -99,22 +99,24 @@ Current stance:
 
 ### GNOME stack divergence
 
-- **Alma 9:** keeps a smaller delta around the distro workstation base and uses
-  the `Workstation product core` group plus a focused package list
-- **Alma 10:** uses the `jreilly1821/c10s-gnome` COPR to replace core GNOME
-  packages and carries a larger package delta
+- **Alma 9:** tracks the distro GNOME 40 workstation base and keeps a small
+  delta via the `Workstation product core` group plus a focused package list
+- **Alma 10:** tracks the distro GNOME 47 workstation base without the old
+  GNOME backport COPR and keeps its remaining app/extension delta explicit
 
 Why it exists:
 
-- Alma 10 GNOME 48 packaging reality diverged from Alma 9
+- the distros still ship different GNOME major versions
+- some app and extension choices remain shell-version-sensitive
 
 Current stance:
 
 - accepted compromise for now
-- do not try to force shared parity by moving the Alma 10 GNOME replacement path
-  into shared layers
-- do not assume the bigger Alma 10 delta means the architecture should split
-  further by default
+- keep version-agnostic GNOME defaults in shared layers
+- keep shell-version-sensitive app and extension choices in the Alma-specific
+  workstation layers
+- do not reintroduce the old Alma 10 GNOME replacement path unless packaging
+  forces it again
 
 ### Default editor and image-viewer source
 
@@ -131,19 +133,38 @@ Current stance:
 - intentional workstation UX parity via different packaging sources
 - the user-facing goal is similar; the implementation is not
 
-### GNOME extensions set
+### Ptyxis source
 
-- **Alma 9:** ships one GNOME extension set
-- **Alma 10:** ships a different, larger GNOME extension set
+- **Alma 9:** installs `app.devsuite.Ptyxis` as a managed system Flatpak
+- **Alma 10:** installs `ptyxis` as an RPM
 
 Why it exists:
 
-- extension compatibility and desktop behavior differ with the GNOME stack
+- packaging and GNOME stack availability differ by distro generation
 
 Current stance:
 
 - intentional
-- treat extension IDs as distro- and shell-version-sensitive, not as shared by default
+- keep shared Ptyxis dconf under `/org/gnome/Ptyxis/`
+- keep launcher command and desktop ID overrides in the Alma-specific GNOME
+  payloads
+
+### GNOME extensions set
+
+- **Alma 9:** uses the shared cross-version-safe extension baseline plus the
+  packaged `sound-output-device-chooser` add-on
+- **Alma 10:** uses the same shared baseline plus GNOME 47-specific
+  `Accent Icons` and `Quick Web Search`
+
+Why it exists:
+
+- extension compatibility and preferred UX still differ by shell major version
+
+Current stance:
+
+- intentional
+- keep cross-version-safe extensions in `shared/workstation-base.yml`
+- keep shell-version-specific adds in the Alma-specific workstation layers
 
 ### Extra workstation kernel arguments
 
@@ -195,7 +216,8 @@ Current stance:
 Do not treat these as obvious cleanup targets without a wider design review:
 
 - RamaLama only being packaged on Alma 10
-- Alma 10 GNOME COPR replacement path
+- Alma 9 and Alma 10 using different GNOME major versions with some
+  distro-specific app and extension packaging
 - Alma 9 legacy NVIDIA being proprietary and pinned to `580`
 - Alma 9 using a `just` bootstrap script while Alma 10 installs the package
 - Alma 9 and Alma 10 using different packaging sources for some workstation apps
