@@ -211,6 +211,10 @@ modules:
       - 3193  # Blur my Shell
 
   # Flatpak UX helpers and workstation service defaults
+  - type: kargs
+    kargs:
+      - mem_sleep_default=s2idle
+
   - type: files
     files:
       - source: workstation/flatpak

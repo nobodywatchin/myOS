@@ -88,11 +88,3 @@ modules:
       - source: workstation/gnome-alma10
         destination: /
 
-  - type: kargs
-    kargs:
-      - mem_sleep_default=s2idle
-      - amdgpu.si_support=1
-      - amdgpu.cik_support=1
-      - radeon.si_support=0
-      - radeon.cik_support=0
-      - modprobe.blacklist=radeon

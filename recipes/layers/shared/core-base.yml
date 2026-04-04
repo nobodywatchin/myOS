@@ -257,7 +257,17 @@ modules:
           getent group render >/dev/null 2>&1 || groupadd --system render; \
           ldconfig
 
-  # 7) Final service defaults and image branding
+  # 7) Shared boot arguments across the full image family
+  - type: kargs
+    kargs:
+      - iommu=pt
+      - transparent_hugepage=madvise
+      - radeon.si_support=0
+      - amdgpu.si_support=1
+      - radeon.cik_support=0
+      - amdgpu.cik_support=1
+
+  # 8) Final service defaults and image branding
   - type: systemd
     system:
       masked:
