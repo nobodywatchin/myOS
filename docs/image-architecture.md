@@ -86,7 +86,7 @@ The build workflow is ordered so workstation images wait for the full core image
 
 The layering now mirrors the rootless workload split.
 
-- `core-full-*` carries the persistent or background plane: dedicated tenant-account OpenClaw tooling, the persistent-user enrollment commands, the `openclaw` and `openquad` host wrappers, template buckets under `/etc/myos/templates/apps/` and `/etc/myos/templates/persistent-users/`, and the shared `/var/tmp/myos-podman` rootless storage location.
+- `core-full-*` carries the persistent or background plane: dedicated tenant-account OpenClaw tooling, the persistent-user enrollment commands, the `openclaw` and `openquad` host wrappers, template buckets under `/etc/myos/templates/apps/` and `/etc/myos/templates/persistent-users/`, and the shared `/var/tmp/myos-podman` rootless storage location. The per-user OpenClaw template ships under `/etc/myos/templates/apps/openclaw/user/` and is instantiated explicitly by `openquad` rather than enrolled automatically.
 - `workstation-*` now reuses that same shared per-user OpenClaw runtime model instead of adding a separate session-bound helper through `/etc/skel`.
 - `core-base.yml` disables the stock `bootc-fetch-apply-updates.*` units so update activation remains an explicit operator action across the image family.
 

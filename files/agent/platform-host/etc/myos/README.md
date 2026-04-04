@@ -13,6 +13,6 @@ Key paths:
 - Persistent-user state and the selected owner assignment live under `/etc/myos/persistent-users/`.
 - Provisioning helpers live under `/usr/local/libexec/myos/`.
 - Reverse proxy scaffolding lives under `/etc/nginx/conf.d/myos-platform.conf` and `/etc/myos/proxy/`.
-- The supported operator interfaces are the `myos tenant-*`, `myos persistent-user-*`, and `myos openclaw-host *` command surfaces.
+- The supported operator interfaces are the `myos tenant-*`, `myos persistent-user-*`, `myos openclaw-host *`, and per-user `openquad` command surfaces.
 
 This image does not bake live tenant accounts, real secrets, active tenant OpenClaw services, or globally lingered login users into the image.

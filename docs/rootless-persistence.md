@@ -46,10 +46,9 @@ session plane.
 
 - `openclaw` is the thin host-side workload CLI. It only execs into the already-running per-user container.
 - `openquad` is the runtime control plane. It owns `start`, `stop`, `restart`, `status`, `logs`, `doctor`, `inspect`, and `version`.
-- The per-user runtime is shipped as `openclaw.container` under `/etc/myos/templates/persistent-users/baseline/quadlets/`.
-- Enrollment copies that Quadlet into `~/.config/containers/systemd/` and starts the generated `openclaw.service` for that user. For Quadlets, the generator applies the install metadata during generation, so operators should think in terms of rendering and starting or restarting the generated service rather than manually enabling a separate unit file.
-- On upgraded accounts that predate this rollout, `openquad start` will render that shipped baseline Quadlet into `~/.config/containers/systemd/` if it is missing.
-- Lingering, subuid/subgid provisioning, and admin-managed template reconciliation still come from `myos persistent-user-enroll`.
+- The per-user runtime is shipped as `openclaw.container` under `/etc/myos/templates/apps/openclaw/user/`.
+- `openquad start` renders that shipped Quadlet into `~/.config/containers/systemd/` on demand for the current user and starts the generated `openclaw.service`. For Quadlets, the generator applies the install metadata during generation, so operators should think in terms of rendering and starting or restarting the generated service rather than manually enabling a separate unit file.
+- Lingering, subuid/subgid provisioning, and admin-managed template reconciliation still come from `myos persistent-user-enroll`, but enrollment no longer installs the per-user OpenClaw runtime by default.
 - The container stays rootless, per-user, and quadlet-backed.
 
 The wrapper boundary is intentional.
@@ -88,7 +87,7 @@ What enrollment does:
 
 - enables lingering for that user
 - ensures the user has `subuid` and `subgid` ranges for rootless Podman
-- installs the baseline template bucket into that user's `~/.config/containers/systemd/`
+- installs any admin-managed baseline template bucket entries into that user's `~/.config/containers/systemd/`
 - installs the owner-only bucket as well if that user is the selected owner
 - reloads the user's systemd manager and enables any service-capable units that came from those managed buckets
 - records the managed files and units under `/etc/myos/persistent-users/`

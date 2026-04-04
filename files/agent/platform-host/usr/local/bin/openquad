@@ -192,11 +192,11 @@ run_doctor() {
   else
     fail_status "missing ${quadlet_path}"
     if openclaw_user_quadlet_template_available; then
-      warn_status "baseline template available: ${template_path}"
+      warn_status "system template available: ${template_path}"
       warn_status "run openquad start to install it and start the generated user service"
     else
-      warn_status "baseline template missing: ${template_path}"
-      warn_status "ask an admin to re-run: myos persistent-user-enroll --user $(id -un)"
+      warn_status "system template missing: ${template_path}"
+      warn_status "this image may be missing the shipped per-user OpenClaw template"
     fi
   fi
 

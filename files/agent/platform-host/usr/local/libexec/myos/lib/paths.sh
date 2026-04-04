@@ -22,7 +22,7 @@ account_systemd_user_dir() { printf '%s/.config/systemd/user\n' "$(account_home 
 current_user_quadlet_dir() { printf '%s/containers/systemd\n' "${XDG_CONFIG_HOME:-${HOME}/.config}"; }
 openclaw_user_quadlet_path() { printf '%s/%s\n' "$(current_user_quadlet_dir)" "$OPENCLAW_USER_QUADLET_NAME"; }
 persistent_user_template_dir() { printf '%s/%s/quadlets\n' "$PERSISTENT_USER_TEMPLATE_BASE" "$1"; }
-openclaw_user_quadlet_template_path() { printf '%s/%s\n' "$(persistent_user_template_dir baseline)" "$OPENCLAW_USER_QUADLET_NAME"; }
+openclaw_user_quadlet_template_path() { printf '%s/user/%s\n' "$TEMPLATE_BASE" "$OPENCLAW_USER_QUADLET_NAME"; }
 openclaw_user_config_dir() { printf '%s/.config/myos\n' "$HOME"; }
 openclaw_user_state_dir() { printf '%s/.local/share/openclaw\n' "$HOME"; }
 openclaw_user_config_file() { printf '%s/openclaw.json\n' "$(openclaw_user_state_dir)"; }

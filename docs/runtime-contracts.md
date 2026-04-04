@@ -257,7 +257,7 @@ For an enrolled login user, current expected paths are:
 Important distinction:
 
 - `~/.config/containers/systemd/` is the supported self-service Quadlet path
-- admin-managed baseline and owner templates may place files there
+- admin-managed baseline and owner templates may place files there, and `openquad` may install the per-user OpenClaw Quadlet there on demand
 - unrelated user-created Quadlets in that directory are still user-owned
 
 ### Service contract
@@ -269,9 +269,9 @@ The per-user OpenClaw runtime is also a generated user unit:
 - wrapper CLI: `openquad`
 - workload CLI: `openclaw`
 
-The shipped baseline template lives at:
+The shipped per-user template lives at:
 
-- `/etc/myos/templates/persistent-users/baseline/quadlets/openclaw.container`
+- `/etc/myos/templates/apps/openclaw/user/openclaw.container`
 
 The wrapper boundary is intentional:
 

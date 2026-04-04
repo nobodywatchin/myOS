@@ -7,4 +7,5 @@ myOS ships two rootless workload planes:
 
 Desktop or session-only Quadlets do not live here. This tree is for shared
 platform-host and persistent-user templates, including the per-user OpenClaw
-runtime shipped in `persistent-users/baseline/quadlets/`.
+runtime template shipped in `apps/openclaw/user/` for explicit `openquad`
+installation.

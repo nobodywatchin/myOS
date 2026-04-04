@@ -14,5 +14,6 @@ Important rules:
 - Prefer `%h`, `%u`, `%U`, `%t`, and other user-aware specifiers over hardcoded paths.
 - Avoid fixed shared host ports in baseline units unless you parameterize them outside the template.
 - If a workload should be shared once per machine, it belongs in a system unit rather than here.
-- myOS can ship shared baseline policy here. This repo now includes the per-user OpenClaw runtime in `baseline/quadlets/`.
+- myOS can ship shared baseline policy here.
 - Adding files here defines the baseline or owner policy for that image or deployment.
+- The per-user OpenClaw runtime is intentionally not baseline-managed here; users install it explicitly through `openquad` from the system template under `apps/openclaw/user/`.

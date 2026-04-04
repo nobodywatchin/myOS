@@ -45,11 +45,11 @@ openquad status
 openquad doctor
 ```
 
-On accounts that predate the per-user Quadlet rollout, the first `openquad start`
-will render the shipped `openclaw.container` into
-`~/.config/containers/systemd/` and start the generated user service. Lingering across logout still requires
-`myos persistent-user-enroll --user <name>`. The runtime config file itself lives at
-`~/.local/share/openclaw/openclaw.json`.
+The first `openquad start` renders the shipped per-user `openclaw.container`
+into `~/.config/containers/systemd/` and starts the generated user service for
+that user only. Lingering across logout still requires
+`myos persistent-user-enroll --user <name>`. The runtime config file itself
+lives at `~/.local/share/openclaw/openclaw.json`.
 On first-time setups, `openquad start` now leaves the runtime up in a safe
 unconfigured mode so `openclaw onboard` can finish the initial setup without a
 restart loop.

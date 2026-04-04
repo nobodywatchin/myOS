@@ -201,7 +201,7 @@ myos tenant-validate --tenant demo --require-running
 What to inspect:
 
 - `/srv/tenants/demo/` contains the expected config, state, storage, and secret paths
-- `~demo/.config/containers/systemd/openclaw.container` is rendered
+- `/srv/tenants/<tenant>/home/.config/containers/systemd/openclaw.container` is rendered
 - `openclaw.service` is active for the tenant user
 - dashboard endpoint responds on the configured loopback port
 - `tenant-validate` passes without missing env, port, or secret failures
@@ -376,3 +376,4 @@ Examples:
 
 The repo is complex enough that partial validation is normal. Hidden validation
 scope is worse than incomplete validation declared clearly.
+d clearly.
