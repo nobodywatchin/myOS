@@ -254,8 +254,8 @@ modules:
       files:
         - opentofu.repo
       keys:
-        - https://get.opentofu.org/opentofu.asc
         - https://packages.opentofu.org/opentofu/tofu/gpgkey
+        - https://get.opentofu.org/opentofu.asc
     install:
       install-weak-deps: false
       packages:
