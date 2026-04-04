@@ -19,8 +19,6 @@ modules:
         - google-noto-fonts-common
         - gnome-logs
         - gnome-shell-extension-sound-output-device-chooser
-        - gnome-terminal
-        - gnome-terminal-nautilus
         - hunspell
         - ibus-anthy
         - ibus-gtk3
