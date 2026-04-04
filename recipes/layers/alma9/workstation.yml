@@ -1,19 +1,44 @@
 ---
 modules:
   - type: dnf
-    group-install:
-      packages:
-        - Workstation product core
     install:
       install-weak-deps: false
       packages:
+        - acl
+        - almalinux-release
+        - alsa-sof-firmware
+        - attr
+        - bash-completion
+        - cpio
+        - crontabs
+        - cyrus-sasl-plain
+        - dos2unix
+        - git
+        - glibc-all-langpacks
         - google-noto-cjk-fonts-common
         - google-noto-fonts-common
+        - gnome-logs
+        - gnome-shell-extension-sound-output-device-chooser
         - gnome-terminal
         - gnome-terminal-nautilus
-        - gnome-logs
+        - hunspell
+        - ibus-anthy
+        - ibus-gtk3
+        - ibus-hangul
+        - ibus-libpinyin
+        - ibus-libzhuyin
+        - ibus-m17n
+        - ibus-typing-booster
+        - logrotate
+        - microcode_ctl
+        - pciutils
+        - pinentry-gnome3
+        - plymouth
+        - polkit
+        - setroubleshoot
+        - thermald
+        - usbutils
         - xorg-x11-utils
-        - gnome-shell-extension-sound-output-device-chooser
 
   # Append Alma 9-specific system Flatpaks on top of the shared workstation
   # defaults from `shared/workstation-base.yml`; `default-flatpaks`
