@@ -249,6 +249,20 @@ modules:
             - rocm-opencl-sdk
             - rocm-smi-lib
 
+  - type: dnf
+    repos:
+      files:
+        - opentofu.repo
+      keys:
+        - https://get.opentofu.org/opentofu.gpg
+        - https://packages.opentofu.org/opentofu/tofu/gpgkey
+    install:
+      install-weak-deps: false
+      packages:
+        - repo: opentofu
+          packages:
+            - tofu
+
   - type: containerfile
     snippets:
       - >-
