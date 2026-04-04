@@ -6,4 +6,10 @@ modules:
     snippets:
       - RUN dnf -y module reset nvidia-driver
       - RUN dnf -y module enable nvidia-driver:580
-      - RUN dnf -y install nvidia-driver nvidia-driver-cuda
+      - >-
+        RUN dnf -y install \
+          --exclude='kernel-debug*' \
+          --exclude='kernel-debug-core*' \
+          --exclude='kernel-debug-modules*' \
+          --exclude='kernel-debug-modules-extra*' \
+          nvidia-driver nvidia-driver-cuda
