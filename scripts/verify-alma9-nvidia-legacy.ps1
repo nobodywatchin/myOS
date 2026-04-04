@@ -13,7 +13,11 @@ $legacyLayer = Get-Content $legacyLayerPath -Raw
 $requiredSnippets = @(
     "RUN dnf -y module reset nvidia-driver",
     "RUN dnf -y module enable nvidia-driver:580",
-    "RUN dnf -y install nvidia-driver nvidia-driver-cuda"
+    "nvidia-driver nvidia-driver-cuda",
+    "--exclude='kernel-debug*'",
+    "--exclude='kernel-debug-core*'",
+    "--exclude='kernel-debug-modules*'",
+    "--exclude='kernel-debug-modules-extra*'"
 )
 
 foreach ($snippet in $requiredSnippets) {
