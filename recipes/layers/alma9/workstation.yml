@@ -40,12 +40,6 @@ modules:
 
   - type: containerfile
     snippets:
-      - RUN curl -fsSL https://repo.secureblue.dev/secureblue.repo -o /etc/yum.repos.d/secureblue.repo
-      - RUN dnf config-manager --set-disabled "secureblue"
-      - RUN dnf -y --enablerepo "secureblue" install trivalent
-
-  - type: containerfile
-    snippets:
       - >-
         RUN for ext in \
           /usr/share/gnome-shell/extensions/clipboard-indicator@tudmotu.com \

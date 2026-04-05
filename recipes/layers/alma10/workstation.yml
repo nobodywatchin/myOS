@@ -78,12 +78,6 @@ modules:
         - ptyxis
         - baobab
 
-  - type: containerfile
-    snippets:
-      - RUN curl -fsSL https://repo.secureblue.dev/secureblue.repo -o /etc/yum.repos.d/secureblue.repo
-      - RUN dnf config-manager --set-disabled "secureblue"
-      - RUN dnf -y --enablerepo "secureblue" install trivalent
-
   - type: gnome-extensions
     install:
       - 7535 # Accent Icons
