@@ -284,6 +284,7 @@ The wrapper boundary is intentional:
 Supported checks:
 
 - `myos persistent-user-validate --user <name>`
+- `openquad update`
 - `openquad doctor`
 
 Healthy enrolled-user state means at least:

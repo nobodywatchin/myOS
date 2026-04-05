@@ -100,7 +100,7 @@ See [`docs/rootless-persistence.md`](docs/rootless-persistence.md) for the full 
 
 # Update Flow
 
-myOS disables the stock `bootc-fetch-apply-updates.service` and `bootc-fetch-apply-updates.timer` so hosts do not surprise-reboot on their own. Use `myos update-system` or `myos rebase`, then reboot on your own schedule or during a maintenance window.
+myOS disables the stock `bootc-fetch-apply-updates.service` and `bootc-fetch-apply-updates.timer` so hosts do not surprise-reboot on their own. Use `myos update-system` or `myos rebase`, then reboot on your own schedule or during a maintenance window. For per-user runtime maintenance, `myos update-user` runs `openquad update` alongside the user-space refresh steps.
 
 # Tenant Operations
 

@@ -250,6 +250,7 @@ myos persistent-user-enroll --user alice
 myos persistent-user-validate --user alice
 openquad start
 openquad status
+openquad update
 openquad doctor
 ```
 

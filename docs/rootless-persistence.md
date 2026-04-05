@@ -45,7 +45,7 @@ OpenClaw now follows the persistent-user plane instead of the old desktop
 session plane.
 
 - `openclaw` is the thin host-side workload CLI. It only execs into the already-running per-user container.
-- `openquad` is the runtime control plane. It owns `start`, `stop`, `restart`, `status`, `logs`, `doctor`, `inspect`, and `version`.
+- `openquad` is the runtime control plane. It owns `start`, `stop`, `restart`, `update`, `status`, `logs`, `doctor`, `inspect`, and `version`.
 - The per-user runtime is shipped as `openclaw.container` under `/etc/myos/templates/apps/openclaw/user/`.
 - `openquad start` renders that shipped Quadlet into `~/.config/containers/systemd/` on demand for the current user and starts the generated `openclaw.service`. For Quadlets, the generator applies the install metadata during generation, so operators should think in terms of rendering and starting or restarting the generated service rather than manually enabling a separate unit file.
 - Lingering, subuid/subgid provisioning, and admin-managed template reconciliation still come from `myos persistent-user-enroll`, but enrollment no longer installs the per-user OpenClaw runtime by default.
