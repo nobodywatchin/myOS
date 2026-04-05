@@ -38,6 +38,12 @@ modules:
         - usbutils
         - xorg-x11-utils
 
+  - type: containerfile
+    snippets:
+      - RUN curl -fsSL https://repo.secureblue.dev/secureblue.repo -o /etc/yum.repos.d/secureblue.repo
+      - RUN dnf config-manager --set-disabled "secureblue"
+      - RUN dnf -y --enablerepo "secureblue" install trivalent
+
   # Append Alma 9-specific system Flatpaks on top of the shared workstation
   # defaults from `shared/workstation-base.yml`; `default-flatpaks`
   # configurations add to the shared list instead of replacing it.
