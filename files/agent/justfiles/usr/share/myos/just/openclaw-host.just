@@ -4,7 +4,7 @@ openclaw-host *args:
     set -euo pipefail
     exec sudo /usr/local/libexec/myos/openclaw-host "$@"
 
-openclaw-host:
+openclaw-host-menu:
     #!/usr/bin/env bash
     set -euo pipefail
 
