@@ -211,7 +211,6 @@ modules:
         - gnome-shell-extension-custom-menu
         - gnome-shell-extension-gesture-inhibitor
         - gnome-shell-extension-launch-new-instance
-        - gnome-shell-extension-workspace-indicator
         - gnome-shell-extension-screenshot-window-sizer
 
   - type: gnome-extensions

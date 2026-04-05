@@ -19,6 +19,7 @@ modules:
         - google-noto-fonts-common
         - gnome-logs
         - gnome-shell-extension-sound-output-device-chooser
+        - gnome-shell-extension-workspace-indicator
         - hunspell
         - ibus-anthy
         - ibus-gtk3
@@ -48,6 +49,11 @@ modules:
               glib-compile-schemas "$ext/schemas"; \
             fi; \
           done
+      - >-
+        RUN ext=/usr/share/gnome-shell/extensions/workspace-indicator@gnome-shell-extensions.gcampax.github.com; \
+          js="$ext/extension.js"; \
+          grep -q "addToStatusArea('workspace-indicator', _indicator, 0, 'left')" "$js" || \
+          sed -i "s/Main\\.panel\\.addToStatusArea('workspace-indicator', _indicator);/Main.panel.addToStatusArea('workspace-indicator', _indicator, 0, 'left');/" "$js"
 
   # Append Alma 9-specific system Flatpaks on top of the shared workstation
   # defaults from `shared/workstation-base.yml`; `default-flatpaks`
