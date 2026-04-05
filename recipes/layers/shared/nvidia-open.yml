@@ -8,7 +8,9 @@ modules:
 
   - type: dnf
     install:
+      install-weak-deps: false
       packages:
         - nvidia-open-kmod
         - nvidia-driver
         - nvidia-driver-cuda
+        - cuda-toolkit

@@ -1,0 +1,20 @@
+---
+modules:
+  - type: containerfile
+    snippets:
+      - >-
+        RUN . /usr/share/myos/os-release-meta.env && \
+          arch="$(uname -m)" && \
+          repo_id="cuda-rhel${EL_MAJOR}-${arch}" && \
+          repo_url="https://developer.download.nvidia.com/compute/cuda/repos/rhel${EL_MAJOR}/${arch}/cuda-rhel${EL_MAJOR}.repo" && \
+          curl -fsSL "${repo_url}" -o /etc/yum.repos.d/cuda.repo && \
+          dnf config-manager --set-disabled "${repo_id}"
+
+  - type: files
+    files:
+      - source: agent/nvidia/etc
+        destination: /etc
+
+  - type: containerfile
+    snippets:
+      - RUN ldconfig

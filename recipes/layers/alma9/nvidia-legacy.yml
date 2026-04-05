@@ -12,4 +12,4 @@ modules:
           --exclude='kernel-debug-core*' \
           --exclude='kernel-debug-modules*' \
           --exclude='kernel-debug-modules-extra*' \
-          nvidia-driver nvidia-driver-cuda
+          nvidia-driver nvidia-driver-cuda cuda-toolkit-12-6

@@ -30,6 +30,10 @@ It owns the common GNOME baseline, workstation diagnostics and utilities, shared
 
 Shared NVIDIA repo enablement, container toolkit setup, and core boot args.
 
+### `shared/nvidia-cuda.yml`
+
+Shared CUDA repo setup plus NVIDIA-only shell/ldconfig payloads.
+
 ### `shared/nvidia-open.yml`
 
 Shared NVIDIA open-kernel-module stream for newer supported GPUs.

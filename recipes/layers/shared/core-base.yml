@@ -249,20 +249,6 @@ modules:
             - rocm-opencl-sdk
             - rocm-smi-lib
 
-  # Keep the CUDA build toolchain in the shared core substrate so every
-  # published core/workstation line can build CUDA-backed projects like llama.cpp.
-  - type: containerfile
-    snippets:
-      - >-
-        RUN . /usr/share/myos/os-release-meta.env && \
-          arch="$(uname -m)" && \
-          repo_id="cuda-rhel${EL_MAJOR}-${arch}" && \
-          repo_url="https://developer.download.nvidia.com/compute/cuda/repos/rhel${EL_MAJOR}/${arch}/cuda-rhel${EL_MAJOR}.repo" && \
-          curl -fsSL "${repo_url}" -o /etc/yum.repos.d/cuda.repo && \
-          dnf config-manager --set-disabled "${repo_id}" && \
-          dnf -y --enablerepo "${repo_id}" --setopt=install_weak_deps=False install cuda-toolkit && \
-          dnf clean all
-
   - type: dnf
     repos:
       files:

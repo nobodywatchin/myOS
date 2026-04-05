@@ -1,5 +1,7 @@
 ---
 modules:
+  - from-file: layers/shared/nvidia-cuda.yml
+
   - type: dnf
     install:
       packages:
