@@ -27,8 +27,9 @@ otherwise:
 - both distros keep the same persistent-user enrollment model
 - workstations build from the published `core-full-*` images rather than from
   AlmaLinux BootC directly
-- myOS remains AI-ready across the core image family; shared ROCm/AI payloads
-  stay in the shared core substrate unless there is a deliberate product change
+- myOS remains AI-ready across the core image family; shared ROCm/CUDA AI
+  payloads stay in the shared core substrate unless there is a deliberate
+  product change
 - NVIDIA open-stream support stays in the shared `nvidia-open` path for distros
   that support it
 

@@ -27,7 +27,7 @@ NVIDIA streams are explicit:
 
 For the legacy AI lane, keep the host driver and the AI userspace stack as separate decisions. The host stays on the pinned R580 proprietary branch, while older-GPU AI workloads should start from CUDA 12.6-class userspace stacks, such as PyTorch `cu126`, instead of assuming newer CUDA 13-era examples are the safest default for Maxwell/Pascal-class hardware.
 
-`core-full-*` is the single full base tier. It includes tenant commands, persistent-user enrollment tooling, Cockpit admin services, and OpenClaw platform-host scaffolding for both distros.
+`core-full-*` is the single full base tier. It includes tenant commands, persistent-user enrollment tooling, Cockpit admin services, shared ROCm userspace, the NVIDIA CUDA Toolkit, and OpenClaw platform-host scaffolding for both distros.
 Alma 10 carries the packaged RamaLama runtime in its distro-specific core layer, while Alma 9 keeps the same platform layout without the packaged RamaLama runtime.
 
 For per-user OpenClaw on `core-full-*` and workstation images, the split is explicit:
