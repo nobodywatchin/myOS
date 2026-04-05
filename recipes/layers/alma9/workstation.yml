@@ -44,6 +44,17 @@ modules:
       - RUN dnf config-manager --set-disabled "secureblue"
       - RUN dnf -y --enablerepo "secureblue" install trivalent
 
+  - type: containerfile
+    snippets:
+      - >-
+        RUN for ext in \
+          /usr/share/gnome-shell/extensions/clipboard-indicator@tudmotu.com \
+          /usr/share/gnome-shell/extensions/bluetooth-quick-connect@bjarosze.gmail.com; do \
+            if [ -d "$ext/schemas" ]; then \
+              glib-compile-schemas "$ext/schemas"; \
+            fi; \
+          done
+
   # Append Alma 9-specific system Flatpaks on top of the shared workstation
   # defaults from `shared/workstation-base.yml`; `default-flatpaks`
   # configurations add to the shared list instead of replacing it.
