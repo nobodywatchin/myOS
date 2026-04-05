@@ -156,6 +156,17 @@ modules:
     snippets:
       - RUN rm -f /usr/share/flatpak/remotes.d/*.flatpakrepo || true
       - RUN rm -f /etc/flatpak/remotes.d/*.flatpakrepo || true
+      # Keep GNOME Software focused on Flatpak; use dedicated tools for
+      # firmware and curated system package flows instead.
+      - >-
+        RUN plugin_path="$(find /usr/lib64/gnome-software -type f -name
+        libgs_plugin_flatpak.so -print -quit)" && test -n "$plugin_path" &&
+        plugin_dir="${plugin_path%/*}" && rm -f
+        "$plugin_dir/libgs_plugin_packagekit.so"
+        "$plugin_dir/libgs_plugin_fwupd.so"
+        "$plugin_dir/libgs_plugin_fedora-pkgdb-collections.so"
+        /usr/share/applications/gnome-software-local-file-packagekit.desktop
+        /usr/share/applications/gnome-software-local-file-fwupd.desktop
 
   - type: default-flatpaks
     configurations:
