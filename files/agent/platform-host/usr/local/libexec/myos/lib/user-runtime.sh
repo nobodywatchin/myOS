@@ -90,6 +90,30 @@ install_openclaw_user_quadlet_from_template() {
   restorecon_if_available "$(current_user_quadlet_dir)" "$target"
 }
 
+reinstall_openclaw_user_quadlet_from_template() {
+  local target tmp changed=0
+
+  target="$(openclaw_user_quadlet_path)"
+  openclaw_user_quadlet_template_available || return 1
+
+  ensure_openclaw_user_runtime_dirs
+  tmp="$(mktemp)"
+
+  if ! render_openclaw_user_quadlet "$tmp"; then
+    rm -f "$tmp"
+    return 1
+  fi
+
+  if [ ! -f "$target" ] || ! cmp -s "$tmp" "$target"; then
+    install -m 0644 "$tmp" "$target"
+    changed=1
+  fi
+
+  rm -f "$tmp"
+  restorecon_if_available "$(current_user_quadlet_dir)" "$target"
+  return "$changed"
+}
+
 openclaw_user_image_from_quadlet() {
   local quadlet
 

@@ -12,6 +12,7 @@ Commands:
   start
   stop
   restart
+  update
   status
   logs
   doctor
@@ -316,6 +317,21 @@ case "$command_name" in
       require_runtime_installed
     fi
     ensure_openclaw_user_runtime_dirs
+    current_user_systemctl daemon-reload
+    current_user_systemctl reset-failed "$service_name" >/dev/null 2>&1 || true
+    current_user_systemctl restart "$service_name"
+    verify_runtime_started
+    ;;
+  update)
+    if ! bootstrap_runtime_if_available; then
+      require_runtime_installed
+    fi
+    ensure_openclaw_user_runtime_dirs
+    if reinstall_openclaw_user_quadlet_from_template; then
+      printf 'openquad: quadlet already up to date: %s\n' "$quadlet_path"
+    else
+      printf 'openquad: refreshed quadlet from template: %s\n' "$quadlet_path"
+    fi
     current_user_systemctl daemon-reload
     current_user_systemctl reset-failed "$service_name" >/dev/null 2>&1 || true
     current_user_systemctl restart "$service_name"

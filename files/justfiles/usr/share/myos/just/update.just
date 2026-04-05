@@ -4,6 +4,10 @@ update-system:
   sudo bootc upgrade
   @echo "bootc auto-apply is disabled in myOS; reboot during your maintenance window to activate the staged image update"
 
+# Refresh the per-user OpenClaw quadlet/runtime
+update-openquad:
+  openquad update
+
 # Update User Flatpaks and Distrobox Containers
 update-user:
     #!/usr/bin/env bash
@@ -107,7 +111,7 @@ update:
     set -euo pipefail
     sel="$(fzf --prompt='Update: ' --height=15 --border --exit-0 \
           --with-nth=2.. \
-          <<< $'update-system    Update System Flatpaks and OS Image\nupdate-user      Update User Flatpaks and Distrobox Containers\nupdate-podman    Update Podman Containers\nupdate-firmware  Update Firmware\nupdate-all       Update Everything\n')"
+          <<< $'update-system    Update System Flatpaks and OS Image\nupdate-openquad  Refresh the per-user OpenClaw quadlet/runtime\nupdate-user      Update User Flatpaks and Distrobox Containers\nupdate-podman    Update Podman Containers\nupdate-firmware  Update Firmware\nupdate-all       Update Everything\n')"
     [[ -n "$sel" ]] || { echo "No selection."; exit 0; }
     target="${sel%% *}"
     echo "→ Running: just ${target}"
