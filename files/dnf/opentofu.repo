@@ -4,7 +4,6 @@ baseurl=https://packages.opentofu.org/opentofu/tofu/rpm_any/rpm_any/$basearch
 enabled=1
 gpgcheck=1
 gpgkey=https://packages.opentofu.org/opentofu/tofu/gpgkey
-       https://get.opentofu.org/opentofu.asc
 repo_gpgcheck=1
 sslverify=1
 sslcacert=/etc/pki/tls/certs/ca-bundle.crt
@@ -16,7 +15,6 @@ baseurl=https://packages.opentofu.org/opentofu/tofu/rpm_any/rpm_any/SRPMS
 enabled=0
 gpgcheck=1
 gpgkey=https://packages.opentofu.org/opentofu/tofu/gpgkey
-       https://get.opentofu.org/opentofu.asc
 repo_gpgcheck=1
 sslverify=1
 sslcacert=/etc/pki/tls/certs/ca-bundle.crt
