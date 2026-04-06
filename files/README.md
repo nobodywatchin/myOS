@@ -46,6 +46,7 @@ This is the biggest payload tree because it carries the packaged host tooling an
 - `agent/platform-host/etc/` -> copied to `/etc`
 - `agent/platform-host/usr/` -> copied to `/usr`
 - `agent/platform-host/var/` -> copied to `/var`
+- `agent/nvidia/etc/` -> NVIDIA-only shell and ldconfig payloads used by `shared/nvidia-cuda.yml`
 - `agent/justfiles/` -> shared `myos` just command surface layered into full-core/workstation images
 
 ### `dnf/`

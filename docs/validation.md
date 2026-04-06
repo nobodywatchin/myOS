@@ -86,16 +86,25 @@ Current build workflow lives in:
 
 - `.github/workflows/build.yml`
 
-### `validate-tenant-cli`
+### `validate-runtime-artifacts`
 
 This job is the current static contract check for:
 
 - host-side shell helper syntax
 - tenant template helper syntax
+- Alma 9 helper script syntax
 - UI helper syntax
 - example OpenClaw config JSON validity
+- `myos-ramalama@.service` unit verification
+- tenant and per-user Quadlet template sanity checks
 - `just` import wiring
 - `os-release-meta` syntax
+
+The workflow runs the repo-local helper:
+
+```bash
+bash ./scripts/validate-runtime-artifacts.sh
+```
 
 If you touch any of those areas, make sure your local validation at least covers
 the same surface.
@@ -177,6 +186,10 @@ If the change touches:
 - `files/agent/platform-host/usr/local/libexec/myos/**`
 - `files/agent/platform-host/etc/myos/templates/**`
 - `files/agent/platform-host/usr/local/bin/openquad`
+- `files/scripts/just-el9.sh`
+- `files/agent/platform-host/usr/lib/systemd/system/myos-ramalama@.service`
+- `files/agent/platform-host/etc/myos/templates/apps/openclaw/quadlets/openclaw.container`
+- `files/agent/platform-host/etc/myos/templates/apps/openclaw/user/openclaw.container`
 
 then treat runtime validation as required, not optional.
 
@@ -377,5 +390,8 @@ Examples:
 - tenant preflight passed, but no live provider secret was available for a full running validation
 
 The repo is complex enough that partial validation is normal. Hidden validation
+scope is worse than incomplete validation declared clearly.
+d clearly.
+ough that partial validation is normal. Hidden validation
 scope is worse than incomplete validation declared clearly.
 d clearly.

@@ -1,5 +1,8 @@
 ---
 modules:
+  # CUDA repo bootstrap also stays inline for now. The useful boundary here is
+  # that CUDA repo/toolkit content belongs only to the NVIDIA image lanes, not
+  # the plain non-NVIDIA core images.
   - type: containerfile
     snippets:
       - >-

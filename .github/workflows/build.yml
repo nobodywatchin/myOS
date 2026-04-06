@@ -13,30 +13,15 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.ref || github.run_id }}
   cancel-in-progress: true
 jobs:
-  validate-tenant-cli:
-    name: Validate tenant CLI
+  validate-runtime-artifacts:
+    name: Validate runtime artifacts
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6
-      - name: Check tenant scripts and templates
+      - name: Check runtime scripts, templates, and units
         run: |
           set -euo pipefail
-          find files/agent/platform-host/usr/local/libexec/myos -type f -print0 | xargs -0 -n1 bash -n
-          bash -n files/agent/platform-host/usr/local/bin/openquad
-          bash -n files/agent/platform-host/etc/myos/templates/apps/openclaw/scripts/openclaw-start.sh
-          node --check files/agent/platform-host/etc/myos/templates/apps/openclaw/scripts/openclaw-ui-server.mjs
-          python3 -m json.tool files/agent/platform-host/etc/myos/templates/apps/openclaw/config/openclaw.json.example >/dev/null
-          grep -q "import '/usr/share/myos/just/rebase.just'" files/justfiles/usr/share/myos/just/index.just
-          grep -q "import '/usr/share/myos/just/tenant.just'" files/agent/justfiles/usr/share/myos/just/index.just
-          grep -q "import '/usr/share/myos/just/openclaw-host.just'" files/agent/justfiles/usr/share/myos/just/index.just
-          grep -q '^tenant-list ' files/agent/justfiles/usr/share/myos/just/tenant.just
-          grep -q '^tenant-dashboard ' files/agent/justfiles/usr/share/myos/just/tenant.just
-          grep -q '^tenant-config ' files/agent/justfiles/usr/share/myos/just/tenant.just
-          grep -q '^tenant-models ' files/agent/justfiles/usr/share/myos/just/tenant.just
-          grep -q '^tenant-openclaw ' files/agent/justfiles/usr/share/myos/just/tenant.just
-          grep -q '^tenant-tailscale ' files/agent/justfiles/usr/share/myos/just/tenant.just
-          grep -q '^openclaw-host ' files/agent/justfiles/usr/share/myos/just/openclaw-host.just
-          bash -n modules/os-release-meta/os-release-meta.sh
+          bash ./scripts/validate-runtime-artifacts.sh
 
   validate-alma9-nvidia-legacy:
     name: Validate Alma 9 NVIDIA Legacy
@@ -49,7 +34,7 @@ jobs:
   full-core-images:
     name: Full Core Images (${{ matrix.name }})
     needs:
-      - validate-tenant-cli
+      - validate-runtime-artifacts
       - validate-alma9-nvidia-legacy
     runs-on: ubuntu-latest
     permissions:
@@ -84,7 +69,7 @@ jobs:
   workstation-images:
     name: Workstation Images (${{ matrix.name }})
     needs:
-      - validate-tenant-cli
+      - validate-runtime-artifacts
       - validate-alma9-nvidia-legacy
       - full-core-images
     runs-on: ubuntu-latest

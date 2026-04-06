@@ -27,7 +27,7 @@ NVIDIA streams are explicit:
 
 For the legacy AI lane, keep the host driver and the AI userspace stack as separate decisions. The host stays on the pinned R580 proprietary branch, while older-GPU AI workloads should start from CUDA 12.6-class userspace stacks, such as PyTorch `cu126`, instead of assuming newer CUDA 13-era examples are the safest default for Maxwell/Pascal-class hardware.
 
-`core-full-*` is the single full base tier. It includes tenant commands, persistent-user enrollment tooling, Cockpit admin services, shared ROCm userspace, the NVIDIA CUDA Toolkit, and OpenClaw platform-host scaffolding for both distros.
+`core-full-*` is the single full base tier. It includes tenant commands, persistent-user enrollment tooling, Cockpit admin services, shared ROCm userspace, and OpenClaw platform-host scaffolding for both distros. CUDA repo/toolkit content is layered through the NVIDIA image paths rather than the plain non-NVIDIA `core-full-*` images.
 Alma 10 carries the packaged RamaLama runtime in its distro-specific core layer, while Alma 9 keeps the same platform layout without the packaged RamaLama runtime.
 
 For per-user OpenClaw on `core-full-*` and workstation images, the host contract is explicit:
@@ -77,7 +77,7 @@ files/
 ```
 
 - `recipes/images` contains only buildable images.
-- `recipes/layers/shared` contains the small shared building blocks: `core-base`, `workstation-base`, `nvidia-common`, `nvidia-open`, and `nvidia-workstation`.
+- `recipes/layers/shared` contains the shared composition layers: `core-base`, `workstation-base`, `nvidia-common`, `nvidia-cuda`, `nvidia-open`, and `nvidia-workstation`.
 - `recipes/layers/alma9` and `recipes/layers/alma10` keep version differences explicit without spreading them across lots of tiny files.
 - `modules/os-release-meta` runs first from `core-base`, before branding, and is the shared EL metadata source of truth. `core-base` now carries the shared EL Tailscale setup, common runtime payloads, and shared admin/platform-host scaffolding, while `workstation-base` carries the shared GNOME desktop baseline in addition to the broader workstation tooling and Flatpak defaults.
 - `files/base`, `files/workstation`, and `files/agent` mirror those concerns in the payloads.
@@ -212,6 +212,10 @@ sudo podman run --rm -it --privileged --pull=newer \
   --progress verbose \
   --use-librepo=false \
   --config /config.toml \
+  ghcr.io/myos-dev/workstation-alma10:latest
+rm -f "$TMP"
+```
+--config /config.toml \
   ghcr.io/myos-dev/workstation-alma10:latest
 rm -f "$TMP"
 ```
