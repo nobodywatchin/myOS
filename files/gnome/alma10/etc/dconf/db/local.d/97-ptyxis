@@ -1,3 +1,5 @@
+# Alma 10 uses the packaged Ptyxis desktop id and host launcher path.
+# Keep the favorite and Ctrl+Alt+T binding aligned with the packaged app.
 [org/gnome/shell]
 favorite-apps=['org.gnome.Software.desktop', 'org.gnome.Ptyxis.desktop', 'org.gnome.Nautilus.desktop', 'org.gnome.Calculator.desktop', 'org.gnome.TextEditor.desktop', 'org.gnome.Boxes.desktop']
 

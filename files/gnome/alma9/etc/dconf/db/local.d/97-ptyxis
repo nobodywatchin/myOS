@@ -1,3 +1,5 @@
+# Alma 9 keeps Ptyxis on the Flatpak app id and launcher path.
+# Keep the favorite and Ctrl+Alt+T binding aligned with that packaging model.
 [org/gnome/shell]
 favorite-apps=['org.gnome.Software.desktop', 'app.devsuite.Ptyxis.desktop', 'org.gnome.Nautilus.desktop', 'org.gnome.Calculator.desktop', 'org.gnome.TextEditor.desktop', 'org.gnome.Boxes.desktop']
 
