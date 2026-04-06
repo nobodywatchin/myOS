@@ -8,7 +8,7 @@ usage() {
   cat <<'USAGE'
 Usage: tenant-status --tenant NAME [--show-token]
 
-Show the current tenant status, endpoints, and recent logs.
+Show hosted tenant health, endpoints, and recent logs.
 USAGE
 }
 

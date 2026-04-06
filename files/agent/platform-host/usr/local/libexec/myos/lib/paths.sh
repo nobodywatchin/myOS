@@ -3,6 +3,9 @@ tenant_home() { printf '%s/home\n' "$(tenant_root "$1")"; }
 tenant_config_root() { printf '%s/config\n' "$(tenant_root "$1")"; }
 tenant_env_dir() { printf '%s/env\n' "$(tenant_config_root "$1")"; }
 tenant_rendered_dir() { printf '%s/rendered\n' "$(tenant_config_root "$1")"; }
+# Tenant runtime paths still use the historical zone-c labels. The important
+# contract is the split between state, workspace, and secrets; the zone name
+# itself is legacy compatibility naming rather than an active multi-zone model.
 tenant_secret_dir() { printf '%s/zone-c/secrets\n' "$(tenant_root "$1")"; }
 tenant_secret_file() { printf '%s/openclaw.secrets.env\n' "$(tenant_secret_dir "$1")"; }
 tenant_state_dir() { printf '%s/zone-c/state\n' "$(tenant_root "$1")"; }

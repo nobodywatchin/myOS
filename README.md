@@ -120,6 +120,10 @@ Supported tenant operator surface:
 - `tenant-backup`, `tenant-restore`, `tenant-remove`
 - advanced tenant-context entry points: `tenant-models`, `tenant-openclaw`
 
+The important tenant storage split is runtime state vs durable workspace vs
+host-managed secrets. The current `zone-c/*` path names are legacy labels, not
+an active multi-zone product concept.
+
 Internal implementation helpers under `/usr/local/libexec/myos/tenant-*` still exist for reconciliation, rendering, and scaffolding, but they are not intended as the stable day-to-day operator surface.
 
 Common tenant flows:

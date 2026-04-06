@@ -66,7 +66,6 @@ grep -q '^tenant-dashboard ' files/agent/justfiles/usr/share/myos/just/tenant.ju
 grep -q '^tenant-config ' files/agent/justfiles/usr/share/myos/just/tenant.just
 grep -q '^tenant-models ' files/agent/justfiles/usr/share/myos/just/tenant.just
 grep -q '^tenant-openclaw ' files/agent/justfiles/usr/share/myos/just/tenant.just
-grep -q '^tenant-optimize-tokens ' files/agent/justfiles/usr/share/myos/just/tenant.just
 grep -q '^tenant-tailscale ' files/agent/justfiles/usr/share/myos/just/tenant.just
 grep -q '^openclaw-host ' files/agent/justfiles/usr/share/myos/just/openclaw-host.just
 ```

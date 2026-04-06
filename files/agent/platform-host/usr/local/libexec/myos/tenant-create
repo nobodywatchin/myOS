@@ -8,7 +8,9 @@ usage() {
   cat <<'USAGE'
 Usage: tenant-create --tenant NAME [--no-linger] [--start] [configuration options]
 
-Provision a tenant scaffold through the supported operator workflow.
+Create a hosted tenant through the supported operator workflow.
+This is the normal bootstrap entry point; it handles the lower-level tenant
+scaffold and reconcile steps for you.
 USAGE
 }
 

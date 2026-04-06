@@ -8,7 +8,8 @@ usage() {
   cat <<'USAGE'
 Usage: tenant-config --tenant NAME <get|set|unset|file|validate|show|patch|apply> [args...]
 
-Docs-aligned config helpers for a tenant OpenClaw runtime.
+Advanced config helpers for a hosted tenant OpenClaw runtime.
+Use `tenant-configure` for the normal curated operator flow.
 
 Examples:
   tenant-config --tenant oc-demo get agents.defaults.model.primary

@@ -194,6 +194,10 @@ Current required subtrees:
 - `home/.config/containers/systemd/openclaw.container`
   - rendered rootless Quadlet owned by the tenant account
 
+The important contract is the separation between runtime state, durable
+workspace data, and host-managed secrets. The current `zone-c/*` names are
+legacy path labels, not a required multi-zone runtime concept.
+
 Important env contracts:
 
 - tenant runtime config file: `/srv/tenants/<tenant>/zone-c/state/openclaw.json`

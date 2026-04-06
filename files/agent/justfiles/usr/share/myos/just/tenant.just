@@ -41,12 +41,6 @@ tenant-openclaw *args:
     exec sudo /usr/local/libexec/myos/tenant-openclaw "$@"
 
 [positional-arguments]
-tenant-optimize-tokens *args:
-    #!/usr/bin/env bash
-    set -euo pipefail
-    exec sudo /usr/local/libexec/myos/tenant-optimize-tokens "$@"
-
-[positional-arguments]
 tenant-tailscale *args:
     #!/usr/bin/env bash
     set -euo pipefail
