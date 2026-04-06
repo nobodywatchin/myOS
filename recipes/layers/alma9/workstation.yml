@@ -58,6 +58,10 @@ modules:
   # Append Alma 9-specific system Flatpaks on top of the shared workstation
   # defaults from `shared/workstation-base.yml`; `default-flatpaks`
   # configurations add to the shared list instead of replacing it.
+  - type: gnome-extensions
+    install:
+      - 3184  # No Activities Button
+
   - type: default-flatpaks
     configurations:
       - scope: system
