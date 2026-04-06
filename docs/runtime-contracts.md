@@ -41,7 +41,6 @@ not share mutable runtime state.
 These are shipped in the image and are expected to be replaced by image
 upgrades, not hand-mutated as live state:
 
-- `/usr/local/bin/openclaw`
 - `/usr/local/bin/openquad`
 - `/usr/local/libexec/myos/`
 - `/etc/myos/templates/apps/openclaw/`
@@ -266,18 +265,18 @@ The per-user OpenClaw runtime is also a generated user unit:
 
 - service name: `openclaw.service`
 - container name: `openclaw`
-- wrapper CLI: `openquad`
-- workload CLI: `openclaw`
+- host wrapper CLI: `openquad`
+- upstream workload CLI: `openclaw` inside the container
 
 The shipped per-user template lives at:
 
 - `/etc/myos/templates/apps/openclaw/user/openclaw.container`
 
-The wrapper boundary is intentional:
+The boundary is intentional:
 
-- `openquad` owns lifecycle (`start`, `stop`, `restart`, `status`, `logs`, `doctor`, `inspect`)
-- `openclaw` only execs into an already-running runtime
-- `openclaw` must not auto-start the runtime silently
+- `openquad` owns lifecycle (`start`, `stop`, `restart`, `update`, `status`, `logs`, `doctor`, `inspect`)
+- `openquad exec -- ...` and `openquad shell` are the supported host-side entry points into the running container
+- the upstream `openclaw` binary is expected to run inside the container rather than through a separate host wrapper
 
 ### Persistent-user health contract
 

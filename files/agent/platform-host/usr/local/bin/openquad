@@ -17,6 +17,8 @@ Commands:
   logs
   doctor
   inspect
+  exec -- <command> [args...]
+  shell [shell args...]
   version
 USAGE
 }
@@ -85,6 +87,37 @@ container_image() {
 
 inner_openclaw_version() {
   user_runtime_inner_openclaw_version
+}
+
+runtime_exec() {
+  local -a podman_args
+
+  user_runtime_container_running || {
+    printf 'openquad: OpenClaw runtime is not running for this user.
+' >&2
+    printf 'Start it with: openquad start
+' >&2
+    printf 'Check it with: openquad doctor
+' >&2
+    exit 1
+  }
+
+  podman_args=(exec)
+  if [ -t 0 ] && [ -t 1 ]; then
+    podman_args+=(-it)
+  else
+    podman_args+=(-i)
+  fi
+
+  podman_args+=(
+    --env HOME=/home/node
+    --env OPENCLAW_STATE_DIR=/home/node/.openclaw
+    --env OPENCLAW_CONFIG_PATH=/home/node/.openclaw/openclaw.json
+    --workdir /home/node
+    "$container_name"
+  )
+
+  exec podman "${podman_args[@]}" "$@"
 }
 
 bootstrap_runtime_if_available() {
@@ -265,7 +298,7 @@ run_doctor() {
     ok "runtime config present: $(openclaw_user_config_file)"
   else
     warn_status "runtime config missing: $(openclaw_user_config_file)"
-    warn_status "finish first-run setup with: openclaw onboard"
+    warn_status "finish first-run setup with: openquad exec -- openclaw onboard"
   fi
 
   if container_exists; then
@@ -305,7 +338,7 @@ case "$command_name" in
     verify_runtime_started
     if ! openclaw_user_config_exists; then
       printf 'openquad: runtime started in first-run mode.\n'
-      printf 'Next: openclaw onboard\n'
+      printf 'Next: openquad exec -- openclaw onboard\n'
     fi
     ;;
   stop)
@@ -351,6 +384,25 @@ case "$command_name" in
   inspect)
     require_runtime_installed
     show_inspect
+    ;;
+  exec)
+    require_runtime_installed
+    if [ "${1:-}" = "--" ]; then
+      shift
+    fi
+    [ "$#" -gt 0 ] || {
+      printf 'openquad: exec requires a command after --\n' >&2
+      exit 1
+    }
+    runtime_exec "$@"
+    ;;
+  shell)
+    require_runtime_installed
+    if [ "$#" -gt 0 ]; then
+      runtime_exec "$@"
+    else
+      runtime_exec sh
+    fi
     ;;
   version)
     printf 'openquad %s\n' "$OPENQUAD_WRAPPER_VERSION"

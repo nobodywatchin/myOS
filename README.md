@@ -30,17 +30,18 @@ For the legacy AI lane, keep the host driver and the AI userspace stack as separ
 `core-full-*` is the single full base tier. It includes tenant commands, persistent-user enrollment tooling, Cockpit admin services, shared ROCm userspace, the NVIDIA CUDA Toolkit, and OpenClaw platform-host scaffolding for both distros.
 Alma 10 carries the packaged RamaLama runtime in its distro-specific core layer, while Alma 9 keeps the same platform layout without the packaged RamaLama runtime.
 
-For per-user OpenClaw on `core-full-*` and workstation images, the split is explicit:
+For per-user OpenClaw on `core-full-*` and workstation images, the host contract is explicit:
 
-- `openclaw` is the workload CLI that forwards into the already-running per-user runtime.
 - `openquad` manages the rootless per-user `openclaw.service` Quadlet runtime.
+- The upstream `openclaw` CLI runs inside the container rather than through a separate host wrapper.
+- Use `openquad exec -- ...` for one-shot commands or `openquad shell` to enter the runtime container interactively.
 
 Typical flow:
 
 ```bash
 openquad start
-openclaw onboard
-openclaw chat
+openquad exec -- openclaw onboard
+openquad exec -- openclaw chat
 openquad status
 openquad doctor
 ```
@@ -51,8 +52,8 @@ that user only. Lingering across logout still requires
 `myos persistent-user-enroll --user <name>`. The runtime config file itself
 lives at `~/.local/share/openclaw/openclaw.json`.
 On first-time setups, `openquad start` now leaves the runtime up in a safe
-unconfigured mode so `openclaw onboard` can finish the initial setup without a
-restart loop.
+unconfigured mode so `openquad exec -- openclaw onboard` can finish the initial
+setup without a restart loop.
 
 # Repo Layout
 

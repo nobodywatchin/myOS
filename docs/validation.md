@@ -36,7 +36,6 @@ If shell files changed:
 
 ```bash
 find files/agent/platform-host/usr/local/libexec/myos -type f -print0 | xargs -0 -n1 bash -n
-bash -n files/agent/platform-host/usr/local/bin/openclaw
 bash -n files/agent/platform-host/usr/local/bin/openquad
 bash -n files/agent/platform-host/etc/myos/templates/apps/openclaw/scripts/openclaw-start.sh
 bash -n files/scripts/just-el9.sh
@@ -178,7 +177,6 @@ If the change touches:
 
 - `files/agent/platform-host/usr/local/libexec/myos/**`
 - `files/agent/platform-host/etc/myos/templates/**`
-- `files/agent/platform-host/usr/local/bin/openclaw`
 - `files/agent/platform-host/usr/local/bin/openquad`
 
 then treat runtime validation as required, not optional.
@@ -260,7 +258,7 @@ What to inspect:
 - `~alice/.config/containers/systemd/openclaw.container` exists
 - `~alice/.local/share/openclaw/` exists and is writable
 - `openclaw.service` is active in Alice's user manager after `openquad start`
-- `openclaw` does not auto-start the runtime when it is inactive
+- `openquad exec -- openclaw ...` fails clearly when the runtime is inactive instead of auto-starting it
 
 For persistence-specific changes, also test:
 

@@ -46,18 +46,18 @@ persistent-user baseline bucket.
 OpenClaw now follows the persistent-user plane instead of the old desktop
 session plane.
 
-- `openclaw` is the thin host-side workload CLI. It only execs into the already-running per-user container.
-- `openquad` is the runtime control plane. It owns `start`, `stop`, `restart`, `update`, `status`, `logs`, `doctor`, `inspect`, and `version`.
+- `openquad` is the host-side runtime control plane. It owns `start`, `stop`, `restart`, `update`, `status`, `logs`, `doctor`, `inspect`, `exec`, `shell`, and `version`.
 - The per-user runtime is shipped as `openclaw.container` under `/etc/myos/templates/apps/openclaw/user/`.
 - `openquad start` renders that shipped Quadlet into `~/.config/containers/systemd/` on demand for the current user and starts the generated `openclaw.service`. For Quadlets, the generator applies the install metadata during generation, so operators should think in terms of rendering and starting or restarting the generated service rather than manually enabling a separate unit file.
+- `openquad exec -- ...` runs commands inside the already-running runtime container, and `openquad shell` opens an interactive shell there.
 - Lingering, subuid/subgid provisioning, and admin-managed template reconciliation still come from `myos persistent-user-enroll`, but enrollment no longer installs the per-user OpenClaw runtime by default.
 - The container stays rootless, per-user, and quadlet-backed.
 
-The wrapper boundary is intentional.
+The boundary is intentional.
 
-- `openclaw` does not auto-start the runtime.
-- `openclaw` does not manage service lifecycle.
-- If the runtime is missing or inactive, `openclaw` sends the user to `openquad`.
+- `openquad` owns host-side lifecycle and entry.
+- The upstream `openclaw` CLI lives inside the runtime container.
+- If the runtime is missing or inactive, users should fix it with `openquad` rather than expecting a host wrapper to auto-start it.
 
 ## Admin Enrollment Flow
 
@@ -116,8 +116,8 @@ That wrapper is intentionally not a third runtime plane.
 
 Use this wrapper when you want a machine's primary remotely reachable OpenClaw
 service to stay easy to pair and easy to expose over Tailscale. Use the normal
-`openquad` plus `openclaw` workflow when you want a login user's own separate
-local per-user runtime.
+`openquad` workflow when you want a login user's own separate local per-user
+runtime.
 
 Quick smoke test:
 
@@ -188,8 +188,8 @@ User workflow:
 
 ```bash
 openquad start
-openclaw onboard
-openclaw chat
+openquad exec -- openclaw onboard
+openquad exec -- openclaw chat
 ```
 
 Useful runtime commands:
@@ -198,7 +198,8 @@ Useful runtime commands:
 openquad status
 openquad doctor
 openquad logs
-openclaw run file.md
+openquad shell
+openquad exec -- openclaw run file.md
 ```
 
 ## bootc Update Policy
@@ -221,7 +222,8 @@ That means:
 4. Log in as another user and confirm the `alice` background unit is still running.
 5. Enroll a second user and confirm the baseline service becomes a separate per-user instance rather than a shared singleton.
 6. Confirm a non-enrolled user does not have lingering enabled and does not receive the admin-managed baseline Quadlet files.
-7. On an enrolled user account, run `openquad start`, confirm `systemctl --user status openclaw.service` is active, then verify `openclaw chat` runs without starting the runtime implicitly.
+7. On an enrolled user account, run `openquad start`, confirm `systemctl --user status openclaw.service` is active, then verify `openquad exec -- openclaw chat` works against the running runtime without changing its lifecycle implicitly.
 8. On any image, confirm `systemctl is-enabled bootc-fetch-apply-updates.timer` reports disabled and that OS updates still stage correctly through `myos update-system`.
 9. For the tenant path, run `myos tenant-validate --tenant <name>` to verify the existing dedicated OpenClaw tenant flow still renders Quadlets and uses the persistent/background plane.
 10. For the owner-host wrapper, run `myos openclaw-host enable --user alice`, then confirm `myos openclaw-host status` reports the fixed hosted tenant and that `myos openclaw-host tailscale status` proxies through to the tenant Tailscale state.
+ Tailscale state.
