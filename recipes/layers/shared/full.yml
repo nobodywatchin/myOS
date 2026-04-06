@@ -26,22 +26,15 @@ modules:
       - source: agent/justfiles
         destination: /
 
-  # Shared platform-host layout and model service account.
+  # Shared platform-host layout under /etc, /srv, and /var/tmp for host tooling.
   - type: containerfile
     snippets:
-      - >-
-        RUN getent passwd modelsvc >/dev/null 2>&1 || useradd --system \
-          --create-home --home-dir /var/lib/modelsvc --shell /usr/sbin/nologin \
-          --comment "myOS shared model service" modelsvc
-
-      # Managed platform layout under /etc, /srv, and /var/tmp for shared host tooling.
       - >-
         RUN install -d -m 0755 \
           /etc/myos /etc/myos/dns /etc/myos/firewall \
           /etc/myos/firewall/rendered /etc/myos/firewall/tenants \
           /etc/myos/persistent-users /etc/myos/persistent-users/users \
           /etc/myos/proxy /etc/myos/proxy/tenants \
-          /etc/myos/ramalama /etc/myos/ramalama/models \
           /etc/myos/templates /etc/myos/templates/apps \
           /etc/myos/templates/apps/openclaw \
           /etc/myos/templates/persistent-users \
@@ -50,51 +43,21 @@ modules:
           /etc/myos/templates/persistent-users/owner \
           /etc/myos/templates/persistent-users/owner/quadlets \
           /etc/myos/tenants \
-          /srv/models /srv/models/ramalama \
           /srv/tenants /srv/tenants/.skel \
           /var/tmp/myos-podman
 
       - RUN install -D -m 0644 /var/srv/tenants/README.md /srv/tenants/.skel/README.md
-
-      - >-
-        RUN install -d -m 0755 \
-          /usr/local/libexec/myos \
-          /var/lib/modelsvc/.config \
-          /var/lib/modelsvc/.local/share
-
-      - RUN ln -sfn /srv/models/ramalama /var/lib/modelsvc/.local/share/ramalama
-
-      # Reserve subordinate IDs so the shared model service can use rootless Podman safely.
-      - >-
-        RUN if ! grep -q '^modelsvc:' /etc/subuid; then \
-          start="$(awk -F: 'BEGIN{max=200000} NF >= 3 && $2 ~ /^[0-9]+$/ && \
-            $3 ~ /^[0-9]+$/ {end=$2+$3; if (end > max) max=end} END{print max+1}' \
-            /etc/subuid 2>/dev/null)"; \
-          printf 'modelsvc:%s:65536\n' "${start:-200001}" >> /etc/subuid; \
-        fi
-
-      - >-
-        RUN if ! grep -q '^modelsvc:' /etc/subgid; then \
-          start="$(awk -F: 'BEGIN{max=200000} NF >= 3 && $2 ~ /^[0-9]+$/ && \
-            $3 ~ /^[0-9]+$/ {end=$2+$3; if (end > max) max=end} END{print max+1}' \
-            /etc/subgid 2>/dev/null)"; \
-          printf 'modelsvc:%s:65536\n' "${start:-200001}" >> /etc/subgid; \
-        fi
-
-      - RUN chown -R modelsvc:modelsvc /var/lib/modelsvc /srv/models/ramalama
+      - RUN install -d -m 0755 /usr/local/libexec/myos
 
       # Pre-label persistent content so shared rootless services come up with the right SELinux context.
-      - RUN semanage fcontext -a -t container_file_t '/srv/models(/.*)?' 2>/dev/null || true
       - RUN semanage fcontext -a -t container_file_t '/srv/tenants(/.*)?' 2>/dev/null || true
       - RUN semanage fcontext -a -e /var/lib/containers /var/tmp/myos-podman 2>/dev/null || true
 
       - >-
         RUN restorecon -RF \
-          /etc/myos /srv/models /srv/tenants \
+          /etc/myos /srv/tenants \
           /usr/local/libexec/myos \
-          /usr/lib/systemd/system/myos-ramalama@.service \
           /etc/nginx/conf.d/myos-platform.conf \
-          /var/lib/modelsvc \
           /var/tmp/myos-podman || true
 
   # Shared accelerator and infrastructure tooling for the published full-core line.
@@ -170,8 +133,6 @@ modules:
         - akmods-keygen@akmods-keygen.service
         - bootc-fetch-apply-updates.service
         - bootc-fetch-apply-updates.timer
-      disabled:
-        - myos-ramalama@default.service
 
   - type: files
     files:

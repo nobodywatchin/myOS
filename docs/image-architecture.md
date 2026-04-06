@@ -63,14 +63,14 @@ Both Alma 9 and Alma 10 now expose the same build path:
 - `core-full-alma9-nvidia-legacy`
 - GNOME images on top of `core-full-*`
 
-`core-full-*` is the single feature-complete base tier. It includes dedicated tenant tooling, persistent-user enrollment commands, Cockpit admin services, shared ROCm userspace, the Kubernetes CLI, and OpenClaw platform-host scaffolding for both distros. CUDA repo/toolkit content comes in through the NVIDIA image paths via `shared/nvidia-cuda.yml` rather than the plain non-NVIDIA `core-full-*` images. That shared OpenClaw scaffolding includes the host-side `openquad` runtime wrapper plus the shipped per-user rootless Quadlet template. Alma 10 carries the optional packaged RamaLama host-service path in its distro-specific core layer; Alma 9 keeps the same platform layout without the packaged RamaLama runtime.
+`core-full-*` is the single feature-complete base tier. It includes dedicated tenant tooling, persistent-user enrollment commands, Cockpit admin services, shared ROCm userspace, the Kubernetes CLI, and OpenClaw platform-host scaffolding for both distros. CUDA repo/toolkit content comes in through the NVIDIA image paths via `shared/nvidia-cuda.yml` rather than the plain non-NVIDIA `core-full-*` images. That shared OpenClaw scaffolding includes the host-side `openquad` runtime wrapper plus the shipped per-user rootless Quadlet template. Alma 10 carries the packaged RamaLama CLI in its distro-specific core layer; Alma 9 keeps the same platform layout without a packaged RamaLama CLI.
 
 ## Layer Responsibilities
 
 - `recipes/layers/shared/core.yml`: earliest shared EL metadata hookup, base system, podman/runtime tooling, shared EL runtime defaults, and the shared Tailscale baseline
 - `recipes/layers/shared/full.yml`: feature-complete full-core composition layered on top of `shared/core.yml`, adding platform-host scaffolding, shared AI/infrastructure tooling, Kubernetes CLI availability, shared service defaults, and late branding
 - `modules/os-release-meta`: runs first from `core`, writing `/usr/share/myos/os-release-meta.env` plus the DNF `releasever_major` and `releasever_minor` vars
-- `recipes/layers/alma10/core.yml`: Alma 10-specific core delta, including the optional packaged RamaLama host-service path
+- `recipes/layers/alma10/core.yml`: Alma 10-specific core delta, including the packaged RamaLama CLI
 - `recipes/layers/shared/gnome-base.yml`: shared GNOME desktop baseline, desktop diagnostics, network/storage extras, and Flatpak defaults for the current GNOME image family
 - `recipes/layers/shared/nvidia-common.yml`: NVIDIA repo enablement, container toolkit, and core boot args shared by both streams
 - `recipes/layers/shared/nvidia-open.yml`: open-kmod NVIDIA driver path for newer supported GPUs

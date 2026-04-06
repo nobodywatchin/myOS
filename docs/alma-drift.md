@@ -41,19 +41,19 @@ otherwise:
 
 ### RamaLama packaging
 
-- **Alma 9:** no packaged RamaLama runtime in `recipes/layers/alma9/core.yml`
+- **Alma 9:** no packaged RamaLama CLI in `recipes/layers/alma9/core.yml`
 - **Alma 10:** installs `ramalama` in `recipes/layers/alma10/core.yml`
 
 Why it exists:
 
-- Alma 10 currently has the clean packaged runtime path
+- Alma 10 currently has the clean packaged CLI path
 - Alma 9 keeps the same surrounding platform layout without pretending the
   package exists there
 
 Current stance:
 
 - intentional and accepted
-- treat RamaLama as an optional Alma 10-only host feature, not as part of the minimum shared OpenClaw runtime contract
+- treat RamaLama as an Alma 10-only operator utility for local model testing and artifact generation, not as part of the OpenClaw runtime contract
 - do not invent a fake Alma 9 parity story without a real source of packages
 
 ### `just` acquisition path

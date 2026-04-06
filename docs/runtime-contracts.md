@@ -17,7 +17,7 @@ this file.
 
 ## Runtime planes
 
-myOS currently ships three runtime planes:
+myOS currently ships two primary runtime planes:
 
 1. **Dedicated tenant accounts**
    - managed through `myos tenant-*`
@@ -27,12 +27,9 @@ myOS currently ships three runtime planes:
    - managed through `myos persistent-user-*`
    - each enrolled user keeps their real home directory and their own user systemd manager
 
-3. **Shared host RamaLama service**
-   - managed through `myos-ramalama@.service`
-   - runs as the dedicated `modelsvc` account
-
 These planes intentionally share some image-provided scaffolding, but they do
-not share mutable runtime state.
+not share mutable runtime state. Alma 10 may also include the packaged RamaLama
+CLI as an operator utility, but that is not a separate runtime plane.
 
 ## Contract classes
 
@@ -45,7 +42,6 @@ upgrades, not hand-mutated as live state:
 - `/usr/local/libexec/myos/`
 - `/etc/myos/templates/apps/openclaw/`
 - `/etc/myos/templates/persistent-users/`
-- `/usr/lib/systemd/system/myos-ramalama@.service` (optional Alma 10 host feature)
 - `/etc/nginx/conf.d/myos-platform.conf`
 
 Rule:
@@ -62,10 +58,7 @@ These are writable, operator-facing paths that survive upgrades:
 - `/etc/myos/proxy/tenants/`
 - `/etc/myos/firewall/rendered/`
 - `/etc/myos/persistent-users/`
-- `/etc/myos/ramalama/models/*.env`
-- `/srv/models/ramalama`
 - `/srv/tenants/<tenant>/`
-- `/var/lib/modelsvc`
 - `/var/tmp/myos-podman/<tenant>/storage`
 
 ### User-managed mutable state
@@ -104,8 +97,6 @@ Key subtrees:
   - host-managed nginx route fragments and metadata
 - `/etc/myos/firewall/`
   - rendered firewall plans
-- `/etc/myos/ramalama/`
-  - host-managed shared RamaLama instance configs
 
 Ownership expectations:
 
@@ -326,60 +317,6 @@ For a running runtime, healthy also means:
 - the inner `openclaw` binary exists
 - first-run config has either been completed or the runtime is clearly in onboarding mode
 
-## Shared RamaLama contract
-
-This is an optional Alma 10 host feature, not part of the minimum stable
-OpenClaw runtime contract.
-
-The shared model-host plane is the dedicated `modelsvc` account.
-
-### Identity and state
-
-Account:
-
-- user: `modelsvc`
-- group: `modelsvc`
-
-Authoritative mutable paths:
-
-- service home: `/var/lib/modelsvc`
-- shared model store: `/srv/models/ramalama`
-- instance env files: `/etc/myos/ramalama/models/<instance>.env`
-- runtime dir: `/run/myos-modelsvc`
-
-The image creates the directories and ownership baseline; operators provide the
-instance env files and enable the service explicitly.
-
-### Service contract
-
-System service template:
-
-- `myos-ramalama@.service`
-
-Launcher:
-
-- `/usr/local/libexec/myos/ramalama-serve`
-
-Current expectations from `ramalama-serve`:
-
-- `MODEL_REF` must be set in the instance env file
-- the image must actually include the `ramalama` binary
-- loopback binding is preferred through `RAMALAMA_HOST=127.0.0.1`
-- wide binding is refused unless `RAMALAMA_ALLOW_WIDE_BIND=1`
-
-### RamaLama health contract
-
-Validate this contract only when the optional RamaLama host feature is being
-used or changed.
-
-Healthy instance state means at least:
-
-- `/etc/myos/ramalama/models/<instance>.env` exists
-- `ramalama` is installed in the image variant
-- `myos-ramalama@<instance>.service` starts cleanly
-- the service only binds as widely as the config explicitly allows
-- `/var/lib/modelsvc` and `/srv/models/ramalama` remain writable by `modelsvc`
-
 ## Ownership boundaries and safe mutation
 
 ### Safe to change with repo edits
@@ -394,20 +331,15 @@ Healthy instance state means at least:
 - tenant env files under `/srv/tenants/<tenant>/config/env/`
 - tenant secret files under `/srv/tenants/<tenant>/zone-c/secrets/`
 - persistent-user enrollment state under `/etc/myos/persistent-users/`
-- RamaLama instance env files under `/etc/myos/ramalama/models/`
 - active proxy fragments under `/etc/myos/proxy/tenants/`
 
 ### Must not be treated as generic scratch space
 
 - `/etc/myos/templates/**`
-- `/srv/models/ramalama`
 - `/srv/tenants/<tenant>/zone-c/state`
 - `/srv/tenants/<tenant>/zone-c/storage`
 - `~/.local/share/openclaw/`
 
 If you need new runtime state, give it an explicit owner and document whether it
-belongs to the image, the host operator, the tenant account, the enrolled login
-user, or the shared `modelsvc` service.
- and document whether it
-belongs to the image, the host operator, the tenant account, the enrolled login
-user, or the shared `modelsvc` service.
+belongs to the image, the host operator, the tenant account, or the enrolled login
+user.

@@ -22,7 +22,7 @@ validate_tenant() {
   [[ "$tenant" =~ ^[a-z][a-z0-9-]{1,31}$ ]] || die "tenant names must match ^[a-z][a-z0-9-]{1,31}$"
 
   case "$tenant" in
-    root|modelsvc)
+    root)
       die "tenant name ${tenant} is reserved"
       ;;
   esac

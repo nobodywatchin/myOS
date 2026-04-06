@@ -28,7 +28,7 @@ NVIDIA streams are explicit:
 For the legacy AI lane, keep the host driver and the AI userspace stack as separate decisions. The host stays on the pinned R580 proprietary branch, while older-GPU AI workloads should start from CUDA 12.6-class userspace stacks, such as PyTorch `cu126`, instead of assuming newer CUDA 13-era examples are the safest default for Maxwell/Pascal-class hardware.
 
 `core-full-*` is the single full base tier. It includes tenant commands, persistent-user enrollment tooling, Cockpit admin services, shared ROCm userspace, the Kubernetes CLI, and OpenClaw platform-host scaffolding for both distros. CUDA repo/toolkit content is layered through the NVIDIA image paths rather than the plain non-NVIDIA `core-full-*` images.
-Alma 10 also carries an optional packaged RamaLama host-service path in its distro-specific core layer. That feature is disabled by default and is not required for the tenant, `openclaw-host`, or per-user `openquad` runtime contracts.
+Alma 10 also carries the packaged RamaLama CLI in its distro-specific core layer as an operator utility for local model testing and artifact generation. It is not part of the tenant, `openclaw-host`, or per-user `openquad` runtime contracts.
 
 For per-user OpenClaw on `core-full-*` and `gnome-*` images, the host contract is explicit:
 

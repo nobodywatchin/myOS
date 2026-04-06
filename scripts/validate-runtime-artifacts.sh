@@ -12,17 +12,6 @@ bash -n modules/os-release-meta/os-release-meta.sh
 node --check files/agent/platform-host/etc/myos/templates/apps/openclaw/scripts/openclaw-ui-server.mjs
 python3 -m json.tool files/agent/platform-host/etc/myos/templates/apps/openclaw/config/openclaw.json.example >/dev/null
 
-# Repo-local validation must treat units as staged payload, not as files already
-# installed into the host rootfs. Direct `systemd-analyze verify` against the
-# checkout can fail on absolute ExecStart paths even when the image payload is
-# correct, so keep this as field-level contract validation here.
-grep -q '^\[Unit\]$' files/agent/platform-host/usr/lib/systemd/system/myos-ramalama@.service
-grep -q '^ConditionPathExists=/etc/myos/ramalama/models/%i.env$' files/agent/platform-host/usr/lib/systemd/system/myos-ramalama@.service
-grep -q '^ExecStart=/usr/local/libexec/myos/ramalama-serve %i$' files/agent/platform-host/usr/lib/systemd/system/myos-ramalama@.service
-grep -q '^User=modelsvc$' files/agent/platform-host/usr/lib/systemd/system/myos-ramalama@.service
-grep -q '^ProtectSystem=full$' files/agent/platform-host/usr/lib/systemd/system/myos-ramalama@.service
-grep -q '^WantedBy=multi-user.target$' files/agent/platform-host/usr/lib/systemd/system/myos-ramalama@.service
-
 grep -q '^\[Container\]$' files/agent/platform-host/etc/myos/templates/apps/openclaw/quadlets/openclaw.container
 grep -q '^Image=' files/agent/platform-host/etc/myos/templates/apps/openclaw/quadlets/openclaw.container
 grep -q '^Exec=' files/agent/platform-host/etc/myos/templates/apps/openclaw/quadlets/openclaw.container

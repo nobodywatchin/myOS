@@ -95,7 +95,7 @@ This job is the current static contract check for:
 - Alma 9 helper script syntax
 - UI helper syntax
 - example OpenClaw config JSON validity
-- `myos-ramalama@.service` unit verification
+- host-side shell helper syntax
 - tenant and per-user Quadlet template sanity checks
 - `just` import wiring
 - `os-release-meta` syntax
@@ -189,7 +189,6 @@ If the change touches:
 - `files/agent/platform-host/etc/myos/templates/**`
 - `files/agent/platform-host/usr/local/bin/openquad`
 - `files/scripts/just-el9.sh`
-- `files/agent/platform-host/usr/lib/systemd/system/myos-ramalama@.service`
 - `files/agent/platform-host/etc/myos/templates/apps/openclaw/quadlets/openclaw.container`
 - `files/agent/platform-host/etc/myos/templates/apps/openclaw/user/openclaw.container`
 
@@ -285,29 +284,22 @@ For persistence-specific changes, also test:
 - background service survival after logout
 - second enrolled user gets a separate per-user instance rather than a shared singleton
 
-### Shared RamaLama changes
+### RamaLama CLI changes
 
-Only Alma 10 currently ships the packaged RamaLama runtime.
+Only Alma 10 currently ships the packaged RamaLama CLI.
 
 On an Alma 10 host or image:
 
 ```bash
-sudo cp files/agent/platform-host/etc/myos/ramalama/models/default.env.example /etc/myos/ramalama/models/default.env
-sudo systemctl enable --now myos-ramalama@default.service
-sudo systemctl status myos-ramalama@default.service
-sudo journalctl -u myos-ramalama@default.service -b --no-pager | tail -n 50
+ramalama --help
+ramalama list || true
 ```
 
 What to inspect:
 
-- instance env file exists
-- service starts as `modelsvc`
-- loopback binding is honored unless wide bind was explicitly allowed
-- `/var/lib/modelsvc` and `/srv/models/ramalama` stay writable by `modelsvc`
-
-If the service start logic changed, also verify that releases lacking an
-advertised host-binding flag still fail closed unless
-`RAMALAMA_ALLOW_WIDE_BIND=1` is set.
+- `ramalama` is present in the image
+- the packaged CLI starts successfully
+- docs still describe it as an operator utility for local model testing and artifact generation rather than a managed host service
 
 ### Workstation Tailscale systray changes
 
@@ -398,4 +390,16 @@ scope is worse than incomplete validation declared clearly.
 d clearly.
 ough that partial validation is normal. Hidden validation
 scope is worse than incomplete validation declared clearly.
+d clearly.
+ssed, but no live provider secret was available for a full running validation
+
+The repo is complex enough that partial validation is normal. Hidden validation
+scope is worse than incomplete validation declared clearly.
+d clearly.
+ough that partial validation is normal. Hidden validation
+scope is worse than incomplete validation declared clearly.
+d clearly.
+ete validation declared clearly.
+d clearly.
+ete validation declared clearly.
 d clearly.
