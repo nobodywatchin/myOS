@@ -28,14 +28,16 @@ That is different from login-user persistence.
 
 The template tree is now explicit.
 
-- `/etc/myos/templates/apps/openclaw/`: dedicated tenant-account OpenClaw hosting.
+- `/etc/myos/templates/apps/openclaw/`: dedicated tenant-account OpenClaw hosting plus the shipped self-service per-user `openclaw.container` template under `user/`.
 - `/etc/myos/templates/persistent-users/baseline/quadlets/`: per-user baseline rootless services for every enrolled user.
 - `/etc/myos/templates/persistent-users/owner/quadlets/`: rootless services that belong only to the selected owner.
 
-The OpenClaw runtime now lives in the baseline bucket so every enrolled user
-gets their own separate instance.
+The key boundary is that the per-user OpenClaw runtime is **not** part of the
+persistent-user baseline bucket.
 
 - The framework exists on every `core-full-*` image and anything built from it.
+- Baseline and owner buckets are for admin-managed per-user services that enrollment reconciles into `~/.config/containers/systemd/`.
+- The per-user OpenClaw runtime ships separately under `/etc/myos/templates/apps/openclaw/user/` and is installed on demand by `openquad`, not by enrollment.
 - If you add more baseline units, each enrolled user gets their own separate instance.
 - If you need one machine-wide shared singleton, use a system unit instead.
 
@@ -165,7 +167,8 @@ service or Quadlet.
 
 - Persistent hosting is an explicit admin action through `myos persistent-user-enroll`.
 - Workstation images can still use `/etc/skel` for desktop conveniences, but the OpenClaw runtime is no longer injected there.
-- The OpenClaw runtime now comes from the persistent-user baseline template bucket and is tied to `default.target`.
+- Enrollment may reconcile admin-managed baseline or owner templates for opted-in users, but the per-user OpenClaw runtime is separate from those buckets.
+- The OpenClaw runtime instead comes from the shipped `apps/openclaw/user` template and is installed on demand by `openquad`.
 
 ## OpenClaw Workflow
 
