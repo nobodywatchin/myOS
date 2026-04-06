@@ -102,6 +102,8 @@ This job is the current static contract check for:
 
 The workflow runs the repo-local helper:
 
+- for `myos-ramalama@.service`, this is repo-local field/contract validation rather than host-root `systemd-analyze verify`, because CI is checking staged image payloads rather than files already installed under `/`.
+
 ```bash
 bash ./scripts/validate-runtime-artifacts.sh
 ```
