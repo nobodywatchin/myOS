@@ -218,6 +218,7 @@ What to inspect:
 - `/srv/tenants/<tenant>/home/.config/containers/systemd/openclaw.container` is rendered
 - `openclaw.service` is active for the tenant user
 - dashboard endpoint responds on the configured loopback port
+- stopping either the UI helper or gateway process causes the tenant container to fail rather than silently staying half-alive
 - `tenant-validate` passes without missing env, port, or secret failures
 
 If the runtime is intentionally not started yet, at least run:

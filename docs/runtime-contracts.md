@@ -238,6 +238,7 @@ If `--require-running` is used, healthy also means:
 
 - `openclaw.service` is active
 - container exists and is running
+- the tenant startup supervisor keeps the UI helper and gateway process lifecycles tied together
 - configured loopback ports are listening
 - dashboard endpoint responds
 - optional Tailscale exposure matches the rendered config

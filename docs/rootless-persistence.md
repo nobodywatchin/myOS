@@ -113,7 +113,7 @@ single-host preset over the tenant system.
 - It records the selected login user through the existing persistent-user owner role.
 - It provisions and manages a fixed dedicated tenant service account for the hosted gateway.
 - It keeps the hosted runtime on the same tenant state/workspace/secrets split as the broader tenant system rather than introducing a separate special-case layout.
-- It reuses the tenant-side localhost port publication, host-managed Tailscale Serve integration, and pairing URL wiring.
+- It reuses the tenant-side localhost port publication, host-managed Tailscale Serve integration, pairing URL wiring, and the supervised single-container tenant startup path.
 - It does not change the per-user `openquad` contract or expose the per-user runtime directly.
 
 Use this wrapper when you want a machine's primary remotely reachable OpenClaw
