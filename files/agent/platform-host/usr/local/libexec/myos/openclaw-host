@@ -8,7 +8,7 @@ usage() {
   cat <<'USAGE'
 Usage: openclaw-host <command> [options]
 
-Owner-friendly wrapper around the dedicated tenant-hosted OpenClaw service.
+Owner-friendly supported wrapper around the dedicated tenant-hosted OpenClaw service.
 This keeps remote pairing and Tailscale on the tenant path while recording the
 chosen login user through the persistent-user owner role.
 

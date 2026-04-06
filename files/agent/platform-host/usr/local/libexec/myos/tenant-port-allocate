@@ -8,6 +8,10 @@ usage() {
   cat <<'USAGE'
 Usage: tenant-port-allocate --tenant NAME
 
+Internal reconciliation helper.
+Use `tenant-create` or `tenant-configure` for the supported operator-facing
+flow.
+
 Reserve localhost ports for a tenant and write config/env/ports.env.
 USAGE
 }

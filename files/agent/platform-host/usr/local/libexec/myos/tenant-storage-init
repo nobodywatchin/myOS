@@ -8,6 +8,9 @@ usage() {
   cat <<'USAGE'
 Usage: tenant-storage-init --tenant NAME
 
+Internal reconciliation helper.
+Use `tenant-create` for the supported operator-facing bootstrap flow.
+
 Create the host storage layout for a tenant without enabling any workloads.
 USAGE
 }

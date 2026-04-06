@@ -8,6 +8,9 @@ usage() {
   cat <<'USAGE'
 Usage: tenant-init --tenant NAME [--enable-linger] [--force-quadlets]
 
+Internal reconciliation helper.
+Use `tenant-create` for the supported operator-facing tenant bootstrap flow.
+
 Create a tenant user, storage scaffold, placeholder secrets, localhost port
 allocations, and inert rootless Quadlets for later OpenClaw deployment.
 USAGE

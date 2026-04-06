@@ -8,6 +8,10 @@ usage() {
   cat <<'USAGE'
 Usage: tenant-firewall-apply --tenant NAME
 
+Internal reconciliation helper.
+Use `tenant-create`, `tenant-configure`, or `tenant-tailscale` for the
+supported operator-facing flow.
+
 Render future firewall and proxy integration notes for a tenant. This script
 does not open ports by default.
 USAGE

@@ -141,6 +141,24 @@ Contract:
 The dedicated tenant plane is the persistent, service-account path for hosted
 OpenClaw gateways.
 
+Supported operator-facing entry points for this plane are:
+
+- `myos tenant-create`
+- `myos tenant-configure`
+- `myos tenant-config`
+- `myos tenant-secret-set`
+- `myos tenant-secret-import`
+- `myos tenant-start`, `myos tenant-stop`, `myos tenant-restart`
+- `myos tenant-status`, `myos tenant-validate`, `myos tenant-dashboard`
+- `myos tenant-tailscale`
+- `myos tenant-backup`, `myos tenant-restore`, `myos tenant-remove`
+- advanced tenant-context entry points: `myos tenant-models`, `myos tenant-openclaw`
+
+Implementation helpers such as `tenant-init`, `tenant-config-render`,
+`tenant-quadlet-install`, `tenant-port-allocate`, `tenant-secrets-init`,
+`tenant-storage-init`, and `tenant-firewall-apply` are part of the internal
+reconciliation path and should not be treated as the stable operator contract.
+
 ### Identity and home
 
 Each tenant is a real local account with:

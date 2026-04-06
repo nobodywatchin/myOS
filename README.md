@@ -107,6 +107,21 @@ myOS disables the stock `bootc-fetch-apply-updates.service` and `bootc-fetch-app
 
 The supported OpenClaw operator workflow is exposed through the `myos` just wrapper instead of hand-editing tenant files under `/srv/tenants`. That flow remains the dedicated service-account path for persistent background OpenClaw hosting.
 
+Supported tenant operator surface:
+
+- `tenant-create`
+- `tenant-configure`
+- `tenant-config`
+- `tenant-secret-set`
+- `tenant-secret-import`
+- `tenant-start`, `tenant-stop`, `tenant-restart`
+- `tenant-status`, `tenant-validate`, `tenant-dashboard`
+- `tenant-tailscale`
+- `tenant-backup`, `tenant-restore`, `tenant-remove`
+- advanced tenant-context entry points: `tenant-models`, `tenant-openclaw`
+
+Internal implementation helpers under `/usr/local/libexec/myos/tenant-*` still exist for reconciliation, rendering, and scaffolding, but they are not intended as the stable day-to-day operator surface.
+
 Common tenant flows:
 
 ```bash

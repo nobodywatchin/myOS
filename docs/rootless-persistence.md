@@ -107,7 +107,8 @@ myos openclaw-host tailscale enable
 myos openclaw-host qr
 ```
 
-That wrapper is intentionally not a third runtime plane.
+That wrapper is intentionally not a third runtime plane. It is the supported
+single-host preset over the tenant system.
 
 - It records the selected login user through the existing persistent-user owner role.
 - It provisions and manages a fixed dedicated tenant service account for the hosted gateway.

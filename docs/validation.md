@@ -55,7 +55,7 @@ python3 -m json.tool files/agent/platform-host/etc/myos/templates/apps/openclaw/
 ```
 
 If the `just` entrypoints changed, confirm the import surface still matches the
-current command model:
+current supported command model:
 
 ```bash
 grep -q "import '/usr/share/myos/just/rebase.just'" files/justfiles/usr/share/myos/just/index.just
@@ -184,6 +184,10 @@ then treat runtime validation as required, not optional.
 ### Tenant runtime changes
 
 On a booted image or host, validate the dedicated tenant plane.
+
+Prefer the supported tenant operator surface for setup and lifecycle checks.
+Treat low-level `tenant-*` reconciliation helpers under `/usr/local/libexec/myos/`
+as implementation details unless you are explicitly debugging the tenant plumbing.
 
 Recommended flow:
 

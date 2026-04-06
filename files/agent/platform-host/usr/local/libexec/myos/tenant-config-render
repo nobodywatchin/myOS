@@ -8,6 +8,10 @@ usage() {
   cat <<'USAGE'
 Usage: tenant-config-render --tenant NAME
 
+Internal reconciliation helper.
+Use `tenant-create`, `tenant-configure`, or `tenant-config` for supported
+operator-facing config changes.
+
 Seed a tenant OpenClaw config if it is missing and ensure the same-port
 loopback dashboard origins are present.
 USAGE

@@ -8,6 +8,10 @@ usage() {
   cat <<'USAGE'
 Usage: tenant-quadlet-install --tenant NAME [--force] [--restart] [--validate]
 
+Internal reconciliation helper.
+Use `tenant-create`, `tenant-start`, `tenant-restart`, or `tenant-validate`
+for the supported operator-facing lifecycle.
+
 Render rootless Quadlet files into the tenant home directory and optionally
 reconcile the running tenant service.
 USAGE
