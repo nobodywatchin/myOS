@@ -376,7 +376,8 @@ Use this as the default baseline:
 - syntax-check `openclaw-ui-server.mjs` if touched
 - JSON-check `openclaw.json.example` if touched
 - rerun `scripts/verify-alma9-nvidia-legacy.ps1` if Alma 9 legacy NVIDIA changed
-- do at least one runtime validation pass for tenant, persistent-user, Flatpak, or RamaLama behavior if that plane changed
+- do at least one runtime validation pass for tenant, persistent-user, or Flatpak behavior if that primary plane changed
+- validate RamaLama only when the optional Alma 10 host feature changed or is part of the deployment you care about
 - update docs when a path, service name, or intentional Alma 9/10 divergence changed
 
 ## When validation is incomplete

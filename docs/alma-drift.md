@@ -51,6 +51,7 @@ Why it exists:
 Current stance:
 
 - intentional and accepted
+- treat RamaLama as an optional Alma 10-only host feature, not as part of the minimum shared OpenClaw runtime contract
 - do not invent a fake Alma 9 parity story without a real source of packages
 
 ### `just` acquisition path

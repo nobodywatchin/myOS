@@ -64,7 +64,7 @@ Both Alma 9 and Alma 10 now expose the same build path:
 
 - `recipes/layers/shared/core-base.yml`: earliest shared EL metadata hookup, base system, podman/runtime tooling, shared ROCm userspace, shared EL runtime payloads, shared admin/platform-host scaffolding, shared service defaults, and late branding
 - `modules/os-release-meta`: runs first from `core-base`, writing `/usr/share/myos/os-release-meta.env` plus the DNF `releasever_major` and `releasever_minor` vars
-- `recipes/layers/alma10/core.yml`: Alma 10-specific core delta, including the packaged RamaLama runtime
+- `recipes/layers/alma10/core.yml`: Alma 10-specific core delta, including the optional packaged RamaLama host-service path
 - `recipes/layers/shared/workstation-base.yml`: shared GNOME desktop baseline, workstation diagnostics, network/storage extras, and Flatpak defaults
 - `recipes/layers/shared/nvidia-common.yml`: NVIDIA repo enablement, container toolkit, and core boot args shared by both streams
 - `recipes/layers/shared/nvidia-open.yml`: open-kmod NVIDIA driver path for newer supported GPUs
@@ -138,3 +138,4 @@ Manual review still recommended for:
 - whether future headless/server products should stay on `core-full-*` or eventually reintroduce a slimmer core tier
 ags for your PR workflow expectations
 - whether future headless/server products should stay on `core-full-*` or eventually reintroduce a slimmer core tier
+y reintroduce a slimmer core tier

@@ -45,7 +45,7 @@ upgrades, not hand-mutated as live state:
 - `/usr/local/libexec/myos/`
 - `/etc/myos/templates/apps/openclaw/`
 - `/etc/myos/templates/persistent-users/`
-- `/usr/lib/systemd/system/myos-ramalama@.service`
+- `/usr/lib/systemd/system/myos-ramalama@.service` (optional Alma 10 host feature)
 - `/etc/nginx/conf.d/myos-platform.conf`
 
 Rule:
@@ -327,6 +327,9 @@ For a running runtime, healthy also means:
 
 ## Shared RamaLama contract
 
+This is an optional Alma 10 host feature, not part of the minimum stable
+OpenClaw runtime contract.
+
 The shared model-host plane is the dedicated `modelsvc` account.
 
 ### Identity and state
@@ -365,6 +368,9 @@ Current expectations from `ramalama-serve`:
 
 ### RamaLama health contract
 
+Validate this contract only when the optional RamaLama host feature is being
+used or changed.
+
 Healthy instance state means at least:
 
 - `/etc/myos/ramalama/models/<instance>.env` exists
@@ -399,5 +405,8 @@ Healthy instance state means at least:
 - `~/.local/share/openclaw/`
 
 If you need new runtime state, give it an explicit owner and document whether it
+belongs to the image, the host operator, the tenant account, the enrolled login
+user, or the shared `modelsvc` service.
+ and document whether it
 belongs to the image, the host operator, the tenant account, the enrolled login
 user, or the shared `modelsvc` service.

@@ -1,5 +1,7 @@
 # Shared RamaLama substrate
 
+Optional Alma 10-only host feature.
+
 `modelsvc` is the dedicated host account for shared inference.
 
 - Shared model state: `/srv/models/ramalama`

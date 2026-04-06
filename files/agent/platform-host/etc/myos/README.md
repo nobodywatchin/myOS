@@ -7,7 +7,7 @@ This image ships the host substrate for two kinds of rootless workloads:
 
 Key paths:
 
-- Shared RamaLama state lives under `/srv/models/ramalama`.
+- Optional Alma 10-only RamaLama host state lives under `/srv/models/ramalama`.
 - Dedicated tenant app templates live under `/etc/myos/templates/apps/openclaw/`.
 - Persistent login-user template buckets live under `/etc/myos/templates/persistent-users/`.
 - Persistent-user state and the selected owner assignment live under `/etc/myos/persistent-users/`.
