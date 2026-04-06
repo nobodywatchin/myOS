@@ -39,16 +39,12 @@ modules:
         - usbutils
         - xorg-x11-utils
 
+  # Alma 9 GNOME 40 still needs this tiny workspace-indicator tweak so the
+  # indicator lands on the left side of the top bar instead of the default
+  # position used by the packaged extension.
   - type: containerfile
     snippets:
-      - >-
-        # Alma 9 GNOME 40 still needs this tiny workspace-indicator tweak so the
-        # indicator lands on the left side of the top bar instead of the default
-        # position used by the packaged extension.
-        RUN ext=/usr/share/gnome-shell/extensions/workspace-indicator@gnome-shell-extensions.gcampax.github.com; \
-          js="$ext/extension.js"; \
-          grep -q "addToStatusArea('workspace-indicator', _indicator, 0, 'left')" "$js" || \
-          sed -i "s/Main\\.panel\\.addToStatusArea('workspace-indicator', _indicator);/Main.panel.addToStatusArea('workspace-indicator', _indicator, 0, 'left');/" "$js"
+      - RUN ext=/usr/share/gnome-shell/extensions/workspace-indicator@gnome-shell-extensions.gcampax.github.com; js="$ext/extension.js"; grep -q "addToStatusArea('workspace-indicator', _indicator, 0, 'left')" "$js" || sed -i "s/Main\\.panel\\.addToStatusArea('workspace-indicator', _indicator);/Main.panel.addToStatusArea('workspace-indicator', _indicator, 0, 'left');/" "$js"
 
   # Alma 9 currently carries two known GNOME extension rough edges:
   # - clipboard-indicator
