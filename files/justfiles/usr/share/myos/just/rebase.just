@@ -6,6 +6,11 @@ rebase:
 
     sel="$(
       printf '%s\n' \
+        core-full-alma10:latest \
+        core-full-alma10-nvidia-open:latest \
+        core-full-alma9:latest \
+        core-full-alma9-nvidia-open:latest \
+        core-full-alma9-nvidia-legacy:latest \
         gnome-alma10:latest \
         gnome-alma10-nvidia-open:latest \
         gnome-alma9:latest \
