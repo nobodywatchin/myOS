@@ -1,0 +1,130 @@
+---
+modules:
+  # Shared core substrate used by the published `core-full-*` image line.
+  # Keep distro-specific additions in `recipes/layers/alma9/core.yml` and
+  # `recipes/layers/alma10/core.yml`.
+  #
+  # 1) EL identity and repo bootstrap
+  - type: os-release-meta
+    source: local
+
+  - type: dnf
+    install:
+      packages:
+        - epel-release
+
+  - type: containerfile
+    snippets:
+      - RUN dnf -y config-manager --set-enabled crb
+
+  # 2) Shared base system and container/runtime tools
+  - type: dnf
+    remove:
+      packages:
+        - subscription-manager
+    install:
+      install-weak-deps: false
+      packages:
+        - lshw
+        - dnf-plugins-core
+        - audit
+        - rpm-plugin-audit
+        - basesystem
+        - bash
+        - coreutils
+        - crypto-policies
+        - crypto-policies-scripts
+        - dnf
+        - e2fsprogs
+        - filesystem
+        - glibc
+        - ca-certificates
+        - hostname
+        - irqbalance
+        - kbd
+        - less
+        - ncurses
+        - policycoreutils
+        - procps-ng
+        - rootfiles
+        - rpm
+        - selinux-policy-targeted
+        - setup
+        - shadow-utils
+        - sudo
+        - systemd
+        - systemd-udev
+        - util-linux
+        - xfsprogs
+        - curl
+        - iproute
+        - iputils
+        - NetworkManager
+        - openssh-server
+        - p11-kit
+        - chrony
+        - dosfstools
+        - lvm2
+        - sg3_utils
+        - sg3_utils-libs
+        - dbus
+        - python3-libselinux
+        - linux-firmware
+        - system-reinstall-bootc
+        - fastfetch
+        - fzf
+        - NetworkManager-tui
+        - podman
+        - podman-docker
+        - podman-compose
+        - container-selinux
+        - conntrack-tools
+        - skopeo
+        - buildah
+        - distrobox
+        - fuse-overlayfs
+        - slirp4netns
+        - openssh-clients
+        - policycoreutils-python-utils
+        - vim-minimal
+        - bzip2
+        - file
+        - gnupg2
+        - mailcap
+        - rsync
+        - tar
+        - unzip
+        - wget
+        - which
+        - zip
+  - type: containerfile
+    snippets:
+      - >-
+        RUN for helper in distrobox-export distrobox-host-exec distrobox-init; do \
+          if [ -x "/usr/bin/${helper}" ] && [ ! -e "/usr/sbin/${helper}" ]; then \
+            ln -s "../bin/${helper}" "/usr/sbin/${helper}"; \
+          fi; \
+        done
+
+  # 3) Shared external repos and baseline services
+  # Tailscale repo bootstrap stays inline for now instead of shipping a vendored
+  # repo file under files/dnf/. Keep this explicit and reviewable here until the
+  # repo policy is unified across all third-party bootstrap paths.
+  - type: containerfile
+    snippets:
+      - RUN . /usr/share/myos/os-release-meta.env && dnf config-manager --add-repo "https://pkgs.tailscale.com/stable/rhel/${EL_MAJOR}/tailscale.repo"
+      - RUN dnf config-manager --set-disabled "tailscale-stable"
+      - RUN dnf -y --enablerepo "tailscale-stable" install tailscale
+
+  - type: systemd
+    system:
+      enabled:
+        - tailscaled.service
+
+  # 4) Shared runtime defaults and common operator entrypoints
+  - type: files
+    files:
+      - source: base/runtime
+        destination: /
+      - source: justfiles
+        destination: /

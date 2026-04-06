@@ -5,7 +5,7 @@ description: Full myOS AlmaLinux 9 core with tenant/OpenClaw platform tooling an
 base-image: quay.io/almalinuxorg/almalinux-bootc
 image-version: latest
 modules:
-  - from-file: layers/shared/core-base.yml
+  - from-file: layers/shared/full.yml
   - from-file: layers/alma9/core.yml
   - type: initramfs
   - type: signing

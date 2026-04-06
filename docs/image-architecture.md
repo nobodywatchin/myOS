@@ -7,7 +7,7 @@ The repo is intentionally flatter now:
 - shared layers for what really is shared
 - one small layer set per Alma version
 - one core tier per distro: `full`
-- `core-base` acts as the shared full-core substrate, with distro-specific full additions layered on where needed
+- `core.yml` acts as the shared substrate and `full.yml` adds the feature-complete published core composition on top of it
 - NVIDIA split into explicit `open` and `legacy` streams, plus workstation-only extras
 
 ## Repo Tree
@@ -33,9 +33,11 @@ recipes/
         nvidia-open.yml
   layers/
     shared/
-      core-base.yml
+      core.yml
+      full.yml
       workstation-base.yml
       nvidia-common.yml
+      nvidia-cuda.yml
       nvidia-open.yml
       nvidia-workstation.yml
     alma9/
@@ -48,6 +50,9 @@ recipes/
     features/
       kubernetes-cli.yml
 ```
+
+The `features/` directory still exists for composable extras, but `kubernetes-cli.yml`
+is now also pulled into the published `core-full-*` image line through `shared/full.yml`.
 
 ## Core Progression
 
@@ -62,8 +67,9 @@ Both Alma 9 and Alma 10 now expose the same build path:
 
 ## Layer Responsibilities
 
-- `recipes/layers/shared/core-base.yml`: earliest shared EL metadata hookup, base system, podman/runtime tooling, shared ROCm userspace, shared EL runtime payloads, shared admin/platform-host scaffolding, shared service defaults, and late branding
-- `modules/os-release-meta`: runs first from `core-base`, writing `/usr/share/myos/os-release-meta.env` plus the DNF `releasever_major` and `releasever_minor` vars
+- `recipes/layers/shared/core.yml`: earliest shared EL metadata hookup, base system, podman/runtime tooling, shared EL runtime defaults, and the shared Tailscale baseline
+- `recipes/layers/shared/full.yml`: feature-complete full-core composition layered on top of `shared/core.yml`, adding platform-host scaffolding, shared AI/infrastructure tooling, Kubernetes CLI availability, shared service defaults, and late branding
+- `modules/os-release-meta`: runs first from `core`, writing `/usr/share/myos/os-release-meta.env` plus the DNF `releasever_major` and `releasever_minor` vars
 - `recipes/layers/alma10/core.yml`: Alma 10-specific core delta, including the optional packaged RamaLama host-service path
 - `recipes/layers/shared/workstation-base.yml`: shared GNOME desktop baseline, workstation diagnostics, network/storage extras, and Flatpak defaults
 - `recipes/layers/shared/nvidia-common.yml`: NVIDIA repo enablement, container toolkit, and core boot args shared by both streams
@@ -88,7 +94,7 @@ The layering now mirrors the rootless workload split.
 
 - `core-full-*` carries the persistent or background plane: dedicated tenant-account OpenClaw tooling, the persistent-user enrollment commands, the `openquad` host wrapper, template buckets under `/etc/myos/templates/apps/` and `/etc/myos/templates/persistent-users/`, and the shared `/var/tmp/myos-podman` rootless storage location. The per-user OpenClaw template ships under `/etc/myos/templates/apps/openclaw/user/` and is instantiated explicitly by `openquad` rather than enrolled automatically.
 - `workstation-*` now reuses that same shared per-user OpenClaw runtime model instead of adding a separate session-bound helper through `/etc/skel`.
-- `core-base.yml` disables the stock `bootc-fetch-apply-updates.*` units so update activation remains an explicit operator action across the image family.
+- `full.yml` disables the stock `bootc-fetch-apply-updates.*` units so update activation remains an explicit operator action across the image family.
 
 ## Migration Summary
 
@@ -136,6 +142,4 @@ Manual review still recommended for:
 - whether Alma 9 should eventually gain an alternate AI runtime source or remain model-host-runtime-free
 - whether the published `latest` core tags are the right workstation base tags for your PR workflow expectations
 - whether future headless/server products should stay on `core-full-*` or eventually reintroduce a slimmer core tier
-ags for your PR workflow expectations
-- whether future headless/server products should stay on `core-full-*` or eventually reintroduce a slimmer core tier
-y reintroduce a slimmer core tier
+core tier

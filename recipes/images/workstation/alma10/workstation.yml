@@ -3,6 +3,8 @@
 name: workstation-alma10
 description: myOS AlmaLinux 10 workstation layered on the published full core image.
 base-image: ghcr.io/myos-dev/core-full-alma10
+# This tracks the latest published build of our own Alma 10 core image line,
+# not Alma's quay tag semantics.
 image-version: latest
 modules:
   - from-file: layers/shared/workstation-base.yml

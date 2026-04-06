@@ -3,6 +3,8 @@
 name: workstation-alma10-nvidia-open
 description: myOS AlmaLinux 10 workstation layered on the published full NVIDIA open core image with workstation NVIDIA extras.
 base-image: ghcr.io/myos-dev/core-full-alma10-nvidia-open
+# This tracks the latest published build of our own Alma 10 NVIDIA core line,
+# not Alma's quay tag semantics.
 image-version: latest
 modules:
   - from-file: layers/shared/workstation-base.yml

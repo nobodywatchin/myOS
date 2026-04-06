@@ -21,15 +21,17 @@ These are current cross-distro invariants unless a wider design review says
 otherwise:
 
 - `core-full-*` is the single feature-complete core tier
-- `recipes/layers/shared/core-base.yml` is the shared full-core substrate
-- `recipes/layers/shared/workstation-base.yml` is the shared workstation add-on
+- `recipes/layers/shared/core.yml` is the shared core substrate
+- `recipes/layers/shared/full.yml` is the shared feature-complete core composition used by the published `core-full-*` images
+- `recipes/layers/shared/workstation-base.yml` is the shared GNOME workstation add-on
 - both distros keep the same dedicated tenant-account model
 - both distros keep the same persistent-user enrollment model
 - workstations build from the published `core-full-*` images rather than from
   AlmaLinux BootC directly
 - myOS remains AI-ready across the core image family; shared ROCm userspace
-  stays in the shared core substrate unless there is a deliberate product
-  change, while CUDA repo/toolkit content stays on the NVIDIA image paths
+  stays in the shared full-core composition unless there is a deliberate
+  product change, while CUDA repo/toolkit content stays on the NVIDIA image
+  paths
 - NVIDIA open-stream support stays in the shared `nvidia-open` path for distros
   that support it
 
@@ -250,6 +252,10 @@ review:
 3. Is the divergence temporary or open-ended?
 4. What should remain aligned across both distros despite this change?
 5. Does `docs/image-architecture.md`, `docs/runtime-contracts.md`, or this file
+   need an update?
+
+If the answer to question 1 is weak, the change probably belongs in shared.
+ this file
    need an update?
 
 If the answer to question 1 is weak, the change probably belongs in shared.

@@ -6,7 +6,7 @@
 
 # myOS &nbsp; [![bluebuild build badge](https://github.com/myos-dev/myOS/actions/workflows/build.yml/badge.svg)](https://github.com/myos-dev/myOS/actions/workflows/build.yml)
 
-myOS is an opinionated BootC image ecosystem organized around the shared `core-base` substrate, clear per-distro layers, and workstation products that stay easy to extend.
+myOS is an opinionated BootC image ecosystem organized around a shared `core` substrate, a feature-complete `full` core composition, clear per-distro layers, and workstation products that stay easy to extend.
 
 # Image Progression
 
@@ -27,7 +27,7 @@ NVIDIA streams are explicit:
 
 For the legacy AI lane, keep the host driver and the AI userspace stack as separate decisions. The host stays on the pinned R580 proprietary branch, while older-GPU AI workloads should start from CUDA 12.6-class userspace stacks, such as PyTorch `cu126`, instead of assuming newer CUDA 13-era examples are the safest default for Maxwell/Pascal-class hardware.
 
-`core-full-*` is the single full base tier. It includes tenant commands, persistent-user enrollment tooling, Cockpit admin services, shared ROCm userspace, and OpenClaw platform-host scaffolding for both distros. CUDA repo/toolkit content is layered through the NVIDIA image paths rather than the plain non-NVIDIA `core-full-*` images.
+`core-full-*` is the single full base tier. It includes tenant commands, persistent-user enrollment tooling, Cockpit admin services, shared ROCm userspace, the Kubernetes CLI, and OpenClaw platform-host scaffolding for both distros. CUDA repo/toolkit content is layered through the NVIDIA image paths rather than the plain non-NVIDIA `core-full-*` images.
 Alma 10 also carries an optional packaged RamaLama host-service path in its distro-specific core layer. That feature is disabled by default and is not required for the tenant, `openclaw-host`, or per-user `openquad` runtime contracts.
 
 For per-user OpenClaw on `core-full-*` and workstation images, the host contract is explicit:
@@ -77,12 +77,12 @@ files/
 ```
 
 - `recipes/images` contains only buildable images.
-- `recipes/layers/shared` contains the shared composition layers: `core-base`, `workstation-base`, `nvidia-common`, `nvidia-cuda`, `nvidia-open`, and `nvidia-workstation`.
+- `recipes/layers/shared` contains the shared composition layers: `core`, `full`, `workstation-base`, `nvidia-common`, `nvidia-cuda`, `nvidia-open`, and `nvidia-workstation`.
 - `recipes/layers/alma9` and `recipes/layers/alma10` keep version differences explicit without spreading them across lots of tiny files.
-- `modules/os-release-meta` runs first from `core-base`, before branding, and is the shared EL metadata source of truth. `core-base` now carries the shared EL Tailscale setup, common runtime payloads, and shared admin/platform-host scaffolding, while `workstation-base` carries the shared GNOME desktop baseline in addition to the broader workstation tooling and Flatpak defaults.
+- `modules/os-release-meta` runs first from `core`, before branding, and is the shared EL metadata source of truth. `core.yml` carries the shared EL Tailscale setup, base system, and common runtime defaults, while `full.yml` adds the platform-host scaffolding, shared AI/infrastructure tooling, and Kubernetes-ready operator surface used by the published `core-full-*` images. `workstation-base` carries the shared GNOME desktop baseline in addition to the broader workstation tooling and Flatpak defaults.
 - `files/base`, `files/workstation`, and `files/agent` mirror those concerns in the payloads.
 
-Kubernetes is still available as the opt-in feature layer at [`recipes/layers/features/kubernetes-cli.yml`](recipes/layers/features/kubernetes-cli.yml).
+Kubernetes is now included in the published `core-full-*` image line via [`recipes/layers/features/kubernetes-cli.yml`](recipes/layers/features/kubernetes-cli.yml), so the full core/workstation stack is ready to talk to Terraform and Kubernetes out of the box.
 
 The full architecture and migration notes live in [`docs/image-architecture.md`](docs/image-architecture.md). The rootless persistence model lives in [`docs/rootless-persistence.md`](docs/rootless-persistence.md). Runtime ownership and path contracts live in [`docs/runtime-contracts.md`](docs/runtime-contracts.md). Validation guidance lives in [`docs/validation.md`](docs/validation.md). Current Alma 9 versus Alma 10 intentional drift is tracked in [`docs/alma-drift.md`](docs/alma-drift.md).
 
@@ -217,5 +217,8 @@ rm -f "$TMP"
 ```
 --config /config.toml \
   ghcr.io/myos-dev/workstation-alma10:latest
+rm -f "$TMP"
+```
+:latest
 rm -f "$TMP"
 ```

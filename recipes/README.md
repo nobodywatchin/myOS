@@ -32,7 +32,7 @@ images/
 
 These recipes build directly from the AlmaLinux BootC base image and then compose:
 
-- `layers/shared/core-base.yml`
+- `layers/shared/full.yml`
 - one distro-specific core delta
 - optional NVIDIA stream layers
 
@@ -60,9 +60,10 @@ Use `recipes/layers/README.md` as the quick map for:
 
 ### If it is shared across all core images
 
-Start in:
+Start in one of:
 
-- `layers/shared/core-base.yml`
+- `layers/shared/core.yml`
+- `layers/shared/full.yml`
 
 ### If it is distro-specific core behavior
 

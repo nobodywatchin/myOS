@@ -1,0 +1,185 @@
+---
+modules:
+  - from-file: layers/shared/core.yml
+
+  # Shared full-core packages, platform-host payloads, and admin services.
+  - type: dnf
+    install:
+      install-weak-deps: false
+      packages:
+        - gcc
+        - zstd
+        - cockpit
+        - cockpit-ostree
+        - cockpit-files
+        - cockpit-storaged
+        - cockpit-podman
+
+  - type: files
+    files:
+      - source: agent/platform-host/etc
+        destination: /etc
+      - source: agent/platform-host/usr
+        destination: /usr
+      - source: agent/platform-host/var
+        destination: /var
+      - source: agent/justfiles
+        destination: /
+
+  # Shared platform-host layout and model service account.
+  - type: containerfile
+    snippets:
+      - >-
+        RUN getent passwd modelsvc >/dev/null 2>&1 || useradd --system \
+          --create-home --home-dir /var/lib/modelsvc --shell /usr/sbin/nologin \
+          --comment "myOS shared model service" modelsvc
+
+      # Managed platform layout under /etc, /srv, and /var/tmp for shared host tooling.
+      - >-
+        RUN install -d -m 0755 \
+          /etc/myos /etc/myos/dns /etc/myos/firewall \
+          /etc/myos/firewall/rendered /etc/myos/firewall/tenants \
+          /etc/myos/persistent-users /etc/myos/persistent-users/users \
+          /etc/myos/proxy /etc/myos/proxy/tenants \
+          /etc/myos/ramalama /etc/myos/ramalama/models \
+          /etc/myos/templates /etc/myos/templates/apps \
+          /etc/myos/templates/apps/openclaw \
+          /etc/myos/templates/persistent-users \
+          /etc/myos/templates/persistent-users/baseline \
+          /etc/myos/templates/persistent-users/baseline/quadlets \
+          /etc/myos/templates/persistent-users/owner \
+          /etc/myos/templates/persistent-users/owner/quadlets \
+          /etc/myos/tenants \
+          /srv/models /srv/models/ramalama \
+          /srv/tenants /srv/tenants/.skel \
+          /var/tmp/myos-podman
+
+      - RUN install -D -m 0644 /var/srv/tenants/README.md /srv/tenants/.skel/README.md
+
+      - >-
+        RUN install -d -m 0755 \
+          /usr/local/libexec/myos \
+          /var/lib/modelsvc/.config \
+          /var/lib/modelsvc/.local/share
+
+      - RUN ln -sfn /srv/models/ramalama /var/lib/modelsvc/.local/share/ramalama
+
+      # Reserve subordinate IDs so the shared model service can use rootless Podman safely.
+      - >-
+        RUN if ! grep -q '^modelsvc:' /etc/subuid; then \
+          start="$(awk -F: 'BEGIN{max=200000} NF >= 3 && $2 ~ /^[0-9]+$/ && \
+            $3 ~ /^[0-9]+$/ {end=$2+$3; if (end > max) max=end} END{print max+1}' \
+            /etc/subuid 2>/dev/null)"; \
+          printf 'modelsvc:%s:65536\n' "${start:-200001}" >> /etc/subuid; \
+        fi
+
+      - >-
+        RUN if ! grep -q '^modelsvc:' /etc/subgid; then \
+          start="$(awk -F: 'BEGIN{max=200000} NF >= 3 && $2 ~ /^[0-9]+$/ && \
+            $3 ~ /^[0-9]+$/ {end=$2+$3; if (end > max) max=end} END{print max+1}' \
+            /etc/subgid 2>/dev/null)"; \
+          printf 'modelsvc:%s:65536\n' "${start:-200001}" >> /etc/subgid; \
+        fi
+
+      - RUN chown -R modelsvc:modelsvc /var/lib/modelsvc /srv/models/ramalama
+
+      # Pre-label persistent content so shared rootless services come up with the right SELinux context.
+      - RUN semanage fcontext -a -t container_file_t '/srv/models(/.*)?' 2>/dev/null || true
+      - RUN semanage fcontext -a -t container_file_t '/srv/tenants(/.*)?' 2>/dev/null || true
+      - RUN semanage fcontext -a -e /var/lib/containers /var/tmp/myos-podman 2>/dev/null || true
+
+      - >-
+        RUN restorecon -RF \
+          /etc/myos /srv/models /srv/tenants \
+          /usr/local/libexec/myos \
+          /usr/lib/systemd/system/myos-ramalama@.service \
+          /etc/nginx/conf.d/myos-platform.conf \
+          /var/lib/modelsvc \
+          /var/tmp/myos-podman || true
+
+  # Shared accelerator and infrastructure tooling for the published full-core line.
+  - type: dnf
+    install:
+      install-weak-deps: false
+      packages:
+        - mesa-vulkan-drivers
+        - vulkan-loader
+        - vulkan-tools
+
+  - type: dnf
+    repos:
+      files:
+        - rocm.repo
+      keys:
+        - https://repo.radeon.com/rocm/rocm.gpg.key
+    install:
+      install-weak-deps: false
+      skip-broken: true
+      packages:
+        - clinfo
+        - repo: rocm
+          packages:
+            - amd-smi-lib
+            - rocminfo
+            - rocm-hip-sdk
+            - rocm-ml-sdk
+            - rocm-opencl-sdk
+            - rocm-smi-lib
+
+  - type: dnf
+    repos:
+      files:
+        - opentofu.repo
+      keys:
+        - https://packages.opentofu.org/opentofu/tofu/gpgkey
+        - https://get.opentofu.org/opentofu.asc
+    install:
+      install-weak-deps: false
+      packages:
+        - repo: opentofu
+          packages:
+            - tofu
+
+  # Full core images should be ready to terraform / talk to Kubernetes out of the box.
+  - from-file: layers/features/kubernetes-cli.yml
+
+  - type: containerfile
+    snippets:
+      - >-
+        RUN set -eux; \
+          getent group video >/dev/null 2>&1 || groupadd --system video; \
+          getent group render >/dev/null 2>&1 || groupadd --system render; \
+          ldconfig
+
+  # Shared boot arguments across the full image family.
+  - type: kargs
+    kargs:
+      - iommu=pt
+      - transparent_hugepage=madvise
+      - radeon.si_support=0
+      - amdgpu.si_support=1
+      - radeon.cik_support=0
+      - amdgpu.cik_support=1
+
+  # Final service defaults and image branding.
+  - type: systemd
+    system:
+      masked:
+        - rpm-ostree-countme.service
+        - rpm-ostree-countme.timer
+        - akmods-keygen@akmods-keygen.service
+        - bootc-fetch-apply-updates.service
+        - bootc-fetch-apply-updates.timer
+      disabled:
+        - myos-ramalama@default.service
+
+  - type: files
+    files:
+      - source: base/branding
+        destination: /
+
+  - type: os-release
+    properties:
+      NAME: myOS
+      PRETTY_NAME: myOS
+      VENDOR_NAME: myOS

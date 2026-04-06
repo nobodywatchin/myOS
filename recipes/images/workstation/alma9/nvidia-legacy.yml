@@ -3,6 +3,8 @@
 name: workstation-alma9-nvidia-legacy
 description: myOS AlmaLinux 9 workstation for older-GPU AI work layered on the published full proprietary NVIDIA 580 core image with workstation NVIDIA extras.
 base-image: ghcr.io/myos-dev/core-full-alma9-nvidia-legacy
+# Workstation images intentionally track the latest published build of the
+# matching myOS core line rather than rebuilding the full stack inline.
 image-version: latest
 modules:
   - from-file: layers/shared/workstation-base.yml

@@ -42,18 +42,20 @@ modules:
   - type: containerfile
     snippets:
       - >-
-        RUN for ext in \
-          /usr/share/gnome-shell/extensions/clipboard-indicator@tudmotu.com \
-          /usr/share/gnome-shell/extensions/bluetooth-quick-connect@bjarosze.gmail.com; do \
-            if [ -d "$ext/schemas" ]; then \
-              glib-compile-schemas "$ext/schemas"; \
-            fi; \
-          done
-      - >-
+        # Alma 9 GNOME 40 still needs this tiny workspace-indicator tweak so the
+        # indicator lands on the left side of the top bar instead of the default
+        # position used by the packaged extension.
         RUN ext=/usr/share/gnome-shell/extensions/workspace-indicator@gnome-shell-extensions.gcampax.github.com; \
           js="$ext/extension.js"; \
           grep -q "addToStatusArea('workspace-indicator', _indicator, 0, 'left')" "$js" || \
           sed -i "s/Main\\.panel\\.addToStatusArea('workspace-indicator', _indicator);/Main.panel.addToStatusArea('workspace-indicator', _indicator, 0, 'left');/" "$js"
+
+  # Alma 9 currently carries two known GNOME extension rough edges:
+  # - clipboard-indicator
+  # - bluetooth-quick-connect
+  # Their packaged schemas are still the ones that fail here, so leave the
+  # extensions enabled/configured through dconf for now but do not keep the old
+  # build-time glib-compile-schemas workaround in the image recipe.
 
   # Append Alma 9-specific system Flatpaks on top of the shared workstation
   # defaults from `shared/workstation-base.yml`; `default-flatpaks`

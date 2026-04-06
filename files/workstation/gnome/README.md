@@ -18,7 +18,7 @@ it should not try to run the systray at image build time.
 
 ### 1. The system daemon comes from the shared core layer
 
-`recipes/layers/shared/core-base.yml`:
+`recipes/layers/shared/core.yml`:
 
 - installs the `tailscale` package from the upstream repo
 - enables `tailscaled.service` in **system** scope

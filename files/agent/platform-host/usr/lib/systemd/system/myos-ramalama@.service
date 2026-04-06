@@ -24,7 +24,7 @@ NoNewPrivileges=yes
 PrivateTmp=yes
 ProtectSystem=full
 ProtectHome=true
-ReadWritePaths=/var/lib/modelsvc /srv/models /etc/myos/ramalama /run/myos-modelsvc
+ReadWritePaths=/var/lib/modelsvc /srv/models /run/myos-modelsvc
 
 [Install]
 WantedBy=multi-user.target

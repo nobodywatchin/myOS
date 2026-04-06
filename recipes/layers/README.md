@@ -14,11 +14,17 @@ layers/
 
 ## Shared layers
 
-### `shared/core-base.yml`
+### `shared/core.yml`
 
-The shared full-core substrate.
+The shared core substrate.
 
-This is not a tiny bootstrap layer despite the name. It carries the common EL identity setup, base packages, shared runtime payloads, shared platform-host scaffolding, and shared service defaults used by every `core-full-*` image.
+This carries the common EL identity setup, base packages, shared runtime defaults, and the shared Tailscale baseline used by the published `core-full-*` image line.
+
+### `shared/full.yml`
+
+The feature-complete shared full-core composition.
+
+This layers on top of `shared/core.yml` and carries the platform-host scaffolding, shared AI/infrastructure tooling, Kubernetes CLI, and shared service defaults used by every `core-full-*` image.
 
 ### `shared/workstation-base.yml`
 
@@ -68,7 +74,7 @@ Alma 9-only proprietary NVIDIA legacy stream for older-GPU AI hosts.
 
 ### `features/`
 
-Optional capabilities that should stay opt-in instead of silently becoming part of every image.
+Composable capabilities that can be reused without inventing a new image tier. Most should stay opt-in, but a shared feature layer may also be pulled into the published full-core composition when that capability becomes part of the default operator surface.
 
 ## Reading order
 
