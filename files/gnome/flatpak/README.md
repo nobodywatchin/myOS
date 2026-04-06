@@ -1,14 +1,14 @@
-# workstation/flatpak/
+# gnome/flatpak/
 
-This tree contains the workstation-only Flatpak UX and policy layer.
+This tree contains the GNOME-only Flatpak UX and policy layer.
 
 It does **not** replace BlueBuild's `default-flatpaks` module.
-Instead, it shapes how the workstation images use the remotes and apps that
+Instead, it shapes how the GNOME images use the remotes and apps that
 BlueBuild creates at boot.
 
 ## Intended model
 
-Workstation images intentionally expose two Flatpak lanes:
+GNOME images intentionally expose two Flatpak lanes:
 
 - `flathub` in **user** scope for normal personal installs
 - `org-system` in **system** scope for curated, image-managed shared apps

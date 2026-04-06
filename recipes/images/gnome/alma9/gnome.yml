@@ -1,13 +1,13 @@
 ---
 # yaml-language-server: $schema=https://schema.blue-build.org/recipe-v1.json
-name: workstation-alma9
-description: myOS AlmaLinux 9 workstation layered on the published full core image.
+name: gnome-alma9
+description: myOS AlmaLinux 9 GNOME image layered on the published full core image.
 base-image: ghcr.io/myos-dev/core-full-alma9
-# Workstation images intentionally track the latest published build of the
+# GNOME images intentionally track the latest published build of the
 # matching myOS core line rather than rebuilding the full stack inline.
 image-version: latest
 modules:
   - from-file: layers/shared/gnome-base.yml
-  - from-file: layers/alma9/workstation.yml
+  - from-file: layers/alma9/gnome.yml
   - type: initramfs
   - type: signing

@@ -32,10 +32,6 @@ The shared GNOME desktop add-on layered on top of published `core-full-*` images
 
 It owns the common GNOME baseline, desktop diagnostics and utilities, shared Flatpak defaults, and GNOME payload trees.
 
-### `shared/workstation-base.yml`
-
-Compatibility shim that forwards to `shared/gnome-base.yml`.
-
 ### `shared/nvidia-common.yml`
 
 Shared NVIDIA repo enablement, container toolkit setup, and core boot args.
@@ -48,9 +44,9 @@ Shared CUDA repo setup plus NVIDIA-only shell/ldconfig payloads.
 
 Shared NVIDIA open-kernel-module stream for newer supported GPUs.
 
-### `shared/nvidia-workstation.yml`
+### `shared/nvidia-gnome.yml`
 
-Workstation-only NVIDIA userspace extras layered on top of the matching NVIDIA core image.
+GNOME-only NVIDIA userspace extras layered on top of the matching NVIDIA core image.
 
 ## Distro-specific layers
 
@@ -62,13 +58,13 @@ Alma 9-only core delta. Keep this small and limited to EL9-specific behavior.
 
 Alma 10-only core delta. This is where the packaged RamaLama runtime currently lives.
 
-### `alma9/workstation.yml`
+### `alma9/gnome.yml`
 
-Alma 9-only GNOME workstation delta on top of `shared/gnome-base.yml`.
+Alma 9-only GNOME delta on top of `shared/gnome-base.yml`.
 
-### `alma10/workstation.yml`
+### `alma10/gnome.yml`
 
-Alma 10-only GNOME workstation delta on top of `shared/gnome-base.yml`.
+Alma 10-only GNOME delta on top of `shared/gnome-base.yml`.
 
 ### `alma9/nvidia-legacy.yml`
 

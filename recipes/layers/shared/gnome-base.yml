@@ -2,8 +2,8 @@
 modules:
   # Shared GNOME desktop add-on layered on top of published `core-full-*`
   # images. Keep distro-specific GNOME drift in
-  # `recipes/layers/alma9/workstation.yml` and
-  # `recipes/layers/alma10/workstation.yml`.
+  # `recipes/layers/alma9/gnome.yml` and
+  # `recipes/layers/alma10/gnome.yml`.
   #
   # Shared GNOME desktop packages and session services
   - type: dnf
@@ -99,7 +99,7 @@ modules:
   # Shared GNOME payload and session refresh helpers
   - type: files
     files:
-      - source: workstation/gnome
+      - source: gnome/shared
         destination: /
 
   - type: bling
@@ -223,5 +223,5 @@ modules:
 
   - type: files
     files:
-      - source: workstation/flatpak
+      - source: gnome/flatpak
         destination: /

@@ -140,16 +140,16 @@ Current CI builds these image families:
 - `core-full-alma9-nvidia-legacy`
 - `core-full-alma10`
 - `core-full-alma10-nvidia-open`
-- `workstation-alma9`
-- `workstation-alma9-nvidia-open`
-- `workstation-alma9-nvidia-legacy`
-- `workstation-alma10`
-- `workstation-alma10-nvidia-open`
+- `gnome-alma9`
+- `gnome-alma9-nvidia-open`
+- `gnome-alma9-nvidia-legacy`
+- `gnome-alma10`
+- `gnome-alma10-nvidia-open`
 
 Important repo behavior:
 
-- workstation jobs wait for the full core image jobs
-- workstation recipes build from published `core-full-*` images
+- GNOME jobs wait for the full core image jobs
+- GNOME recipes build from published `core-full-*` images
 - docs-only pushes do **not** trigger this workflow because `push.paths-ignore`
   excludes `**.md`
 
@@ -311,7 +311,7 @@ advertised host-binding flag still fail closed unless
 
 ### Workstation Tailscale systray changes
 
-On a booted workstation image:
+On a booted GNOME image:
 
 ```bash
 systemctl status tailscaled.service --no-pager
@@ -336,7 +336,7 @@ sudo tailscale set --operator=<username>
 
 ### Workstation Flatpak changes
 
-On a booted workstation image:
+On a booted GNOME image:
 
 ```bash
 flatpak remotes --user
@@ -355,7 +355,7 @@ What to inspect:
 
 Reference behavior is documented in:
 
-- `files/workstation/flatpak/README.md`
+- `files/gnome/flatpak/README.md`
 
 ### Alma drift changes
 

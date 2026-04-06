@@ -54,7 +54,7 @@ $transactions = @(
     },
     [PSCustomObject]@{
         Images = @(
-            "workstation-alma9-nvidia-legacy"
+            "gnome-alma9-nvidia-legacy"
         )
         Packages = @(
             "nvidia-driver",

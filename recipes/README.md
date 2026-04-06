@@ -21,7 +21,7 @@ images/
   core/
     alma9/
     alma10/
-  workstation/
+  gnome/
     alma9/
     alma10/
 ```
@@ -36,15 +36,15 @@ These recipes build directly from the AlmaLinux BootC base image and then compos
 - one distro-specific core delta
 - optional NVIDIA stream layers
 
-### Workstation images
+### GNOME images
 
-Workstation images build **from the published `core-full-*` images**, not directly from the AlmaLinux BootC base image.
+GNOME images build **from the published `core-full-*` images**, not directly from the AlmaLinux BootC base image.
 
-That means the workstation recipes should read like thin additive layers:
+That means the GNOME recipes should read like thin additive layers:
 
 - `layers/shared/gnome-base.yml`
-- one distro-specific GNOME workstation delta
-- optional workstation NVIDIA extras
+- one distro-specific GNOME delta
+- optional GNOME NVIDIA extras
 
 This is the main repo convention to keep in mind if you are coming from a more single-stage BlueBuild repo.
 
@@ -72,18 +72,18 @@ Start in one of:
 - `layers/alma9/core.yml`
 - `layers/alma10/core.yml`
 
-### If it is shared GNOME workstation behavior
+### If it is shared GNOME desktop behavior
 
 Start in:
 
 - `layers/shared/gnome-base.yml`
 
-### If it is distro-specific workstation behavior
+### If it is distro-specific GNOME behavior
 
 Start in one of:
 
-- `layers/alma9/workstation.yml`
-- `layers/alma10/workstation.yml`
+- `layers/alma9/gnome.yml`
+- `layers/alma10/gnome.yml`
 
 ### If it is optional and should not silently grow every image
 
@@ -99,4 +99,3 @@ For a quick repo read:
 2. follow each `from-file:` in order
 3. check `files/README.md` when a `files` module pulls in payload trees
 4. check `modules/os-release-meta/` for the local EL metadata module
-odule

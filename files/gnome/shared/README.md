@@ -1,6 +1,6 @@
-# workstation/gnome/
+# gnome/shared/
 
-This tree contains the workstation-only GNOME defaults and session helpers.
+This tree contains the GNOME-only GNOME defaults and session helpers.
 
 ## Intended Tailscale model
 
@@ -23,7 +23,7 @@ it should not try to run the systray at image build time.
 - installs the `tailscale` package from the upstream repo
 - enables `tailscaled.service` in **system** scope
 
-That keeps the daemon available for both headless and workstation images.
+That keeps the daemon available for both headless and GNOME images.
 
 ### 2. GNOME autostarts the systray for each interactive desktop login
 
@@ -60,7 +60,7 @@ sudo tailscale set --operator=noah
 ## Why this is documented instead of auto-detected
 
 This repo does not currently have a generic first-boot or post-install hook that
-can reliably identify the intended interactive workstation user without making
+can reliably identify the intended interactive GNOME user without making
 broader assumptions about account creation order, autologin, or ownership.
 
 So the least invasive current policy is:
@@ -79,4 +79,5 @@ that would be the right place to automate `tailscale set --operator=<username>`.
 
 If duplicate Tailscale UI surfaces become a problem, handle that as a separate
 follow-up instead of folding it into this autostart patch.
+tart patch.
 s autostart patch.

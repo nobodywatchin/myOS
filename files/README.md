@@ -12,7 +12,7 @@ If you are coming from a BlueBuild background, read this as:
 ```text
 files/
   base/
-  workstation/
+  gnome/
   agent/
   dnf/
   justfiles/
@@ -30,13 +30,13 @@ Current usage in this repo is intentionally small:
 - `base/runtime/` for shared runtime defaults
 - `base/branding/` for late branding assets
 
-### `workstation/`
+### `gnome/`
 
-Desktop payloads layered by the current GNOME workstation stack.
+GNOME desktop payloads layered by the current GNOME stack.
 
-- `workstation/gnome/` for shared GNOME-session and desktop defaults
-- `workstation/gnome-alma9/` and `workstation/gnome-alma10/` for GNOME shell-version-specific dconf overrides
-- `workstation/flatpak/` for Flatpak UX helpers, policy, and the managed-vs-user Flatpak model (`workstation/flatpak/README.md`)
+- `gnome/shared/` for shared GNOME-session and desktop defaults
+- `gnome/alma9/` and `gnome/alma10/` for GNOME shell-version-specific dconf overrides
+- `gnome/flatpak/` for Flatpak UX helpers, policy, and the managed-vs-user Flatpak model (`files/gnome/flatpak/README.md`)
 
 ### `agent/`
 
@@ -48,7 +48,7 @@ This is the biggest payload tree because it carries the packaged host tooling an
 - `agent/platform-host/usr/` -> copied to `/usr`
 - `agent/platform-host/var/` -> copied to `/var`
 - `agent/nvidia/etc/` -> NVIDIA-only shell and ldconfig payloads used by `shared/nvidia-cuda.yml`
-- `agent/justfiles/` -> shared `myos` just command surface layered into full-core/workstation images
+- `agent/justfiles/` -> shared `myos` just command surface layered into full-core/GNOME images
 
 ### `dnf/`
 
@@ -88,12 +88,12 @@ Example:
 ```yaml
 - type: files
   files:
-    - source: workstation/gnome
+    - source: gnome/shared
       destination: /
 ```
 
 means:
 
-- take `files/workstation/gnome/**`
+- take `files/gnome/shared/**`
 - copy it into the image root
 - so nested paths inside that tree become their normal runtime locations

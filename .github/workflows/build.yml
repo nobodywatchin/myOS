@@ -66,8 +66,8 @@ jobs:
           rechunk: true
           maximize_build_space: true
 
-  workstation-images:
-    name: Workstation Images (${{ matrix.name }})
+  gnome-images:
+    name: GNOME Images (${{ matrix.name }})
     needs:
       - validate-runtime-artifacts
       - validate-alma9-nvidia-legacy
@@ -81,18 +81,18 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - name: workstation-alma9
-            recipe: /images/workstation/alma9/workstation.yml
-          - name: workstation-alma9-nvidia-open
-            recipe: /images/workstation/alma9/nvidia-open.yml
-          - name: workstation-alma9-nvidia-legacy
-            recipe: /images/workstation/alma9/nvidia-legacy.yml
-          - name: workstation-alma10
-            recipe: /images/workstation/alma10/workstation.yml
-          - name: workstation-alma10-nvidia-open
-            recipe: /images/workstation/alma10/nvidia-open.yml
+          - name: gnome-alma9
+            recipe: /images/gnome/alma9/gnome.yml
+          - name: gnome-alma9-nvidia-open
+            recipe: /images/gnome/alma9/nvidia-open.yml
+          - name: gnome-alma9-nvidia-legacy
+            recipe: /images/gnome/alma9/nvidia-legacy.yml
+          - name: gnome-alma10
+            recipe: /images/gnome/alma10/gnome.yml
+          - name: gnome-alma10-nvidia-open
+            recipe: /images/gnome/alma10/nvidia-open.yml
     steps:
-      - name: Build workstation image
+      - name: Build GNOME image
         uses: blue-build/github-action@v1.11
         with:
           recipe: ${{ matrix.recipe }}

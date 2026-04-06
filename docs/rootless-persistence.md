@@ -168,7 +168,7 @@ service or Quadlet.
 `/etc/skel` is no longer used to opt every new user into persistent hosting.
 
 - Persistent hosting is an explicit admin action through `myos persistent-user-enroll`.
-- Workstation images can still use `/etc/skel` for desktop conveniences, but the OpenClaw runtime is no longer injected there.
+- GNOME images can still use `/etc/skel` for desktop conveniences, but the OpenClaw runtime is no longer injected there.
 - Enrollment may reconcile admin-managed baseline or owner templates for opted-in users, but the per-user OpenClaw runtime is separate from those buckets.
 - The OpenClaw runtime instead comes from the shipped `apps/openclaw/user` template and is installed on demand by `openquad`.
 

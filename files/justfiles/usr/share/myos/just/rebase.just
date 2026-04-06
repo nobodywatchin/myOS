@@ -6,11 +6,11 @@ rebase:
 
     sel="$(
       printf '%s\n' \
-        workstation-alma10:latest \
-        workstation-alma10-nvidia-open:latest \
-        workstation-alma9:latest \
-        workstation-alma9-nvidia-open:latest \
-        workstation-alma9-nvidia-legacy:latest \
+        gnome-alma10:latest \
+        gnome-alma10-nvidia-open:latest \
+        gnome-alma9:latest \
+        gnome-alma9-nvidia-open:latest \
+        gnome-alma9-nvidia-legacy:latest \
       | fzf --prompt='Select image: '
     )"
 

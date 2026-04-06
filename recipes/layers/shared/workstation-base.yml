@@ -1,5 +1,0 @@
----
-modules:
-  # Compatibility shim.
-  # New GNOME desktop work should target `layers/shared/gnome-base.yml`.
-  - from-file: layers/shared/gnome-base.yml

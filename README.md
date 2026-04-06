@@ -6,18 +6,18 @@
 
 # myOS &nbsp; [![bluebuild build badge](https://github.com/myos-dev/myOS/actions/workflows/build.yml/badge.svg)](https://github.com/myos-dev/myOS/actions/workflows/build.yml)
 
-myOS is an opinionated BootC image ecosystem organized around a shared `core` substrate, a feature-complete `full` core composition, clear per-distro layers, and workstation products that stay easy to extend.
+myOS is an opinionated BootC image ecosystem organized around a shared `core` substrate, a feature-complete `full` core composition, clear per-distro layers, and GNOME desktop products that stay easy to extend.
 
 # Image Progression
 
-Both Alma 9 and 10 now follow one core tier plus workstation products:
+Both Alma 9 and 10 now follow one core tier plus GNOME desktop products:
 
 - `core-full-alma9` / `core-full-alma10`
 - `core-full-alma9-nvidia-open` / `core-full-alma10-nvidia-open`
 - `core-full-alma9-nvidia-legacy`
-- `workstation-alma9` / `workstation-alma10`
-- `workstation-alma9-nvidia-open` / `workstation-alma10-nvidia-open`
-- `workstation-alma9-nvidia-legacy`
+- `gnome-alma9` / `gnome-alma10`
+- `gnome-alma9-nvidia-open` / `gnome-alma10-nvidia-open`
+- `gnome-alma9-nvidia-legacy`
 
 NVIDIA streams are explicit:
 
@@ -30,7 +30,7 @@ For the legacy AI lane, keep the host driver and the AI userspace stack as separ
 `core-full-*` is the single full base tier. It includes tenant commands, persistent-user enrollment tooling, Cockpit admin services, shared ROCm userspace, the Kubernetes CLI, and OpenClaw platform-host scaffolding for both distros. CUDA repo/toolkit content is layered through the NVIDIA image paths rather than the plain non-NVIDIA `core-full-*` images.
 Alma 10 also carries an optional packaged RamaLama host-service path in its distro-specific core layer. That feature is disabled by default and is not required for the tenant, `openclaw-host`, or per-user `openquad` runtime contracts.
 
-For per-user OpenClaw on `core-full-*` and workstation images, the host contract is explicit:
+For per-user OpenClaw on `core-full-*` and `gnome-*` images, the host contract is explicit:
 
 - `openquad` manages the rootless per-user `openclaw.service` Quadlet runtime.
 - The upstream `openclaw` CLI runs inside the container rather than through a separate host wrapper.
@@ -61,7 +61,7 @@ setup without a restart loop.
 recipes/
   images/
     core/
-    workstation/
+    gnome/
   layers/
     shared/
     alma9/
@@ -70,32 +70,32 @@ recipes/
 
 files/
   base/
-  workstation/
+  gnome/
   agent/
   dnf/
   justfiles/
 ```
 
 - `recipes/images` contains only buildable images.
-- `recipes/layers/shared` contains the shared composition layers: `core`, `full`, `gnome-base`, `nvidia-common`, `nvidia-cuda`, `nvidia-open`, and `nvidia-workstation`.
+- `recipes/layers/shared` contains the shared composition layers: `core`, `full`, `gnome-base`, `nvidia-common`, `nvidia-cuda`, `nvidia-open`, and `nvidia-gnome`.
 - `recipes/layers/alma9` and `recipes/layers/alma10` keep version differences explicit without spreading them across lots of tiny files.
-- `modules/os-release-meta` runs first from `core`, before branding, and is the shared EL metadata source of truth. `core.yml` carries the shared EL Tailscale setup, base system, and common runtime defaults, while `full.yml` adds the platform-host scaffolding, shared AI/infrastructure tooling, and Kubernetes-ready operator surface used by the published `core-full-*` images. `gnome-base.yml` carries the shared GNOME desktop baseline in addition to the broader desktop tooling and Flatpak defaults used by the current workstation family.
-- `files/base`, `files/workstation`, and `files/agent` mirror those concerns in the payloads.
+- `modules/os-release-meta` runs first from `core`, before branding, and is the shared EL metadata source of truth. `core.yml` carries the shared EL Tailscale setup, base system, and common runtime defaults, while `full.yml` adds the platform-host scaffolding, shared AI/infrastructure tooling, and Kubernetes-ready operator surface used by the published `core-full-*` images. `gnome-base.yml` carries the shared GNOME desktop baseline in addition to the broader desktop tooling and Flatpak defaults used by the current GNOME family.
+- `files/base`, `files/gnome`, and `files/agent` mirror those concerns in the payloads.
 
-Kubernetes is now included in the published `core-full-*` image line via [`recipes/layers/features/kubernetes-cli.yml`](recipes/layers/features/kubernetes-cli.yml), so the full core/workstation stack is ready to talk to Terraform and Kubernetes out of the box.
+Kubernetes is now included in the published `core-full-*` image line via [`recipes/layers/features/kubernetes-cli.yml`](recipes/layers/features/kubernetes-cli.yml), so the full core/GNOME stack is ready to talk to Terraform and Kubernetes out of the box.
 
 The full architecture and migration notes live in [`docs/image-architecture.md`](docs/image-architecture.md). The rootless persistence model lives in [`docs/rootless-persistence.md`](docs/rootless-persistence.md). Runtime ownership and path contracts live in [`docs/runtime-contracts.md`](docs/runtime-contracts.md). Validation guidance lives in [`docs/validation.md`](docs/validation.md). Current Alma 9 versus Alma 10 intentional drift is tracked in [`docs/alma-drift.md`](docs/alma-drift.md).
 
 # Build Flow
 
-The workflow now publishes full core images before workstation builds run. Workstation recipes use `ghcr.io/myos-dev/core-full-*` as their base image, so the published workstation tags reflect the latest published full core tags.
+The workflow now publishes full core images before GNOME builds run. GNOME recipes use `ghcr.io/myos-dev/core-full-*` as their base image, so the published GNOME tags reflect the latest published full core tags.
 
 # Rootless Service Model
 
 myOS keeps two rootless planes:
 
 - persistent or background rootless services for dedicated tenant accounts and explicitly enrolled login users with lingering
-- desktop or session rootless services for workstation-only helpers that are separate from the per-user OpenClaw runtime
+- desktop or session rootless services for GNOME-only helpers that are separate from the per-user OpenClaw runtime
 
 See [`docs/rootless-persistence.md`](docs/rootless-persistence.md) for the full model, including owner-only versus per-user baseline units and the supported self-service Quadlet path.
 
@@ -159,15 +159,15 @@ That wrapper assigns the selected login user through the persistent-user owner
 role, but it keeps the remotely exposed service on the dedicated `owner-openclaw`
 tenant path instead of trying to repurpose the per-user `openquad` runtime.
 
-Generic `myos` commands live in the shared core. Tenant commands, persistent-user commands, and the owner-host wrapper are layered into the `core-full-*` and workstation images for both distros.
+Generic `myos` commands live in the shared core. Tenant commands, persistent-user commands, and the owner-host wrapper are layered into the `core-full-*` and GNOME images for both distros.
 
 # Adding Images
 
 1. Start from `core-full-*`, which is now the single published core tier.
 2. Use `core-full-*` when the image needs tenant or OpenClaw host features.
 3. Treat RamaLama as an Alma 10 full-core add-on until Alma 9 has a supported package source.
-4. Use `nvidia-open.yml` for shared core/server NVIDIA support, `alma9/nvidia-legacy.yml` only for the EL9 proprietary R580 older-GPU AI path, and `nvidia-workstation.yml` only for workstation-specific NVIDIA extras.
-5. Add workstation layers only for actual workstation products.
+4. Use `nvidia-open.yml` for shared core/server NVIDIA support, `alma9/nvidia-legacy.yml` only for the EL9 proprietary R580 older-GPU AI path, and `nvidia-gnome.yml` only for GNOME-specific NVIDIA extras.
+5. Add GNOME layers only for actual GNOME desktop products.
 6. Keep optional capabilities in `recipes/layers/features/` instead of silently growing every image.
 
 # Building as a VM
@@ -175,7 +175,7 @@ Generic `myos` commands live in the shared core. Tenant commands, persistent-use
 ```bash
 TMP=$(mktemp) && \
 curl -fsSL https://raw.githubusercontent.com/myos-dev/myOS/stable/image.toml -o "$TMP" && \
-sudo podman pull ghcr.io/myos-dev/workstation-alma10:latest && \
+sudo podman pull ghcr.io/myos-dev/gnome-alma10:latest && \
 sudo podman pull quay.io/centos-bootc/bootc-image-builder:latest && \
 sudo podman run --rm -it --privileged --pull=newer \
   --security-opt label=type:unconfined_t \
@@ -188,7 +188,7 @@ sudo podman run --rm -it --privileged --pull=newer \
   --progress verbose \
   --use-librepo=false \
   --config /config.toml \
-  ghcr.io/myos-dev/workstation-alma10:latest
+  ghcr.io/myos-dev/gnome-alma10:latest
 rm -f "$TMP"
 ```
 
@@ -199,7 +199,7 @@ The old single-stream `*-nvidia` image names were replaced by explicit `*-nvidia
 ```bash
 TMP=$(mktemp) && \
 curl -fsSL https://raw.githubusercontent.com/myos-dev/myOS/stable/iso.toml -o "$TMP" && \
-sudo podman pull ghcr.io/myos-dev/workstation-alma10:latest && \
+sudo podman pull ghcr.io/myos-dev/gnome-alma10:latest && \
 sudo podman pull quay.io/centos-bootc/bootc-image-builder:latest && \
 sudo podman run --rm -it --privileged --pull=newer \
   --security-opt label=type:unconfined_t \
@@ -212,13 +212,6 @@ sudo podman run --rm -it --privileged --pull=newer \
   --progress verbose \
   --use-librepo=false \
   --config /config.toml \
-  ghcr.io/myos-dev/workstation-alma10:latest
-rm -f "$TMP"
-```
---config /config.toml \
-  ghcr.io/myos-dev/workstation-alma10:latest
-rm -f "$TMP"
-```
-:latest
+  ghcr.io/myos-dev/gnome-alma10:latest
 rm -f "$TMP"
 ```
