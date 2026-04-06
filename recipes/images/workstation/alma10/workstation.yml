@@ -7,7 +7,7 @@ base-image: ghcr.io/myos-dev/core-full-alma10
 # not Alma's quay tag semantics.
 image-version: latest
 modules:
-  - from-file: layers/shared/workstation-base.yml
+  - from-file: layers/shared/gnome-base.yml
   - from-file: layers/alma10/workstation.yml
   - type: initramfs
   - type: signing

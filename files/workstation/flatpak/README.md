@@ -24,7 +24,7 @@ The goal is:
 
 ### 1. BlueBuild creates and manages the remotes/apps
 
-`recipes/layers/shared/workstation-base.yml` uses `default-flatpaks` with:
+`recipes/layers/shared/gnome-base.yml` uses `default-flatpaks` with:
 
 - one `scope: user` Flathub remote named `flathub`
 - one `scope: system` Flathub remote named `org-system`

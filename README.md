@@ -77,9 +77,9 @@ files/
 ```
 
 - `recipes/images` contains only buildable images.
-- `recipes/layers/shared` contains the shared composition layers: `core`, `full`, `workstation-base`, `nvidia-common`, `nvidia-cuda`, `nvidia-open`, and `nvidia-workstation`.
+- `recipes/layers/shared` contains the shared composition layers: `core`, `full`, `gnome-base`, `nvidia-common`, `nvidia-cuda`, `nvidia-open`, and `nvidia-workstation`.
 - `recipes/layers/alma9` and `recipes/layers/alma10` keep version differences explicit without spreading them across lots of tiny files.
-- `modules/os-release-meta` runs first from `core`, before branding, and is the shared EL metadata source of truth. `core.yml` carries the shared EL Tailscale setup, base system, and common runtime defaults, while `full.yml` adds the platform-host scaffolding, shared AI/infrastructure tooling, and Kubernetes-ready operator surface used by the published `core-full-*` images. `workstation-base` carries the shared GNOME desktop baseline in addition to the broader workstation tooling and Flatpak defaults.
+- `modules/os-release-meta` runs first from `core`, before branding, and is the shared EL metadata source of truth. `core.yml` carries the shared EL Tailscale setup, base system, and common runtime defaults, while `full.yml` adds the platform-host scaffolding, shared AI/infrastructure tooling, and Kubernetes-ready operator surface used by the published `core-full-*` images. `gnome-base.yml` carries the shared GNOME desktop baseline in addition to the broader desktop tooling and Flatpak defaults used by the current workstation family.
 - `files/base`, `files/workstation`, and `files/agent` mirror those concerns in the payloads.
 
 Kubernetes is now included in the published `core-full-*` image line via [`recipes/layers/features/kubernetes-cli.yml`](recipes/layers/features/kubernetes-cli.yml), so the full core/workstation stack is ready to talk to Terraform and Kubernetes out of the box.

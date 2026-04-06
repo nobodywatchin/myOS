@@ -26,11 +26,15 @@ The feature-complete shared full-core composition.
 
 This layers on top of `shared/core.yml` and carries the platform-host scaffolding, shared AI/infrastructure tooling, Kubernetes CLI, and shared service defaults used by every `core-full-*` image.
 
+### `shared/gnome-base.yml`
+
+The shared GNOME desktop add-on layered on top of published `core-full-*` images.
+
+It owns the common GNOME baseline, desktop diagnostics and utilities, shared Flatpak defaults, and GNOME payload trees.
+
 ### `shared/workstation-base.yml`
 
-The shared workstation add-on layered on top of published `core-full-*` images.
-
-It owns the common GNOME baseline, workstation diagnostics and utilities, shared Flatpak defaults, and workstation payload trees.
+Compatibility shim that forwards to `shared/gnome-base.yml`.
 
 ### `shared/nvidia-common.yml`
 
@@ -60,11 +64,11 @@ Alma 10-only core delta. This is where the packaged RamaLama runtime currently l
 
 ### `alma9/workstation.yml`
 
-Alma 9-only workstation delta on top of `shared/workstation-base.yml`.
+Alma 9-only GNOME workstation delta on top of `shared/gnome-base.yml`.
 
 ### `alma10/workstation.yml`
 
-Alma 10-only workstation delta on top of `shared/workstation-base.yml`.
+Alma 10-only GNOME workstation delta on top of `shared/gnome-base.yml`.
 
 ### `alma9/nvidia-legacy.yml`
 

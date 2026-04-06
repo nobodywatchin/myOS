@@ -32,9 +32,10 @@ Current usage in this repo is intentionally small:
 
 ### `workstation/`
 
-Shared workstation payloads layered by `shared/workstation-base.yml`.
+Desktop payloads layered by the current GNOME workstation stack.
 
-- `workstation/gnome/` for GNOME-session and desktop defaults
+- `workstation/gnome/` for shared GNOME-session and desktop defaults
+- `workstation/gnome-alma9/` and `workstation/gnome-alma10/` for GNOME shell-version-specific dconf overrides
 - `workstation/flatpak/` for Flatpak UX helpers, policy, and the managed-vs-user Flatpak model (`workstation/flatpak/README.md`)
 
 ### `agent/`

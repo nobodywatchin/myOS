@@ -1,0 +1,2 @@
+[org/gnome/shell]
+enabled-extensions=['just-perfection-desktop@just-perfection', 'appindicatorsupport@rgcjonas.gmail.com', 'caffeine@patapon.info', 'drive-menu@gnome-shell-extensions.gcampax.github.com', 'user-theme@gnome-shell-extensions.gcampax.github.com', 'tiling-assistant@leleat-on-github', 'blur-my-shell@aunetx', 'clipboard-indicator@tudmotu.com', 'bluetooth-quick-connect@bjarosze.gmail.com']

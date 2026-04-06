@@ -23,7 +23,7 @@ otherwise:
 - `core-full-*` is the single feature-complete core tier
 - `recipes/layers/shared/core.yml` is the shared core substrate
 - `recipes/layers/shared/full.yml` is the shared feature-complete core composition used by the published `core-full-*` images
-- `recipes/layers/shared/workstation-base.yml` is the shared GNOME workstation add-on
+- `recipes/layers/shared/gnome-base.yml` is the shared GNOME workstation add-on
 - both distros keep the same dedicated tenant-account model
 - both distros keep the same persistent-user enrollment model
 - workstations build from the published `core-full-*` images rather than from
@@ -167,7 +167,7 @@ Why it exists:
 Current stance:
 
 - intentional
-- keep cross-version-safe extensions in `shared/workstation-base.yml`
+- keep cross-version-safe extensions in `shared/gnome-base.yml`
 - keep shell-version-specific adds in the Alma-specific workstation layers
 
 ### Extra workstation kernel arguments

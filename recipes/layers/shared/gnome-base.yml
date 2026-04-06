@@ -1,0 +1,227 @@
+---
+modules:
+  # Shared GNOME desktop add-on layered on top of published `core-full-*`
+  # images. Keep distro-specific GNOME drift in
+  # `recipes/layers/alma9/workstation.yml` and
+  # `recipes/layers/alma10/workstation.yml`.
+  #
+  # Shared GNOME desktop packages and session services
+  - type: dnf
+    repos:
+      cleanup: true
+      copr:
+        - trixieua/morewaita-icon-theme
+    remove:
+      packages:
+        - vim-minimal
+    install:
+      install-weak-deps: false
+      packages:
+        - ModemManager
+        - NetworkManager-adsl
+        - NetworkManager-bluetooth
+        - NetworkManager-openconnect
+        - NetworkManager-openvpn
+        - NetworkManager-wifi
+        - NetworkManager-wwan
+        - alsa-ucm
+        - alsa-utils
+        - bluez
+        - bolt
+        - colord
+        - cups
+        - cups-filters
+        - cups-pk-helper
+        - dejavu-sans-fonts
+        - dejavu-sans-mono-fonts
+        - dejavu-serif-fonts
+        - dnsmasq
+        - flatpak
+        - fwupd
+        - gdm
+        - ghostscript
+        - gnome-color-manager
+        - gnome-control-center
+        - gnome-disk-utility
+        - gnome-initial-setup
+        - gnome-remote-desktop
+        - gnome-session
+        - gnome-settings-daemon
+        - gnome-shell
+        - gnome-software
+        - google-noto-sans-arabic-fonts
+        - google-noto-sans-devanagari-fonts
+        - google-noto-sans-hebrew-fonts
+        - gstreamer1-plugins-bad-free
+        - gstreamer1-plugins-bad-free-libs
+        - gstreamer1-plugins-base
+        - gstreamer1-plugins-good
+        - gutenprint
+        - gutenprint-cups
+        - gvfs-fuse
+        - gvfs-goa
+        - gvfs-gphoto2
+        - gvfs-mtp
+        - gvfs-smb
+        - hplip
+        - iw
+        - libcamera
+        - libcamera-gstreamer
+        - libcamera-tools
+        - libsane-hpaio
+        - morewaita-icon-theme
+        - nautilus
+        - nftables
+        - orca
+        - pavucontrol
+        - pipewire
+        - pipewire-alsa
+        - pipewire-jack-audio-connection-kit
+        - pipewire-pulseaudio
+        - pipewire-utils
+        - plymouth-system-theme
+        - ppp
+        - rfkill
+        - sane-airscan
+        - sane-backends-drivers-scanners
+        - switcheroo-control
+        - system-config-printer-udev
+        - systemd-container
+        - systemd-oomd
+        - vim-enhanced
+        - wireplumber
+        - wl-clipboard
+        - wpa_supplicant
+        - xdg-desktop-portal
+        - xdg-desktop-portal-gnome
+        - xdg-user-dirs-gtk
+
+  # Shared GNOME payload and session refresh helpers
+  - type: files
+    files:
+      - source: workstation/gnome
+        destination: /
+
+  - type: bling
+    install:
+      - dconf-update-service
+
+  # Shared desktop diagnostics, admin tools, and developer utilities
+  - type: dnf
+    install:
+      install-weak-deps: false
+      packages:
+        - ethtool
+        - iproute-tc
+        - dracut-network
+        - mtr
+        - tcpdump
+        - traceroute
+        - iptables
+        - socat
+        - cryptsetup
+        - mdadm
+        - quota
+        - rdma-core
+        - nvmetcli
+        - blktrace
+        - bpftool
+        - tuned
+        - nvme-cli
+        - cifs-utils
+        - nfs-utils
+        - rsyslog
+        - lsof
+        - sos
+        - smartmontools
+        - strace
+        - rasdaemon
+        - time
+        - parted
+        - kernel-tools
+        - firewalld
+        - flatseal
+        - gnome-calculator
+        - rocm-developer-tools
+        - vulkan-validation-layers
+
+  # Keep Homebrew on desktop images only.
+  - type: brew
+    nofile-limits: true
+    brew-analytics: false
+
+  # Reset Flatpak remotes and declare shared defaults.
+  - type: containerfile
+    snippets:
+      - RUN rm -f /usr/share/flatpak/remotes.d/*.flatpakrepo || true
+      - RUN rm -f /etc/flatpak/remotes.d/*.flatpakrepo || true
+      - >-
+        RUN plugin_path="$(find /usr/lib64/gnome-software -type f -name
+        libgs_plugin_flatpak.so -print -quit)" && test -n "$plugin_path" &&
+        plugin_dir="${plugin_path%/*}" && rm -f
+        "$plugin_dir/libgs_plugin_packagekit.so"
+        "$plugin_dir/libgs_plugin_fwupd.so"
+        "$plugin_dir/libgs_plugin_fedora-pkgdb-collections.so"
+        /usr/share/applications/gnome-software-local-file-packagekit.desktop
+        /usr/share/applications/gnome-software-local-file-fwupd.desktop
+
+  - type: default-flatpaks
+    configurations:
+      - scope: user
+        notify: false
+        repo:
+          url: https://dl.flathub.org/repo/flathub.flatpakrepo
+          name: flathub
+          title: Flathub (user)
+      - scope: system
+        notify: false
+        repo:
+          url: https://dl.flathub.org/repo/flathub.flatpakrepo
+          name: org-system
+          title: Flathub (system, managed)
+        install:
+          - com.github.marhkb.Pods
+          - io.github.dvlv.boxbuddyrs
+          - io.github.giantpinkrobots.flatsweep
+          - it.mijorus.gearlever
+          - com.usebottles.bottles
+          - net.nokyan.Resources
+          - com.mattjakeman.ExtensionManager
+          - io.github.flattool.Warehouse
+          - io.github.flattool.Ignition
+          - org.gnome.Epiphany
+          - org.gnome.Decibels
+          - org.gnome.Showtime
+          - org.gnome.FileRoller
+          - org.gnome.Firmware
+          - org.gnome.Logs
+
+  - type: dnf
+    install:
+      install-weak-deps: false
+      packages:
+        - gnome-shell-extension-appindicator
+        - gnome-shell-extension-caffeine
+        - gnome-shell-extension-drive-menu
+        - gnome-shell-extension-just-perfection
+        - gnome-shell-extension-user-theme
+        - gnome-shell-extension-custom-menu
+        - gnome-shell-extension-gesture-inhibitor
+        - gnome-shell-extension-launch-new-instance
+        - gnome-shell-extension-screenshot-window-sizer
+
+  - type: gnome-extensions
+    install:
+      - 3733
+      - 779
+      - 1401
+      - 3193
+
+  - type: kargs
+    kargs:
+      - mem_sleep_default=s2idle
+
+  - type: files
+    files:
+      - source: workstation/flatpak
+        destination: /

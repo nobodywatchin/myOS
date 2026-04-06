@@ -35,7 +35,7 @@ recipes/
     shared/
       core.yml
       full.yml
-      workstation-base.yml
+      gnome-base.yml
       nvidia-common.yml
       nvidia-cuda.yml
       nvidia-open.yml
@@ -71,7 +71,7 @@ Both Alma 9 and Alma 10 now expose the same build path:
 - `recipes/layers/shared/full.yml`: feature-complete full-core composition layered on top of `shared/core.yml`, adding platform-host scaffolding, shared AI/infrastructure tooling, Kubernetes CLI availability, shared service defaults, and late branding
 - `modules/os-release-meta`: runs first from `core`, writing `/usr/share/myos/os-release-meta.env` plus the DNF `releasever_major` and `releasever_minor` vars
 - `recipes/layers/alma10/core.yml`: Alma 10-specific core delta, including the optional packaged RamaLama host-service path
-- `recipes/layers/shared/workstation-base.yml`: shared GNOME desktop baseline, workstation diagnostics, network/storage extras, and Flatpak defaults
+- `recipes/layers/shared/gnome-base.yml`: shared GNOME desktop baseline, desktop diagnostics, network/storage extras, and Flatpak defaults for the current workstation family
 - `recipes/layers/shared/nvidia-common.yml`: NVIDIA repo enablement, container toolkit, and core boot args shared by both streams
 - `recipes/layers/shared/nvidia-open.yml`: open-kmod NVIDIA driver path for newer supported GPUs
 - `recipes/layers/alma9/nvidia-legacy.yml`: Alma 9 proprietary older-GPU AI path pinned to `nvidia-driver:580`, using `module enable` plus package install so EL9 resolves kernel-version-specific prebuilt `kmod-nvidia-*` providers instead of DKMS

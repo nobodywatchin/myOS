@@ -42,8 +42,8 @@ Workstation images build **from the published `core-full-*` images**, not direct
 
 That means the workstation recipes should read like thin additive layers:
 
-- `layers/shared/workstation-base.yml`
-- one distro-specific workstation delta
+- `layers/shared/gnome-base.yml`
+- one distro-specific GNOME workstation delta
 - optional workstation NVIDIA extras
 
 This is the main repo convention to keep in mind if you are coming from a more single-stage BlueBuild repo.
@@ -72,11 +72,11 @@ Start in one of:
 - `layers/alma9/core.yml`
 - `layers/alma10/core.yml`
 
-### If it is shared workstation behavior
+### If it is shared GNOME workstation behavior
 
 Start in:
 
-- `layers/shared/workstation-base.yml`
+- `layers/shared/gnome-base.yml`
 
 ### If it is distro-specific workstation behavior
 
@@ -99,3 +99,4 @@ For a quick repo read:
 2. follow each `from-file:` in order
 3. check `files/README.md` when a `files` module pulls in payload trees
 4. check `modules/os-release-meta/` for the local EL metadata module
+odule

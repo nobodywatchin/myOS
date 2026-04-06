@@ -83,6 +83,8 @@ modules:
       - 7535 # Accent Icons
       - 6051 # Quick Web Search
 
+  # Alma 10 GNOME-only dconf overrides live under `workstation/gnome-alma10/`
+  # so shell-version-specific settings stay separate from the shared GNOME baseline.
   - type: files
     files:
       - source: workstation/gnome-alma10

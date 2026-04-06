@@ -58,7 +58,7 @@ modules:
   # build-time glib-compile-schemas workaround in the image recipe.
 
   # Append Alma 9-specific system Flatpaks on top of the shared workstation
-  # defaults from `shared/workstation-base.yml`; `default-flatpaks`
+  # defaults from `shared/gnome-base.yml`; `default-flatpaks`
   # configurations add to the shared list instead of replacing it.
   - type: gnome-extensions
     install:
@@ -77,6 +77,8 @@ modules:
           - org.gnome.Loupe
           - app.devsuite.Ptyxis
 
+  # Alma 9 GNOME-only dconf overrides live under `workstation/gnome-alma9/` so
+  # shell-version-specific settings stay separate from the shared GNOME baseline.
   - type: files
     files:
       - source: workstation/gnome-alma9

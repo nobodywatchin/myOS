@@ -7,7 +7,7 @@ base-image: ghcr.io/myos-dev/core-full-alma9-nvidia-legacy
 # matching myOS core line rather than rebuilding the full stack inline.
 image-version: latest
 modules:
-  - from-file: layers/shared/workstation-base.yml
+  - from-file: layers/shared/gnome-base.yml
   - from-file: layers/alma9/workstation.yml
   - from-file: layers/shared/nvidia-workstation.yml
   - type: initramfs

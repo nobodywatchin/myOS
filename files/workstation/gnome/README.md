@@ -69,7 +69,7 @@ So the least invasive current policy is:
 - ship the GNOME autostart entry for the systray
 - document the explicit admin step for operator assignment
 
-If myOS later grows a clearly scoped workstation first-login provisioning path,
+If myOS later grows a clearly scoped GNOME workstation first-login provisioning path,
 that would be the right place to automate `tailscale set --operator=<username>`.
 
 ## Assumptions kept intact
@@ -79,3 +79,4 @@ that would be the right place to automate `tailscale set --operator=<username>`.
 
 If duplicate Tailscale UI surfaces become a problem, handle that as a separate
 follow-up instead of folding it into this autostart patch.
+s autostart patch.
