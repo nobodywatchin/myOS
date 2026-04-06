@@ -43,10 +43,10 @@ recipes/
     alma9/
       core.yml
       nvidia-legacy.yml
-      workstation.yml
+      gnome.yml
     alma10/
       core.yml
-      workstation.yml
+      gnome.yml
     features/
       kubernetes-cli.yml
 ```
