@@ -20,6 +20,7 @@ modules:
         - gnome-logs
         - gnome-shell-extension-sound-output-device-chooser
         - gnome-shell-extension-workspace-indicator
+        - gnome-tweaks
         - hunspell
         - ibus-anthy
         - ibus-gtk3
@@ -39,26 +40,20 @@ modules:
         - usbutils
         - xorg-x11-utils
 
-  # Alma 9 GNOME 40 still needs this tiny workspace-indicator tweak so the
-  # indicator lands on the left side of the top bar instead of the default
-  # position used by the packaged extension.
-  - type: containerfile
-    snippets:
-      - RUN ext=/usr/share/gnome-shell/extensions/workspace-indicator@gnome-shell-extensions.gcampax.github.com; js="$ext/extension.js"; grep -q "addToStatusArea('workspace-indicator', _indicator, 0, 'left')" "$js" || sed -i "s/Main\\.panel\\.addToStatusArea('workspace-indicator', _indicator);/Main.panel.addToStatusArea('workspace-indicator', _indicator, 0, 'left');/" "$js"
-
-  # Alma 9 currently carries two known GNOME extension rough edges:
+  # These packaged schemas are still the ones that fail here:
   # - clipboard-indicator
   # - bluetooth-quick-connect
-  # Their packaged schemas are still the ones that fail here, so leave the
-  # extensions enabled/configured through dconf for now but do not keep the old
-  # build-time glib-compile-schemas workaround in the image recipe.
 
-  # Append Alma 9-specific system Flatpaks on top of the shared GNOME
-  # defaults from `shared/gnome-base.yml`; `default-flatpaks`
-  # configurations add to the shared list instead of replacing it.
+
+  # Alma 9 GNOME 40 has a boring activities button, so it's disabled and replaced with a Workspace Indicator
   - type: gnome-extensions
     install:
       - 3184  # No Activities Button
+
+  # indicator lands on the left side of the top bar instead of the default position used by the packaged extension.
+  - type: containerfile
+    snippets:
+      - RUN ext=/usr/share/gnome-shell/extensions/workspace-indicator@gnome-shell-extensions.gcampax.github.com; js="$ext/extension.js"; grep -q "addToStatusArea('workspace-indicator', _indicator, 0, 'left')" "$js" || sed -i "s/Main\\.panel\\.addToStatusArea('workspace-indicator', _indicator);/Main.panel.addToStatusArea('workspace-indicator', _indicator, 0, 'left');/" "$js"
 
   - type: default-flatpaks
     configurations:
@@ -73,8 +68,7 @@ modules:
           - org.gnome.Loupe
           - app.devsuite.Ptyxis
 
-  # Alma 9 GNOME-only dconf overrides live under `gnome/alma9/` so
-  # shell-version-specific settings stay separate from the shared GNOME baseline.
+  # Alma 9 GNOME-only dconf overrides live under `gnome/alma9/` 
   - type: files
     files:
       - source: gnome/alma9
