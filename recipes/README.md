@@ -4,8 +4,9 @@ If you already think in BlueBuild terms, start here.
 
 ## Mental model
 
-- `recipes/images/` contains the **published image entrypoints**.
-- `recipes/layers/` contains the **reusable composition units** those images pull in with `from-file:`.
+- `recipes/images/` contains the published image entrypoints.
+- `recipes/layers/` contains the reusable composition units those images pull in
+  with `from-file:`.
 
 The image recipes stay intentionally small:
 
@@ -24,29 +25,44 @@ images/
   gnome/
     alma9/
     alma10/
+  cosmic/
+    alma9/
+    alma10/
 ```
 
 ### Core images
 
 `core-full-*` is the single feature-complete core tier.
 
-These recipes build directly from the AlmaLinux BootC base image and then compose:
+These recipes build directly from the AlmaLinux BootC base image and then
+compose:
 
 - `layers/shared/full.yml`
 - one distro-specific core delta
 - optional NVIDIA stream layers
 
-### GNOME images
+### Workstation images
 
-GNOME images build **from the published `core-full-*` images**, not directly from the AlmaLinux BootC base image.
+GNOME and COSMIC images both build from the published `core-full-*` images, not
+directly from the AlmaLinux BootC base image.
 
-That means the GNOME recipes should read like thin additive layers:
+That means workstation recipes should read like thin additive layers:
 
-- `layers/shared/gnome-base.yml`
-- one distro-specific GNOME delta
-- optional GNOME NVIDIA extras
+- `layers/shared/workstation-common.yml`
+- one distro-specific workstation delta
+- one DE-specific workstation layer
+- optional DE-specific distro drift
+- optional workstation NVIDIA extras
 
-This is the main repo convention to keep in mind if you are coming from a more single-stage BlueBuild repo.
+Current workstation families are:
+
+- GNOME: `workstation-common` + `alma*/workstation` + `workstation-gnome` +
+  `alma*/gnome`
+- COSMIC: `workstation-common` + `alma*/workstation` + `workstation-cosmic`
+
+Thin compatibility wrappers remain at `layers/shared/gnome-base.yml` and
+`layers/shared/nvidia-gnome.yml`, but new work should target the explicit
+workstation layer names.
 
 ## Layer responsibilities
 
@@ -65,18 +81,30 @@ Start in one of:
 - `layers/shared/core.yml`
 - `layers/shared/full.yml`
 
-### If it is distro-specific core behavior
+### If it is shared across all workstation images
+
+Start in:
+
+- `layers/shared/workstation-common.yml`
+
+### If it is distro-specific workstation behavior
 
 Start in one of:
 
-- `layers/alma9/core.yml`
-- `layers/alma10/core.yml`
+- `layers/alma9/workstation.yml`
+- `layers/alma10/workstation.yml`
 
 ### If it is shared GNOME desktop behavior
 
 Start in:
 
-- `layers/shared/gnome-base.yml`
+- `layers/shared/workstation-gnome.yml`
+
+### If it is shared COSMIC desktop behavior
+
+Start in:
+
+- `layers/shared/workstation-cosmic.yml`
 
 ### If it is distro-specific GNOME behavior
 

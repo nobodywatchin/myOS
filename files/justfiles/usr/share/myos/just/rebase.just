@@ -11,6 +11,11 @@ rebase:
         core-full-alma9:latest \
         core-full-alma9-nvidia-open:latest \
         core-full-alma9-nvidia-legacy:latest \
+        cosmic-alma10:latest \
+        cosmic-alma10-nvidia-open:latest \
+        cosmic-alma9:latest \
+        cosmic-alma9-nvidia-open:latest \
+        cosmic-alma9-nvidia-legacy:latest \
         gnome-alma10:latest \
         gnome-alma10-nvidia-open:latest \
         gnome-alma9:latest \

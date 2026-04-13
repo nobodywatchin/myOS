@@ -4,7 +4,7 @@
 // - System-wide Flatpak ops: only wheel can do them, and they MUST authenticate (AUTH_ADMIN).
 //   Non-wheel users get a hard NO.
 // - AppStream / metadata refresh: allowed for local, active users without password
-//   (so GUIs like Bazaar can sync).
+//   (so GUIs can sync).
 // - Parental controls override: only wheel with AUTH_ADMIN.
 // - No silent YES for installs/uninstalls; admin group is mapped to wheel.
 //
@@ -34,7 +34,7 @@ polkit.addRule(function (action, subject) {
         return polkit.Result.AUTH_ADMIN;
     }
 
-    // Allow refreshing AppStream/metadata so GUIs (e.g., Bazaar) can see system remotes
+    // Allow refreshing AppStream/metadata so GUIs can see system remotes
     if (action.id == "org.freedesktop.Flatpak.appstream-update" ||
         action.id == "org.freedesktop.Flatpak.metadata-update" ||
         action.id == "org.freedesktop.Flatpak.DeployAppstream") {

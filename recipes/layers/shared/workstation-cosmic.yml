@@ -1,0 +1,35 @@
+---
+modules:
+  # Shared COSMIC workstation layer. The package source stays shared, but the
+  # COPR target string is EL-major aware because COPR names the EL9 and EL10
+  # chroots differently.
+  - type: containerfile
+    snippets:
+      - >-
+        RUN set -eux; \
+          . /usr/share/myos/os-release-meta.env; \
+          arch="$(uname -m)"; \
+          case "$EL_MAJOR" in \
+            9) copr_target="epel-9-${arch}" ;; \
+            10) copr_target="rhel+epel-10-${arch}" ;; \
+            *) echo "Unsupported EL major for COSMIC: $EL_MAJOR" >&2; exit 1 ;; \
+          esac; \
+          dnf -y copr enable "ligenix/enterprise-cosmic" "$copr_target"
+      - >-
+        RUN set -eux; \
+          cosmic_bundle="cosmic-epoch"; \
+          if dnf -q repoquery cosmic-desktop >/dev/null 2>&1; then \
+            cosmic_bundle="cosmic-desktop"; \
+          fi; \
+          dnf -y --setopt=install_weak_deps=False install \
+            "$cosmic_bundle" \
+            adw-gtk3-theme \
+            cosmic-greeter \
+            greetd \
+            xdg-desktop-portal-cosmic; \
+          test -f /usr/lib/systemd/system/cosmic-greeter.service
+
+  - type: systemd
+    system:
+      enabled:
+        - cosmic-greeter.service

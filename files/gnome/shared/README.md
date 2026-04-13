@@ -1,6 +1,9 @@
 # gnome/shared/
 
-This tree contains the GNOME-only GNOME defaults and session helpers.
+This tree contains the GNOME-only session defaults and helpers.
+
+The workstation-wide Flatpak shell helper, Flatpak service drop-in, and Flatpak
+polkit rules now live under `files/workstation/shared/`.
 
 ## Intended Tailscale model
 

@@ -1,14 +1,5 @@
 ---
 modules:
-  - type: dnf
-    install:
-      packages:
-        - libnvidia-fbc
-        - libnvidia-cfg
-        - nvidia-settings
-        - nvidia-libXNVCtrl
-
-  - type: kargs
-    kargs:
-      - nvidia-drm.modeset=1
-      - nvidia-drm.fbdev=1
+  # Compatibility wrapper retained while workstation images move to the new
+  # workstation-wide NVIDIA layer.
+  - from-file: layers/shared/nvidia-workstation.yml

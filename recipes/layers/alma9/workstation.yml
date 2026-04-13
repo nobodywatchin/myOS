@@ -1,0 +1,10 @@
+---
+modules:
+  - type: dnf
+    install:
+      install-weak-deps: false
+      packages:
+        - almalinux-release
+        - google-noto-cjk-fonts-common
+        - google-noto-fonts-common
+        - xorg-x11-utils

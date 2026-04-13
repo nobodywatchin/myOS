@@ -145,11 +145,16 @@ Current CI builds these image families:
 - `gnome-alma9-nvidia-legacy`
 - `gnome-alma10`
 - `gnome-alma10-nvidia-open`
+- `cosmic-alma9`
+- `cosmic-alma9-nvidia-open`
+- `cosmic-alma9-nvidia-legacy`
+- `cosmic-alma10`
+- `cosmic-alma10-nvidia-open`
 
 Important repo behavior:
 
-- GNOME jobs wait for the full core image jobs
-- GNOME recipes build from published `core-full-*` images
+- GNOME and COSMIC jobs wait for the full core image jobs
+- workstation recipes build from published `core-full-*` images
 - docs-only pushes do **not** trigger this workflow because `push.paths-ignore`
   excludes `**.md`
 
@@ -328,7 +333,7 @@ sudo tailscale set --operator=<username>
 
 ### Workstation Flatpak changes
 
-On a booted GNOME image:
+On a booted GNOME or COSMIC image:
 
 ```bash
 flatpak remotes --user
@@ -347,7 +352,7 @@ What to inspect:
 
 Reference behavior is documented in:
 
-- `files/gnome/flatpak/README.md`
+- `files/workstation/shared/README.md`
 
 ### Alma drift changes
 

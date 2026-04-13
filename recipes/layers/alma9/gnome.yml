@@ -4,47 +4,14 @@ modules:
     install:
       install-weak-deps: false
       packages:
-        - acl
-        - almalinux-release
-        - alsa-sof-firmware
-        - attr
-        - bash-completion
-        - cpio
-        - crontabs
-        - cyrus-sasl-plain
-        - dos2unix
-        - git
-        - glibc-all-langpacks
-        - google-noto-cjk-fonts-common
-        - google-noto-fonts-common
         - gnome-logs
         - gnome-shell-extension-sound-output-device-chooser
         - gnome-shell-extension-workspace-indicator
         - gnome-tweaks
-        - hunspell
-        - ibus-anthy
-        - ibus-gtk3
-        - ibus-hangul
-        - ibus-libpinyin
-        - ibus-libzhuyin
-        - ibus-m17n
-        - ibus-typing-booster
-        - logrotate
-        - microcode_ctl
-        - pciutils
-        - pinentry-gnome3
-        - plymouth
-        - polkit
-        - setroubleshoot
-        - thermald
-        - usbutils
-        - xorg-x11-utils
 
   # These packaged schemas are still the ones that fail here:
   # - clipboard-indicator
   # - bluetooth-quick-connect
-
-
   # Alma 9 GNOME 40 has a boring activities button, so it's disabled and replaced with a Workspace Indicator
   - type: gnome-extensions
     install:
@@ -68,7 +35,7 @@ modules:
           - org.gnome.Loupe
           - app.devsuite.Ptyxis
 
-  # Alma 9 GNOME-only dconf overrides live under `gnome/alma9/` 
+  # Alma 9 GNOME-only dconf overrides live under `gnome/alma9/`
   - type: files
     files:
       - source: gnome/alma9

@@ -23,7 +23,9 @@ otherwise:
 - `core-full-*` is the single feature-complete core tier
 - `recipes/layers/shared/core.yml` is the shared core substrate
 - `recipes/layers/shared/full.yml` is the shared feature-complete core composition used by the published `core-full-*` images
-- `recipes/layers/shared/gnome-base.yml` is the shared GNOME add-on
+- `recipes/layers/shared/workstation-common.yml` is the shared workstation base
+- `recipes/layers/shared/workstation-gnome.yml` is the shared GNOME add-on
+- `recipes/layers/shared/workstation-cosmic.yml` is the shared COSMIC add-on
 - both distros keep the same dedicated tenant-account model
 - both distros keep the same persistent-user enrollment model
 - workstations build from the published `core-full-*` images rather than from
@@ -103,10 +105,10 @@ Current stance:
 
 ### GNOME stack divergence
 
-- **Alma 9:** tracks the distro GNOME 40 workstation base and keeps a small
-  delta via the `Workstation product core` group plus a focused package list
-- **Alma 10:** tracks the distro GNOME 47 workstation base without the old
-  GNOME backport COPR and keeps its remaining app/extension delta explicit
+- **Alma 9:** tracks the distro GNOME 40 workstation base and keeps its
+  remaining app/extension drift in `recipes/layers/alma9/gnome.yml`
+- **Alma 10:** tracks the distro GNOME 47 workstation base and keeps its
+  remaining app/extension drift in `recipes/layers/alma10/gnome.yml`
 
 Why it exists:
 
@@ -116,11 +118,31 @@ Why it exists:
 Current stance:
 
 - accepted compromise for now
-- keep version-agnostic GNOME defaults in shared layers
+- keep version-agnostic GNOME defaults in `shared/workstation-gnome.yml`
 - keep shell-version-sensitive app and extension choices in the Alma-specific
-  workstation layers
+  GNOME layers
 - do not reintroduce the old Alma 10 GNOME replacement path unless packaging
   forces it again
+
+### COSMIC COPR target selection
+
+- **Alma 9:** the shared COSMIC layer enables `ligenix/enterprise-cosmic` with
+  `epel-9-$arch`
+- **Alma 10:** the shared COSMIC layer enables `ligenix/enterprise-cosmic` with
+  `rhel+epel-10-$arch`
+
+Why it exists:
+
+- the COPR exposes different chroot naming for EL9 and EL10 even though the
+  desktop layer itself is otherwise shared
+
+Current stance:
+
+- keep the COSMIC install logic in the shared `workstation-cosmic.yml` layer
+  until runtime behavior or package drift proves that a distro-specific COSMIC
+  layer is needed
+- do not fork Alma 9 and Alma 10 COSMIC layers just to mirror the GNOME file
+  shape when the only known difference is the COPR target string
 
 ### Default editor and image-viewer source
 
@@ -167,22 +189,18 @@ Why it exists:
 Current stance:
 
 - intentional
-- keep cross-version-safe extensions in `shared/gnome-base.yml`
+- keep cross-version-safe extensions in `shared/workstation-gnome.yml`
 - keep shell-version-specific adds in the Alma-specific workstation layers
 
-### Extra workstation kernel arguments
+### Shared workstation kernel arguments
 
-- **Alma 9:** no GNOME-only kargs in the distro delta
-- **Alma 10:** adds workstation kargs for sleep and legacy AMD GPU handling
-
-Why it exists:
-
-- Alma 10 workstation support currently needs that platform-specific behavior
+- **Alma 9 and Alma 10:** currently share the workstation sleep default karg in
+  `shared/workstation-common.yml`
 
 Current stance:
 
-- intentional until proven unnecessary
-- if a karg becomes required on both distros, move it into the shared layer
+- keep workstation kargs shared unless runtime evidence forces an Alma-specific
+  split
 
 ## NVIDIA layer
 

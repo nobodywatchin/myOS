@@ -1,0 +1,188 @@
+---
+modules:
+  # Shared workstation substrate layered on top of published `core-full-*`
+  # images. Keep distro-specific workstation drift in
+  # `recipes/layers/alma9/workstation.yml` and
+  # `recipes/layers/alma10/workstation.yml`, and keep DE-specific session logic
+  # in `workstation-gnome.yml` and `workstation-cosmic.yml`.
+  - type: dnf
+    remove:
+      packages:
+        - vim-minimal
+    install:
+      install-weak-deps: false
+      packages:
+        - ModemManager
+        - NetworkManager-adsl
+        - NetworkManager-bluetooth
+        - NetworkManager-openconnect
+        - NetworkManager-openvpn
+        - NetworkManager-wifi
+        - NetworkManager-wwan
+        - acl
+        - alsa-sof-firmware
+        - alsa-ucm
+        - alsa-utils
+        - attr
+        - bash-completion
+        - bluez
+        - bolt
+        - colord
+        - cpio
+        - crontabs
+        - cups
+        - cups-filters
+        - cups-pk-helper
+        - cyrus-sasl-plain
+        - dejavu-sans-fonts
+        - dejavu-sans-mono-fonts
+        - dejavu-serif-fonts
+        - dnsmasq
+        - dos2unix
+        - flatpak
+        - fwupd
+        - ghostscript
+        - git
+        - glibc-all-langpacks
+        - google-noto-sans-arabic-fonts
+        - google-noto-sans-devanagari-fonts
+        - google-noto-sans-hebrew-fonts
+        - gstreamer1-plugins-bad-free
+        - gstreamer1-plugins-bad-free-libs
+        - gstreamer1-plugins-base
+        - gstreamer1-plugins-good
+        - gutenprint
+        - gutenprint-cups
+        - gvfs
+        - gvfs-fuse
+        - gvfs-goa
+        - gvfs-gphoto2
+        - gvfs-mtp
+        - gvfs-smb
+        - hplip
+        - hunspell
+        - ibus-anthy
+        - ibus-gtk3
+        - ibus-hangul
+        - ibus-libpinyin
+        - ibus-libzhuyin
+        - ibus-m17n
+        - ibus-typing-booster
+        - iw
+        - libcamera
+        - libcamera-gstreamer
+        - libcamera-tools
+        - libsane-hpaio
+        - logrotate
+        - microcode_ctl
+        - nftables
+        - orca
+        - pavucontrol
+        - pciutils
+        - pipewire
+        - pipewire-alsa
+        - pipewire-jack-audio-connection-kit
+        - pipewire-pulseaudio
+        - pipewire-utils
+        - plymouth
+        - plymouth-system-theme
+        - polkit
+        - ppp
+        - rfkill
+        - sane-airscan
+        - sane-backends-drivers-scanners
+        - setroubleshoot
+        - switcheroo-control
+        - system-config-printer-udev
+        - systemd-container
+        - systemd-oomd
+        - thermald
+        - usbutils
+        - vim-enhanced
+        - wireplumber
+        - wl-clipboard
+        - wpa_supplicant
+        - xdg-desktop-portal
+        - xdg-user-dirs
+
+  - type: files
+    files:
+      - source: workstation/shared
+        destination: /
+
+  # Shared desktop diagnostics, admin tools, and developer utilities.
+  - type: dnf
+    install:
+      install-weak-deps: false
+      packages:
+        - blktrace
+        - bpftool
+        - cifs-utils
+        - cryptsetup
+        - dracut-network
+        - ethtool
+        - firewalld
+        - flatseal
+        - iproute-tc
+        - iptables
+        - kernel-tools
+        - lsof
+        - mdadm
+        - mtr
+        - nfs-utils
+        - nvme-cli
+        - nvmetcli
+        - parted
+        - quota
+        - rasdaemon
+        - rdma-core
+        - rocm-developer-tools
+        - rsyslog
+        - smartmontools
+        - socat
+        - sos
+        - strace
+        - tcpdump
+        - time
+        - traceroute
+        - tuned
+        - vulkan-validation-layers
+
+  # Keep Homebrew on workstation images only.
+  - type: brew
+    nofile-limits: true
+    brew-analytics: false
+
+  # Reset Flatpak remotes and declare the workstation-wide defaults.
+  - type: containerfile
+    snippets:
+      - RUN rm -f /usr/share/flatpak/remotes.d/*.flatpakrepo || true
+      - RUN rm -f /etc/flatpak/remotes.d/*.flatpakrepo || true
+
+  - type: default-flatpaks
+    configurations:
+      - scope: user
+        notify: false
+        repo:
+          url: https://dl.flathub.org/repo/flathub.flatpakrepo
+          name: flathub
+          title: Flathub (user)
+      - scope: system
+        notify: false
+        repo:
+          url: https://dl.flathub.org/repo/flathub.flatpakrepo
+          name: org-system
+          title: Flathub (system, managed)
+        install:
+          - com.github.marhkb.Pods
+          - com.usebottles.bottles
+          - io.github.dvlv.boxbuddyrs
+          - io.github.flattool.Ignition
+          - io.github.flattool.Warehouse
+          - io.github.giantpinkrobots.flatsweep
+          - it.mijorus.gearlever
+          - net.nokyan.Resources
+
+  - type: kargs
+    kargs:
+      - mem_sleep_default=s2idle

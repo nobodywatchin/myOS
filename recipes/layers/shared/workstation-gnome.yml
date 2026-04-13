@@ -1,0 +1,89 @@
+---
+modules:
+  # GNOME-specific workstation layer on top of `workstation-common`.
+  # Keep distro-specific GNOME drift in
+  # `recipes/layers/alma9/gnome.yml` and
+  # `recipes/layers/alma10/gnome.yml`.
+  - type: dnf
+    repos:
+      cleanup: true
+      copr:
+        - trixieua/morewaita-icon-theme
+    install:
+      install-weak-deps: false
+      packages:
+        - gdm
+        - gnome-calculator
+        - gnome-color-manager
+        - gnome-control-center
+        - gnome-disk-utility
+        - gnome-initial-setup
+        - gnome-remote-desktop
+        - gnome-session
+        - gnome-settings-daemon
+        - gnome-shell
+        - gnome-software
+        - morewaita-icon-theme
+        - nautilus
+        - pinentry-gnome3
+        - xdg-desktop-portal-gnome
+        - xdg-user-dirs-gtk
+
+  - type: files
+    files:
+      - source: gnome/shared
+        destination: /
+
+  - type: bling
+    install:
+      - dconf-update-service
+
+  - type: containerfile
+    snippets:
+      - >-
+        RUN plugin_path="$(find /usr/lib64/gnome-software -type f -name
+        libgs_plugin_flatpak.so -print -quit)" && test -n "$plugin_path" &&
+        plugin_dir="${plugin_path%/*}" && rm -f
+        "$plugin_dir/libgs_plugin_packagekit.so"
+        "$plugin_dir/libgs_plugin_fwupd.so"
+        "$plugin_dir/libgs_plugin_fedora-pkgdb-collections.so"
+        /usr/share/applications/gnome-software-local-file-packagekit.desktop
+        /usr/share/applications/gnome-software-local-file-fwupd.desktop
+
+  - type: default-flatpaks
+    configurations:
+      - scope: system
+        notify: false
+        repo:
+          url: https://dl.flathub.org/repo/flathub.flatpakrepo
+          name: org-system
+          title: Flathub (system, managed)
+        install:
+          - com.mattjakeman.ExtensionManager
+          - org.gnome.Decibels
+          - org.gnome.Epiphany
+          - org.gnome.FileRoller
+          - org.gnome.Firmware
+          - org.gnome.Logs
+          - org.gnome.Showtime
+
+  - type: dnf
+    install:
+      install-weak-deps: false
+      packages:
+        - gnome-shell-extension-appindicator
+        - gnome-shell-extension-caffeine
+        - gnome-shell-extension-custom-menu
+        - gnome-shell-extension-drive-menu
+        - gnome-shell-extension-gesture-inhibitor
+        - gnome-shell-extension-just-perfection
+        - gnome-shell-extension-launch-new-instance
+        - gnome-shell-extension-screenshot-window-sizer
+        - gnome-shell-extension-user-theme
+
+  - type: gnome-extensions
+    install:
+      - 3733
+      - 779
+      - 1401
+      - 3193

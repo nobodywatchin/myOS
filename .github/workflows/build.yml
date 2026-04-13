@@ -101,3 +101,39 @@ jobs:
           pr_event_number: ${{ github.event.number }}
           rechunk: true
           maximize_build_space: true
+
+  cosmic-images:
+    name: COSMIC Images (${{ matrix.name }})
+    needs:
+      - validate-runtime-artifacts
+      - validate-alma9-nvidia-legacy
+      - full-core-images
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+      id-token: write
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - name: cosmic-alma9
+            recipe: /images/cosmic/alma9/cosmic.yml
+          - name: cosmic-alma9-nvidia-open
+            recipe: /images/cosmic/alma9/nvidia-open.yml
+          - name: cosmic-alma9-nvidia-legacy
+            recipe: /images/cosmic/alma9/nvidia-legacy.yml
+          - name: cosmic-alma10
+            recipe: /images/cosmic/alma10/cosmic.yml
+          - name: cosmic-alma10-nvidia-open
+            recipe: /images/cosmic/alma10/nvidia-open.yml
+    steps:
+      - name: Build COSMIC image
+        uses: blue-build/github-action@v1.11
+        with:
+          recipe: ${{ matrix.recipe }}
+          cosign_private_key: ${{ secrets.SIGNING_SECRET }}
+          registry_token: ${{ github.token }}
+          pr_event_number: ${{ github.event.number }}
+          rechunk: true
+          maximize_build_space: true

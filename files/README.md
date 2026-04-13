@@ -4,14 +4,15 @@ This tree contains payloads copied into images by the BlueBuild `files` module.
 
 If you are coming from a BlueBuild background, read this as:
 
-- the `recipes/layers/**.yml` files decide **when** payloads are included
-- the `files/**` tree defines **what** gets copied into the image
+- the `recipes/layers/**.yml` files decide when payloads are included
+- the `files/**` tree defines what gets copied into the image
 
 ## Top-level layout
 
 ```text
 files/
   base/
+  workstation/
   gnome/
   agent/
   dnf/
@@ -30,25 +31,36 @@ Current usage in this repo is intentionally small:
 - `base/runtime/` for shared runtime defaults
 - `base/branding/` for late branding assets
 
+### `workstation/`
+
+Shared workstation payloads layered by both GNOME and COSMIC images.
+
+- `workstation/shared/` for the workstation-wide Flatpak shell helper, Flatpak
+  service drop-in, and Flatpak polkit rules
+
 ### `gnome/`
 
-GNOME desktop payloads layered by the current GNOME stack.
+GNOME-specific workstation payloads layered only by the GNOME stack.
 
-- `gnome/shared/` for shared GNOME-session and desktop defaults
-- `gnome/alma9/` and `gnome/alma10/` for GNOME shell-version-specific dconf overrides
-- `gnome/flatpak/` for Flatpak UX helpers, policy, and the managed-vs-user Flatpak model (`files/gnome/flatpak/README.md`)
+- `gnome/shared/` for shared GNOME session defaults and GNOME-only session
+  helpers
+- `gnome/alma9/` and `gnome/alma10/` for GNOME shell-version-specific dconf
+  overrides
 
 ### `agent/`
 
 Host-side OpenClaw/myOS platform payloads.
 
-This is the biggest payload tree because it carries the packaged host tooling and templates used by the shared full-core substrate.
+This is the biggest payload tree because it carries the packaged host tooling
+and templates used by the shared full-core substrate.
 
 - `agent/platform-host/etc/` -> copied to `/etc`
 - `agent/platform-host/usr/` -> copied to `/usr`
 - `agent/platform-host/var/` -> copied to `/var`
-- `agent/nvidia/etc/` -> NVIDIA-only shell and ldconfig payloads used by `shared/nvidia-cuda.yml`
-- `agent/justfiles/` -> shared `myos` just command surface layered into full-core/GNOME images
+- `agent/nvidia/etc/` -> NVIDIA-only shell and ldconfig payloads used by
+  `shared/nvidia-cuda.yml`
+- `agent/justfiles/` -> shared `myos` just command surface layered into
+  `core-full-*` and workstation images
 
 ### `dnf/`
 
@@ -64,7 +76,8 @@ Standalone helper scripts used by layer-specific modules.
 
 ## Why some content lives under `var/srv/...`
 
-BlueBuild's `files` module is straightforward, but it has an important caveat: do not copy payload directly into paths that become symlinks on atomic systems.
+BlueBuild's `files` module is straightforward, but it has an important caveat:
+do not copy payload directly into paths that become symlinks on atomic systems.
 
 That matters for `/srv`.
 
@@ -72,9 +85,11 @@ In this repo, persistent tenant and model content is staged under:
 
 - `files/agent/platform-host/var/srv/...`
 
-and then copied into `/var`, which yields runtime paths under `/var/srv/...` without fighting the atomic filesystem layout.
+and then copied into `/var`, which yields runtime paths under `/var/srv/...`
+without fighting the atomic filesystem layout.
 
-So if you are looking for tenant or model skeleton content and expect a direct `files/.../srv/...` tree, that absence is intentional.
+So if you are looking for tenant or model skeleton content and expect a direct
+`files/.../srv/...` tree, that absence is intentional.
 
 ## How to trace a payload
 
@@ -88,12 +103,12 @@ Example:
 ```yaml
 - type: files
   files:
-    - source: gnome/shared
+    - source: workstation/shared
       destination: /
 ```
 
 means:
 
-- take `files/gnome/shared/**`
+- take `files/workstation/shared/**`
 - copy it into the image root
 - so nested paths inside that tree become their normal runtime locations
