@@ -1,0 +1,22 @@
+---
+modules:
+  # Console is an Alma 10 core-only preview role.
+  - type: files
+    files:
+      - source: console/shared
+        destination: /
+
+  - type: default-flatpaks
+    configurations:
+      - scope: user
+        notify: false
+        repo:
+          url: https://dl.flathub.org/repo/flathub.flatpakrepo
+          name: flathub
+          title: Flathub (user)
+      - scope: system
+        notify: false
+        repo:
+          url: https://dl.flathub.org/repo/flathub.flatpakrepo
+          name: org-system
+          title: Flathub (system, managed)

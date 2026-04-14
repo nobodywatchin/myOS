@@ -1,0 +1,13 @@
+---
+# yaml-language-server: $schema=https://schema.blue-build.org/recipe-v1.json
+name: console-core-alma10
+description: myOS AlmaLinux 10 core Console preview image with the end-user app/runtime model and no default host/operator tooling.
+base-image: quay.io/almalinuxorg/almalinux-bootc
+image-version: 10
+modules:
+  - from-file: layers/shared/core.yml
+  - from-file: layers/alma10/core.yml
+  - from-file: layers/shared/end-user-common.yml
+  - from-file: layers/shared/console.yml
+  - type: initramfs
+  - type: signing

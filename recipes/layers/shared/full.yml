@@ -2,7 +2,7 @@
 modules:
   - from-file: layers/shared/core.yml
 
-  # Shared full-core packages, platform-host payloads, and admin services.
+  # Full is the explicit admin/operator tier.
   - type: dnf
     install:
       install-weak-deps: false
@@ -26,7 +26,8 @@ modules:
       - source: agent/justfiles
         destination: /
 
-  # Shared platform-host layout under /etc, /srv, and /var/tmp for host tooling.
+  # Shared platform-host layout under /etc, /srv, and /var/tmp for full-tier
+  # tenant, persistent-user, and admin tooling.
   - type: containerfile
     snippets:
       - >-
@@ -45,49 +46,16 @@ modules:
           /etc/myos/tenants \
           /srv/tenants /srv/tenants/.skel \
           /var/tmp/myos-podman
-
       - RUN install -D -m 0644 /var/srv/tenants/README.md /srv/tenants/.skel/README.md
       - RUN install -d -m 0755 /usr/local/libexec/myos
-
-      # Pre-label persistent content so shared rootless services come up with the right SELinux context.
       - RUN semanage fcontext -a -t container_file_t '/srv/tenants(/.*)?' 2>/dev/null || true
       - RUN semanage fcontext -a -e /var/lib/containers /var/tmp/myos-podman 2>/dev/null || true
-
       - >-
         RUN restorecon -RF \
           /etc/myos /srv/tenants \
           /usr/local/libexec/myos \
           /etc/nginx/conf.d/myos-platform.conf \
           /var/tmp/myos-podman || true
-
-  # Shared accelerator and infrastructure tooling for the published full-core line.
-  - type: dnf
-    install:
-      install-weak-deps: false
-      packages:
-        - mesa-vulkan-drivers
-        - vulkan-loader
-        - vulkan-tools
-
-  - type: dnf
-    repos:
-      files:
-        - rocm.repo
-      keys:
-        - https://repo.radeon.com/rocm/rocm.gpg.key
-    install:
-      install-weak-deps: false
-      skip-broken: true
-      packages:
-        - clinfo
-        - repo: rocm
-          packages:
-            - amd-smi-lib
-            - rocminfo
-            - rocm-hip-sdk
-            - rocm-ml-sdk
-            - rocm-opencl-sdk
-            - rocm-smi-lib
 
   - type: dnf
     repos:
@@ -103,44 +71,5 @@ modules:
           packages:
             - tofu
 
-  # Full core images should be ready to terraform / talk to Kubernetes out of the box.
+  # Full images should be ready to administer and automate against Kubernetes.
   - from-file: layers/features/kubernetes-cli.yml
-
-  - type: containerfile
-    snippets:
-      - >-
-        RUN set -eux; \
-          getent group video >/dev/null 2>&1 || groupadd --system video; \
-          getent group render >/dev/null 2>&1 || groupadd --system render; \
-          ldconfig
-
-  # Shared boot arguments across the full image family.
-  - type: kargs
-    kargs:
-      - iommu=pt
-      - transparent_hugepage=madvise
-      - radeon.si_support=0
-      - amdgpu.si_support=1
-      - radeon.cik_support=0
-      - amdgpu.cik_support=1
-
-  # Final service defaults and image branding.
-  - type: systemd
-    system:
-      masked:
-        - rpm-ostree-countme.service
-        - rpm-ostree-countme.timer
-        - akmods-keygen@akmods-keygen.service
-        - bootc-fetch-apply-updates.service
-        - bootc-fetch-apply-updates.timer
-
-  - type: files
-    files:
-      - source: base/branding
-        destination: /
-
-  - type: os-release
-    properties:
-      NAME: myOS
-      PRETTY_NAME: myOS
-      VENDOR_NAME: myOS

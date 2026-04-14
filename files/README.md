@@ -2,19 +2,16 @@
 
 This tree contains payloads copied into images by the BlueBuild `files` module.
 
-If you are coming from a BlueBuild background, read this as:
-
-- the `recipes/layers/**.yml` files decide when payloads are included
-- the `files/**` tree defines what gets copied into the image
-
 ## Top-level layout
 
 ```text
 files/
   base/
+  end-user/
   workstation/
   gnome/
   cosmic/
+  console/
   agent/
   dnf/
   justfiles/
@@ -23,102 +20,22 @@ files/
 
 ## What each tree is for
 
-### `base/`
+- `base/`: payload shared by every image.
+- `end-user/`: shared Flatpak governance and end-user runtime payloads for Workstation and Console.
+- `workstation/`: shared DE-agnostic workstation payloads.
+- `gnome/`: GNOME family payloads.
+- `cosmic/`: COSMIC family payloads.
+- `console/`: Console preview payloads.
+- `agent/runtime-core/`: per-user OpenClaw runtime helpers and shared ROCm runtime files that now belong to core.
+- `agent/platform-host/`: full-tier host/operator payloads such as tenant tooling, persistent-user tooling, and `openclaw-host`.
+- `dnf/`: repository files used by `dnf` modules.
+- `justfiles/`: shared just recipes copied into the image.
 
-Shared payload for all core images.
+## Important split
 
-Current usage in this repo is intentionally small:
+The refactor deliberately split the old platform-host payload into two contracts.
 
-- `base/runtime/` for shared runtime defaults
-- `base/branding/` for late branding assets
+- `agent/runtime-core/` is safe to ship on every image.
+- `agent/platform-host/` is full-tier only.
 
-### `workstation/`
-
-Shared workstation payloads layered by both GNOME and COSMIC images.
-
-- `workstation/shared/` for the workstation-wide Flatpak shell helper, Flatpak
-  service drop-in, Flatpak polkit rules, and the shared display-manager
-  reconciliation unit/helper
-
-### `gnome/`
-
-GNOME-specific workstation payloads layered only by the GNOME stack.
-
-- `gnome/shared/` for shared GNOME session defaults and GNOME-only session
-  helpers, including the GNOME desktop marker consumed by the shared
-  workstation display-manager helper
-- `gnome/alma9/` and `gnome/alma10/` for GNOME shell-version-specific dconf
-  overrides
-
-### `cosmic/`
-
-COSMIC-specific workstation payloads layered only by the COSMIC stack.
-
-- `cosmic/shared/` for the COSMIC desktop marker and future COSMIC-only session
-  payloads
-
-### `agent/`
-
-Host-side OpenClaw/myOS platform payloads.
-
-This is the biggest payload tree because it carries the packaged host tooling
-and templates used by the shared full-core substrate.
-
-- `agent/platform-host/etc/` -> copied to `/etc`
-- `agent/platform-host/usr/` -> copied to `/usr`
-- `agent/platform-host/var/` -> copied to `/var`
-- `agent/nvidia/etc/` -> NVIDIA-only shell and ldconfig payloads used by
-  `shared/nvidia-cuda.yml`
-- `agent/justfiles/` -> shared `myos` just command surface layered into
-  `core-full-*` and workstation images
-
-### `dnf/`
-
-Repository files used by the BlueBuild `dnf` module.
-
-### `justfiles/`
-
-Shared just recipes copied into the image.
-
-### `scripts/`
-
-Standalone helper scripts used by layer-specific modules.
-
-## Why some content lives under `var/srv/...`
-
-BlueBuild's `files` module is straightforward, but it has an important caveat:
-do not copy payload directly into paths that become symlinks on atomic systems.
-
-That matters for `/srv`.
-
-In this repo, persistent tenant and model content is staged under:
-
-- `files/agent/platform-host/var/srv/...`
-
-and then copied into `/var`, which yields runtime paths under `/var/srv/...`
-without fighting the atomic filesystem layout.
-
-So if you are looking for tenant or model skeleton content and expect a direct
-`files/.../srv/...` tree, that absence is intentional.
-
-## How to trace a payload
-
-1. find the `files` module entry in a layer file
-2. note the `source:` and `destination:`
-3. map that back to `files/<source>/...`
-4. read the destination as the final image path after copy
-
-Example:
-
-```yaml
-- type: files
-  files:
-    - source: workstation/shared
-      destination: /
-```
-
-means:
-
-- take `files/workstation/shared/**`
-- copy it into the image root
-- so nested paths inside that tree become their normal runtime locations
+That is how myOS keeps optional per-user OpenClaw support everywhere without implying that every image is a hosted OpenClaw appliance.

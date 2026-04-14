@@ -1,53 +1,21 @@
 # workstation/shared/
 
-This tree contains workstation-wide payloads shared by GNOME and COSMIC images.
+This tree contains DE-agnostic workstation payloads shared by GNOME and COSMIC.
 
-## Intended model
+It now focuses on workstation behavior that is truly about the workstation role itself.
 
-Workstation images intentionally expose two Flatpak lanes:
+## Current ownership
 
-- `flathub` in **user** scope for normal personal installs
-- `org-system` in **system** scope for curated, image-managed shared apps
+- the shared display-manager reconciliation unit and helper
+- workstation-wide payloads that are not specific to GNOME or COSMIC
 
-The goal is:
-
-- user installs stay in the user's home by default
-- curated shared apps can still be installed system-wide
-- users do not browse two fully visible Flathub catalogs
-- admins can still deliberately manage system Flatpaks
-
-This tree carries the workstation-wide shell helper, Flatpak service drop-in,
-polkit rules, Flatpak environment exports, and the boot-time display-manager
-reconciliation helper.
+Flatpak governance payloads moved to `files/end-user/shared/` so Workstation and Console can share the same end-user app model.
 
 ## Display-manager reconciliation
 
-Workstation images now ship a shared oneshot unit and helper script that run on
-every boot before the display manager:
+Workstation images ship:
 
 - `usr/lib/systemd/system/myos-workstation-dm-apply.service`
 - `usr/libexec/myos-workstation-dm-apply`
 
-That helper reads the active desktop marker from
-`/usr/share/myos/workstation/desktop.env` and then repairs stale
-`display-manager.service` state left behind by bootc/rpm-ostree rebases.
-
-The shared workstation tree owns the helper because the behavior is the same
-for every workstation image. The desktop-specific marker stays with the
-desktop-specific payload tree.
-
-## Flatpak desktop exports
-
-Interactive shells already default the `flatpak` CLI to `--user` unless a scope
-is specified. Graphical sessions also need the Flatpak export paths in
-`XDG_DATA_DIRS` so launchers can see installed apps.
-
-`usr/lib/environment.d/60-myos-flatpak-exports.conf` now prepends:
-
-- `${HOME}/.local/share/flatpak/exports/share`
-- `/var/lib/flatpak/exports/share`
-
-to `XDG_DATA_DIRS` for workstation sessions.
-
-GNOME-only session helpers and GNOME-specific autostart behavior stay under
-`files/gnome/shared/`.
+That helper reads the active family marker from `/usr/share/myos/workstation/desktop.env` and repairs stale `display-manager.service` ownership after bootc rebases.

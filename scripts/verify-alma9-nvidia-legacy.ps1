@@ -8,6 +8,20 @@ if (-not (Test-Path $legacyLayerPath)) {
     throw "Missing legacy layer: $legacyLayerPath"
 }
 
+$expectedLegacyRecipes = @(
+    "recipes/images/server/alma9/full-nvidia-legacy.yml",
+    "recipes/images/workstation/gnome/alma9/core-nvidia-legacy.yml",
+    "recipes/images/workstation/gnome/alma9/full-nvidia-legacy.yml",
+    "recipes/images/workstation/cosmic/alma9/core-nvidia-legacy.yml",
+    "recipes/images/workstation/cosmic/alma9/full-nvidia-legacy.yml"
+) | ForEach-Object { Join-Path $repoRoot $_ }
+
+foreach ($recipePath in $expectedLegacyRecipes) {
+    if (-not (Test-Path $recipePath)) {
+        throw "Missing supported Alma 9 NVIDIA legacy recipe: $recipePath"
+    }
+}
+
 $legacyLayer = Get-Content $legacyLayerPath -Raw
 
 $requiredSnippets = @(
@@ -54,7 +68,10 @@ $transactions = @(
     },
     [PSCustomObject]@{
         Images = @(
-            "gnome-alma9-nvidia-legacy"
+            "workstation-core-gnome-alma9-nvidia-legacy",
+            "gnome-alma9-nvidia-legacy",
+            "workstation-core-cosmic-alma9-nvidia-legacy",
+            "cosmic-alma9-nvidia-legacy"
         )
         Packages = @(
             "nvidia-driver",
@@ -143,6 +160,8 @@ foreach ($transaction in $transactions) {
     foreach ($image in $transaction.Images) {
         Write-Output "IMAGE=$image"
         Write-Output "DISTRO_BASE=alma9"
+        Write-Output "ROLE=$(if ($image -like 'core-full-*') { 'server' } else { 'workstation' })"
+        Write-Output "TIER=$(if ($image -like 'workstation-core-*') { 'core' } elseif ($image -like 'core-full-*' -or $image -like 'gnome-*' -or $image -like 'cosmic-*') { 'full' } else { 'unknown' })"
         Write-Output "DRIVER_STREAM=$driverStream"
         Write-Output "KERNEL_CORE=$($result.Kernel)"
         Write-Output "PREBUILT_KMODS=$($result.Prebuilt)"

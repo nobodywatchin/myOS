@@ -1,0 +1,15 @@
+---
+# yaml-language-server: $schema=https://schema.blue-build.org/recipe-v1.json
+name: workstation-core-cosmic-alma10
+description: myOS AlmaLinux 10 core Workstation image with the COSMIC family and no default host/operator tooling.
+base-image: quay.io/almalinuxorg/almalinux-bootc
+image-version: 10
+modules:
+  - from-file: layers/shared/core.yml
+  - from-file: layers/alma10/core.yml
+  - from-file: layers/shared/end-user-common.yml
+  - from-file: layers/shared/workstation-common.yml
+  - from-file: layers/alma10/workstation.yml
+  - from-file: layers/shared/workstation-cosmic.yml
+  - type: initramfs
+  - type: signing

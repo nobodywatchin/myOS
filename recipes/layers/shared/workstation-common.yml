@@ -1,9 +1,9 @@
 ---
 modules:
-  # Shared workstation substrate layered on top of published `core-full-*`
-  # images. Keep distro-specific workstation drift in
-  # `recipes/layers/alma9/workstation.yml` and
-  # `recipes/layers/alma10/workstation.yml`, and keep DE-specific session logic
+  # Shared workstation substrate used by both core and full workstation images.
+  # It expects the shared end-user layer to be present first, then keeps
+  # distro-specific workstation drift in `recipes/layers/alma9/workstation.yml`
+  # and `recipes/layers/alma10/workstation.yml`, with DE-specific session logic
   # in `workstation-gnome.yml` and `workstation-cosmic.yml`.
   - type: dnf
     remove:
@@ -39,7 +39,6 @@ modules:
         - dejavu-serif-fonts
         - dnsmasq
         - dos2unix
-        - flatpak
         - fwupd
         - ghostscript
         - git
@@ -136,7 +135,6 @@ modules:
         - quota
         - rasdaemon
         - rdma-core
-        - rocm-developer-tools
         - rsyslog
         - smartmontools
         - socat
@@ -153,12 +151,10 @@ modules:
     nofile-limits: true
     brew-analytics: false
 
-  # Reset Flatpak remotes and declare the workstation-wide defaults.
+  # Workstation images boot to the graphical target.
   - type: containerfile
     snippets:
       - RUN systemctl set-default graphical.target
-      - RUN rm -f /usr/share/flatpak/remotes.d/*.flatpakrepo || true
-      - RUN rm -f /etc/flatpak/remotes.d/*.flatpakrepo || true
 
   # Workstation images reconcile the active desktop environment's display
   # manager on every boot so bootc/rpm-ostree rebases do not leave stale

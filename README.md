@@ -6,69 +6,139 @@
 
 # myOS &nbsp; [![bluebuild build badge](https://github.com/myos-dev/myOS/actions/workflows/build.yml/badge.svg)](https://github.com/myos-dev/myOS/actions/workflows/build.yml)
 
-myOS is an opinionated BootC image ecosystem organized around a shared `core` substrate, a feature-complete `full` core composition, clear per-distro layers, and workstation image families that stay easy to extend.
+myOS is a distro-first BootC project built on the boring stability of AlmaLinux and shaped around a polished, hardware-aware desktop experience.
 
-# Image Progression
+Workstation is the flagship. Server and Console are separate roles. GNOME and COSMIC are workstation families, not separate top-level products.
 
-Both Alma 9 and 10 now follow one core tier plus workstation image families:
+## Why myOS
 
-- `core-full-alma9` / `core-full-alma10`
-- `core-full-alma9-nvidia-open` / `core-full-alma10-nvidia-open`
-- `core-full-alma9-nvidia-legacy`
-- `gnome-alma9` / `gnome-alma10`
-- `gnome-alma9-nvidia-open` / `gnome-alma10-nvidia-open`
-- `gnome-alma9-nvidia-legacy`
-- `cosmic-alma9` / `cosmic-alma10`
-- `cosmic-alma9-nvidia-open` / `cosmic-alma10-nvidia-open`
-- `cosmic-alma9-nvidia-legacy`
+- Stable foundation, modern experience: Alma gives us a calm long-lived base, and myOS spends the complexity budget on the image experience instead of pretending the base needs constant churn.
+- Curated, not inherited: images include what fits the contract for that role and tier. Workstation does not quietly inherit Kubernetes, OpenTofu, or hosted OpenClaw admin tooling.
+- Hardware policy is explicit: choose `default`, `nvidia-open`, or, on Alma 9 only, `nvidia-legacy`.
+- Clean app model: system Flatpaks stay admin-managed, user Flatpaks stay user-owned, and the default UX does not bury people in duplicate catalogs.
+- AI-ready, not AI-bloated: ROCm userspace stays in core, optional per-user OpenClaw via `openquad` ships everywhere, and hosted/operator tooling stays in full.
 
-GNOME remains the default documented workstation path in the README examples and
-VM/ISO examples, while COSMIC is now a parallel supported workstation family.
+## Choose An Image
 
-NVIDIA streams are explicit:
+Every myOS image is chosen across four axes.
 
-- `-nvidia-open` uses the open kernel module path and is the default fit for newer supported GPUs.
-- Alma 9 `-nvidia-legacy` is the older-GPU AI host lane. It pins the proprietary `nvidia-driver:580` stream and expects kernel-version-specific prebuilt `kmod-nvidia-*` packages on EL9 for Maxwell-, Pascal-, and similar legacy-supported GPUs.
-- Alma 10 support in myOS is `-nvidia-open`.
+1. Role
+   - `workstation`: the flagship desktop role.
+   - `server`: full-only admin/operator role.
+   - `console`: Alma 10 core-only preview role for living-room and gaming-oriented setups.
+2. Tier
+   - `core`: stable daily-use base without host/operator defaults.
+   - `full`: adds Cockpit, OpenTofu, Kubernetes CLI, tenant tooling, persistent-user admin tooling, and `openclaw-host`.
+3. Distro lane
+   - `alma9`: long-lived lane with first-class NVIDIA legacy support.
+   - `alma10`: newer lane with Console support and no NVIDIA legacy path.
+4. Hardware lane
+   - `default`
+   - `nvidia-open`
+   - `nvidia-legacy` on Alma 9 only
 
-For the legacy AI lane, keep the host driver and the AI userspace stack as separate decisions. The host stays on the pinned R580 proprietary branch, while older-GPU AI workloads should start from CUDA 12.6-class userspace stacks, such as PyTorch `cu126`, instead of assuming newer CUDA 13-era examples are the safest default for Maxwell/Pascal-class hardware.
+### Supported Matrix
 
-`core-full-*` is the single full base tier. It includes tenant commands, persistent-user enrollment tooling, Cockpit admin services, shared ROCm userspace, the Kubernetes CLI, and OpenClaw platform-host scaffolding for both distros. CUDA repo/toolkit content is layered through the NVIDIA image paths rather than the plain non-NVIDIA `core-full-*` images.
-Alma 10 also carries the packaged RamaLama CLI in its distro-specific core layer as an operator utility for local model testing and artifact generation. It is not part of the tenant, `openclaw-host`, or per-user `openquad` runtime contracts.
+| Distro | Role | Tier | Hardware lanes |
+| --- | --- | --- | --- |
+| Alma 9 | Workstation | core, full | default, nvidia-open, nvidia-legacy |
+| Alma 9 | Server | full | default, nvidia-open, nvidia-legacy |
+| Alma 10 | Workstation | core, full | default, nvidia-open |
+| Alma 10 | Server | full | default, nvidia-open |
+| Alma 10 | Console | core | default, nvidia-open |
 
-For per-user OpenClaw on `core-full-*`, `gnome-*`, and `cosmic-*` images, the host contract is explicit:
+Unsupported by design:
 
-- `openquad` manages the rootless per-user `openclaw.service` Quadlet runtime.
-- The upstream `openclaw` CLI runs inside the container rather than through a separate host wrapper.
-- Use `openquad exec -- ...` for one-shot commands or `openquad shell` to enter the runtime container interactively.
+- no `core/server`
+- no `full/console`
+- no Alma 9 Console
+- no Alma 10 NVIDIA legacy
 
-Typical flow:
+### Workstation Families
+
+Workstation currently has two desktop-environment implementations:
+
+- `GNOME`: the default documented workstation path.
+- `COSMIC`: a parallel supported workstation family.
+
+Published full workstation tags keep the existing compatibility names:
+
+- `gnome-alma10`, `gnome-alma10-nvidia-open`, `gnome-alma9`, `gnome-alma9-nvidia-open`, `gnome-alma9-nvidia-legacy`
+- `cosmic-alma10`, `cosmic-alma10-nvidia-open`, `cosmic-alma9`, `cosmic-alma9-nvidia-open`, `cosmic-alma9-nvidia-legacy`
+
+New core workstation tags are role-first:
+
+- `workstation-core-gnome-*`
+- `workstation-core-cosmic-*`
+
+Server keeps the published compatibility tags:
+
+- `core-full-alma10`, `core-full-alma10-nvidia-open`
+- `core-full-alma9`, `core-full-alma9-nvidia-open`, `core-full-alma9-nvidia-legacy`
+
+Console is currently published as:
+
+- `console-core-alma10`
+- `console-core-alma10-nvidia-open`
+
+## App Model
+
+myOS keeps two Flatpak lanes on end-user images:
+
+- user-managed `flathub` for personal installs
+- admin-managed `org-system` for curated shared apps
+
+That keeps normal app installs user-owned while still giving the image a clean place for system-wide apps the project or an admin wants to curate.
+
+Details live in [docs/user/apps-and-flatpak.md](docs/user/apps-and-flatpak.md).
+
+## AI-Ready
+
+AI-ready in myOS means:
+
+- ROCm userspace is available in core.
+- Optional per-user OpenClaw support via `openquad` ships in every image.
+- That runtime is inert by default, user-owned, and stores mutable state in the user's home.
+- Full images add the hosted/operator surfaces for tenants, persistent-user administration, and `openclaw-host`.
+
+This is local capability, not forced hosted infrastructure and not preloaded models.
+
+Details live in [docs/user/ai-ready.md](docs/user/ai-ready.md).
+
+## Install And Update
+
+The simplest way to switch images on an installed system is:
 
 ```bash
-openquad start
-openquad exec -- openclaw onboard
-openquad exec -- openclaw chat
-openquad status
-openquad doctor
+myos rebase
 ```
 
-The first `openquad start` renders the shipped per-user `openclaw.container`
-into `~/.config/containers/systemd/` and starts the generated user service for
-that user only. Lingering across logout still requires
-`myos persistent-user-enroll --user <name>`. The runtime config file itself
-lives at `~/.local/share/openclaw/openclaw.json`.
-On first-time setups, `openquad start` now leaves the runtime up in a safe
-unconfigured mode so `openquad exec -- openclaw onboard` can finish the initial
-setup without a restart loop.
+That picker is now grouped by role, tier, workstation family, distro lane, and hardware lane.
 
-# Repo Layout
+For manual switching:
+
+```bash
+sudo bootc switch ghcr.io/myos-dev/gnome-alma10:latest
+```
+
+myOS disables unattended `bootc` auto-apply. Update or rebase when you choose, then reboot when you are ready.
+
+More user docs:
+
+- [docs/user/choose-an-image.md](docs/user/choose-an-image.md)
+- [docs/user/install.md](docs/user/install.md)
+- [docs/user/updates-and-rollbacks.md](docs/user/updates-and-rollbacks.md)
+- [docs/user/hardware.md](docs/user/hardware.md)
+- [docs/user/release-policy.md](docs/user/release-policy.md)
+
+## Repo Layout
 
 ```text
 recipes/
   images/
-    core/
-    gnome/
-    cosmic/
+    workstation/
+    server/
+    console/
   layers/
     shared/
     alma9/
@@ -77,151 +147,28 @@ recipes/
 
 files/
   base/
+  end-user/
   workstation/
   gnome/
+  cosmic/
+  console/
   agent/
   dnf/
   justfiles/
 ```
 
-- `recipes/images` contains only buildable images.
-- `recipes/layers/shared` contains the shared composition layers: `core`, `full`, `workstation-common`, `workstation-gnome`, `workstation-cosmic`, `nvidia-common`, `nvidia-cuda`, `nvidia-open`, and `nvidia-workstation`. `gnome-base` and `nvidia-gnome` remain as thin compatibility wrappers.
-- `recipes/layers/alma9` and `recipes/layers/alma10` keep version differences explicit without spreading them across lots of tiny files.
-- `modules/os-release-meta` runs first from `core`, before branding, and is the shared EL metadata source of truth. `core.yml` carries the shared EL Tailscale setup, base system, and common runtime defaults, while `full.yml` adds the platform-host scaffolding, shared AI/infrastructure tooling, and Kubernetes-ready operator surface used by the published `core-full-*` images. `workstation-common.yml` carries the shared workstation baseline plus boot-time display-manager reconciliation, `alma9/workstation.yml` and `alma10/workstation.yml` keep shared workstation drift explicit, and `workstation-gnome.yml` / `workstation-cosmic.yml` own the DE-specific session layers and desktop markers.
-- `files/base`, `files/workstation`, `files/gnome`, `files/cosmic`, and `files/agent` mirror those concerns in the payloads.
+The authoritative repo shape is now role-first. Workstation keeps clean GNOME and COSMIC family layering underneath that role.
 
-Kubernetes is now included in the published `core-full-*` image line via [`recipes/layers/features/kubernetes-cli.yml`](recipes/layers/features/kubernetes-cli.yml), so the full core/workstation stack is ready to talk to Terraform and Kubernetes out of the box.
+## Advanced Docs
 
-The full architecture and migration notes live in [`docs/image-architecture.md`](docs/image-architecture.md). The rootless persistence model lives in [`docs/rootless-persistence.md`](docs/rootless-persistence.md). Runtime ownership and path contracts live in [`docs/runtime-contracts.md`](docs/runtime-contracts.md). Validation guidance lives in [`docs/validation.md`](docs/validation.md). Current Alma 9 versus Alma 10 intentional drift is tracked in [`docs/alma-drift.md`](docs/alma-drift.md).
+User-facing docs start at [docs/README.md](docs/README.md).
 
-# Build Flow
+Maintainer and operator-facing docs live under `docs/maintainers/`:
 
-The workflow now publishes full core images before GNOME and COSMIC workstation builds run. Workstation recipes use `ghcr.io/myos-dev/core-full-*` as their base image, so the published workstation tags reflect the latest published full core tags.
+- [docs/maintainers/image-architecture.md](docs/maintainers/image-architecture.md)
+- [docs/maintainers/runtime-contracts.md](docs/maintainers/runtime-contracts.md)
+- [docs/maintainers/workstation-layering.md](docs/maintainers/workstation-layering.md)
+- [docs/maintainers/operator-flows.md](docs/maintainers/operator-flows.md)
+- [docs/maintainers/validation.md](docs/maintainers/validation.md)
 
-# Rootless Service Model
-
-myOS keeps two rootless planes:
-
-- persistent or background rootless services for dedicated tenant accounts and explicitly enrolled login users with lingering
-- desktop or session rootless services for workstation helpers that are separate from the per-user OpenClaw runtime, with the current session-bound helper surface still living in the GNOME layer
-
-See [`docs/rootless-persistence.md`](docs/rootless-persistence.md) for the full model, including owner-only versus per-user baseline units and the supported self-service Quadlet path.
-
-# Update Flow
-
-myOS disables the stock `bootc-fetch-apply-updates.service` and `bootc-fetch-apply-updates.timer` so hosts do not surprise-reboot on their own. Use `myos update-system` or `myos rebase`, then reboot on your own schedule or during a maintenance window. Workstation images now re-apply the selected desktop environment's display-manager ownership on boot, so GNOME/COSMIC rebases do not require manual `display-manager.service` cleanup. For per-user runtime maintenance, `myos update-user` runs `openquad update` alongside the user-space refresh steps.
-
-# Tenant Operations
-
-The supported OpenClaw operator workflow is exposed through the `myos` just wrapper instead of hand-editing tenant files under `/srv/tenants`. That flow remains the dedicated service-account path for persistent background OpenClaw hosting.
-
-Supported tenant operator surface:
-
-- `tenant-create`
-- `tenant-configure`
-- `tenant-config`
-- `tenant-secret-set`
-- `tenant-secret-import`
-- `tenant-start`, `tenant-stop`, `tenant-restart`
-- `tenant-status`, `tenant-validate`, `tenant-dashboard`
-- `tenant-tailscale`
-- `tenant-backup`, `tenant-restore`, `tenant-remove`
-- advanced tenant-context entry points: `tenant-models`, `tenant-openclaw`
-
-The important tenant storage split is runtime state vs durable workspace vs
-host-managed secrets. The current `zone-c/*` path names are legacy labels, not
-an active multi-zone product concept.
-
-Internal implementation helpers under `/usr/local/libexec/myos/tenant-*` still exist for reconciliation, rendering, and scaffolding, but they are not intended as the stable day-to-day operator surface.
-
-Common tenant flows:
-
-```bash
-myos tenant-create --tenant demo
-myos tenant-secret-set --tenant demo --key OPENROUTER_API_KEY
-myos tenant-configure --tenant demo --model openrouter/anthropic/claude-sonnet-4-5
-myos tenant-start --tenant demo
-myos tenant-status --tenant demo
-```
-
-For persistent login users, use the separate enrollment flow:
-
-```bash
-myos persistent-user-enroll --user alice
-myos persistent-user-set-owner --user alice
-myos persistent-user-install-quadlet --file ./my-api.container --enable
-```
-
-For an owner-friendly hosted OpenClaw service that stays on the dedicated tenant
-path and is easy to expose over Tailscale, use the wrapper surface:
-
-```bash
-myos openclaw-host enable --user alice --model openrouter/anthropic/claude-sonnet-4-5
-myos openclaw-host secret-set --key OPENROUTER_API_KEY
-myos openclaw-host start
-myos openclaw-host tailscale enable
-myos openclaw-host qr
-```
-
-That wrapper assigns the selected login user through the persistent-user owner
-role, but it keeps the remotely exposed service on the dedicated `owner-openclaw`
-tenant path instead of trying to repurpose the per-user `openquad` runtime.
-
-Generic `myos` commands live in the shared core. Tenant commands, persistent-user commands, and the owner-host wrapper are layered into the `core-full-*` and workstation images for both distros.
-
-# Adding Images
-
-1. Start from `core-full-*`, which is now the single published core tier.
-2. Use `core-full-*` when the image needs tenant or OpenClaw host features.
-3. Treat RamaLama as an Alma 10 full-core add-on until Alma 9 has a supported package source.
-4. Use `nvidia-open.yml` for shared core/server NVIDIA support, `alma9/nvidia-legacy.yml` only for the EL9 proprietary R580 older-GPU AI path, and `nvidia-workstation.yml` for workstation-display NVIDIA extras.
-5. Build workstation images from `workstation-common` plus an explicit DE layer such as `workstation-gnome` or `workstation-cosmic`.
-6. Keep optional capabilities in `recipes/layers/features/` instead of silently growing every image.
-
-# Building as a VM
-
-```bash
-TMP=$(mktemp) && \
-curl -fsSL https://raw.githubusercontent.com/myos-dev/myOS/stable/image.toml -o "$TMP" && \
-sudo podman pull ghcr.io/myos-dev/gnome-alma10:latest && \
-sudo podman pull quay.io/centos-bootc/bootc-image-builder:latest && \
-sudo podman run --rm -it --privileged --pull=newer \
-  --security-opt label=type:unconfined_t \
-  --network=host \
-  -v /var/lib/containers/storage:/var/lib/containers/storage \
-  -v "$(pwd)/output:/output" \
-  -v "$TMP:/config.toml:ro" \
-  quay.io/centos-bootc/bootc-image-builder:latest \
-  --type qcow2 \
-  --progress verbose \
-  --use-librepo=false \
-  --config /config.toml \
-  ghcr.io/myos-dev/gnome-alma10:latest
-rm -f "$TMP"
-```
-
-The old single-stream `*-nvidia` image names were replaced by explicit `*-nvidia-open` images, with Alma 9 also retaining `*-nvidia-legacy` for the supported proprietary older-GPU AI path.
-
-The VM and ISO examples intentionally keep `gnome-alma10` as the default documented workstation path. Swap in `cosmic-alma10` if you want the COSMIC workstation image instead.
-
-# Building ISO File
-
-```bash
-TMP=$(mktemp) && \
-curl -fsSL https://raw.githubusercontent.com/myos-dev/myOS/stable/iso.toml -o "$TMP" && \
-sudo podman pull ghcr.io/myos-dev/gnome-alma10:latest && \
-sudo podman pull quay.io/centos-bootc/bootc-image-builder:latest && \
-sudo podman run --rm -it --privileged --pull=newer \
-  --security-opt label=type:unconfined_t \
-  --network=host \
-  -v /var/lib/containers/storage:/var/lib/containers/storage \
-  -v "$(pwd)/output:/output" \
-  -v "$TMP:/config.toml:ro" \
-  quay.io/centos-bootc/bootc-image-builder:latest \
-  --type iso \
-  --progress verbose \
-  --use-librepo=false \
-  --config /config.toml \
-  ghcr.io/myos-dev/gnome-alma10:latest
-rm -f "$TMP"
-```
+Hosted OpenClaw, tenant workflows, and persistent-user administration are still supported, but they are advanced full-tier flows rather than the public identity of every image.
