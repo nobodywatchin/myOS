@@ -78,14 +78,13 @@ case "${MYOS_DESKTOP:-}" in
   cosmic)
     log "selecting COSMIC display manager"
     disable_unit gdm.service
-    disable_unit greetd.service
     disable_unit cosmic-greeter.service
-    if have_unit cosmic-greeter.service; then
-      enable_unit cosmic-greeter.service
-      ensure_display_manager_alias "cosmic-greeter.service"
-    elif have_unit greetd.service; then
+    if have_unit greetd.service; then
       enable_unit greetd.service
       ensure_display_manager_alias "greetd.service"
+    elif have_unit cosmic-greeter.service; then
+      enable_unit cosmic-greeter.service
+      ensure_display_manager_alias "cosmic-greeter.service"
     else
       log "neither cosmic-greeter.service nor greetd.service is available"
       exit 1

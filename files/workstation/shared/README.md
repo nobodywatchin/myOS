@@ -17,7 +17,8 @@ The goal is:
 - admins can still deliberately manage system Flatpaks
 
 This tree carries the workstation-wide shell helper, Flatpak service drop-in,
-polkit rules, and the boot-time display-manager reconciliation helper.
+polkit rules, Flatpak environment exports, and the boot-time display-manager
+reconciliation helper.
 
 ## Display-manager reconciliation
 
@@ -34,6 +35,19 @@ That helper reads the active desktop marker from
 The shared workstation tree owns the helper because the behavior is the same
 for every workstation image. The desktop-specific marker stays with the
 desktop-specific payload tree.
+
+## Flatpak desktop exports
+
+Interactive shells already default the `flatpak` CLI to `--user` unless a scope
+is specified. Graphical sessions also need the Flatpak export paths in
+`XDG_DATA_DIRS` so launchers can see installed apps.
+
+`usr/lib/environment.d/60-myos-flatpak-exports.conf` now prepends:
+
+- `${HOME}/.local/share/flatpak/exports/share`
+- `/var/lib/flatpak/exports/share`
+
+to `XDG_DATA_DIRS` for workstation sessions.
 
 GNOME-only session helpers and GNOME-specific autostart behavior stay under
 `files/gnome/shared/`.

@@ -2,7 +2,9 @@
 modules:
   # Shared COSMIC workstation layer. The package source stays shared, but the
   # COPR target string is EL-major aware because COPR names the EL9 and EL10
-  # chroots differently.
+  # chroots differently. COSMIC uses greetd as the display-manager backend and
+  # cosmic-greeter as the frontend, so this layer validates both the desktop
+  # session pieces and the greetd-side integration files.
   - type: files
     files:
       - source: cosmic/shared
@@ -68,12 +70,10 @@ modules:
           command -v cosmic-files >/dev/null; \
           command -v cosmic-settings >/dev/null; \
           command -v cosmic-store >/dev/null; \
+          command -v cosmic-greeter-start >/dev/null; \
+          command -v cosmic-greeter-daemon >/dev/null; \
           find /usr/share/wayland-sessions -maxdepth 1 -type f -iname '*cosmic*.desktop' | grep -q .; \
-          if [ -f /usr/lib/systemd/system/cosmic-greeter.service ]; then \
-            :; \
-          elif [ -f /usr/lib/systemd/system/greetd.service ]; then \
-            :; \
-          else \
-            echo 'Missing COSMIC greeter service file' >&2; \
-            exit 1; \
-          fi
+          test -f /usr/lib/systemd/system/greetd.service; \
+          test -f /etc/greetd/cosmic-greeter.toml; \
+          test -f /etc/pam.d/cosmic-greeter; \
+          grep -q 'command = "cosmic-greeter-start"' /etc/greetd/cosmic-greeter.toml
