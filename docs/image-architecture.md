@@ -97,7 +97,8 @@ layer; Alma 9 keeps the same platform layout without a packaged RamaLama CLI.
 
 - `recipes/layers/shared/workstation-common.yml`: the DE-agnostic workstation
   base, including shared multimedia/session packages, shared Flatpak policy,
-  desktop diagnostics/admin tooling, and Homebrew support
+  boot-time display-manager reconciliation, desktop diagnostics/admin tooling,
+  and Homebrew support
 - `recipes/layers/alma9/workstation.yml` and `recipes/layers/alma10/workstation.yml`:
   distro-specific workstation drift shared by GNOME and COSMIC
 - `recipes/layers/shared/workstation-gnome.yml`: shared GNOME session stack,
@@ -105,8 +106,8 @@ layer; Alma 9 keeps the same platform layout without a packaged RamaLama CLI.
 - `recipes/layers/alma9/gnome.yml` and `recipes/layers/alma10/gnome.yml`:
   GNOME-only Alma drift on top of the shared workstation base
 - `recipes/layers/shared/workstation-cosmic.yml`: shared COSMIC install logic,
-  version-aware `ligenix/enterprise-cosmic` COPR enablement, `cosmic-greeter`
-  enablement, and COSMIC portal wiring
+  version-aware `ligenix/enterprise-cosmic` COPR enablement, COSMIC session
+  validation, desktop marker payloads, and COSMIC portal wiring
 - `recipes/layers/shared/nvidia-workstation.yml`: workstation-display NVIDIA
   extras shared by GNOME and COSMIC workstation images
 

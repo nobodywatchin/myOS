@@ -30,4 +30,5 @@ rebase:
     echo "Selected: $ref"
     echo "Executing: sudo bootc switch $ref"
     sudo bootc switch "$ref"
+    echo "The next boot will re-apply the correct desktop display-manager ownership for the selected image."
     echo "bootc auto-apply is disabled in myOS; reboot when you are ready to activate the new image."

@@ -60,6 +60,10 @@ Current workstation families are:
   `alma*/gnome`
 - COSMIC: `workstation-common` + `alma*/workstation` + `workstation-cosmic`
 
+`workstation-common` now owns the shared boot-time display-manager
+reconciliation helper. The DE-specific layers only publish packages, payloads,
+and a tiny desktop marker consumed by that shared helper.
+
 Thin compatibility wrappers remain at `layers/shared/gnome-base.yml` and
 `layers/shared/nvidia-gnome.yml`, but new work should target the explicit
 workstation layer names.

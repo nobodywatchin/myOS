@@ -39,6 +39,7 @@ find files/agent/platform-host/usr/local/libexec/myos -type f -print0 | xargs -0
 bash -n files/agent/platform-host/usr/local/bin/openquad
 bash -n files/agent/platform-host/etc/myos/templates/apps/openclaw/scripts/openclaw-start.sh
 bash -n files/scripts/just-el9.sh
+bash -n files/workstation/shared/usr/libexec/myos-workstation-dm-apply
 bash -n modules/os-release-meta/os-release-meta.sh
 ```
 
@@ -79,6 +80,17 @@ Use these only if the tooling exists in the current environment.
 - `shellcheck` for touched shell scripts
 
 The repo should not depend on these being installed everywhere.
+
+If workstation layering or desktop handoff changed, confirm the shared runtime
+contract still points at exactly one desktop environment and that the shared DM
+helper is wired in the shared workstation layer:
+
+```bash
+grep -q 'myos-workstation-dm-apply.service' recipes/layers/shared/workstation-common.yml
+grep -q 'MYOS_DESKTOP=gnome' files/gnome/shared/usr/share/myos/workstation/desktop.env
+grep -q 'MYOS_DESKTOP=cosmic' files/cosmic/shared/usr/share/myos/workstation/desktop.env
+grep -q 'cosmic-desktop' recipes/layers/shared/workstation-cosmic.yml
+```
 
 ## CI-backed checks
 

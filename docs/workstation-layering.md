@@ -42,6 +42,7 @@ GNOME images stay intact:
   - DE-agnostic workstation packages
   - shared multimedia/session tooling
   - shared Flatpak policy and shell helpers
+  - boot-time display-manager reconciliation
   - shared workstation diagnostics/admin utilities
   - shared desktop-only extras such as Homebrew support
 - `alma9/workstation.yml` and `alma10/workstation.yml`
@@ -55,7 +56,7 @@ GNOME images stay intact:
 - `workstation-cosmic`
   - version-aware `ligenix/enterprise-cosmic` COPR enablement
   - COSMIC desktop package install
-  - COSMIC greeter/session enablement
+  - COSMIC session validation and desktop marker payload
   - COSMIC-specific portal/session integration
 - `nvidia-workstation`
   - workstation-display-oriented NVIDIA extras shared by GNOME and COSMIC
@@ -106,6 +107,7 @@ Move into `workstation-common`:
 - DE-agnostic workstation hardware/network/printing/scanning packages
 - common workstation diagnostics/admin tools
 - workstation-wide user shell helpers
+- the shared display-manager reconciliation service and helper
 
 Keep GNOME-specific:
 
@@ -115,26 +117,22 @@ Keep GNOME-specific:
 - GNOME dconf payloads
 - GNOME Software cleanup and GNOME Flatpak app choices
 - GNOME extensions
+- the `MYOS_DESKTOP=gnome` marker payload
 
 Keep COSMIC-specific:
 
 - `ligenix/enterprise-cosmic` COPR enablement
-- COSMIC desktop bundle selection
+- COSMIC desktop package selection and build-time assertions
 - `cosmic-greeter` / greetd stack
 - `xdg-desktop-portal-cosmic`
+- the `MYOS_DESKTOP=cosmic` marker payload
 
 ## Risks And Unknowns
 
-- The COPR result indexes confirm EL9 and EL10 package lanes plus
-  `cosmic-greeter`, `greetd`, `xdg-desktop-portal-cosmic`, and `cosmic-epoch`.
-- The COPR install example references `cosmic-desktop`, but I could not do a
-  live DNF resolution in this environment because `dnf` is not installed here.
-- The implementation therefore probes for `cosmic-desktop` at build time and
-  falls back to the confirmed `cosmic-epoch` bundle package if the COPR only
-  exposes that name.
-- `cosmic-greeter.service` is assumed to be the right enablement target because
-  that matches the COPR installation guidance; if the built image exposes a
-  different unit shape, the follow-up should stay narrowly scoped to the COSMIC
-  layer instead of weakening other workstation images.
+- The COSMIC layer now prefers `cosmic-desktop` when the COPR exposes it and
+  falls back to an explicit package set only when that meta-package is absent.
+- Workstation rebases still preserve `/etc`, so the new boot-time helper is the
+  critical path for GNOME/COSMIC handoff correctness.
 - No booted GNOME or COSMIC image is available in this environment, so runtime
-  validation here is limited to repo wiring and static consistency checks.
+  validation here is still limited to repo wiring and static consistency
+  checks.

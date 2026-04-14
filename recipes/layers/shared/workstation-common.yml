@@ -156,8 +156,17 @@ modules:
   # Reset Flatpak remotes and declare the workstation-wide defaults.
   - type: containerfile
     snippets:
+      - RUN systemctl set-default graphical.target
       - RUN rm -f /usr/share/flatpak/remotes.d/*.flatpakrepo || true
       - RUN rm -f /etc/flatpak/remotes.d/*.flatpakrepo || true
+
+  # Workstation images reconcile the active desktop environment's display
+  # manager on every boot so bootc/rpm-ostree rebases do not leave stale
+  # `display-manager.service` state behind in `/etc`.
+  - type: systemd
+    system:
+      enabled:
+        - myos-workstation-dm-apply.service
 
   - type: default-flatpaks
     configurations:

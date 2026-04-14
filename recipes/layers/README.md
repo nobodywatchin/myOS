@@ -37,21 +37,24 @@ The DE-agnostic workstation base layered on top of published `core-full-*`
 images.
 
 It owns the common workstation packages, shared multimedia/session tooling,
-shared Flatpak policy, and desktop-wide diagnostics/admin utilities.
+shared Flatpak policy, the boot-time display-manager reconciliation helper, and
+desktop-wide diagnostics/admin utilities.
 
 ### `shared/workstation-gnome.yml`
 
 The GNOME-specific workstation layer on top of `workstation-common`.
 
 It owns the shared GNOME session stack, GNOME payload trees, GNOME Software
-integration, and the cross-version-safe GNOME extension baseline.
+integration, the GNOME desktop marker payload, and the cross-version-safe GNOME
+extension baseline.
 
 ### `shared/workstation-cosmic.yml`
 
 The shared COSMIC workstation layer on top of `workstation-common`.
 
 It owns the version-aware `ligenix/enterprise-cosmic` COPR enablement, COSMIC
-desktop install logic, `cosmic-greeter` enablement, and COSMIC portal wiring.
+desktop install logic, COSMIC build-time sanity checks, the COSMIC desktop
+marker payload, and COSMIC portal wiring.
 
 ### `shared/gnome-base.yml`
 

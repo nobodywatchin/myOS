@@ -87,8 +87,8 @@ files/
 - `recipes/images` contains only buildable images.
 - `recipes/layers/shared` contains the shared composition layers: `core`, `full`, `workstation-common`, `workstation-gnome`, `workstation-cosmic`, `nvidia-common`, `nvidia-cuda`, `nvidia-open`, and `nvidia-workstation`. `gnome-base` and `nvidia-gnome` remain as thin compatibility wrappers.
 - `recipes/layers/alma9` and `recipes/layers/alma10` keep version differences explicit without spreading them across lots of tiny files.
-- `modules/os-release-meta` runs first from `core`, before branding, and is the shared EL metadata source of truth. `core.yml` carries the shared EL Tailscale setup, base system, and common runtime defaults, while `full.yml` adds the platform-host scaffolding, shared AI/infrastructure tooling, and Kubernetes-ready operator surface used by the published `core-full-*` images. `workstation-common.yml` carries the shared workstation baseline, `alma9/workstation.yml` and `alma10/workstation.yml` keep shared workstation drift explicit, and `workstation-gnome.yml` / `workstation-cosmic.yml` own the DE-specific session layers.
-- `files/base`, `files/workstation`, `files/gnome`, and `files/agent` mirror those concerns in the payloads.
+- `modules/os-release-meta` runs first from `core`, before branding, and is the shared EL metadata source of truth. `core.yml` carries the shared EL Tailscale setup, base system, and common runtime defaults, while `full.yml` adds the platform-host scaffolding, shared AI/infrastructure tooling, and Kubernetes-ready operator surface used by the published `core-full-*` images. `workstation-common.yml` carries the shared workstation baseline plus boot-time display-manager reconciliation, `alma9/workstation.yml` and `alma10/workstation.yml` keep shared workstation drift explicit, and `workstation-gnome.yml` / `workstation-cosmic.yml` own the DE-specific session layers and desktop markers.
+- `files/base`, `files/workstation`, `files/gnome`, `files/cosmic`, and `files/agent` mirror those concerns in the payloads.
 
 Kubernetes is now included in the published `core-full-*` image line via [`recipes/layers/features/kubernetes-cli.yml`](recipes/layers/features/kubernetes-cli.yml), so the full core/workstation stack is ready to talk to Terraform and Kubernetes out of the box.
 
@@ -109,7 +109,7 @@ See [`docs/rootless-persistence.md`](docs/rootless-persistence.md) for the full 
 
 # Update Flow
 
-myOS disables the stock `bootc-fetch-apply-updates.service` and `bootc-fetch-apply-updates.timer` so hosts do not surprise-reboot on their own. Use `myos update-system` or `myos rebase`, then reboot on your own schedule or during a maintenance window. For per-user runtime maintenance, `myos update-user` runs `openquad update` alongside the user-space refresh steps.
+myOS disables the stock `bootc-fetch-apply-updates.service` and `bootc-fetch-apply-updates.timer` so hosts do not surprise-reboot on their own. Use `myos update-system` or `myos rebase`, then reboot on your own schedule or during a maintenance window. Workstation images now re-apply the selected desktop environment's display-manager ownership on boot, so GNOME/COSMIC rebases do not require manual `display-manager.service` cleanup. For per-user runtime maintenance, `myos update-user` runs `openquad update` alongside the user-space refresh steps.
 
 # Tenant Operations
 

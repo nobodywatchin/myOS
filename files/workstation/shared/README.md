@@ -16,8 +16,24 @@ The goal is:
 - users do not browse two fully visible Flathub catalogs
 - admins can still deliberately manage system Flatpaks
 
-This tree only carries the workstation-wide shell helper, Flatpak service
-drop-in, and polkit rules for that shared model.
+This tree carries the workstation-wide shell helper, Flatpak service drop-in,
+polkit rules, and the boot-time display-manager reconciliation helper.
+
+## Display-manager reconciliation
+
+Workstation images now ship a shared oneshot unit and helper script that run on
+every boot before the display manager:
+
+- `usr/lib/systemd/system/myos-workstation-dm-apply.service`
+- `usr/libexec/myos-workstation-dm-apply`
+
+That helper reads the active desktop marker from
+`/usr/share/myos/workstation/desktop.env` and then repairs stale
+`display-manager.service` state left behind by bootc/rpm-ostree rebases.
+
+The shared workstation tree owns the helper because the behavior is the same
+for every workstation image. The desktop-specific marker stays with the
+desktop-specific payload tree.
 
 GNOME-only session helpers and GNOME-specific autostart behavior stay under
 `files/gnome/shared/`.

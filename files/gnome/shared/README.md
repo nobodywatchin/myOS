@@ -5,6 +5,13 @@ This tree contains the GNOME-only session defaults and helpers.
 The workstation-wide Flatpak shell helper, Flatpak service drop-in, and Flatpak
 polkit rules now live under `files/workstation/shared/`.
 
+This tree also publishes the GNOME desktop marker at:
+
+- `usr/share/myos/workstation/desktop.env`
+
+The shared workstation display-manager reconciliation helper reads that marker
+to decide that a GNOME image should own `gdm.service`.
+
 ## Intended Tailscale model
 
 myOS keeps Tailscale split across system and session scopes:
@@ -82,5 +89,3 @@ that would be the right place to automate `tailscale set --operator=<username>`.
 
 If duplicate Tailscale UI surfaces become a problem, handle that as a separate
 follow-up instead of folding it into this autostart patch.
-tart patch.
-s autostart patch.

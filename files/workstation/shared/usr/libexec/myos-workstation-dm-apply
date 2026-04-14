@@ -1,0 +1,102 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+desktop_env_file="/usr/share/myos/workstation/desktop.env"
+
+if [[ ! -r "${desktop_env_file}" ]]; then
+  exit 0
+fi
+
+# shellcheck disable=SC1090
+. "${desktop_env_file}"
+
+log() {
+  printf 'myos-workstation-dm-apply: %s\n' "$*"
+}
+
+have_unit() {
+  local unit="$1"
+  [[ -f "/usr/lib/systemd/system/${unit}" || -f "/etc/systemd/system/${unit}" ]] \
+    || systemctl list-unit-files "${unit}" --no-legend >/dev/null 2>&1
+}
+
+disable_unit() {
+  local unit="$1"
+  if have_unit "${unit}"; then
+    systemctl disable "${unit}" >/dev/null 2>&1 || true
+  fi
+}
+
+enable_unit() {
+  local unit="$1"
+  if ! have_unit "${unit}"; then
+    return 1
+  fi
+
+  systemctl enable --force "${unit}" >/dev/null 2>&1
+}
+
+cleanup_display_manager_links() {
+  rm -f \
+    /etc/systemd/system/display-manager.service \
+    /etc/systemd/system/graphical.target.wants/gdm.service \
+    /etc/systemd/system/graphical.target.wants/cosmic-greeter.service \
+    /etc/systemd/system/graphical.target.wants/greetd.service
+}
+
+ensure_graphical_default() {
+  local default_target
+  default_target="$(readlink -f /etc/systemd/system/default.target 2>/dev/null || true)"
+  if [[ "${default_target}" != "/usr/lib/systemd/system/graphical.target" ]]; then
+    systemctl set-default graphical.target >/dev/null 2>&1 || true
+  fi
+}
+
+ensure_display_manager_alias() {
+  if [[ ! -L /etc/systemd/system/display-manager.service ]]; then
+    log "display-manager.service alias was not recreated for ${1}"
+    return 1
+  fi
+}
+
+ensure_graphical_default
+cleanup_display_manager_links
+systemctl daemon-reload >/dev/null 2>&1 || true
+
+case "${MYOS_DESKTOP:-}" in
+  gnome)
+    log "selecting GDM for GNOME"
+    disable_unit cosmic-greeter.service
+    disable_unit greetd.service
+    if ! enable_unit gdm.service; then
+      log "gdm.service is not available"
+      exit 1
+    fi
+    ensure_display_manager_alias "gdm.service"
+    ;;
+  cosmic)
+    log "selecting COSMIC display manager"
+    disable_unit gdm.service
+    disable_unit greetd.service
+    disable_unit cosmic-greeter.service
+    if have_unit cosmic-greeter.service; then
+      enable_unit cosmic-greeter.service
+      ensure_display_manager_alias "cosmic-greeter.service"
+    elif have_unit greetd.service; then
+      enable_unit greetd.service
+      ensure_display_manager_alias "greetd.service"
+    else
+      log "neither cosmic-greeter.service nor greetd.service is available"
+      exit 1
+    fi
+    ;;
+  "")
+    log "desktop marker is empty"
+    exit 1
+    ;;
+  *)
+    log "unsupported desktop marker: ${MYOS_DESKTOP}"
+    exit 1
+    ;;
+esac

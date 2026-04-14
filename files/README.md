@@ -14,6 +14,7 @@ files/
   base/
   workstation/
   gnome/
+  cosmic/
   agent/
   dnf/
   justfiles/
@@ -36,16 +37,25 @@ Current usage in this repo is intentionally small:
 Shared workstation payloads layered by both GNOME and COSMIC images.
 
 - `workstation/shared/` for the workstation-wide Flatpak shell helper, Flatpak
-  service drop-in, and Flatpak polkit rules
+  service drop-in, Flatpak polkit rules, and the shared display-manager
+  reconciliation unit/helper
 
 ### `gnome/`
 
 GNOME-specific workstation payloads layered only by the GNOME stack.
 
 - `gnome/shared/` for shared GNOME session defaults and GNOME-only session
-  helpers
+  helpers, including the GNOME desktop marker consumed by the shared
+  workstation display-manager helper
 - `gnome/alma9/` and `gnome/alma10/` for GNOME shell-version-specific dconf
   overrides
+
+### `cosmic/`
+
+COSMIC-specific workstation payloads layered only by the COSMIC stack.
+
+- `cosmic/shared/` for the COSMIC desktop marker and future COSMIC-only session
+  payloads
 
 ### `agent/`
 

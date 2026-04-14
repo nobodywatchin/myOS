@@ -3,6 +3,11 @@ modules:
   # Shared COSMIC workstation layer. The package source stays shared, but the
   # COPR target string is EL-major aware because COPR names the EL9 and EL10
   # chroots differently.
+  - type: files
+    files:
+      - source: cosmic/shared
+        destination: /
+
   - type: containerfile
     snippets:
       - >-
@@ -17,19 +22,58 @@ modules:
           dnf -y copr enable "ligenix/enterprise-cosmic" "$copr_target"
       - >-
         RUN set -eux; \
-          cosmic_bundle="cosmic-epoch"; \
-          if dnf -q repoquery cosmic-desktop >/dev/null 2>&1; then \
-            cosmic_bundle="cosmic-desktop"; \
+          optional_packages=""; \
+          if dnf -q repoquery cosmic-config-fedora >/dev/null 2>&1; then \
+            optional_packages="$optional_packages cosmic-config-fedora"; \
           fi; \
-          dnf -y --setopt=install_weak_deps=False install \
-            "$cosmic_bundle" \
-            adw-gtk3-theme \
-            cosmic-greeter \
-            greetd \
-            xdg-desktop-portal-cosmic; \
-          test -f /usr/lib/systemd/system/cosmic-greeter.service
-
-  - type: systemd
-    system:
-      enabled:
-        - cosmic-greeter.service
+          if dnf -q repoquery cosmic-desktop >/dev/null 2>&1; then \
+            dnf -y --setopt=install_weak_deps=False install \
+              cosmic-desktop \
+              cosmic-greeter \
+              greetd \
+              xdg-desktop-portal-cosmic \
+              adw-gtk3-theme \
+              $optional_packages; \
+          else \
+            dnf -y --setopt=install_weak_deps=False install \
+              cosmic-session \
+              cosmic-comp \
+              cosmic-panel \
+              cosmic-app-library \
+              cosmic-applets \
+              cosmic-files \
+              cosmic-launcher \
+              cosmic-notifications \
+              cosmic-osd \
+              cosmic-settings \
+              cosmic-settings-daemon \
+              cosmic-store \
+              cosmic-term \
+              cosmic-workspaces \
+              cosmic-randr \
+              cosmic-screenshot \
+              cosmic-bg \
+              cosmic-wallpapers \
+              cosmic-icon-theme \
+              cosmic-initial-setup \
+              cosmic-greeter \
+              greetd \
+              xdg-desktop-portal-cosmic \
+              adw-gtk3-theme \
+              $optional_packages; \
+          fi; \
+          command -v cosmic-session >/dev/null; \
+          command -v cosmic-panel >/dev/null; \
+          command -v cosmic-app-library >/dev/null; \
+          command -v cosmic-files >/dev/null; \
+          command -v cosmic-settings >/dev/null; \
+          command -v cosmic-store >/dev/null; \
+          find /usr/share/wayland-sessions -maxdepth 1 -type f -iname '*cosmic*.desktop' | grep -q .; \
+          if [ -f /usr/lib/systemd/system/cosmic-greeter.service ]; then \
+            :; \
+          elif [ -f /usr/lib/systemd/system/greetd.service ]; then \
+            :; \
+          else \
+            echo 'Missing COSMIC greeter service file' >&2; \
+            exit 1; \
+          fi
