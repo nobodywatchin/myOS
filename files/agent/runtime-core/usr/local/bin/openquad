@@ -85,6 +85,23 @@ container_image() {
   user_runtime_container_image
 }
 
+quadlet_image() {
+  openclaw_user_image_from_quadlet
+}
+
+pull_latest_quadlet_image() {
+  local image
+
+  image="$(quadlet_image)"
+  [ -n "$image" ] || {
+    printf 'openquad: could not resolve image from %s\n' "$quadlet_path" >&2
+    exit 1
+  }
+
+  printf 'openquad: pulling image: %s\n' "$image"
+  podman pull "$image"
+}
+
 inner_openclaw_version() {
   user_runtime_inner_openclaw_version
 }
@@ -365,6 +382,7 @@ case "$command_name" in
     else
       printf 'openquad: refreshed quadlet from template: %s\n' "$quadlet_path"
     fi
+    pull_latest_quadlet_image
     current_user_systemctl daemon-reload
     current_user_systemctl reset-failed "$service_name" >/dev/null 2>&1 || true
     current_user_systemctl restart "$service_name"

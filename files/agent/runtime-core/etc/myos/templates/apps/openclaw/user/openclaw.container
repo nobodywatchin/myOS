@@ -3,6 +3,7 @@ Description=OpenClaw Runtime (per-user)
 
 [Container]
 Image=__OPENCLAW_IMAGE__
+Pull=missing
 ContainerName=openclaw
 UserNS=keep-id
 User=__ACCOUNT_UID__:__ACCOUNT_GID__

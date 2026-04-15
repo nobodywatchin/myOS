@@ -28,6 +28,7 @@ grep -q '^WantedBy=default.target$' files/agent/platform-host/etc/myos/templates
 
 grep -q '^\[Container\]$' files/agent/runtime-core/etc/myos/templates/apps/openclaw/user/openclaw.container
 grep -q '^Image=' files/agent/runtime-core/etc/myos/templates/apps/openclaw/user/openclaw.container
+grep -q '^Pull=missing$' files/agent/runtime-core/etc/myos/templates/apps/openclaw/user/openclaw.container
 grep -q '^Exec=openclaw gateway --allow-unconfigured$' files/agent/runtime-core/etc/myos/templates/apps/openclaw/user/openclaw.container
 grep -q '^Volume=%h/.local/share/openclaw:/home/node/.openclaw:rw,Z$' files/agent/runtime-core/etc/myos/templates/apps/openclaw/user/openclaw.container
 grep -q '^TimeoutStartSec=15min$' files/agent/runtime-core/etc/myos/templates/apps/openclaw/user/openclaw.container
