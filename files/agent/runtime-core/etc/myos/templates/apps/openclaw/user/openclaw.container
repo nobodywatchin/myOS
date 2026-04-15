@@ -23,7 +23,7 @@ Exec=openclaw gateway --allow-unconfigured
 [Service]
 Restart=on-failure
 RestartSec=5s
-TimeoutStartSec=120
+TimeoutStartSec=15min
 
 [Install]
 WantedBy=default.target

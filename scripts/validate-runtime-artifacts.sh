@@ -30,6 +30,7 @@ grep -q '^\[Container\]$' files/agent/runtime-core/etc/myos/templates/apps/openc
 grep -q '^Image=' files/agent/runtime-core/etc/myos/templates/apps/openclaw/user/openclaw.container
 grep -q '^Exec=openclaw gateway --allow-unconfigured$' files/agent/runtime-core/etc/myos/templates/apps/openclaw/user/openclaw.container
 grep -q '^Volume=%h/.local/share/openclaw:/home/node/.openclaw:rw,Z$' files/agent/runtime-core/etc/myos/templates/apps/openclaw/user/openclaw.container
+grep -q '^TimeoutStartSec=15min$' files/agent/runtime-core/etc/myos/templates/apps/openclaw/user/openclaw.container
 grep -q '^WantedBy=default.target$' files/agent/runtime-core/etc/myos/templates/apps/openclaw/user/openclaw.container
 
 test -f files/end-user/shared/etc/profile.d/flatpak-user-default.sh
