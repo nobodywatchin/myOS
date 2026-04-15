@@ -8,3 +8,5 @@ It is intentionally separate from `templates/persistent-users/`:
 - `myos persistent-user-enroll` does not copy it automatically
 - the generated Quadlet lives in `~/.config/containers/systemd/`
 - user-owned runtime state lives under `~/.local/share/openclaw/` and `~/.local/state/openclaw/`
+- GPU device passthrough is not enabled here by default; add explicit `/dev/dri`
+  or `/dev/kfd` handling if you want a local GPU backend inside the container

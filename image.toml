@@ -1,7 +1,7 @@
 [[customizations.user]]
 name = "myos"
 password = "myos"
-groups = ["wheel"]
+groups = ["wheel", "render", "video"]
 
 [[customizations.filesystem]]
 mountpoint = "/"

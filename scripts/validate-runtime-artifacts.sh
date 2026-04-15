@@ -40,6 +40,14 @@ test -f files/end-user/shared/usr/lib/environment.d/60-myos-flatpak-exports.conf
 test -f files/end-user/shared/usr/share/polkit-1/rules.d/org.freedesktop.Flatpak.rules
 test -f files/console/shared/usr/share/myos/console/role.env
 
+grep -q "mesa-vulkan-drivers" recipes/layers/shared/core.yml
+grep -q "vulkan-loader" recipes/layers/shared/core.yml
+grep -q "vulkan-tools" recipes/layers/shared/core.yml
+grep -q 'TAG+="uaccess"' files/agent/runtime-core/etc/udev/rules.d/70-amdgpu.rules
+grep -q "for group in render video; do" files/agent/platform-host/usr/local/libexec/myos/persistent-user-enroll
+grep -q "podman info --format" files/agent/runtime-core/usr/local/bin/openquad
+grep -q 'groups = \["wheel", "render", "video"\]' image.toml
+
 grep -q "import '/usr/share/myos/just/rebase.just'" files/justfiles/usr/share/myos/just/index.just
 grep -q "import '/usr/share/myos/just/tenant.just'" files/agent/justfiles/usr/share/myos/just/index.just
 grep -q "import '/usr/share/myos/just/openclaw-host.just'" files/agent/justfiles/usr/share/myos/just/index.just

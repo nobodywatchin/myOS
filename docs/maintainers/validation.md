@@ -16,6 +16,9 @@ bash ./scripts/validate-image-matrix.sh
 
 - `files/agent/runtime-core/**`
 - `files/agent/platform-host/**`
+- shared Vulkan packaging in `shared/core.yml`
+- explicit AMD `uaccess` tagging in the shared DRM/KFD rule
+- persistent-user GPU group enrollment wiring
 - workstation DM helper wiring
 - the end-user Flatpak policy payloads
 - Console preview marker payloads
@@ -60,3 +63,8 @@ The build workflow covers only supported combinations:
 - If you change `end-user-common.yml`, re-check Workstation and Console together.
 - If you change `workstation-common.yml`, re-check both GNOME and COSMIC family expectations.
 - If you change Alma-specific drift, update `docs/maintainers/alma-drift.md` in the same change.
+
+## Runtime diagnostics
+
+- `openquad doctor` now surfaces current-session GPU group membership, device-node access, Podman runtime, and whether the shipped per-user Quadlet actually requests GPU devices.
+- `myos persistent-user-validate --user NAME` now checks `render`/`video` membership plus real access to `/dev/dri/renderD*` and `/dev/kfd` for enrolled login users.

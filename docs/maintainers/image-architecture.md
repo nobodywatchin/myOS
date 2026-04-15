@@ -65,6 +65,7 @@ It owns:
 
 - common EL identity and base packages
 - base runtime defaults and branding payloads
+- host Vulkan userland/tooling
 - shared ROCm userspace
 - shared Tailscale baseline
 - optional per-user OpenClaw runtime payloads under `files/agent/runtime-core/`
@@ -88,7 +89,6 @@ It owns:
 It owns:
 
 - Flatpak base packaging and policy payloads
-- Vulkan userland/tooling
 - shared end-user files under `files/end-user/shared/`
 
 ### Workstation role

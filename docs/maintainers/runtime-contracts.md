@@ -11,6 +11,7 @@ That includes:
 - base EL packages and common runtime defaults
 - branding and `os-release` metadata
 - Tailscale system daemon baseline
+- host Vulkan userland/tooling
 - ROCm userspace and related shared AMD runtime files
 - the `openquad` command and its supporting runtime-core library files
 - the shipped per-user OpenClaw template under `files/agent/runtime-core/etc/myos/templates/apps/openclaw/user/`
@@ -40,7 +41,6 @@ It owns:
 
 - Flatpak packaging baseline
 - system-vs-user Flatpak policy payloads
-- Vulkan userland/tooling
 
 Server does not consume this layer.
 

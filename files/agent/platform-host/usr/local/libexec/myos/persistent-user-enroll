@@ -39,6 +39,22 @@ done
 require_root
 require_existing_account "$user"
 
+gpu_group_membership_changed=0
+for group in render video; do
+  if ! getent group "$group" >/dev/null 2>&1; then
+    warn "required group ${group} is missing"
+    continue
+  fi
+
+  if id -nG "$user" 2>/dev/null | tr ' ' '\n' | grep -qx "$group"; then
+    continue
+  fi
+
+  usermod -a -G "$group" "$user"
+  log "added ${user} to ${group} for local GPU access and rootless GPU workloads"
+  gpu_group_membership_changed=1
+done
+
 current_owner="$(persistent_user_owner 2>/dev/null || true)"
 if [ "$mark_owner" -eq 1 ] && [ -n "$current_owner" ] && [ "$current_owner" != "$user" ]; then
   die "owner role is already assigned to ${current_owner}; run persistent-user-set-owner --user ${user} to transfer it"
@@ -216,6 +232,11 @@ fi
 if [ "${#enable_units[@]}" -eq 0 ] && [ "${#start_units[@]}" -eq 0 ]; then
   log "no managed persistent units are currently defined for ${user}"
 fi
+
+if [ "$gpu_group_membership_changed" -eq 1 ]; then
+  warn "GPU group changes for ${user} take effect on the next login or after restarting the user's systemd manager"
+fi
+
 /usr/local/libexec/myos/persistent-user-validate --user "$user"
 log "persistent hosting is configured for ${user}"
 if persistent_user_is_owner "$user"; then

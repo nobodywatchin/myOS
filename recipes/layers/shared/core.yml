@@ -83,10 +83,13 @@ modules:
         - buildah
         - distrobox
         - fuse-overlayfs
+        - mesa-vulkan-drivers
         - slirp4netns
         - openssh-clients
         - policycoreutils-python-utils
         - vim-minimal
+        - vulkan-loader
+        - vulkan-tools
         - bzip2
         - file
         - gnupg2
@@ -120,8 +123,9 @@ modules:
       - source: base/branding
         destination: /
 
-  # ROCm stays in core by design so every image stays genuinely AI-ready
-  # without forcing hosted tooling, model services, or NVIDIA-specific choices.
+  # ROCm and host Vulkan stay in core by design so every image keeps the same
+  # local GPU/runtime baseline without forcing hosted tooling, model services,
+  # or NVIDIA-specific choices.
   - type: dnf
     repos:
       files:

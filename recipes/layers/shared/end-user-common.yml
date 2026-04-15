@@ -6,9 +6,6 @@ modules:
       install-weak-deps: false
       packages:
         - flatpak
-        - mesa-vulkan-drivers
-        - vulkan-loader
-        - vulkan-tools
 
   - type: files
     files:

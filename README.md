@@ -16,7 +16,7 @@ Workstation is the flagship. Server and Console are separate roles. GNOME and CO
 - Curated, not inherited: images include what fits the contract for that role and tier. Workstation does not quietly inherit Kubernetes, OpenTofu, or hosted OpenClaw admin tooling.
 - Hardware policy is explicit: choose `default`, `nvidia-open`, or, on Alma 9 only, `nvidia-legacy`.
 - Clean app model: system Flatpaks stay admin-managed, user Flatpaks stay user-owned, and the default UX does not bury people in duplicate catalogs.
-- AI-ready, not AI-bloated: ROCm userspace stays in core, optional per-user OpenClaw via `openquad` ships everywhere, and hosted/operator tooling stays in full.
+- AI-ready, not AI-bloated: ROCm userspace and host Vulkan tooling stay in core, optional per-user OpenClaw via `openquad` ships everywhere, and hosted/operator tooling stays in full.
 
 ## Choose An Image
 
@@ -97,6 +97,7 @@ Details live in [docs/user/apps-and-flatpak.md](docs/user/apps-and-flatpak.md).
 AI-ready in myOS means:
 
 - ROCm userspace is available in core.
+- Host Vulkan tooling is available in core.
 - Optional per-user OpenClaw support via `openquad` ships in every image.
 - That runtime is inert by default, user-owned, and stores mutable state in the user's home.
 - Full images add the hosted/operator surfaces for tenants, persistent-user administration, and `openclaw-host`.

@@ -92,10 +92,36 @@ else
   check_warn "linger is not enabled for ${user}"
 fi
 
+for group in render video; do
+  if id -nG "$user" 2>/dev/null | tr " " "\n" | grep -qx "$group"; then
+    pass "login user ${user} is listed in ${group}"
+  else
+    check_warn "login user ${user} is not listed in ${group}; rootless GPU workloads are not guaranteed"
+  fi
+done
+
 if try_user_systemctl "$user" show-environment; then
   pass "user systemd is reachable for ${user}"
 else
   check_fail "user systemd is not reachable for ${user}"
+fi
+
+gpu_nodes=()
+shopt -s nullglob
+gpu_nodes+=(/dev/dri/renderD*)
+gpu_nodes+=(/dev/kfd)
+shopt -u nullglob
+
+if [ "${#gpu_nodes[@]}" -eq 0 ]; then
+  note "no local GPU device nodes were found under /dev/dri/renderD* or /dev/kfd"
+else
+  for node in "${gpu_nodes[@]}"; do
+    if runuser -u "$user" -- test -r "$node" && runuser -u "$user" -- test -w "$node"; then
+      pass "login user ${user} can access ${node}"
+    else
+      check_warn "login user ${user} cannot access ${node}; check group membership or session ACLs"
+    fi
+  done
 fi
 
 check_role() {

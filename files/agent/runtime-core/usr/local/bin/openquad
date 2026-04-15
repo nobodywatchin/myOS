@@ -216,7 +216,8 @@ show_inspect() {
 }
 
 run_doctor() {
-  local enabled_state active_state current_container_state image version
+  local enabled_state active_state current_container_state image version current_groups runtime_name
+  local -a gpu_nodes
 
   doctor_failures=0
 
@@ -232,6 +233,30 @@ run_doctor() {
     fail_status "podman is not installed"
   fi
 
+  if command -v vulkaninfo >/dev/null 2>&1; then
+    ok "vulkaninfo is installed"
+  else
+    warn_status "vulkaninfo is not installed"
+  fi
+
+  current_groups="$(id -nG 2>/dev/null || true)"
+  for group in render video; do
+    if printf '%s\n' "$current_groups" | tr ' ' '\n' | grep -qx "$group"; then
+      ok "current session is in ${group}"
+    else
+      warn_status "current session is not in ${group}"
+    fi
+  done
+
+  runtime_name="$(podman info --format '{{.Host.OCIRuntime.Name}}' 2>/dev/null || true)"
+  if [ "$runtime_name" = crun ]; then
+    ok "Podman OCI runtime is crun"
+  elif [ -n "$runtime_name" ]; then
+    warn_status "Podman OCI runtime is ${runtime_name}; rootless GPU group passthrough is not guaranteed"
+  else
+    warn_status "Podman OCI runtime could not be determined"
+  fi
+
   if service_manager_available; then
     ok "user systemd manager available"
   else
@@ -240,6 +265,11 @@ run_doctor() {
 
   if [ -f "$quadlet_path" ]; then
     ok "${service_name} installed"
+    if grep -Eq '^([^#].*=.*/dev/dri|[^#].*=.*/dev/kfd)' "$quadlet_path" 2>/dev/null; then
+      ok "quadlet declares explicit GPU device passthrough"
+    else
+      warn_status "quadlet does not declare /dev/dri or /dev/kfd passthrough"
+    fi
   else
     fail_status "missing ${quadlet_path}"
     if openclaw_user_quadlet_template_available; then
@@ -255,6 +285,21 @@ run_doctor() {
     ok "linger enabled"
   else
     warn_status "linger not enabled"
+  fi
+
+  shopt -s nullglob
+  gpu_nodes=(/dev/dri/renderD* /dev/kfd)
+  shopt -u nullglob
+  if [ "${#gpu_nodes[@]}" -eq 0 ]; then
+    warn_status "no local GPU device nodes found under /dev/dri/renderD* or /dev/kfd"
+  else
+    for node in "${gpu_nodes[@]}"; do
+      if [ -r "$node" ] && [ -w "$node" ]; then
+        ok "current session can access ${node}"
+      else
+        warn_status "current session cannot access ${node}"
+      fi
+    done
   fi
 
   enabled_state="$(service_enabled_state)"
