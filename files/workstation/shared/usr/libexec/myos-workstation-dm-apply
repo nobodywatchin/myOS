@@ -37,6 +37,11 @@ enable_unit() {
   systemctl enable --force "${unit}" >/dev/null 2>&1
 }
 
+start_unit() {
+  local unit="$1"
+  systemctl start "${unit}" >/dev/null 2>&1
+}
+
 cleanup_display_manager_links() {
   rm -f \
     /etc/systemd/system/display-manager.service \
@@ -60,6 +65,56 @@ ensure_display_manager_alias() {
   fi
 }
 
+pam_gnome_keyring_available() {
+  [[ -f /usr/lib/security/pam_gnome_keyring.so || -f /usr/lib64/security/pam_gnome_keyring.so ]]
+}
+
+insert_line_after_match() {
+  local file="$1"
+  local match="$2"
+  local line="$3"
+  local tmp
+
+  if grep -Fqx "${line}" "${file}"; then
+    return 0
+  fi
+
+  tmp="$(mktemp)"
+  awk -v match="${match}" -v line="${line}" '
+    {
+      print
+      if (!inserted && $0 ~ match) {
+        print line
+        inserted=1
+      }
+    }
+    END {
+      if (!inserted) {
+        print line
+      }
+    }
+  ' "${file}" > "${tmp}"
+  cat "${tmp}" > "${file}"
+  rm -f "${tmp}"
+}
+
+ensure_cosmic_keyring_pam() {
+  local pam_file="/etc/pam.d/cosmic-greeter"
+
+  if [[ ! -f "${pam_file}" ]]; then
+    log "COSMIC PAM file is missing: ${pam_file}"
+    return 1
+  fi
+
+  if ! pam_gnome_keyring_available; then
+    log "pam_gnome_keyring.so is not installed; skipping COSMIC keyring PAM reconciliation"
+    return 0
+  fi
+
+  insert_line_after_match "${pam_file}" '^auth[[:space:]].*login([[:space:]]|$)' 'auth optional pam_gnome_keyring.so'
+  insert_line_after_match "${pam_file}" '^session[[:space:]].*login([[:space:]]|$)' 'session optional pam_gnome_keyring.so auto_start'
+}
+
 ensure_graphical_default
 cleanup_display_manager_links
 systemctl daemon-reload >/dev/null 2>&1 || true
@@ -74,17 +129,36 @@ case "${MYOS_DESKTOP:-}" in
       exit 1
     fi
     ensure_display_manager_alias "gdm.service"
+    if ! start_unit gdm.service; then
+      log "failed to start gdm.service"
+      exit 1
+    fi
     ;;
   cosmic)
     log "selecting COSMIC display manager"
     disable_unit gdm.service
-    disable_unit cosmic-greeter.service
-    if have_unit greetd.service; then
-      enable_unit greetd.service
-      ensure_display_manager_alias "greetd.service"
-    elif have_unit cosmic-greeter.service; then
-      enable_unit cosmic-greeter.service
+    ensure_cosmic_keyring_pam || true
+    if have_unit cosmic-greeter.service; then
+      disable_unit greetd.service
+      if ! enable_unit cosmic-greeter.service; then
+        log "failed to enable cosmic-greeter.service"
+        exit 1
+      fi
       ensure_display_manager_alias "cosmic-greeter.service"
+      if ! start_unit cosmic-greeter.service; then
+        log "failed to start cosmic-greeter.service"
+        exit 1
+      fi
+    elif have_unit greetd.service; then
+      if ! enable_unit greetd.service; then
+        log "failed to enable greetd.service"
+        exit 1
+      fi
+      ensure_display_manager_alias "greetd.service"
+      if ! start_unit greetd.service; then
+        log "failed to start greetd.service"
+        exit 1
+      fi
     else
       log "neither cosmic-greeter.service nor greetd.service is available"
       exit 1
