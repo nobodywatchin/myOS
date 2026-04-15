@@ -1,7 +1,2 @@
 ---
-modules:
-  - type: dnf
-    install:
-      install-weak-deps: false
-      packages:
-        - ramalama
+modules: []

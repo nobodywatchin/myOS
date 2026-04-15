@@ -13,7 +13,6 @@ These are the intentional lane differences that remain after the role-first refa
 - supports Workstation core/full and Server full
 - supports Console core preview
 - supports `nvidia-open`, not `nvidia-legacy`
-- keeps `ramalama` in the Alma 10 full-tier drift instead of the shared or core contract
 
 ## Shared across both lanes
 
