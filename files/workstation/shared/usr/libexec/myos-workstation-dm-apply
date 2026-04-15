@@ -39,7 +39,9 @@ enable_unit() {
 
 start_unit() {
   local unit="$1"
-  systemctl start "${unit}" >/dev/null 2>&1
+  # Queue the display-manager start in the current boot transaction without
+  # blocking on a unit that is explicitly ordered after this helper.
+  systemctl start --no-block "${unit}" >/dev/null 2>&1
 }
 
 cleanup_display_manager_links() {

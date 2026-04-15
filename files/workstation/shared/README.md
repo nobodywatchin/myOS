@@ -20,8 +20,9 @@ Workstation images ship:
 
 That helper reads the active family marker from `/usr/share/myos/workstation/desktop.env` and repairs stale `display-manager.service` ownership after bootc rebases.
 
-It also starts the selected display manager on the first boot after a rebase, so
-the handoff is not delayed until the next reboot.
+It also queues the selected display manager on the first boot after a rebase, so
+the handoff is not delayed until the next reboot while still avoiding a boot-time
+ordering deadlock.
 
 For COSMIC deployments, the helper also reconciles the `cosmic-greeter` PAM file
 with `pam_gnome_keyring.so` when the module is installed, which keeps keyring
