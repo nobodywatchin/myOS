@@ -28,6 +28,27 @@ disable_unit() {
   fi
 }
 
+stop_unit() {
+  local unit="$1"
+  if have_unit "${unit}"; then
+    systemctl stop --no-block "${unit}" >/dev/null 2>&1 || true
+  fi
+}
+
+reset_failed_unit() {
+  local unit="$1"
+  if have_unit "${unit}"; then
+    systemctl reset-failed "${unit}" >/dev/null 2>&1 || true
+  fi
+}
+
+retire_unit() {
+  local unit="$1"
+  disable_unit "${unit}"
+  stop_unit "${unit}"
+  reset_failed_unit "${unit}"
+}
+
 enable_unit() {
   local unit="$1"
   if ! have_unit "${unit}"; then
@@ -124,8 +145,8 @@ systemctl daemon-reload >/dev/null 2>&1 || true
 case "${MYOS_DESKTOP:-}" in
   gnome)
     log "selecting GDM for GNOME"
-    disable_unit cosmic-greeter.service
-    disable_unit greetd.service
+    retire_unit cosmic-greeter.service
+    retire_unit greetd.service
     if ! enable_unit gdm.service; then
       log "gdm.service is not available"
       exit 1
@@ -138,10 +159,10 @@ case "${MYOS_DESKTOP:-}" in
     ;;
   cosmic)
     log "selecting COSMIC display manager"
-    disable_unit gdm.service
+    retire_unit gdm.service
     ensure_cosmic_keyring_pam || true
     if have_unit cosmic-greeter.service; then
-      disable_unit greetd.service
+      retire_unit greetd.service
       if ! enable_unit cosmic-greeter.service; then
         log "failed to enable cosmic-greeter.service"
         exit 1
@@ -152,6 +173,7 @@ case "${MYOS_DESKTOP:-}" in
         exit 1
       fi
     elif have_unit greetd.service; then
+      retire_unit cosmic-greeter.service
       if ! enable_unit greetd.service; then
         log "failed to enable greetd.service"
         exit 1

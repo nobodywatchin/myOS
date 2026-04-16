@@ -25,6 +25,10 @@ It also queues the selected display manager on the first boot after a rebase, so
 the handoff is not delayed until the next reboot while still avoiding a boot-time
 ordering deadlock.
 
+Non-selected display-manager units are also disabled, stopped, and cleared from
+the failed-unit list so stale `greetd` or `gdm` state does not survive as noise
+after a desktop switch.
+
 For COSMIC deployments, the helper also reconciles the `cosmic-greeter` PAM file
 with `pam_gnome_keyring.so` when the module is installed, which keeps keyring
 unlock support aligned even when `/etc` persists across image switches.
