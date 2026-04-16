@@ -7,6 +7,7 @@ It now focuses on workstation behavior that is truly about the workstation role 
 ## Current ownership
 
 - the shared display-manager reconciliation unit and helper
+- shared tmpfiles/relabel snippets for workstation runtime state
 - workstation-wide payloads that are not specific to GNOME or COSMIC
 
 Flatpak governance payloads moved to `files/end-user/shared/` so Workstation and Console can share the same end-user app model.
@@ -27,3 +28,8 @@ ordering deadlock.
 For COSMIC deployments, the helper also reconciles the `cosmic-greeter` PAM file
 with `pam_gnome_keyring.so` when the module is installed, which keeps keyring
 unlock support aligned even when `/etc` persists across image switches.
+
+The shared tmpfiles payload also restores the policy-defined writable labels for
+TuneD runtime state files under `/etc/tuned`, which avoids SELinux denials when
+`tuned-ppd` updates the power-profile state on deployments that retained generic
+`/etc` labels.
