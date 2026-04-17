@@ -1,6 +1,6 @@
 # Image Architecture
 
-The repo still models myOS by role first, but the supported image set is now branch-oriented instead of split across workstation core/full and console variants.
+The repo models myOS by role first, and the supported image set is now rendered from a single-branch matrix that separates the distros into their own lanes.
 
 ## Authoritative image tree
 
@@ -27,11 +27,11 @@ Internal filenames like `core.yml`, `full.yml`, and `nvidia-legacy.yml` remain m
 
 ## Product model
 
-Supported public tags are branch-scoped and short:
+Supported public tags are lane-scoped and short:
 
-- `alma9` branch: `alma9-gnome-nvidia-580`, `alma9-cosmic-nvidia-580`, `alma9-server-nvidia-580`
-- `alma10` branch: `alma10-gnome`, `alma10-gnome-nvidia-open`, `alma10-cosmic`, `alma10-cosmic-nvidia-open`, `alma10-server`, `alma10-server-nvidia-open`
-- `fedora43` branch: `fedora43-gnome`, `fedora43-gnome-nvidia-open`, `fedora43-cosmic`, `fedora43-cosmic-nvidia-open`, `fedora43-server`
+- `alma9` lane: `alma9-gnome-nvidia-580`, `alma9-cosmic-nvidia-580`, `alma9-server-nvidia-580`
+- `alma10` lane: `alma10-gnome`, `alma10-gnome-nvidia-open`, `alma10-cosmic`, `alma10-cosmic-nvidia-open`, `alma10-server`, `alma10-server-nvidia-open`
+- `fedora43` lane: `fedora43-gnome`, `fedora43-gnome-nvidia-open`, `fedora43-cosmic`, `fedora43-cosmic-nvidia-open`, `fedora43-server`
 
 Public names follow this grammar:
 
@@ -51,9 +51,8 @@ It is shipped into images at `/usr/share/myos/image-matrix.tsv` and consumed by:
 - `.github/workflows/build.yml`
 - `myos rebase`
 
-The TSV schema is intentionally small and branch-aware:
+The TSV schema is intentionally small and single-branch:
 
-- `branch`
 - `job`
 - `platform`
 - `role`

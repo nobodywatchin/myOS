@@ -11,8 +11,8 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
 MATRIX_FILE = ROOT / 'files/base/runtime/usr/share/myos/image-matrix.tsv'
-FIELDS = ['branch', 'job', 'platform', 'role', 'environment', 'driver', 'image', 'recipe']
-ALLOWED_BRANCHES = ('alma9', 'alma10', 'fedora43')
+FIELDS = ['job', 'platform', 'role', 'environment', 'driver', 'image', 'recipe']
+ALLOWED_PLATFORMS = ('alma9', 'alma10', 'fedora43')
 ALLOWED_JOBS = ('server-images', 'workstation-images')
 ALLOWED_ROLES = ('server', 'workstation')
 ALLOWED_ENVIRONMENTS = ('cosmic', 'gnome', 'server')
@@ -96,7 +96,7 @@ def load_rows() -> list[dict[str, str]]:
         seen_images: set[str] = set()
         seen_recipes: set[str] = set()
         seen_keys: set[tuple[str, str, str, str]] = set()
-        branch_combinations = {branch: set() for branch in ALLOWED_BRANCHES}
+        platform_combinations = {platform: set() for platform in ALLOWED_PLATFORMS}
 
         for line_number, raw_row in enumerate(reader, start=2):
             row = {field: (raw_row.get(field) or '').strip() for field in FIELDS}
@@ -107,11 +107,9 @@ def load_rows() -> list[dict[str, str]]:
                     + ', '.join(missing)
                 )
 
-            if row['branch'] not in ALLOWED_BRANCHES:
-                die(f"{MATRIX_FILE}:{line_number}: unsupported branch: {row['branch']}")
             if row['job'] not in ALLOWED_JOBS:
                 die(f"{MATRIX_FILE}:{line_number}: unsupported job: {row['job']}")
-            if row['platform'] not in ALLOWED_BRANCHES:
+            if row['platform'] not in ALLOWED_PLATFORMS:
                 die(f"{MATRIX_FILE}:{line_number}: unsupported platform: {row['platform']}")
             if row['role'] not in ALLOWED_ROLES:
                 die(f"{MATRIX_FILE}:{line_number}: unsupported role: {row['role']}")
@@ -127,11 +125,6 @@ def load_rows() -> list[dict[str, str]]:
                 )
             if not row['recipe'].startswith('recipes/images/') or not row['recipe'].endswith('.yml'):
                 die(f"{MATRIX_FILE}:{line_number}: invalid recipe path: {row['recipe']}")
-            if row['branch'] != row['platform']:
-                die(
-                    f"{MATRIX_FILE}:{line_number}: branch and platform must match: "
-                    f"{row['branch']} != {row['platform']}"
-                )
             if row['image'] != expected_image(row):
                 die(
                     f"{MATRIX_FILE}:{line_number}: image tag must match platform, "
@@ -147,10 +140,10 @@ def load_rows() -> list[dict[str, str]]:
             if row['recipe'] in seen_recipes:
                 die(f"{MATRIX_FILE}:{line_number}: duplicate recipe path: {row['recipe']}")
 
-            key = (row['branch'], row['role'], row['environment'], row['driver'])
+            key = (row['platform'], row['role'], row['environment'], row['driver'])
             if key in seen_keys:
                 die(
-                    f"{MATRIX_FILE}:{line_number}: duplicate branch/environment/driver "
+                    f"{MATRIX_FILE}:{line_number}: duplicate platform/environment/driver "
                     f"entry: {key}"
                 )
 
@@ -169,13 +162,13 @@ def load_rows() -> list[dict[str, str]]:
             seen_images.add(row['image'])
             seen_recipes.add(row['recipe'])
             seen_keys.add(key)
-            branch_combinations[row['branch']].add(
+            platform_combinations[row['platform']].add(
                 (row['role'], row['environment'], row['driver'])
             )
             rows.append(row)
 
-    for branch, expected in EXPECTED_COMBINATIONS.items():
-        actual = branch_combinations[branch]
+    for platform, expected in EXPECTED_COMBINATIONS.items():
+        actual = platform_combinations[platform]
         if actual != expected:
             missing = sorted(expected - actual)
             extra = sorted(actual - expected)
@@ -185,7 +178,7 @@ def load_rows() -> list[dict[str, str]]:
             if extra:
                 details.append('extra: ' + ', '.join(map(str, extra)))
             die(
-                f'{branch} supported combinations do not match the target branch model'
+                f'{platform} supported combinations do not match the target lane model'
                 + (' (' + '; '.join(details) + ')' if details else '')
             )
 
@@ -193,7 +186,7 @@ def load_rows() -> list[dict[str, str]]:
 
 
 def filter_rows(rows: list[dict[str, str]], args: argparse.Namespace) -> list[dict[str, str]]:
-    for field in ('branch', 'job', 'platform', 'role', 'environment', 'driver'):
+    for field in ('job', 'platform', 'role', 'environment', 'driver'):
         value = getattr(args, field, None)
         if value:
             rows = [row for row in rows if row[field] == value]
@@ -229,16 +222,15 @@ def build_parser() -> argparse.ArgumentParser:
     subparsers = parser.add_subparsers(dest='command', required=True)
 
     recipes = subparsers.add_parser('recipes', help='print supported recipe paths')
-    recipes.add_argument('--branch', choices=sorted(ALLOWED_BRANCHES))
     recipes.add_argument('--job', choices=sorted(ALLOWED_JOBS))
-    recipes.add_argument('--platform', choices=sorted(ALLOWED_BRANCHES))
+    recipes.add_argument('--platform', choices=sorted(ALLOWED_PLATFORMS))
     recipes.add_argument('--role', choices=sorted(ALLOWED_ROLES))
     recipes.add_argument('--environment', choices=sorted(ALLOWED_ENVIRONMENTS))
     recipes.add_argument('--driver', choices=sorted(ALLOWED_DRIVERS))
     recipes.set_defaults(func=cmd_recipes)
 
     gha = subparsers.add_parser('gha', help='emit a GitHub Actions matrix JSON array')
-    gha.add_argument('--branch', choices=sorted(ALLOWED_BRANCHES))
+    gha.add_argument('--platform', choices=sorted(ALLOWED_PLATFORMS))
     gha.add_argument('job', choices=sorted(ALLOWED_JOBS))
     gha.set_defaults(func=cmd_gha)
 

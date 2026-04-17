@@ -25,9 +25,9 @@ Public image names follow this grammar:
 - `<platform>-<environment>`
 - `<platform>-<environment>-<driver>`
 
-Supported images by branch:
+Supported images by distro lane:
 
-| Branch | Purpose | Images |
+| Lane | Purpose | Images |
 | --- | --- | --- |
 | `alma9` | legacy NVIDIA 580 lane | `alma9-gnome-nvidia-580`, `alma9-cosmic-nvidia-580`, `alma9-server-nvidia-580` |
 | `alma10` | stable lane | `alma10-gnome`, `alma10-gnome-nvidia-open`, `alma10-cosmic`, `alma10-cosmic-nvidia-open`, `alma10-server`, `alma10-server-nvidia-open` |
@@ -117,7 +117,7 @@ files/
   justfiles/
 ```
 
-The authoritative repo shape stays role-first. Workstation keeps clean GNOME and COSMIC layering underneath that role, while the machine-readable matrix defines which combinations are actually supported per branch.
+The authoritative repo shape stays role-first. Workstation keeps clean GNOME and COSMIC layering underneath that role, while the machine-readable matrix defines which combinations are actually supported within a single branch.
 
 ## Advanced Docs
 

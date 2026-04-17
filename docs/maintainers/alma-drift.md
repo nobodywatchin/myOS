@@ -1,6 +1,6 @@
 # Alma Drift
 
-These are the intentional lane differences that remain between the Alma branches.
+These are the intentional lane differences that remain between the Alma distro lanes.
 
 ## Alma 9
 

@@ -19,7 +19,7 @@ Choose in this order.
 - `cosmic`: a parallel supported workstation experience
 - `server`: the headless admin/operator lane
 
-## 3. Pick a driver lane if the branch supports one
+## 3. Pick a driver lane if the distro lane supports one
 
 - images without a driver suffix are the standard lane
 - `nvidia-open`: newer supported NVIDIA GPUs on supported Alma 10 and Fedora 43 images
@@ -27,7 +27,7 @@ Choose in this order.
 
 ## Supported images
 
-| Branch | Purpose | Images |
+| Lane | Purpose | Images |
 | --- | --- | --- |
 | `alma9` | legacy NVIDIA 580 compatibility | `alma9-gnome-nvidia-580`, `alma9-cosmic-nvidia-580`, `alma9-server-nvidia-580` |
 | `alma10` | stable baseline | `alma10-gnome`, `alma10-gnome-nvidia-open`, `alma10-cosmic`, `alma10-cosmic-nvidia-open`, `alma10-server`, `alma10-server-nvidia-open` |

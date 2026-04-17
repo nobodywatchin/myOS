@@ -32,7 +32,7 @@ bash ./scripts/validate-image-matrix.sh
 - unsupported combinations stay absent because extra recipes fail validation
 - retired console and workstation-full paths stay gone
 - the workflow uses manifest-driven JSON matrices for only `server-images` and `workstation-images`
-- each supported branch renders the expected number of server and workstation images
+- each supported distro lane renders the expected number of server and workstation images
 
 ## Alma 9 NVIDIA 580
 
@@ -50,11 +50,11 @@ That script asserts the Alma 9 legacy NVIDIA 580 lane across:
 
 ## CI matrix
 
-The build workflow is branch-aware and covers only supported combinations:
+The build workflow is single-branch and covers the full supported matrix:
 
-- `alma9`: one server image and two workstation images, gated by runtime validation, image-matrix validation, and the NVIDIA 580 lane check
-- `alma10`: two server images and four workstation images, gated by runtime validation and image-matrix validation
-- `fedora43`: one server image and four workstation images, gated by runtime validation and image-matrix validation
+- server images across Alma 9, Alma 10, and Fedora 43
+- workstation images across Alma 9, Alma 10, and Fedora 43
+- the Alma 9 NVIDIA 580 validator runs before any builds because that lane remains part of the supported matrix
 
 Each build job consumes a JSON matrix rendered from the shared TSV manifest in a small `define-image-matrix` workflow job.
 
