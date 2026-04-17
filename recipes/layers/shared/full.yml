@@ -7,8 +7,6 @@ modules:
     install:
       install-weak-deps: false
       packages:
-        - gcc
-        - zstd
         - cockpit
         - cockpit-ostree
         - cockpit-files

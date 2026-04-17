@@ -25,6 +25,8 @@ modules:
     install:
       install-weak-deps: false
       packages:
+        - gcc
+        - zstd
         - lshw
         - dnf-plugins-core
         - audit
