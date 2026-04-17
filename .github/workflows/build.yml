@@ -1,181 +1,133 @@
-name: myos-builder
-on:
-  schedule:
-    - cron:
-        "00 06 * * *"
-  push:
-    paths-ignore:
-      - "**.md"
-  pull_request:
-  workflow_dispatch:
-concurrency:
-  group: ${{ github.workflow }}-${{ github.ref || github.run_id }}
-  cancel-in-progress: true
-jobs:
-  validate-runtime-artifacts:
-    name: Validate runtime artifacts
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v6
-      - name: Check runtime scripts, templates, and units
-        run: |
-          set -euo pipefail
-          bash ./scripts/validate-runtime-artifacts.sh
+    name: myos-builder
+    on:
+      schedule:
+        - cron:
+            "00 06 * * *"
+      push:
+        paths-ignore:
+          - "**.md"
+      pull_request:
+      workflow_dispatch:
+    concurrency:
+      group: ${{ github.workflow }}-${{ github.ref || github.run_id }}
+      cancel-in-progress: true
+    jobs:
+      validate-runtime-artifacts:
+        name: Validate runtime artifacts
+        runs-on: ubuntu-latest
+        steps:
+          - uses: actions/checkout@v6
+          - name: Check runtime scripts, templates, and units
+            run: |
+              set -euo pipefail
+              bash ./scripts/validate-runtime-artifacts.sh
 
-  validate-image-matrix:
-    name: Validate image matrix
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v6
-      - name: Check supported and unsupported recipe combinations
-        run: |
-          set -euo pipefail
-          bash ./scripts/validate-image-matrix.sh
+      validate-image-matrix:
+        name: Validate image matrix
+        runs-on: ubuntu-latest
+        steps:
+          - uses: actions/checkout@v6
+          - name: Check supported and unsupported recipe combinations
+            run: |
+              set -euo pipefail
+              bash ./scripts/validate-image-matrix.sh
 
-  validate-alma9-nvidia-legacy:
-    name: Validate Alma 9 NVIDIA Legacy
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v6
-      - name: Verify Alma 9 NVIDIA legacy stream
-        shell: pwsh
-        run: ./scripts/verify-alma9-nvidia-legacy.ps1
+      validate-branch-lane:
+        name: Validate Branch Lane (${{ github.base_ref || github.ref_name }})
+        runs-on: ubuntu-latest
+        steps:
+          - uses: actions/checkout@v6
+          - name: Verify Alma 9 NVIDIA 580 lane
+            if: ${{ (github.base_ref || github.ref_name) == 'alma9' }}
+            shell: pwsh
+            run: ./scripts/verify-alma9-nvidia-580.ps1
 
-  define-image-matrices:
-    name: Define image matrices
-    runs-on: ubuntu-latest
-    outputs:
-      server_images: ${{ steps.render.outputs.server_images }}
-      workstation_core_images: ${{ steps.render.outputs.workstation_core_images }}
-      workstation_full_images: ${{ steps.render.outputs.workstation_full_images }}
-      console_images: ${{ steps.render.outputs.console_images }}
-    steps:
-      - uses: actions/checkout@v6
-      - id: render
-        name: Render supported image matrices
-        run: |
-          set -euo pipefail
+          - name: No extra branch-specific validation
+            if: ${{ (github.base_ref || github.ref_name) != 'alma9' }}
+            run: echo "No extra branch-specific validation for ${{ github.base_ref || github.ref_name }}"
 
-          emit_output() {
-            local name="$1"
-            shift
-            {
-              printf '%s<<EOF\n' "$name"
-              "$@"
-              printf 'EOF\n'
-            } >> "$GITHUB_OUTPUT"
-          }
+      define-image-matrix:
+        name: Define image matrix
+        if: ${{ contains(fromJson('["alma9","alma10","fedora43"]'), github.base_ref || github.ref_name) }}
+        runs-on: ubuntu-latest
+        outputs:
+          server_images: ${{ steps.render.outputs.server_images }}
+          workstation_images: ${{ steps.render.outputs.workstation_images }}
+        steps:
+          - uses: actions/checkout@v6
+          - id: render
+            name: Render supported image matrices
+            run: |
+              set -euo pipefail
+              active_branch="${{ github.base_ref || github.ref_name }}"
 
-          emit_output server_images python3 ./scripts/render-image-matrix.py gha server-images
-          emit_output workstation_core_images python3 ./scripts/render-image-matrix.py gha workstation-core-images
-          emit_output workstation_full_images python3 ./scripts/render-image-matrix.py gha workstation-full-images
-          emit_output console_images python3 ./scripts/render-image-matrix.py gha console-images
+              emit_output() {
+                local name="$1"
+                shift
+                {
+                  printf '%s<<EOF
+' "$name"
+                  "$@"
+                  printf 'EOF
+'
+                } >> "$GITHUB_OUTPUT"
+              }
 
-  server-images:
-    name: Server Images (${{ matrix.name }})
-    needs:
-      - validate-runtime-artifacts
-      - validate-image-matrix
-      - validate-alma9-nvidia-legacy
-      - define-image-matrices
-    runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      packages: write
-      id-token: write
-    strategy:
-      fail-fast: false
-      matrix:
-        include: ${{ fromJSON(needs.define-image-matrices.outputs.server_images) }}
-    steps:
-      - name: Build Server image
-        uses: blue-build/github-action@v1.11
-        with:
-          recipe: ${{ matrix.recipe }}
-          cosign_private_key: ${{ secrets.SIGNING_SECRET }}
-          registry_token: ${{ github.token }}
-          pr_event_number: ${{ github.event.number }}
-          rechunk: true
-          maximize_build_space: true
+              emit_output server_images python3 ./scripts/render-image-matrix.py gha --branch "$active_branch" server-images
+              emit_output workstation_images python3 ./scripts/render-image-matrix.py gha --branch "$active_branch" workstation-images
 
-  workstation-core-images:
-    name: Workstation Core Images (${{ matrix.name }})
-    needs:
-      - validate-runtime-artifacts
-      - validate-image-matrix
-      - validate-alma9-nvidia-legacy
-      - define-image-matrices
-    runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      packages: write
-      id-token: write
-    strategy:
-      fail-fast: false
-      matrix:
-        include: ${{ fromJSON(needs.define-image-matrices.outputs.workstation_core_images) }}
-    steps:
-      - name: Build core Workstation image
-        uses: blue-build/github-action@v1.11
-        with:
-          recipe: ${{ matrix.recipe }}
-          cosign_private_key: ${{ secrets.SIGNING_SECRET }}
-          registry_token: ${{ github.token }}
-          pr_event_number: ${{ github.event.number }}
-          rechunk: true
-          maximize_build_space: true
+      server-images:
+        name: Server Images (${{ matrix.name }})
+        if: ${{ needs.define-image-matrix.result == 'success' }}
+        needs:
+          - validate-runtime-artifacts
+          - validate-image-matrix
+          - validate-branch-lane
+          - define-image-matrix
+        runs-on: ubuntu-latest
+        permissions:
+          contents: read
+          packages: write
+          id-token: write
+        strategy:
+          fail-fast: false
+          matrix:
+            include: ${{ fromJSON(needs.define-image-matrix.outputs.server_images) }}
+        steps:
+          - name: Build Server image
+            uses: blue-build/github-action@v1.11
+            with:
+              recipe: ${{ matrix.recipe }}
+              cosign_private_key: ${{ secrets.SIGNING_SECRET }}
+              registry_token: ${{ github.token }}
+              pr_event_number: ${{ github.event.number }}
+              rechunk: true
+              maximize_build_space: true
 
-  workstation-full-images:
-    name: Workstation Full Images (${{ matrix.name }})
-    needs:
-      - validate-runtime-artifacts
-      - validate-image-matrix
-      - validate-alma9-nvidia-legacy
-      - define-image-matrices
-      - server-images
-    runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      packages: write
-      id-token: write
-    strategy:
-      fail-fast: false
-      matrix:
-        include: ${{ fromJSON(needs.define-image-matrices.outputs.workstation_full_images) }}
-    steps:
-      - name: Build full Workstation image
-        uses: blue-build/github-action@v1.11
-        with:
-          recipe: ${{ matrix.recipe }}
-          cosign_private_key: ${{ secrets.SIGNING_SECRET }}
-          registry_token: ${{ github.token }}
-          pr_event_number: ${{ github.event.number }}
-          rechunk: true
-          maximize_build_space: true
-
-  console-images:
-    name: Console Images (${{ matrix.name }})
-    needs:
-      - validate-runtime-artifacts
-      - validate-image-matrix
-      - validate-alma9-nvidia-legacy
-      - define-image-matrices
-    runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      packages: write
-      id-token: write
-    strategy:
-      fail-fast: false
-      matrix:
-        include: ${{ fromJSON(needs.define-image-matrices.outputs.console_images) }}
-    steps:
-      - name: Build Console image
-        uses: blue-build/github-action@v1.11
-        with:
-          recipe: ${{ matrix.recipe }}
-          cosign_private_key: ${{ secrets.SIGNING_SECRET }}
-          registry_token: ${{ github.token }}
-          pr_event_number: ${{ github.event.number }}
-          rechunk: true
-          maximize_build_space: true
+      workstation-images:
+        name: Workstation Images (${{ matrix.name }})
+        if: ${{ needs.define-image-matrix.result == 'success' }}
+        needs:
+          - validate-runtime-artifacts
+          - validate-image-matrix
+          - validate-branch-lane
+          - define-image-matrix
+        runs-on: ubuntu-latest
+        permissions:
+          contents: read
+          packages: write
+          id-token: write
+        strategy:
+          fail-fast: false
+          matrix:
+            include: ${{ fromJSON(needs.define-image-matrix.outputs.workstation_images) }}
+        steps:
+          - name: Build Workstation image
+            uses: blue-build/github-action@v1.11
+            with:
+              recipe: ${{ matrix.recipe }}
+              cosign_private_key: ${{ secrets.SIGNING_SECRET }}
+              registry_token: ${{ github.token }}
+              pr_event_number: ${{ github.event.number }}
+              rechunk: true
+              maximize_build_space: true

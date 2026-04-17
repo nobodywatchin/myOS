@@ -1,67 +1,52 @@
 # Choose An Image
 
+Public image names follow this grammar:
+
+- `<platform>-<environment>`
+- `<platform>-<environment>-<driver>`
+
 Choose in this order.
 
-## 1. Pick a role
+## 1. Pick a lane
 
-- `workstation`: the default choice for most people. This is the flagship desktop role.
-- `server`: for full-tier admin/operator systems.
-- `console`: Alma 10 only, core only, currently a preview role.
+- `alma9`: legacy NVIDIA 580 compatibility lane
+- `alma10`: stable lane
+- `fedora43`: edge lane
 
-## 2. Pick a tier
+## 2. Pick an environment
 
-- `core`: the normal daily-use base. It keeps the modern app/runtime model, ROCm userspace, and optional per-user OpenClaw support without host/operator defaults.
-- `full`: adds Cockpit, OpenTofu, Kubernetes CLI, tenant tooling, persistent-user admin tooling, and `openclaw-host`.
+- `gnome`: the default documented workstation experience
+- `cosmic`: a parallel supported workstation experience
+- `server`: the headless admin/operator lane
 
-If you do not already know that you need the operator tooling, choose `core` for Workstation and `full` only for Server or advanced workstation/admin use.
+## 3. Pick a driver lane if the branch supports one
 
-## 3. Pick a distro lane
+- images without a driver suffix are the standard lane
+- `nvidia-open`: newer supported NVIDIA GPUs on supported Alma 10 and Fedora 43 images
+- `nvidia-580`: Alma 9 only, for the supported proprietary R580 legacy lane
 
-- `alma9`: the conservative lane, and the only lane with first-class `nvidia-legacy` support.
-- `alma10`: the newer lane, with Console support and no legacy NVIDIA branch.
-- `fedora43`: an initial workstation-core lane on the official Fedora BootC base.
+## Supported images
 
-## 4. Pick a hardware lane
-
-- `default`: no NVIDIA image-specific add-on.
-- `nvidia-open`: newer supported NVIDIA GPUs.
-- `nvidia-legacy`: Alma 9 only, for the supported older-GPU proprietary R580 path.
-
-## 5. If you chose Workstation, pick a family
-
-- `GNOME`: the default documented workstation experience.
-- `COSMIC`: a parallel supported workstation family.
-- Fedora 43 currently supports GNOME and COSMIC only.
-
-## Supported combinations
-
-| Distro | Role | Tier | Workstation family | Hardware |
-| --- | --- | --- | --- | --- |
-| Alma 9 | Workstation | core | GNOME, COSMIC | default, nvidia-open, nvidia-legacy |
-| Alma 9 | Workstation | full | GNOME, COSMIC | default, nvidia-open, nvidia-legacy |
-| Alma 9 | Server | full | n/a | default, nvidia-open, nvidia-legacy |
-| Alma 10 | Workstation | core | GNOME, COSMIC | default, nvidia-open |
-| Alma 10 | Workstation | full | GNOME, COSMIC | default, nvidia-open |
-| Alma 10 | Server | full | n/a | default, nvidia-open |
-| Alma 10 | Console | core | preview | default, nvidia-open |
-| Fedora 43 | Workstation | core | GNOME, COSMIC | default, nvidia-open |
+| Branch | Purpose | Images |
+| --- | --- | --- |
+| `alma9` | legacy NVIDIA 580 compatibility | `alma9-gnome-nvidia-580`, `alma9-cosmic-nvidia-580`, `alma9-server-nvidia-580` |
+| `alma10` | stable baseline | `alma10-gnome`, `alma10-gnome-nvidia-open`, `alma10-cosmic`, `alma10-cosmic-nvidia-open`, `alma10-server`, `alma10-server-nvidia-open` |
+| `fedora43` | edge lane | `fedora43-gnome`, `fedora43-gnome-nvidia-open`, `fedora43-cosmic`, `fedora43-cosmic-nvidia-open`, `fedora43-server` |
 
 Unsupported combinations are intentional.
 
-- no `core/server`
-- no `full/console`
-- no Alma 9 Console
-- no Alma 10 NVIDIA legacy
-- no Fedora 43 full, server, console, or legacy NVIDIA images yet
+- no console images
+- no workstation full split
+- no Alma 9 standard or `nvidia-open` images
+- no `fedora43-server-nvidia-open`
 
 ## Published tag examples
 
-- Full GNOME Workstation on Alma 10 default GPU lane: `gnome-alma10`
-- Core GNOME Workstation on Alma 10 default GPU lane: `workstation-core-gnome-alma10`
-- Core GNOME Workstation on Fedora 43 default GPU lane: `workstation-core-gnome-fedora43`
-- Core COSMIC Workstation on Fedora 43 default GPU lane: `workstation-core-cosmic-fedora43`
-- Full COSMIC Workstation on Alma 9 legacy NVIDIA lane: `cosmic-alma9-nvidia-legacy`
-- Full Server on Alma 10 default GPU lane: `core-full-alma10`
-- Core Console preview on Alma 10 default GPU lane: `console-core-alma10`
+- Stable GNOME workstation on Alma 10: `alma10-gnome`
+- Stable COSMIC workstation on Alma 10 with the open NVIDIA lane: `alma10-cosmic-nvidia-open`
+- Edge GNOME workstation on Fedora 43: `fedora43-gnome`
+- Legacy NVIDIA 580 GNOME workstation on Alma 9: `alma9-gnome-nvidia-580`
+- Stable server on Alma 10: `alma10-server`
+- Edge server on Fedora 43: `fedora43-server`
 
-`myos rebase` shows the full list grouped by role, tier, family, distro, and hardware.
+`myos rebase` shows the full list grouped by role, environment, platform, and driver.

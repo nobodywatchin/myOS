@@ -1,7 +1,7 @@
 ---
 # yaml-language-server: $schema=https://schema.blue-build.org/recipe-v1.json
-name: workstation-core-cosmic-alma9-nvidia-legacy
-description: myOS AlmaLinux 9 core Workstation image with the COSMIC family and the proprietary NVIDIA 580 older-GPU AI lane.
+name: alma9-cosmic-nvidia-580
+description: myOS AlmaLinux 9 COSMIC workstation image for the legacy NVIDIA 580 lane.
 base-image: quay.io/almalinuxorg/almalinux-bootc
 image-version: latest
 modules:

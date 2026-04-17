@@ -2,43 +2,40 @@
 
 myOS makes GPU policy explicit instead of hiding it behind one generic image.
 
-## Default lane
+## Standard lane
 
-Choose `default` when you do not need NVIDIA-specific packaging.
+Images without a driver suffix are the standard lane.
+
+Choose them when you do not need NVIDIA-specific packaging.
 
 ## NVIDIA open lane
 
-Choose `nvidia-open` for newer supported NVIDIA GPUs on Alma 9 or Alma 10.
+Choose `nvidia-open` for newer supported NVIDIA GPUs on supported Alma 10 and Fedora 43 images.
 
-## NVIDIA legacy lane
+## NVIDIA 580 lane
 
-Choose `nvidia-legacy` only on Alma 9.
+Choose `nvidia-580` only on Alma 9.
 
-That lane is first-class and intentionally pinned to the proprietary `nvidia-driver:580` stream for supported older GPUs. It is not available on Alma 10.
+That lane is intentionally pinned to the proprietary `nvidia-driver:580` stream for supported older GPUs. It is not available on Alma 10 or Fedora 43.
 
 ## AMD and ROCm
 
-ROCm userspace stays in the core contract across all roles.
+ROCm userspace stays in the shared core contract across all roles.
 
-Host Vulkan tooling now ships from the same shared core contract, so every image
-gets the same AMD/Intel host-side baseline.
+Host Vulkan tooling ships from the same shared core contract, so every image gets the same AMD/Intel host-side baseline.
 
 For actual device-node access:
 
 - local graphical sessions can use the DRM/KFD `uaccess` ACL path
-- headless or long-lived rootless service users on full images should use
-  `myos persistent-user-enroll --user <name>`, which adds `render` and `video`
+- headless or long-lived rootless service users on server images should use `myos persistent-user-enroll --user <name>`, which adds `render` and `video`
 
-The shipped OpenClaw and persistent-user helpers still do not auto-inject
-`/dev/dri` or `/dev/kfd` into every rootless container; local GPU containers
-must still opt into explicit device pass-through.
+The shipped OpenClaw and persistent-user helpers still do not auto-inject `/dev/dri` or `/dev/kfd` into every rootless container; local GPU containers must still opt into explicit device pass-through.
 
 ## Admin steps for GPU access
 
-If an admin wants a login user to run host Vulkan tools or rootless GPU-aware
-containers, use one of these paths.
+If an admin wants a login user to run host Vulkan tools or rootless GPU-aware containers, use one of these paths.
 
-### Full images: supported myOS enrollment path
+### Server images: supported myOS enrollment path
 
 Use this when the user is meant to host long-lived rootless workloads:
 
@@ -46,7 +43,7 @@ Use this when the user is meant to host long-lived rootless workloads:
 sudo myos persistent-user-enroll --user alice
 ```
 
-That path now:
+That path:
 
 - enables lingering
 - provisions subuid/subgid
@@ -55,8 +52,7 @@ That path now:
 
 ### Any image: manual group-based path
 
-Use this when the user only needs local GPU device access and does not need the
-full persistent-user flow:
+Use this when the user only needs local GPU device access and does not need the full persistent-user flow:
 
 ```bash
 sudo usermod -aG render,video alice
@@ -79,18 +75,10 @@ podman info --format '{{.Host.OCIRuntime.Name}}'
 Useful expectations:
 
 - `id` should list `render` and `video` for group-based access
-- `/dev/dri/renderD128` should be readable and writable by the user or by a
-  session ACL
+- `/dev/dri/renderD128` should be readable and writable by the user or by a session ACL
 - `vulkaninfo --summary` should show the real GPU instead of only `llvmpipe`
 - rootless GPU container flows are safest when Podman is using `crun`
 
 ### Important container note
 
-User/group permissions are only the host-side prerequisite. A rootless Vulkan
-backend still needs explicit device pass-through in the container invocation or
-Quadlet. Membership in `render`/`video` alone does not make `/dev/dri` or
-`/dev/kfd` appear inside the container.
-
-## Console role
-
-Console currently exists only on Alma 10 and only as a core-tier preview role. It reuses the end-user runtime/app model and keeps room for gaming-oriented evolution without pretending the role is finished today.
+User/group permissions are only the host-side prerequisite. A rootless Vulkan backend still needs explicit device pass-through in the container invocation or Quadlet. Membership in `render`/`video` alone does not make `/dev/dri` or `/dev/kfd` appear inside the container.

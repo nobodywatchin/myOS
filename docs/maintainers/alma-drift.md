@@ -1,24 +1,27 @@
 # Alma Drift
 
-These are the intentional lane differences that remain after the role-first refactor.
+These are the intentional lane differences that remain between the Alma branches.
 
 ## Alma 9
 
-- supports `nvidia-legacy` as a first-class lane
-- supports Workstation core/full and Server full
-- does not support Console
+- supports only the legacy NVIDIA 580 lane in the public matrix
+- supports `server`, `gnome`, and `cosmic` environments on that lane
+- does not support standard images, `nvidia-open`, or console images
+
+The public lane is `nvidia-580`, even though the internal layer file remains `recipes/layers/alma9/nvidia-legacy.yml`.
 
 ## Alma 10
 
-- supports Workstation core/full and Server full
-- supports Console core preview
-- supports `nvidia-open`, not `nvidia-legacy`
+- is the stable baseline lane
+- supports `server`, `gnome`, and `cosmic` environments
+- supports standard images and `nvidia-open`
+- does not support the legacy NVIDIA 580 lane
 
-## Shared across both lanes
+## Shared across both Alma lanes
 
-- Workstation role remains available with GNOME and COSMIC families
+- workstation remains available with GNOME and COSMIC
 - optional per-user OpenClaw via `openquad` ships everywhere
 - ROCm userspace stays in the shared core contract
-- full images remain the only place for tenant tooling, persistent-user admin tooling, and `openclaw-host`
+- server/admin tooling remains the only supported place for tenant tooling, persistent-user administration, and `openclaw-host`
 
 When adding new divergence, prefer keeping it in `recipes/layers/alma9/` or `recipes/layers/alma10/` instead of weakening the shared contracts.

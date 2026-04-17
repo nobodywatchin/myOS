@@ -1,6 +1,6 @@
 # Operator Flows
 
-These are advanced full-tier flows.
+These are advanced server/admin flows.
 
 ## Tenant tooling
 
@@ -30,7 +30,7 @@ myos persistent-user-install-quadlet --file ./my-api.container --enable
 
 ## Hosted OpenClaw wrapper
 
-`myos openclaw-host` remains available on full images for the owner-friendly hosted service path.
+`myos openclaw-host` remains available on server/admin images for the owner-friendly hosted service path.
 
 Examples:
 
@@ -42,6 +42,6 @@ myos openclaw-host start
 
 ## Boundary to keep clear
 
-These flows are supported, but they should stay documented as advanced full-tier behavior.
+These flows are supported, but they should stay documented as advanced server/admin behavior.
 
-They are not the defining public identity of core Workstation, full Workstation, or Console.
+They are not the defining public identity of the workstation images.

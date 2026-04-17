@@ -10,23 +10,39 @@ import sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
-MATRIX_FILE = ROOT / "files/base/runtime/usr/share/myos/image-matrix.tsv"
-FIELDS = ["job", "role", "tier", "family", "distro", "hardware", "image", "recipe"]
-ALLOWED_JOBS = {
-    "server-images",
-    "workstation-core-images",
-    "workstation-full-images",
-    "console-images",
+MATRIX_FILE = ROOT / 'files/base/runtime/usr/share/myos/image-matrix.tsv'
+FIELDS = ['branch', 'job', 'platform', 'role', 'environment', 'driver', 'image', 'recipe']
+ALLOWED_BRANCHES = ('alma9', 'alma10', 'fedora43')
+ALLOWED_JOBS = ('server-images', 'workstation-images')
+ALLOWED_ROLES = ('server', 'workstation')
+ALLOWED_ENVIRONMENTS = ('cosmic', 'gnome', 'server')
+ALLOWED_DRIVERS = ('nvidia-580', 'nvidia-open', 'standard')
+EXPECTED_COMBINATIONS = {
+    'alma9': {
+        ('server', 'server', 'nvidia-580'),
+        ('workstation', 'gnome', 'nvidia-580'),
+        ('workstation', 'cosmic', 'nvidia-580'),
+    },
+    'alma10': {
+        ('server', 'server', 'standard'),
+        ('server', 'server', 'nvidia-open'),
+        ('workstation', 'gnome', 'standard'),
+        ('workstation', 'gnome', 'nvidia-open'),
+        ('workstation', 'cosmic', 'standard'),
+        ('workstation', 'cosmic', 'nvidia-open'),
+    },
+    'fedora43': {
+        ('server', 'server', 'standard'),
+        ('workstation', 'gnome', 'standard'),
+        ('workstation', 'gnome', 'nvidia-open'),
+        ('workstation', 'cosmic', 'standard'),
+        ('workstation', 'cosmic', 'nvidia-open'),
+    },
 }
-ALLOWED_ROLES = {"workstation", "server", "console"}
-ALLOWED_TIERS = {"core", "full"}
-ALLOWED_FAMILIES = {"GNOME", "COSMIC", "-", "preview"}
-ALLOWED_HARDWARE = {"default", "nvidia-open", "nvidia-legacy"}
-EXPECTED_FEDORA43 = {
-    "recipes/images/workstation/gnome/fedora43/core.yml",
-    "recipes/images/workstation/gnome/fedora43/core-nvidia-open.yml",
-    "recipes/images/workstation/cosmic/fedora43/core.yml",
-    "recipes/images/workstation/cosmic/fedora43/core-nvidia-open.yml",
+RECIPE_SUFFIXES = {
+    'standard': '',
+    'nvidia-open': '-nvidia-open',
+    'nvidia-580': '-nvidia-legacy',
 }
 
 
@@ -35,97 +51,149 @@ def die(message: str) -> None:
 
 
 def recipe_ref(recipe: str) -> str:
-    if not recipe.startswith("recipes/"):
+    if not recipe.startswith('recipes/'):
         die(f"recipe path must start with 'recipes/': {recipe}")
-    return "/" + recipe.removeprefix("recipes/")
+    return '/' + recipe.removeprefix('recipes/')
+
+
+def expected_image(row: dict[str, str]) -> str:
+    base = f"{row['platform']}-{row['environment']}"
+    return base if row['driver'] == 'standard' else f"{base}-{row['driver']}"
+
+
+def expected_recipe(row: dict[str, str]) -> str:
+    suffix = RECIPE_SUFFIXES[row['driver']]
+    if row['role'] == 'server':
+        return f"recipes/images/server/{row['platform']}/full{suffix}.yml"
+    return (
+        f"recipes/images/workstation/{row['environment']}/{row['platform']}/"
+        f"core{suffix}.yml"
+    )
 
 
 def display_role(role: str) -> str:
     return role[:1].upper() + role[1:]
 
 
+def display_environment(environment: str) -> str:
+    if environment == 'gnome':
+        return 'GNOME'
+    if environment == 'cosmic':
+        return 'COSMIC'
+    return environment[:1].upper() + environment[1:]
+
+
 def load_rows() -> list[dict[str, str]]:
     if not MATRIX_FILE.is_file():
-        die(f"matrix file not found: {MATRIX_FILE}")
+        die(f'matrix file not found: {MATRIX_FILE}')
 
-    with MATRIX_FILE.open("r", encoding="utf-8", newline="") as handle:
-        reader = csv.DictReader(handle, delimiter="\t")
+    with MATRIX_FILE.open('r', encoding='utf-8', newline='') as handle:
+        reader = csv.DictReader(handle, delimiter='	')
         if reader.fieldnames != FIELDS:
-            die("image matrix header must be exactly: " + "\t".join(FIELDS))
+            die('image matrix header must be exactly: ' + '	'.join(FIELDS))
 
         rows: list[dict[str, str]] = []
         seen_images: set[str] = set()
         seen_recipes: set[str] = set()
+        seen_keys: set[tuple[str, str, str, str]] = set()
+        branch_combinations = {branch: set() for branch in ALLOWED_BRANCHES}
 
         for line_number, raw_row in enumerate(reader, start=2):
-            row = {field: (raw_row.get(field) or "").strip() for field in FIELDS}
+            row = {field: (raw_row.get(field) or '').strip() for field in FIELDS}
             missing = [field for field, value in row.items() if not value]
             if missing:
                 die(
-                    f"{MATRIX_FILE}:{line_number}: missing required fields: "
-                    + ", ".join(missing)
+                    f'{MATRIX_FILE}:{line_number}: missing required fields: '
+                    + ', '.join(missing)
                 )
 
-            if row["job"] not in ALLOWED_JOBS:
+            if row['branch'] not in ALLOWED_BRANCHES:
+                die(f"{MATRIX_FILE}:{line_number}: unsupported branch: {row['branch']}")
+            if row['job'] not in ALLOWED_JOBS:
                 die(f"{MATRIX_FILE}:{line_number}: unsupported job: {row['job']}")
-            if row["role"] not in ALLOWED_ROLES:
+            if row['platform'] not in ALLOWED_BRANCHES:
+                die(f"{MATRIX_FILE}:{line_number}: unsupported platform: {row['platform']}")
+            if row['role'] not in ALLOWED_ROLES:
                 die(f"{MATRIX_FILE}:{line_number}: unsupported role: {row['role']}")
-            if row["tier"] not in ALLOWED_TIERS:
-                die(f"{MATRIX_FILE}:{line_number}: unsupported tier: {row['tier']}")
-            if row["family"] not in ALLOWED_FAMILIES:
-                die(f"{MATRIX_FILE}:{line_number}: unsupported family: {row['family']}")
-            if row["hardware"] not in ALLOWED_HARDWARE:
+            if row['environment'] not in ALLOWED_ENVIRONMENTS:
                 die(
-                    f"{MATRIX_FILE}:{line_number}: unsupported hardware lane: "
-                    f"{row['hardware']}"
+                    f"{MATRIX_FILE}:{line_number}: unsupported environment: "
+                    f"{row['environment']}"
                 )
-            if not row["recipe"].startswith("recipes/images/") or not row["recipe"].endswith(".yml"):
+            if row['driver'] not in ALLOWED_DRIVERS:
+                die(
+                    f"{MATRIX_FILE}:{line_number}: unsupported driver lane: "
+                    f"{row['driver']}"
+                )
+            if not row['recipe'].startswith('recipes/images/') or not row['recipe'].endswith('.yml'):
                 die(f"{MATRIX_FILE}:{line_number}: invalid recipe path: {row['recipe']}")
-            if row["image"] in seen_images:
+            if row['branch'] != row['platform']:
+                die(
+                    f"{MATRIX_FILE}:{line_number}: branch and platform must match: "
+                    f"{row['branch']} != {row['platform']}"
+                )
+            if row['image'] != expected_image(row):
+                die(
+                    f"{MATRIX_FILE}:{line_number}: image tag must match platform, "
+                    f"environment, and driver: {row['image']}"
+                )
+            if row['recipe'] != expected_recipe(row):
+                die(
+                    f"{MATRIX_FILE}:{line_number}: recipe path does not match the "
+                    f"supported naming convention: {row['recipe']}"
+                )
+            if row['image'] in seen_images:
                 die(f"{MATRIX_FILE}:{line_number}: duplicate image tag: {row['image']}")
-            if row["recipe"] in seen_recipes:
+            if row['recipe'] in seen_recipes:
                 die(f"{MATRIX_FILE}:{line_number}: duplicate recipe path: {row['recipe']}")
 
-            if row["role"] == "server":
-                if row["tier"] != "full" or row["family"] != "-":
-                    die(f"{MATRIX_FILE}:{line_number}: server rows must be full tier with '-' family")
-            elif row["role"] == "console":
-                if row["tier"] != "core" or row["family"] != "preview":
-                    die(f"{MATRIX_FILE}:{line_number}: console rows must be core tier with preview family")
-            elif row["family"] not in {"GNOME", "COSMIC"}:
-                die(f"{MATRIX_FILE}:{line_number}: workstation rows must use GNOME or COSMIC")
+            key = (row['branch'], row['role'], row['environment'], row['driver'])
+            if key in seen_keys:
+                die(
+                    f"{MATRIX_FILE}:{line_number}: duplicate branch/environment/driver "
+                    f"entry: {key}"
+                )
 
-            if row["distro"] == "fedora43":
-                if row["role"] != "workstation" or row["tier"] != "core":
-                    die(f"{MATRIX_FILE}:{line_number}: fedora43 must stay workstation core only")
-                if row["family"] not in {"GNOME", "COSMIC"}:
-                    die(f"{MATRIX_FILE}:{line_number}: fedora43 must stay limited to GNOME/COSMIC")
-                if row["hardware"] not in {"default", "nvidia-open"}:
-                    die(f"{MATRIX_FILE}:{line_number}: fedora43 must stay limited to default/nvidia-open")
+            if row['role'] == 'server':
+                if row['job'] != 'server-images' or row['environment'] != 'server':
+                    die(
+                        f"{MATRIX_FILE}:{line_number}: server rows must use the "
+                        'server-images job and server environment'
+                    )
+            elif row['job'] != 'workstation-images' or row['environment'] not in {'gnome', 'cosmic'}:
+                die(
+                    f"{MATRIX_FILE}:{line_number}: workstation rows must use the "
+                    'workstation-images job with gnome/cosmic environments'
+                )
 
-            seen_images.add(row["image"])
-            seen_recipes.add(row["recipe"])
+            seen_images.add(row['image'])
+            seen_recipes.add(row['recipe'])
+            seen_keys.add(key)
+            branch_combinations[row['branch']].add(
+                (row['role'], row['environment'], row['driver'])
+            )
             rows.append(row)
 
-    fedora43_recipes = {row["recipe"] for row in rows if row["distro"] == "fedora43"}
-    if fedora43_recipes != EXPECTED_FEDORA43:
-        missing = sorted(EXPECTED_FEDORA43 - fedora43_recipes)
-        extra = sorted(fedora43_recipes - EXPECTED_FEDORA43)
-        details: list[str] = []
-        if missing:
-            details.append("missing: " + ", ".join(missing))
-        if extra:
-            details.append("extra: " + ", ".join(extra))
-        die(
-            "Fedora 43 must stay limited to four workstation-core recipes"
-            + (" (" + "; ".join(details) + ")" if details else "")
-        )
+    for branch, expected in EXPECTED_COMBINATIONS.items():
+        actual = branch_combinations[branch]
+        if actual != expected:
+            missing = sorted(expected - actual)
+            extra = sorted(actual - expected)
+            details: list[str] = []
+            if missing:
+                details.append('missing: ' + ', '.join(map(str, missing)))
+            if extra:
+                details.append('extra: ' + ', '.join(map(str, extra)))
+            die(
+                f'{branch} supported combinations do not match the target branch model'
+                + (' (' + '; '.join(details) + ')' if details else '')
+            )
 
     return rows
 
 
 def filter_rows(rows: list[dict[str, str]], args: argparse.Namespace) -> list[dict[str, str]]:
-    for field in ("job", "role", "tier", "family", "distro", "hardware"):
+    for field in ('branch', 'job', 'platform', 'role', 'environment', 'driver'):
         value = getattr(args, field, None)
         if value:
             rows = [row for row in rows if row[field] == value]
@@ -134,14 +202,14 @@ def filter_rows(rows: list[dict[str, str]], args: argparse.Namespace) -> list[di
 
 def cmd_recipes(args: argparse.Namespace) -> int:
     for row in filter_rows(load_rows(), args):
-        print(row["recipe"])
+        print(row['recipe'])
     return 0
 
 
 def cmd_gha(args: argparse.Namespace) -> int:
-    rows = [row for row in load_rows() if row["job"] == args.job]
-    payload = [{"name": row["image"], "recipe": recipe_ref(row["recipe"])} for row in rows]
-    json.dump(payload, sys.stdout, separators=(",", ":"))
+    rows = filter_rows(load_rows(), args)
+    payload = [{'name': row['image'], 'recipe': recipe_ref(row['recipe'])} for row in rows]
+    json.dump(payload, sys.stdout, separators=(',', ':'))
     print()
     return 0
 
@@ -149,30 +217,32 @@ def cmd_gha(args: argparse.Namespace) -> int:
 def cmd_rebase(_: argparse.Namespace) -> int:
     for row in load_rows():
         print(
-            f"{display_role(row['role'])} | {row['tier']} | {row['family']} | "
-            f"{row['distro']} | {row['hardware']} | {row['image']}:latest"
+            f"{display_role(row['role'])} | "
+            f"{display_environment(row['environment'])} | "
+            f"{row['platform']} | {row['driver']} | {row['image']}:latest"
         )
     return 0
 
 
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(description=__doc__)
-    subparsers = parser.add_subparsers(dest="command", required=True)
+    subparsers = parser.add_subparsers(dest='command', required=True)
 
-    recipes = subparsers.add_parser("recipes", help="print supported recipe paths")
-    recipes.add_argument("--job")
-    recipes.add_argument("--role")
-    recipes.add_argument("--tier")
-    recipes.add_argument("--family")
-    recipes.add_argument("--distro")
-    recipes.add_argument("--hardware")
+    recipes = subparsers.add_parser('recipes', help='print supported recipe paths')
+    recipes.add_argument('--branch', choices=sorted(ALLOWED_BRANCHES))
+    recipes.add_argument('--job', choices=sorted(ALLOWED_JOBS))
+    recipes.add_argument('--platform', choices=sorted(ALLOWED_BRANCHES))
+    recipes.add_argument('--role', choices=sorted(ALLOWED_ROLES))
+    recipes.add_argument('--environment', choices=sorted(ALLOWED_ENVIRONMENTS))
+    recipes.add_argument('--driver', choices=sorted(ALLOWED_DRIVERS))
     recipes.set_defaults(func=cmd_recipes)
 
-    gha = subparsers.add_parser("gha", help="emit a GitHub Actions matrix JSON array")
-    gha.add_argument("job", choices=sorted(ALLOWED_JOBS))
+    gha = subparsers.add_parser('gha', help='emit a GitHub Actions matrix JSON array')
+    gha.add_argument('--branch', choices=sorted(ALLOWED_BRANCHES))
+    gha.add_argument('job', choices=sorted(ALLOWED_JOBS))
     gha.set_defaults(func=cmd_gha)
 
-    rebase = subparsers.add_parser("rebase", help="emit myos rebase picker rows")
+    rebase = subparsers.add_parser('rebase', help='emit myos rebase picker rows')
     rebase.set_defaults(func=cmd_rebase)
 
     return parser
@@ -184,5 +254,5 @@ def main() -> int:
     return args.func(args)
 
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     raise SystemExit(main())

@@ -101,8 +101,6 @@ test -f files/end-user/shared/etc/profile.d/flatpak-user-default.sh
 test -f files/end-user/shared/etc/systemd/system/system-flatpak-setup.service.d/10-hide-org-system.conf
 test -f files/end-user/shared/usr/lib/environment.d/60-myos-flatpak-exports.conf
 test -f files/end-user/shared/usr/share/polkit-1/rules.d/org.freedesktop.Flatpak.rules
-test -f files/console/shared/usr/share/myos/console/role.env
-
 grep -q "mesa-vulkan-drivers" recipes/layers/shared/core.yml
 grep -q "vulkan-loader" recipes/layers/shared/core.yml
 grep -q "vulkan-tools" recipes/layers/shared/core.yml

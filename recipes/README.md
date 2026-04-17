@@ -18,26 +18,23 @@ recipes/images/
   server/
     alma9/
     alma10/
-  console/
-    alma10/
+    fedora43/
 ```
 
-The repo is role-first now.
+The repo is role-first.
 
-- `workstation` is the flagship role.
-- `server` is the full-tier admin/operator role.
-- `console` is the Alma 10 core-only preview role.
-- Fedora 43 is currently an initial workstation-core lane for GNOME and COSMIC only.
+- `workstation` is the flagship desktop role.
+- `server` is the headless admin/operator role.
+- GNOME and COSMIC are workstation environments under the workstation role.
 
-GNOME and COSMIC are workstation families under the workstation role.
+Supported published tags are short and come from the shipped image matrix rather than from the internal filenames.
 
 ## How images relate
 
-- Server full recipes build directly from the AlmaLinux BootC base and publish the compatibility `core-full-*` tags.
-- Workstation full recipes still build on top of the published `core-full-*` images for compatibility.
-- Workstation core recipes build directly from the shared core plus workstation layers.
-- Fedora 43 workstation core recipes build directly from the official Fedora BootC base plus the Fedora-specific workstation layers.
-- Console core recipes build directly from the shared core plus end-user and console layers.
+- Server recipes build from an explicit distro core plus `shared/full.yml`.
+- The supported workstation recipes live in the current `core*.yml` files and are now the canonical public workstation images.
+- Fedora 43 has both workstation and server recipes.
+- Console and workstation-full recipes are retired and should not come back without a deliberate product-model change.
 
 ## Reading order
 

@@ -1,10 +1,10 @@
 # Runtime Contracts
 
-The purpose of the refactor is to make layer ownership explicit again.
+The purpose of the refactor is to keep layer ownership explicit while simplifying the public image model.
 
 ## Shared core contract
 
-`recipes/layers/shared/core.yml` is allowed to own only behavior that should exist on every supported image.
+`recipes/layers/shared/core.yml` is allowed to own only behavior that should exist on every supported Alma image.
 
 That includes:
 
@@ -18,9 +18,9 @@ That includes:
 
 It must not quietly become the operator/admin layer.
 
-## Full contract
+## Admin/operator contract
 
-`recipes/layers/shared/full.yml` is the explicit admin/operator tier.
+`recipes/layers/shared/full.yml` is the explicit admin/operator layer.
 
 It owns:
 
@@ -29,20 +29,20 @@ It owns:
 - tenant runtime helpers and templates
 - persistent-user admin helpers and templates
 - `openclaw-host`
-- full-tier filesystem scaffolding under `/etc/myos`, `/srv/tenants`, and `/var/tmp/myos-podman`
+- shared admin/operator filesystem scaffolding under `/etc/myos`, `/srv/tenants`, and `/var/tmp/myos-podman`
 
-These tools are supported, but they are not the default contract of Workstation core or Console core.
+This layer is internal composition, not a user-facing product split. It should stay safe to apply on top of either the Alma or Fedora core contracts.
 
 ## End-user contract
 
-`recipes/layers/shared/end-user-common.yml` is for end-user runtime and app governance that should appear on Workstation and Console.
+`recipes/layers/shared/end-user-common.yml` is for workstation runtime and app governance.
 
 It owns:
 
 - Flatpak packaging baseline
 - system-vs-user Flatpak policy payloads
 
-Server does not consume this layer.
+Server recipes do not consume this layer.
 
 ## Workstation contract
 
@@ -59,19 +59,8 @@ It does not own DE identity. That identity lives in the workstation family layer
 
 ## Workstation family contract
 
-GNOME and COSMIC are workstation-family implementations.
+GNOME and COSMIC are workstation-environment implementations.
 
 - `workstation-gnome.yml` owns GNOME session, portal, extension, and Software integration behavior.
 - `workstation-cosmic.yml` owns COSMIC session, greeter, and portal behavior.
 - `files/gnome/shared/usr/share/myos/workstation/desktop.env` and `files/cosmic/shared/usr/share/myos/workstation/desktop.env` are the family markers consumed by the shared DM helper.
-
-## Console contract
-
-Console currently promises only this:
-
-- Alma 10 only
-- core only
-- end-user app/runtime model via `end-user-common`
-- console preview marker payloads via `files/console/shared/`
-
-Do not document it as a finished gaming shell until the role has its own completed package and validation story.

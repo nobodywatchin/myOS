@@ -1,6 +1,6 @@
 ---
 modules:
-  # Shared end-user baseline for Workstation and Console.
+  # Shared end-user baseline for Workstation images.
   - type: dnf
     install:
       install-weak-deps: false

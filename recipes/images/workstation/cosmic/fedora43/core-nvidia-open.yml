@@ -1,7 +1,7 @@
 ---
 # yaml-language-server: $schema=https://schema.blue-build.org/recipe-v1.json
-name: workstation-core-cosmic-fedora43-nvidia-open
-description: myOS Fedora 43 core Workstation image with the COSMIC family and the NVIDIA open kernel-module lane.
+name: fedora43-cosmic-nvidia-open
+description: myOS Fedora 43 edge COSMIC workstation image with the NVIDIA open kernel-module lane.
 base-image: quay.io/fedora/fedora-bootc
 image-version: 43
 modules:

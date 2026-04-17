@@ -1,6 +1,6 @@
 # Image Architecture
 
-The repo now models myOS by role first.
+The repo still models myOS by role first, but the supported image set is now branch-oriented instead of split across workstation core/full and console variants.
 
 ## Authoritative image tree
 
@@ -18,31 +18,25 @@ recipes/images/
   server/
     alma9/
     alma10/
-  console/
-    alma10/
+    fedora43/
 ```
 
 This is the authoritative repo shape.
 
-`recipes/images/gnome/**`, `recipes/images/cosmic/**`, and `recipes/images/core/**` are retired so the tree no longer implies that GNOME, COSMIC, or `core-full-*` are the product model.
+Internal filenames like `core.yml`, `full.yml`, and `nvidia-legacy.yml` remain maintenance details. They no longer define the public product model.
 
 ## Product model
 
-The supported matrix has four axes:
+Supported public tags are branch-scoped and short:
 
-- distro lane: `alma9`, `alma10`, `fedora43`
-- capability tier: `core`, `full`
-- role: `workstation`, `server`, `console`
-- hardware lane: `default`, `nvidia-open`, `nvidia-legacy` on Alma 9 only
+- `alma9` branch: `alma9-gnome-nvidia-580`, `alma9-cosmic-nvidia-580`, `alma9-server-nvidia-580`
+- `alma10` branch: `alma10-gnome`, `alma10-gnome-nvidia-open`, `alma10-cosmic`, `alma10-cosmic-nvidia-open`, `alma10-server`, `alma10-server-nvidia-open`
+- `fedora43` branch: `fedora43-gnome`, `fedora43-gnome-nvidia-open`, `fedora43-cosmic`, `fedora43-cosmic-nvidia-open`, `fedora43-server`
 
-Supported combinations:
+Public names follow this grammar:
 
-- Alma 9 Workstation core/full, with GNOME or COSMIC, across `default`, `nvidia-open`, and `nvidia-legacy`
-- Alma 9 Server full across `default`, `nvidia-open`, and `nvidia-legacy`
-- Alma 10 Workstation core/full, with GNOME or COSMIC, across `default` and `nvidia-open`
-- Alma 10 Server full across `default` and `nvidia-open`
-- Alma 10 Console core across `default` and `nvidia-open`
-- Fedora 43 Workstation core, with GNOME or COSMIC, across `default` and `nvidia-open`
+- `<platform>-<environment>`
+- `<platform>-<environment>-<driver>`
 
 Unsupported combinations stay absent from recipes and CI.
 
@@ -57,23 +51,22 @@ It is shipped into images at `/usr/share/myos/image-matrix.tsv` and consumed by:
 - `.github/workflows/build.yml`
 - `myos rebase`
 
-The docs stay human-authored, but that TSV is the machine-readable source of truth for supported recipe paths and rebase targets.
+The TSV schema is intentionally small and branch-aware:
 
-## Published tag compatibility
+- `branch`
+- `job`
+- `platform`
+- `role`
+- `environment`
+- `driver`
+- `image`
+- `recipe`
 
-The repo tree is role-first, but the published tags keep compatibility where the tags already existed.
-
-- full Server stays published as `core-full-*`
-- full Workstation GNOME stays published as `gnome-*`
-- full Workstation COSMIC stays published as `cosmic-*`
-- new core Workstation tags are `workstation-core-<family>-*`
-- Console preview is published as `console-core-*`
-
-This hybrid naming is intentional. It lets the public story and repo tree move to the new model without breaking existing rebases.
+The docs stay human-authored, but that TSV is the machine-readable source of truth for supported recipe paths, workflow matrices, and rebase targets.
 
 ## Base relationships
 
-### Core role substrate
+### Shared core substrate
 
 `recipes/layers/shared/core.yml` is the shared boring base for every Alma image.
 
@@ -88,9 +81,11 @@ It owns:
 
 `recipes/layers/fedora43/core.yml` is the Fedora 43 counterpart for the same role contract on the official Fedora BootC base.
 
-### Full tier
+### Admin/operator layer
 
-`recipes/layers/shared/full.yml` now means admin/operator surface, not generic "everything desktop users might want".
+`recipes/layers/shared/full.yml` is the distro-neutral admin/operator layer.
+
+It now stacks on top of an explicit distro core instead of pulling one in implicitly, which is what allows `fedora43-server` to exist cleanly.
 
 It owns:
 
@@ -102,7 +97,7 @@ It owns:
 
 ### End-user substrate
 
-`recipes/layers/shared/end-user-common.yml` holds end-user runtime pieces that belong on Workstation and Console but not on Server.
+`recipes/layers/shared/end-user-common.yml` holds workstation runtime pieces that do not belong on server images.
 
 It owns:
 
@@ -121,28 +116,21 @@ It is followed by:
 - `recipes/layers/fedora43/cosmic.yml` for Fedora COSMIC-specific drift
 - `recipes/layers/alma9/gnome.yml`, `recipes/layers/alma10/gnome.yml`, or `recipes/layers/fedora43/gnome.yml` for GNOME-only drift
 
-The initial Fedora lane is intentionally narrow:
+### Server role
 
-- Workstation only
-- core tier only
-- GNOME and COSMIC families only
-- `default` and `nvidia-open` hardware lanes only
-- official `quay.io/fedora/fedora-bootc:43` base, not a BlueBuild/UBlue-derived base
+Server is the headless/admin/operator environment in the public naming model.
 
-### Console role
+- Alma 9 server exists only on the legacy NVIDIA 580 lane.
+- Alma 10 server is the stable admin/operator baseline, with optional `nvidia-open`.
+- Fedora 43 server is the edge admin/operator lane without a parallel open-driver variant.
 
-`recipes/layers/shared/console.yml` is intentionally small.
+## Naming
 
-Console is real in the matrix, but currently scaffolded as an Alma 10 core-only preview role rather than a finished gaming shell.
+The public tags are now uniform and short.
 
-## Why full Workstation still builds from published full Server
+- no `workstation-*` prefix
+- no `core-*` or `full-*` published tags
+- no `default` suffix in published names
+- no public `nvidia-legacy` wording; the Alma 9 lane is published as `nvidia-580`
 
-Full workstation images keep building from the published `core-full-*` images for compatibility.
-
-That means:
-
-- full Server is still the published parent line for full GNOME and COSMIC tags
-- core Workstation and Console build directly from the AlmaLinux BootC base plus the myOS role layers
-- Fedora 43 core Workstation builds directly from the official Fedora BootC base plus the Fedora-specific workstation layers
-
-The repo now documents that as a compatibility choice instead of the public product model.
+Internal filenames may stay descriptive where that reduces churn, but the published names, matrix rows, workflow output, and rebase picker are now aligned.

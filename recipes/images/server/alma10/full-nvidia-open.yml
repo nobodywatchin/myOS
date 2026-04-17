@@ -1,12 +1,13 @@
 ---
 # yaml-language-server: $schema=https://schema.blue-build.org/recipe-v1.json
-name: core-full-alma10-nvidia-open
-description: myOS AlmaLinux 10 full Server image with host/admin tooling, RamaLama, and the NVIDIA open kernel-module lane.
+name: alma10-server-nvidia-open
+description: myOS AlmaLinux 10 stable server image with admin/operator tooling and the NVIDIA open kernel-module lane.
 base-image: quay.io/almalinuxorg/almalinux-bootc
 image-version: 10
 modules:
-  - from-file: layers/shared/full.yml
+  - from-file: layers/shared/core.yml
   - from-file: layers/alma10/core.yml
+  - from-file: layers/shared/full.yml
   - from-file: layers/alma10/full.yml
   - from-file: layers/shared/nvidia-open.yml
   - type: initramfs

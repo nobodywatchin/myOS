@@ -15,9 +15,9 @@ That path is:
 
 This is the local self-service OpenClaw plane.
 
-## Plane 2: persistent-user and tenant flows on full images
+## Plane 2: persistent-user and tenant flows on server/admin images
 
-Full images add the admin-managed persistent service plane.
+Server/admin images add the admin-managed persistent service plane.
 
 That includes:
 
@@ -34,6 +34,6 @@ Before the refactor, the full payload and public docs made it easy to read every
 
 After the refactor:
 
-- core Workstation stays a real desktop-first image
-- full Workstation remains available for advanced users and admins
-- full Server stays the default advanced host/operator role
+- workstation stays a real desktop-first image family
+- server is the default advanced host/operator role
+- advanced platform-host tooling stays available without defining the public identity of every image

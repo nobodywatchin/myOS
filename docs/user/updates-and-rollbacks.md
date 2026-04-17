@@ -20,7 +20,7 @@ myOS disables the stock `bootc-fetch-apply-updates` timer and service. Updates a
 
 ## Rebase
 
-To switch roles, tiers, families, distro lanes, or hardware lanes:
+To switch roles, environments, distro lanes, or driver lanes:
 
 ```bash
 myos rebase

@@ -1,8 +1,6 @@
 ---
 modules:
-  - from-file: layers/shared/core.yml
-
-  # Full is the explicit admin/operator tier.
+  # Full is the explicit admin/operator tier layered on top of a distro core.
   - type: dnf
     install:
       install-weak-deps: false

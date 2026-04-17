@@ -1,12 +1,13 @@
 ---
 # yaml-language-server: $schema=https://schema.blue-build.org/recipe-v1.json
-name: core-full-alma9-nvidia-legacy
-description: myOS AlmaLinux 9 full Server image for older-GPU AI hosts with pinned proprietary NVIDIA 580 prebuilt kernel modules.
+name: alma9-server-nvidia-580
+description: myOS AlmaLinux 9 legacy NVIDIA 580 server image with admin/operator tooling and pinned proprietary prebuilt kernel modules.
 base-image: quay.io/almalinuxorg/almalinux-bootc
 image-version: latest
 modules:
-  - from-file: layers/shared/full.yml
+  - from-file: layers/shared/core.yml
   - from-file: layers/alma9/core.yml
+  - from-file: layers/shared/full.yml
   - from-file: layers/alma9/full.yml
   - from-file: layers/alma9/nvidia-legacy.yml
   - type: initramfs

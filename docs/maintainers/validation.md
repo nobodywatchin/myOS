@@ -14,7 +14,7 @@ bash ./scripts/validate-runtime-artifacts.sh
 bash ./scripts/validate-image-matrix.sh
 ```
 
-`validate-runtime-artifacts.sh` now checks both runtime planes:
+`validate-runtime-artifacts.sh` checks:
 
 - `files/agent/runtime-core/**`
 - `files/agent/platform-host/**`
@@ -22,8 +22,7 @@ bash ./scripts/validate-image-matrix.sh
 - explicit AMD `uaccess` tagging in the shared DRM/KFD rule
 - persistent-user GPU group enrollment wiring
 - workstation DM helper wiring
-- the end-user Flatpak policy payloads
-- Console preview marker payloads
+- the workstation Flatpak policy payloads
 - the host and per-user OpenClaw templates
 
 `validate-image-matrix.sh` checks:
@@ -31,49 +30,45 @@ bash ./scripts/validate-image-matrix.sh
 - the shipped image-matrix manifest parses cleanly
 - the manifest recipe set exactly matches `recipes/images/**`
 - unsupported combinations stay absent because extra recipes fail validation
-- retired top-level recipe directories stay gone
-- the workflow uses manifest-driven JSON matrices for every build job
-- the initial Fedora 43 workstation-core lane stays limited to GNOME/COSMIC with `default` and `nvidia-open`
+- retired console and workstation-full paths stay gone
+- the workflow uses manifest-driven JSON matrices for only `server-images` and `workstation-images`
+- each supported branch renders the expected number of server and workstation images
 
-## Alma 9 NVIDIA legacy
+## Alma 9 NVIDIA 580
 
 When that path changes and the tooling is available, run:
 
 ```bash
-pwsh ./scripts/verify-alma9-nvidia-legacy.ps1
+pwsh ./scripts/verify-alma9-nvidia-580.ps1
 ```
 
-That script now asserts the legacy lane across:
+That script asserts the Alma 9 legacy NVIDIA 580 lane across:
 
-- full Server
-- core GNOME Workstation
-- full GNOME Workstation
-- core COSMIC Workstation
-- full COSMIC Workstation
+- `alma9-server-nvidia-580`
+- `alma9-gnome-nvidia-580`
+- `alma9-cosmic-nvidia-580`
 
 ## CI matrix
 
-The build workflow covers only supported combinations:
+The build workflow is branch-aware and covers only supported combinations:
 
-- Server full on Alma 9 and Alma 10, with supported hardware lanes
-- Workstation core on Alma 9 and Alma 10, with supported families and hardware lanes
-- Workstation core on Fedora 43 for GNOME and COSMIC only, with `default` and `nvidia-open`
-- Workstation full on Alma 9 and Alma 10, with supported families and hardware lanes
-- Console core on Alma 10, with supported hardware lanes
+- `alma9`: one server image and two workstation images, gated by runtime validation, image-matrix validation, and the NVIDIA 580 lane check
+- `alma10`: two server images and four workstation images, gated by runtime validation and image-matrix validation
+- `fedora43`: one server image and four workstation images, gated by runtime validation and image-matrix validation
 
-Each build job now consumes a JSON matrix rendered from the shared TSV manifest in a small `define-image-matrices` workflow job.
+Each build job consumes a JSON matrix rendered from the shared TSV manifest in a small `define-image-matrix` workflow job.
 
 ## Change-specific guidance
 
 - If you change `files/base/runtime/usr/share/myos/image-matrix.tsv`, re-check validation, CI, and `myos rebase` together.
 - If you change `shared/core.yml`, re-check every role contract.
-- If you change `shared/full.yml`, re-check advanced host/operator docs and validation.
-- If you change `end-user-common.yml`, re-check Workstation and Console together.
-- If you change `workstation-common.yml`, re-check both GNOME and COSMIC family expectations.
+- If you change `shared/full.yml`, re-check server/admin docs and validation.
+- If you change `end-user-common.yml`, re-check workstation images together.
+- If you change `workstation-common.yml`, re-check both GNOME and COSMIC expectations.
 - If you change Alma-specific drift, update `docs/maintainers/alma-drift.md` in the same change.
-- If you change the Fedora 43 lane, re-check the Fedora-specific core, GNOME/COSMIC, and NVIDIA-open repo assumptions together.
+- If you change the Fedora 43 lane, re-check the Fedora-specific core, server, workstation, and NVIDIA-open repo assumptions together.
 
 ## Runtime diagnostics
 
-- `openquad doctor` now surfaces current-session GPU group membership, device-node access, Podman runtime, and whether the shipped per-user Quadlet actually requests GPU devices.
-- `myos persistent-user-validate --user NAME` now checks `render`/`video` membership plus real access to `/dev/dri/renderD*` and `/dev/kfd` for enrolled login users.
+- `openquad doctor` surfaces current-session GPU group membership, device-node access, Podman runtime, and whether the shipped per-user Quadlet actually requests GPU devices.
+- `myos persistent-user-validate --user NAME` checks `render`/`video` membership plus real access to `/dev/dri/renderD*` and `/dev/kfd` for enrolled login users.
