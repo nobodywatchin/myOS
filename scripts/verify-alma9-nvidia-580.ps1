@@ -13,17 +13,21 @@ if (-not (Test-Path $matrixPath)) {
     throw "Missing image matrix manifest: $matrixPath"
 }
 
-$laneRows = Import-Csv -Delimiter "`t" -Path $matrixPath | Where-Object {
-    $_.platform -eq 'alma9' -and $_.driver -eq 'nvidia-580'
-}
+$laneRows = @(
+    Import-Csv -Delimiter "`t" -Path $matrixPath | Where-Object {
+        $_.platform -eq 'alma9' -and $_.driver -eq 'nvidia-580'
+    }
+)
 
 if ($laneRows.Count -ne 3) {
     throw "Expected exactly three Alma 9 NVIDIA 580 rows in the image matrix, found $($laneRows.Count)."
 }
 
-$expectedRecipes = $laneRows | Select-Object -ExpandProperty recipe -Unique | ForEach-Object {
-    Join-Path $repoRoot $_
-}
+$expectedRecipes = @(
+    $laneRows | Select-Object -ExpandProperty recipe -Unique | ForEach-Object {
+        Join-Path $repoRoot $_
+    }
+)
 
 foreach ($recipePath in $expectedRecipes) {
     if (-not (Test-Path $recipePath)) {
@@ -36,8 +40,17 @@ foreach ($row in $laneRows) {
     $laneRowsByImage[$row.image] = $row
 }
 
-$serverImages = $laneRows | Where-Object { $_.role -eq 'server' } | Select-Object -ExpandProperty image
-$workstationImages = $laneRows | Where-Object { $_.role -eq 'workstation' } | Select-Object -ExpandProperty image
+$serverImages = @(
+    $laneRows |
+        Where-Object { $_.role -eq 'server' } |
+        Select-Object -ExpandProperty image
+)
+
+$workstationImages = @(
+    $laneRows |
+        Where-Object { $_.role -eq 'workstation' } |
+        Select-Object -ExpandProperty image
+)
 
 if ($serverImages.Count -ne 1 -or $workstationImages.Count -ne 2) {
     throw "Unexpected Alma 9 NVIDIA 580 role split in the image matrix."
