@@ -32,6 +32,7 @@ Every myOS image is chosen across four axes.
 3. Distro lane
    - `alma9`: long-lived lane with first-class NVIDIA legacy support.
    - `alma10`: newer lane with Console support and no NVIDIA legacy path.
+   - `fedora43`: initial workstation-core lane on the official Fedora BootC base.
 4. Hardware lane
    - `default`
    - `nvidia-open`
@@ -46,6 +47,7 @@ Every myOS image is chosen across four axes.
 | Alma 10 | Workstation | core, full | default, nvidia-open |
 | Alma 10 | Server | full | default, nvidia-open |
 | Alma 10 | Console | core | default, nvidia-open |
+| Fedora 43 | Workstation | core | default, nvidia-open |
 
 Unsupported by design:
 
@@ -53,6 +55,7 @@ Unsupported by design:
 - no `full/console`
 - no Alma 9 Console
 - no Alma 10 NVIDIA legacy
+- no Fedora 43 full, server, console, or legacy NVIDIA images yet
 
 ### Workstation Families
 
@@ -115,6 +118,7 @@ myos rebase
 ```
 
 That picker is now grouped by role, tier, workstation family, distro lane, and hardware lane.
+It reads the same shipped image matrix that CI validates, so new supported lanes like Fedora 43 show up as first-class rebase targets without a second hard-coded list.
 
 For manual switching:
 

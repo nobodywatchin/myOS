@@ -19,6 +19,7 @@ If you do not already know that you need the operator tooling, choose `core` for
 
 - `alma9`: the conservative lane, and the only lane with first-class `nvidia-legacy` support.
 - `alma10`: the newer lane, with Console support and no legacy NVIDIA branch.
+- `fedora43`: an initial workstation-core lane on the official Fedora BootC base.
 
 ## 4. Pick a hardware lane
 
@@ -30,6 +31,7 @@ If you do not already know that you need the operator tooling, choose `core` for
 
 - `GNOME`: the default documented workstation experience.
 - `COSMIC`: a parallel supported workstation family.
+- Fedora 43 currently supports GNOME and COSMIC only.
 
 ## Supported combinations
 
@@ -42,6 +44,7 @@ If you do not already know that you need the operator tooling, choose `core` for
 | Alma 10 | Workstation | full | GNOME, COSMIC | default, nvidia-open |
 | Alma 10 | Server | full | n/a | default, nvidia-open |
 | Alma 10 | Console | core | preview | default, nvidia-open |
+| Fedora 43 | Workstation | core | GNOME, COSMIC | default, nvidia-open |
 
 Unsupported combinations are intentional.
 
@@ -49,11 +52,14 @@ Unsupported combinations are intentional.
 - no `full/console`
 - no Alma 9 Console
 - no Alma 10 NVIDIA legacy
+- no Fedora 43 full, server, console, or legacy NVIDIA images yet
 
 ## Published tag examples
 
 - Full GNOME Workstation on Alma 10 default GPU lane: `gnome-alma10`
 - Core GNOME Workstation on Alma 10 default GPU lane: `workstation-core-gnome-alma10`
+- Core GNOME Workstation on Fedora 43 default GPU lane: `workstation-core-gnome-fedora43`
+- Core COSMIC Workstation on Fedora 43 default GPU lane: `workstation-core-cosmic-fedora43`
 - Full COSMIC Workstation on Alma 9 legacy NVIDIA lane: `cosmic-alma9-nvidia-legacy`
 - Full Server on Alma 10 default GPU lane: `core-full-alma10`
 - Core Console preview on Alma 10 default GPU lane: `console-core-alma10`

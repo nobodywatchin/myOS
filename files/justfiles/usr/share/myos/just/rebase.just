@@ -4,36 +4,16 @@ rebase:
 
     command -v fzf >/dev/null || { echo "Missing 'fzf'."; exit 1; }
 
-    sel="$({
-      printf '%s\n' \
-        'Workstation | full | GNOME | alma10 | default | gnome-alma10:latest' \
-        'Workstation | full | GNOME | alma10 | nvidia-open | gnome-alma10-nvidia-open:latest' \
-        'Workstation | full | GNOME | alma9 | default | gnome-alma9:latest' \
-        'Workstation | full | GNOME | alma9 | nvidia-open | gnome-alma9-nvidia-open:latest' \
-        'Workstation | full | GNOME | alma9 | nvidia-legacy | gnome-alma9-nvidia-legacy:latest' \
-        'Workstation | full | COSMIC | alma10 | default | cosmic-alma10:latest' \
-        'Workstation | full | COSMIC | alma10 | nvidia-open | cosmic-alma10-nvidia-open:latest' \
-        'Workstation | full | COSMIC | alma9 | default | cosmic-alma9:latest' \
-        'Workstation | full | COSMIC | alma9 | nvidia-open | cosmic-alma9-nvidia-open:latest' \
-        'Workstation | full | COSMIC | alma9 | nvidia-legacy | cosmic-alma9-nvidia-legacy:latest' \
-        'Workstation | core | GNOME | alma10 | default | workstation-core-gnome-alma10:latest' \
-        'Workstation | core | GNOME | alma10 | nvidia-open | workstation-core-gnome-alma10-nvidia-open:latest' \
-        'Workstation | core | GNOME | alma9 | default | workstation-core-gnome-alma9:latest' \
-        'Workstation | core | GNOME | alma9 | nvidia-open | workstation-core-gnome-alma9-nvidia-open:latest' \
-        'Workstation | core | GNOME | alma9 | nvidia-legacy | workstation-core-gnome-alma9-nvidia-legacy:latest' \
-        'Workstation | core | COSMIC | alma10 | default | workstation-core-cosmic-alma10:latest' \
-        'Workstation | core | COSMIC | alma10 | nvidia-open | workstation-core-cosmic-alma10-nvidia-open:latest' \
-        'Workstation | core | COSMIC | alma9 | default | workstation-core-cosmic-alma9:latest' \
-        'Workstation | core | COSMIC | alma9 | nvidia-open | workstation-core-cosmic-alma9-nvidia-open:latest' \
-        'Workstation | core | COSMIC | alma9 | nvidia-legacy | workstation-core-cosmic-alma9-nvidia-legacy:latest' \
-        'Server | full | - | alma10 | default | core-full-alma10:latest' \
-        'Server | full | - | alma10 | nvidia-open | core-full-alma10-nvidia-open:latest' \
-        'Server | full | - | alma9 | default | core-full-alma9:latest' \
-        'Server | full | - | alma9 | nvidia-open | core-full-alma9-nvidia-open:latest' \
-        'Server | full | - | alma9 | nvidia-legacy | core-full-alma9-nvidia-legacy:latest' \
-        'Console | core | preview | alma10 | default | console-core-alma10:latest' \
-        'Console | core | preview | alma10 | nvidia-open | console-core-alma10-nvidia-open:latest'
-    } | fzf \
+    matrix_file="/usr/share/myos/image-matrix.tsv"
+    [ -r "$matrix_file" ] || { echo "Missing image matrix at $matrix_file."; exit 1; }
+
+    sel="$(awk -F '\t' '
+      NR == 1 { next }
+      {
+        role = toupper(substr($2, 1, 1)) substr($2, 2)
+        printf "%s | %s | %s | %s | %s | %s:latest\n", role, $3, $4, $5, $6, $7
+      }
+    ' "$matrix_file" | fzf \
       --delimiter='\|' \
       --with-nth=1,2,3,4,5 \
       --header='Role | Tier | Family | Distro | Hardware' \

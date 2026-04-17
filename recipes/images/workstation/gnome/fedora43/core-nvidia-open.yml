@@ -1,0 +1,17 @@
+---
+# yaml-language-server: $schema=https://schema.blue-build.org/recipe-v1.json
+name: workstation-core-gnome-fedora43-nvidia-open
+description: myOS Fedora 43 core Workstation image with the GNOME family and the NVIDIA open kernel-module lane.
+base-image: quay.io/fedora/fedora-bootc
+image-version: 43
+modules:
+  - from-file: layers/fedora43/core.yml
+  - from-file: layers/fedora43/nvidia-open.yml
+  - from-file: layers/shared/end-user-common.yml
+  - from-file: layers/shared/workstation-common.yml
+  - from-file: layers/fedora43/workstation.yml
+  - from-file: layers/shared/workstation-gnome.yml
+  - from-file: layers/fedora43/gnome.yml
+  - from-file: layers/shared/nvidia-workstation.yml
+  - type: initramfs
+  - type: signing

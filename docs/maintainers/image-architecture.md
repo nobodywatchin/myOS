@@ -10,9 +10,11 @@ recipes/images/
     gnome/
       alma9/
       alma10/
+      fedora43/
     cosmic/
       alma9/
       alma10/
+      fedora43/
   server/
     alma9/
     alma10/
@@ -28,7 +30,7 @@ This is the authoritative repo shape.
 
 The supported matrix has four axes:
 
-- distro lane: `alma9`, `alma10`
+- distro lane: `alma9`, `alma10`, `fedora43`
 - capability tier: `core`, `full`
 - role: `workstation`, `server`, `console`
 - hardware lane: `default`, `nvidia-open`, `nvidia-legacy` on Alma 9 only
@@ -40,8 +42,22 @@ Supported combinations:
 - Alma 10 Workstation core/full, with GNOME or COSMIC, across `default` and `nvidia-open`
 - Alma 10 Server full across `default` and `nvidia-open`
 - Alma 10 Console core across `default` and `nvidia-open`
+- Fedora 43 Workstation core, with GNOME or COSMIC, across `default` and `nvidia-open`
 
 Unsupported combinations stay absent from recipes and CI.
+
+## Machine-readable matrix
+
+`files/base/runtime/usr/share/myos/image-matrix.tsv` is the authoritative supported-image manifest.
+
+It is shipped into images at `/usr/share/myos/image-matrix.tsv` and consumed by:
+
+- `scripts/render-image-matrix.py`
+- `scripts/validate-image-matrix.sh`
+- `.github/workflows/build.yml`
+- `myos rebase`
+
+The docs stay human-authored, but that TSV is the machine-readable source of truth for supported recipe paths and rebase targets.
 
 ## Published tag compatibility
 
@@ -59,7 +75,7 @@ This hybrid naming is intentional. It lets the public story and repo tree move t
 
 ### Core role substrate
 
-`recipes/layers/shared/core.yml` is the shared boring base for every image.
+`recipes/layers/shared/core.yml` is the shared boring base for every Alma image.
 
 It owns:
 
@@ -69,6 +85,8 @@ It owns:
 - shared ROCm userspace
 - shared Tailscale baseline
 - optional per-user OpenClaw runtime payloads under `files/agent/runtime-core/`
+
+`recipes/layers/fedora43/core.yml` is the Fedora 43 counterpart for the same role contract on the official Fedora BootC base.
 
 ### Full tier
 
@@ -98,8 +116,18 @@ It owns:
 It is followed by:
 
 - `recipes/layers/alma9/workstation.yml` or `recipes/layers/alma10/workstation.yml`
+- `recipes/layers/fedora43/workstation.yml`
 - `recipes/layers/shared/workstation-gnome.yml` or `recipes/layers/shared/workstation-cosmic.yml`
-- `recipes/layers/alma9/gnome.yml` or `recipes/layers/alma10/gnome.yml` for GNOME-only drift
+- `recipes/layers/fedora43/cosmic.yml` for Fedora COSMIC-specific drift
+- `recipes/layers/alma9/gnome.yml`, `recipes/layers/alma10/gnome.yml`, or `recipes/layers/fedora43/gnome.yml` for GNOME-only drift
+
+The initial Fedora lane is intentionally narrow:
+
+- Workstation only
+- core tier only
+- GNOME and COSMIC families only
+- `default` and `nvidia-open` hardware lanes only
+- official `quay.io/fedora/fedora-bootc:43` base, not a BlueBuild/UBlue-derived base
 
 ### Console role
 
@@ -115,5 +143,6 @@ That means:
 
 - full Server is still the published parent line for full GNOME and COSMIC tags
 - core Workstation and Console build directly from the AlmaLinux BootC base plus the myOS role layers
+- Fedora 43 core Workstation builds directly from the official Fedora BootC base plus the Fedora-specific workstation layers
 
 The repo now documents that as a compatibility choice instead of the public product model.

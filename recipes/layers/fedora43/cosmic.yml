@@ -1,0 +1,46 @@
+---
+modules:
+  # Fedora 43 ships COSMIC packages directly, so this lane installs the Fedora
+  # COSMIC stack from the base repos instead of using the EL-oriented COPR flow.
+  - type: files
+    files:
+      - source: cosmic/shared
+        destination: /
+
+  - type: dnf
+    install:
+      install-weak-deps: false
+      packages:
+        - cosmic-config-fedora
+        - cosmic-initial-setup
+        - cosmic-session
+        - cosmic-store
+        - greetd
+        - gnome-keyring
+        - gnome-keyring-pam
+        - xdg-desktop-portal-cosmic
+        - adw-gtk3-theme
+
+  - type: containerfile
+    snippets:
+      - >-
+        RUN set -eux; \
+          rpm -q cosmic-config-fedora cosmic-initial-setup >/dev/null; \
+          command -v cosmic-session >/dev/null; \
+          command -v cosmic-panel >/dev/null; \
+          command -v cosmic-app-library >/dev/null; \
+          command -v cosmic-files >/dev/null; \
+          command -v cosmic-settings >/dev/null; \
+          command -v cosmic-store >/dev/null; \
+          command -v cosmic-greeter-start >/dev/null; \
+          command -v cosmic-greeter-daemon >/dev/null; \
+          command -v gnome-keyring-daemon >/dev/null; \
+          find /usr/share/wayland-sessions -maxdepth 1 -type f -iname '*cosmic*.desktop' | grep -q .; \
+          test -f /usr/share/cosmic/com.system76.CosmicComp/v1/workspaces; \
+          test -f /usr/share/cosmic/com.system76.CosmicTk/v1/apply_theme_global; \
+          test -f /usr/lib/systemd/system/cosmic-greeter.service; \
+          test -f /usr/lib/systemd/system/greetd.service; \
+          test -f /etc/greetd/cosmic-greeter.toml; \
+          test -f /etc/pam.d/cosmic-greeter; \
+          find /usr/lib /usr/lib64 -path '*/security/pam_gnome_keyring.so' -type f | grep -q .; \
+          grep -q 'command = "cosmic-greeter-start"' /etc/greetd/cosmic-greeter.toml

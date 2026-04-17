@@ -41,12 +41,43 @@ jobs:
         shell: pwsh
         run: ./scripts/verify-alma9-nvidia-legacy.ps1
 
+  define-image-matrices:
+    name: Define image matrices
+    runs-on: ubuntu-latest
+    outputs:
+      server_images: ${{ steps.render.outputs.server_images }}
+      workstation_core_images: ${{ steps.render.outputs.workstation_core_images }}
+      workstation_full_images: ${{ steps.render.outputs.workstation_full_images }}
+      console_images: ${{ steps.render.outputs.console_images }}
+    steps:
+      - uses: actions/checkout@v6
+      - id: render
+        name: Render supported image matrices
+        run: |
+          set -euo pipefail
+
+          emit_output() {
+            local name="$1"
+            shift
+            {
+              printf '%s<<EOF\n' "$name"
+              "$@"
+              printf 'EOF\n'
+            } >> "$GITHUB_OUTPUT"
+          }
+
+          emit_output server_images python3 ./scripts/render-image-matrix.py gha server-images
+          emit_output workstation_core_images python3 ./scripts/render-image-matrix.py gha workstation-core-images
+          emit_output workstation_full_images python3 ./scripts/render-image-matrix.py gha workstation-full-images
+          emit_output console_images python3 ./scripts/render-image-matrix.py gha console-images
+
   server-images:
     name: Server Images (${{ matrix.name }})
     needs:
       - validate-runtime-artifacts
       - validate-image-matrix
       - validate-alma9-nvidia-legacy
+      - define-image-matrices
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -55,17 +86,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        include:
-          - name: core-full-alma9
-            recipe: /images/server/alma9/full.yml
-          - name: core-full-alma9-nvidia-open
-            recipe: /images/server/alma9/full-nvidia-open.yml
-          - name: core-full-alma9-nvidia-legacy
-            recipe: /images/server/alma9/full-nvidia-legacy.yml
-          - name: core-full-alma10
-            recipe: /images/server/alma10/full.yml
-          - name: core-full-alma10-nvidia-open
-            recipe: /images/server/alma10/full-nvidia-open.yml
+        include: ${{ fromJSON(needs.define-image-matrices.outputs.server_images) }}
     steps:
       - name: Build Server image
         uses: blue-build/github-action@v1.11
@@ -83,6 +104,7 @@ jobs:
       - validate-runtime-artifacts
       - validate-image-matrix
       - validate-alma9-nvidia-legacy
+      - define-image-matrices
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -91,27 +113,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        include:
-          - name: workstation-core-gnome-alma9
-            recipe: /images/workstation/gnome/alma9/core.yml
-          - name: workstation-core-gnome-alma9-nvidia-open
-            recipe: /images/workstation/gnome/alma9/core-nvidia-open.yml
-          - name: workstation-core-gnome-alma9-nvidia-legacy
-            recipe: /images/workstation/gnome/alma9/core-nvidia-legacy.yml
-          - name: workstation-core-gnome-alma10
-            recipe: /images/workstation/gnome/alma10/core.yml
-          - name: workstation-core-gnome-alma10-nvidia-open
-            recipe: /images/workstation/gnome/alma10/core-nvidia-open.yml
-          - name: workstation-core-cosmic-alma9
-            recipe: /images/workstation/cosmic/alma9/core.yml
-          - name: workstation-core-cosmic-alma9-nvidia-open
-            recipe: /images/workstation/cosmic/alma9/core-nvidia-open.yml
-          - name: workstation-core-cosmic-alma9-nvidia-legacy
-            recipe: /images/workstation/cosmic/alma9/core-nvidia-legacy.yml
-          - name: workstation-core-cosmic-alma10
-            recipe: /images/workstation/cosmic/alma10/core.yml
-          - name: workstation-core-cosmic-alma10-nvidia-open
-            recipe: /images/workstation/cosmic/alma10/core-nvidia-open.yml
+        include: ${{ fromJSON(needs.define-image-matrices.outputs.workstation_core_images) }}
     steps:
       - name: Build core Workstation image
         uses: blue-build/github-action@v1.11
@@ -129,6 +131,7 @@ jobs:
       - validate-runtime-artifacts
       - validate-image-matrix
       - validate-alma9-nvidia-legacy
+      - define-image-matrices
       - server-images
     runs-on: ubuntu-latest
     permissions:
@@ -138,27 +141,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        include:
-          - name: gnome-alma9
-            recipe: /images/workstation/gnome/alma9/full.yml
-          - name: gnome-alma9-nvidia-open
-            recipe: /images/workstation/gnome/alma9/full-nvidia-open.yml
-          - name: gnome-alma9-nvidia-legacy
-            recipe: /images/workstation/gnome/alma9/full-nvidia-legacy.yml
-          - name: gnome-alma10
-            recipe: /images/workstation/gnome/alma10/full.yml
-          - name: gnome-alma10-nvidia-open
-            recipe: /images/workstation/gnome/alma10/full-nvidia-open.yml
-          - name: cosmic-alma9
-            recipe: /images/workstation/cosmic/alma9/full.yml
-          - name: cosmic-alma9-nvidia-open
-            recipe: /images/workstation/cosmic/alma9/full-nvidia-open.yml
-          - name: cosmic-alma9-nvidia-legacy
-            recipe: /images/workstation/cosmic/alma9/full-nvidia-legacy.yml
-          - name: cosmic-alma10
-            recipe: /images/workstation/cosmic/alma10/full.yml
-          - name: cosmic-alma10-nvidia-open
-            recipe: /images/workstation/cosmic/alma10/full-nvidia-open.yml
+        include: ${{ fromJSON(needs.define-image-matrices.outputs.workstation_full_images) }}
     steps:
       - name: Build full Workstation image
         uses: blue-build/github-action@v1.11
@@ -176,6 +159,7 @@ jobs:
       - validate-runtime-artifacts
       - validate-image-matrix
       - validate-alma9-nvidia-legacy
+      - define-image-matrices
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -184,11 +168,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        include:
-          - name: console-core-alma10
-            recipe: /images/console/alma10/core.yml
-          - name: console-core-alma10-nvidia-open
-            recipe: /images/console/alma10/core-nvidia-open.yml
+        include: ${{ fromJSON(needs.define-image-matrices.outputs.console_images) }}
     steps:
       - name: Build Console image
         uses: blue-build/github-action@v1.11

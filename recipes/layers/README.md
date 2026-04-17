@@ -19,6 +19,7 @@ These files are the reusable composition units included from image recipes with 
 - `alma9/full.yml`, `alma10/full.yml`: distro-specific full-tier drift.
 - `alma9/workstation.yml`, `alma10/workstation.yml`: distro workstation drift shared by GNOME and COSMIC.
 - `alma9/gnome.yml`, `alma10/gnome.yml`: GNOME-only distro drift.
+- `fedora43/core.yml`, `fedora43/workstation.yml`, `fedora43/gnome.yml`, `fedora43/cosmic.yml`, `fedora43/nvidia-open.yml`: the initial Fedora 43 workstation-core lane.
 - `alma9/nvidia-legacy.yml`: Alma 9-only proprietary legacy NVIDIA lane.
 
 ## Feature layers
