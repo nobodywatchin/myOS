@@ -73,9 +73,7 @@ modules:
       packages:
         - gnome-shell-extension-appindicator
         - gnome-shell-extension-caffeine
-        - gnome-shell-extension-custom-menu
         - gnome-shell-extension-drive-menu
-        - gnome-shell-extension-gesture-inhibitor
         - gnome-shell-extension-just-perfection
         - gnome-shell-extension-launch-new-instance
         - gnome-shell-extension-screenshot-window-sizer
