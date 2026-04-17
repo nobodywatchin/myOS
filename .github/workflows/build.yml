@@ -65,11 +65,9 @@
                 local name="$1"
                 shift
                 {
-                  printf '%s<<EOF
-' "$name"
+                  printf '%s<<EOF\n' "$name"
                   "$@"
-                  printf 'EOF
-'
+                  printf 'EOF\n'
                 } >> "$GITHUB_OUTPUT"
               }
 
