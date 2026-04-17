@@ -21,3 +21,7 @@ modules:
         - dnf
         - gcc
         - zstd
+        - fastfetch
+        - fzf
+        - distrobox
+        - podman-compose

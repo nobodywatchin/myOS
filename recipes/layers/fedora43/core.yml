@@ -22,3 +22,4 @@ modules:
         - rocm-hip-devel
         - rocm-opencl-devel
         - rocm-smi
+        - gcc
