@@ -1,6 +1,6 @@
 ---
 modules:
-  # Full is the explicit admin/operator tier layered on top of a distro core.
+  # Internal server/admin layer stacked on top of an explicit distro core.
   - type: dnf
     install:
       install-weak-deps: false
@@ -22,7 +22,7 @@ modules:
       - source: agent/justfiles
         destination: /
 
-  # Shared platform-host layout under /etc, /srv, and /var/tmp for full-tier
+  # Shared platform-host layout under /etc, /srv, and /var/tmp for server/admin
   # tenant, persistent-user, and admin tooling.
   - type: containerfile
     snippets:

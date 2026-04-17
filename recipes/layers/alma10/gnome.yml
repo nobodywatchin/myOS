@@ -1,19 +1,4 @@
----
 modules:
-  - type: dnf
-    install:
-      install-weak-deps: false
-      packages:
-        - gnome-text-editor
-        - loupe
-        - ptyxis
-        - baobab
-
-  - type: gnome-extensions
-    install:
-      - 7535 # Accent Icons
-      - 6051 # Quick Web Search
-
   # Alma 10 GNOME-only dconf overrides live under `gnome/alma10/`
   # so shell-version-specific settings stay separate from the shared GNOME baseline.
   - type: files

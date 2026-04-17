@@ -10,7 +10,7 @@ It now focuses on workstation behavior that is truly about the workstation role 
 - shared tmpfiles/relabel snippets for workstation runtime state
 - workstation-wide payloads that are not specific to GNOME or COSMIC
 
-Flatpak governance payloads moved to `files/end-user/shared/` so Workstation and Console can share the same end-user app model.
+Flatpak governance payloads live under `files/end-user/shared/`, which keeps app policy separate from workstation-session behavior.
 
 ## Display-manager reconciliation
 

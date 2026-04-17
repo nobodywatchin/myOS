@@ -1,6 +1,0 @@
----
-modules:
-  # Compatibility wrapper retained while workstation images move to the new
-  # layering model.
-  - from-file: layers/shared/workstation-common.yml
-  - from-file: layers/shared/workstation-gnome.yml

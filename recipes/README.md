@@ -32,9 +32,10 @@ Supported published tags are short and come from the shipped image matrix rather
 ## How images relate
 
 - Server recipes build from an explicit distro core plus `shared/full.yml`.
-- The supported workstation recipes live in the current `core*.yml` files and are now the canonical public workstation images.
+- Workstation recipes build from an explicit distro core plus the shared workstation and environment layers.
 - Fedora 43 has both workstation and server recipes.
-- Console and workstation-full recipes are retired and should not come back without a deliberate product-model change.
+- The machine-readable support contract lives in `files/base/runtime/usr/share/myos/image-matrix.tsv`.
+- Retired product lines stay deleted; if the product model changes, update the manifest first and then add recipes intentionally.
 
 ## Reading order
 

@@ -2,25 +2,28 @@
 
 The purpose of the refactor is to keep layer ownership explicit while simplifying the public image model.
 
-## Shared core contract
+## Cross-distro core contract
 
-`recipes/layers/shared/core.yml` is allowed to own only behavior that should exist on every supported Alma image.
+`recipes/layers/shared/core-base.yml` owns behavior that should exist on every supported image, regardless of distro lane.
 
 That includes:
 
-- base EL packages and common runtime defaults
+- common core packages and runtime defaults
 - branding and `os-release` metadata
 - Tailscale system daemon baseline
 - host Vulkan userland/tooling
-- ROCm userspace and related shared AMD runtime files
 - the `openquad` command and its supporting runtime-core library files
 - the shipped per-user OpenClaw template under `files/agent/runtime-core/etc/myos/templates/apps/openclaw/user/`
 
-It must not quietly become the operator/admin layer.
+## Distro core deltas
 
-## Admin/operator contract
+- `recipes/layers/shared/core.yml` owns Alma-family core delta such as EPEL/CRB enablement and EL-only package drift.
+- `recipes/layers/fedora43/core.yml` owns Fedora 43 edge-lane core delta such as `dnf5-plugins`, Fedora-native ROCm packages, and Fedora-specific package drift.
+- `recipes/layers/alma9/core.yml` and `recipes/layers/alma10/core.yml` own only the remaining Alma-lane drift that does not belong in the shared Alma core layer.
 
-`recipes/layers/shared/full.yml` is the explicit admin/operator layer.
+## Server/admin contract
+
+`recipes/layers/shared/full.yml` is the explicit server/admin layer.
 
 It owns:
 
@@ -29,9 +32,7 @@ It owns:
 - tenant runtime helpers and templates
 - persistent-user admin helpers and templates
 - `openclaw-host`
-- shared admin/operator filesystem scaffolding under `/etc/myos`, `/srv/tenants`, and `/var/tmp/myos-podman`
-
-This layer is internal composition, not a user-facing product split. It should stay safe to apply on top of either the Alma or Fedora core contracts.
+- shared server/admin filesystem scaffolding under `/etc/myos`, `/srv/tenants`, and `/var/tmp/myos-podman`
 
 ## End-user contract
 
@@ -53,14 +54,22 @@ That includes:
 - workstation packages and desktop-oriented diagnostics
 - boot target selection
 - shared display-manager reconciliation
-- default system Flatpak app set for workstation images
+- the common user/system Flatpak remotes and shared workstation app set
 
-It does not own DE identity. That identity lives in the workstation family layers.
+`recipes/layers/shared/workstation-modern.yml` owns the extra workstation delta shared by the Alma 10 and Fedora 43 lanes.
 
-## Workstation family contract
+## Workstation environment contract
 
 GNOME and COSMIC are workstation-environment implementations.
 
 - `workstation-gnome.yml` owns GNOME session, portal, extension, and Software integration behavior.
+- `workstation-gnome-modern.yml` owns the extra GNOME app delta shared by the Alma 10 and Fedora 43 lanes.
 - `workstation-cosmic.yml` owns COSMIC session, greeter, and portal behavior.
 - `files/gnome/shared/usr/share/myos/workstation/desktop.env` and `files/cosmic/shared/usr/share/myos/workstation/desktop.env` are the family markers consumed by the shared DM helper.
+
+## NVIDIA contract
+
+- `shared/nvidia-base.yml` owns the common NVIDIA repo bootstrap, copied config, and kernel args.
+- `shared/nvidia-open-common.yml` owns the open-driver helper shim.
+- `shared/nvidia-common.yml` and `shared/nvidia-open.yml` own the Alma-family NVIDIA lanes.
+- `fedora43/nvidia-open.yml` owns only the Fedora-specific open-driver delta on top of the shared NVIDIA layers.

@@ -1,10 +1,9 @@
----
 modules:
-  # Shared workstation substrate used by both core and full workstation images.
+  # Shared workstation substrate used by every workstation image.
   # It expects the shared end-user layer to be present first, then keeps
-  # distro-specific workstation drift in `recipes/layers/alma9/workstation.yml`
-  # and `recipes/layers/alma10/workstation.yml`, with DE-specific session logic
-  # in `workstation-gnome.yml` and `workstation-cosmic.yml`.
+  # distro-specific workstation drift in the distro workstation layers and
+  # DE-specific session logic in `workstation-gnome.yml` and
+  # `workstation-cosmic.yml`.
   - type: dnf
     remove:
       packages:

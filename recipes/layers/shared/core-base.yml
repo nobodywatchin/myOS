@@ -1,5 +1,140 @@
----
 modules:
-  # Compatibility shim.
-  # New work should target `layers/shared/core.yml` and `layers/shared/full.yml`.
-  - from-file: layers/shared/full.yml
+  # Cross-distro core baseline shared by every supported myOS image.
+  - type: os-release-meta
+    source: local
+
+  - type: dnf
+    install:
+      install-weak-deps: false
+      packages:
+        - lshw
+        - dnf-plugins-core
+        - audit
+        - rpm-plugin-audit
+        - basesystem
+        - bash
+        - coreutils
+        - crypto-policies
+        - crypto-policies-scripts
+        - e2fsprogs
+        - filesystem
+        - glibc
+        - ca-certificates
+        - hostname
+        - irqbalance
+        - kbd
+        - less
+        - ncurses
+        - policycoreutils
+        - procps-ng
+        - rootfiles
+        - rpm
+        - selinux-policy-targeted
+        - setup
+        - shadow-utils
+        - sudo
+        - systemd
+        - systemd-udev
+        - util-linux
+        - xfsprogs
+        - curl
+        - iproute
+        - iputils
+        - NetworkManager
+        - openssh-server
+        - p11-kit
+        - chrony
+        - dosfstools
+        - lvm2
+        - sg3_utils
+        - sg3_utils-libs
+        - dbus
+        - python3-libselinux
+        - linux-firmware
+        - system-reinstall-bootc
+        - fastfetch
+        - fzf
+        - NetworkManager-tui
+        - podman
+        - podman-docker
+        - podman-compose
+        - container-selinux
+        - conntrack-tools
+        - skopeo
+        - buildah
+        - distrobox
+        - fuse-overlayfs
+        - mesa-vulkan-drivers
+        - slirp4netns
+        - openssh-clients
+        - policycoreutils-python-utils
+        - vim-minimal
+        - vulkan-loader
+        - vulkan-tools
+        - bzip2
+        - file
+        - gnupg2
+        - mailcap
+        - rsync
+        - tar
+        - unzip
+        - wget
+        - which
+        - zip
+
+  - type: containerfile
+    snippets:
+      - >-
+        RUN for helper in distrobox-export distrobox-host-exec distrobox-init; do           if [ -x "/usr/bin/${helper}" ] && [ ! -e "/usr/sbin/${helper}" ]; then             ln -s "../bin/${helper}" "/usr/sbin/${helper}";           fi;         done
+
+  - type: files
+    files:
+      - source: base/runtime
+        destination: /
+      - source: justfiles
+        destination: /
+      - source: agent/runtime-core/etc
+        destination: /etc
+      - source: agent/runtime-core/usr
+        destination: /usr
+      - source: base/branding
+        destination: /
+
+  - type: containerfile
+    snippets:
+      - >-
+        RUN set -eux;           getent group video >/dev/null 2>&1 || groupadd --system video;           getent group render >/dev/null 2>&1 || groupadd --system render;           ldconfig
+
+  - type: containerfile
+    snippets:
+      - >-
+        RUN set -eux;           . /usr/share/myos/os-release-meta.env;           if [ "${EL_FAMILY}" = "true" ]; then             repo_url="https://pkgs.tailscale.com/stable/rhel/${EL_MAJOR}/tailscale.repo";           else             repo_url="https://pkgs.tailscale.com/stable/fedora/tailscale.repo";           fi;           curl -fsSL "${repo_url}" -o /etc/yum.repos.d/tailscale.repo;           sed -i 's/^enabled=1$/enabled=0/' /etc/yum.repos.d/tailscale.repo;           dnf -y --enablerepo tailscale-stable install tailscale
+
+  - type: systemd
+    system:
+      enabled:
+        - tailscaled.service
+
+  - type: kargs
+    kargs:
+      - iommu=pt
+      - transparent_hugepage=madvise
+      - radeon.si_support=0
+      - amdgpu.si_support=1
+      - radeon.cik_support=0
+      - amdgpu.cik_support=1
+
+  - type: systemd
+    system:
+      masked:
+        - rpm-ostree-countme.service
+        - rpm-ostree-countme.timer
+        - akmods-keygen@akmods-keygen.service
+        - bootc-fetch-apply-updates.service
+        - bootc-fetch-apply-updates.timer
+
+  - type: os-release
+    properties:
+      NAME: myOS
+      PRETTY_NAME: myOS
+      VENDOR_NAME: myOS

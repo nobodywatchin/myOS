@@ -1,6 +1,6 @@
 # Validation
 
-The refactor keeps validation tied to the actual supported matrix.
+Validation stays tied to the actual supported matrix.
 
 The authoritative machine-readable source is `files/base/runtime/usr/share/myos/image-matrix.tsv`, rendered through `scripts/render-image-matrix.py` for CI and `myos rebase`.
 
@@ -18,21 +18,21 @@ bash ./scripts/validate-image-matrix.sh
 
 - `files/agent/runtime-core/**`
 - `files/agent/platform-host/**`
-- shared Vulkan packaging in `shared/core.yml`
+- shared Vulkan packaging in `shared/core-base.yml`
 - explicit AMD `uaccess` tagging in the shared DRM/KFD rule
 - persistent-user GPU group enrollment wiring
 - workstation DM helper wiring
-- the workstation Flatpak policy payloads
-- the host and per-user OpenClaw templates
+- workstation Flatpak policy payloads
+- host and per-user OpenClaw templates
 
 `validate-image-matrix.sh` checks:
 
 - the shipped image-matrix manifest parses cleanly
 - the manifest recipe set exactly matches `recipes/images/**`
-- unsupported combinations stay absent because extra recipes fail validation
-- retired console and workstation-full paths stay gone
+- retired recipes, wrapper layers, and stale payload docs stay gone
 - the workflow uses manifest-driven JSON matrices for only `server-images` and `workstation-images`
-- each supported distro lane renders the expected number of server and workstation images
+- the renderer can emit per-lane recipe lists, workflow matrices, and `myos rebase` output directly from the manifest
+- legacy NVIDIA naming no longer leaks into the active manifest or recipe tree
 
 ## Alma 9 NVIDIA 580
 
@@ -42,11 +42,7 @@ When that path changes and the tooling is available, run:
 pwsh ./scripts/verify-alma9-nvidia-580.ps1
 ```
 
-That script asserts the Alma 9 legacy NVIDIA 580 lane across:
-
-- `alma9-server-nvidia-580`
-- `alma9-gnome-nvidia-580`
-- `alma9-cosmic-nvidia-580`
+That script derives the supported Alma 9 NVIDIA 580 recipes from the matrix manifest and verifies the lane-specific package transaction.
 
 ## CI matrix
 
@@ -61,12 +57,13 @@ Each build job consumes a JSON matrix rendered from the shared TSV manifest in a
 ## Change-specific guidance
 
 - If you change `files/base/runtime/usr/share/myos/image-matrix.tsv`, re-check validation, CI, and `myos rebase` together.
-- If you change `shared/core.yml`, re-check every role contract.
+- If you change `shared/core-base.yml`, re-check every role contract.
+- If you change `shared/core.yml` or `fedora43/core.yml`, re-check the matching distro core delta.
 - If you change `shared/full.yml`, re-check server/admin docs and validation.
-- If you change `end-user-common.yml`, re-check workstation images together.
-- If you change `workstation-common.yml`, re-check both GNOME and COSMIC expectations.
+- If you change `shared/end-user-common.yml`, re-check workstation images together.
+- If you change `shared/workstation-common.yml`, re-check both GNOME and COSMIC expectations.
+- If you change the shared NVIDIA layers, re-check both the Alma and Fedora NVIDIA lanes.
 - If you change Alma-specific drift, update `docs/maintainers/alma-drift.md` in the same change.
-- If you change the Fedora 43 lane, re-check the Fedora-specific core, server, workstation, and NVIDIA-open repo assumptions together.
 
 ## Runtime diagnostics
 

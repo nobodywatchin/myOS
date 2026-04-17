@@ -3,8 +3,10 @@ set -euo pipefail
 
 cd "$(dirname "$0")/.."
 
-command -v node >/dev/null 2>&1 || { printf 'Missing required tool: node\n' >&2; exit 127; }
-command -v python3 >/dev/null 2>&1 || { printf 'Missing required tool: python3\n' >&2; exit 127; }
+command -v node >/dev/null 2>&1 || { printf 'Missing required tool: node
+' >&2; exit 127; }
+command -v python3 >/dev/null 2>&1 || { printf 'Missing required tool: python3
+' >&2; exit 127; }
 
 find files/agent/runtime-core/usr/local/libexec/myos -type f -print0 | xargs -0 -n1 bash -n
 find files/agent/platform-host/usr/local/libexec/myos -type f -print0 | xargs -0 -n1 bash -n
@@ -29,12 +31,10 @@ run_os_release_meta_smoke() {
   local root="${tmpdir}/${name}"
 
   mkdir -p "${root}/etc/dnf/vars" "${root}/usr/share/myos"
-  printf '%s\n' "${os_release_body}" > "${root}/os-release"
+  printf '%s
+' "${os_release_body}" > "${root}/os-release"
 
-  OS_RELEASE_META_OS_RELEASE_PATH="${root}/os-release" \
-  OS_RELEASE_META_ENV_PATH="${root}/usr/share/myos/os-release-meta.env" \
-  OS_RELEASE_META_DNF_VARS_DIR="${root}/etc/dnf/vars" \
-    bash modules/os-release-meta/os-release-meta.sh
+  OS_RELEASE_META_OS_RELEASE_PATH="${root}/os-release"   OS_RELEASE_META_ENV_PATH="${root}/usr/share/myos/os-release-meta.env"   OS_RELEASE_META_DNF_VARS_DIR="${root}/etc/dnf/vars"     bash modules/os-release-meta/os-release-meta.sh
 
   (
     set -euo pipefail
@@ -57,25 +57,14 @@ run_os_release_meta_smoke() {
   fi
 }
 
-run_os_release_meta_smoke \
-  alma10 \
-  $'ID="almalinux"\nID_LIKE="rhel centos fedora"\nVERSION_ID="10.1"\nPLATFORM_ID="platform:el10"' \
-  almalinux \
-  10 \
-  1 \
-  true \
-  10 \
-  1
+run_os_release_meta_smoke   alma10   $'ID="almalinux"
+ID_LIKE="rhel centos fedora"
+VERSION_ID="10.1"
+PLATFORM_ID="platform:el10"'   almalinux   10   1   true   10   1
 
-run_os_release_meta_smoke \
-  fedora43 \
-  $'ID="fedora"\nVERSION_ID="43"\nNAME="Fedora Linux"' \
-  fedora \
-  43 \
-  0 \
-  false \
-  '' \
-  ''
+run_os_release_meta_smoke   fedora43   $'ID="fedora"
+VERSION_ID="43"
+NAME="Fedora Linux"'   fedora   43   0   false   ''   ''
 
 node --check files/agent/platform-host/etc/myos/templates/apps/openclaw/scripts/openclaw-ui-server.mjs
 python3 -m json.tool files/agent/platform-host/etc/myos/templates/apps/openclaw/config/openclaw.json.example >/dev/null
@@ -101,9 +90,9 @@ test -f files/end-user/shared/etc/profile.d/flatpak-user-default.sh
 test -f files/end-user/shared/etc/systemd/system/system-flatpak-setup.service.d/10-hide-org-system.conf
 test -f files/end-user/shared/usr/lib/environment.d/60-myos-flatpak-exports.conf
 test -f files/end-user/shared/usr/share/polkit-1/rules.d/org.freedesktop.Flatpak.rules
-grep -q "mesa-vulkan-drivers" recipes/layers/shared/core.yml
-grep -q "vulkan-loader" recipes/layers/shared/core.yml
-grep -q "vulkan-tools" recipes/layers/shared/core.yml
+grep -q "mesa-vulkan-drivers" recipes/layers/shared/core-base.yml
+grep -q "vulkan-loader" recipes/layers/shared/core-base.yml
+grep -q "vulkan-tools" recipes/layers/shared/core-base.yml
 grep -q 'TAG+="uaccess"' files/agent/runtime-core/etc/udev/rules.d/70-amdgpu.rules
 grep -q "for group in render video; do" files/agent/platform-host/usr/local/libexec/myos/persistent-user-enroll
 grep -q "podman info --format" files/agent/runtime-core/usr/local/bin/openquad

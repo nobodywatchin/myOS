@@ -1,7 +1,7 @@
 job	platform	role	environment	driver	image	recipe
-server-images	alma9	server	server	nvidia-580	alma9-server-nvidia-580	recipes/images/server/alma9/full-nvidia-legacy.yml
-workstation-images	alma9	workstation	gnome	nvidia-580	alma9-gnome-nvidia-580	recipes/images/workstation/gnome/alma9/core-nvidia-legacy.yml
-workstation-images	alma9	workstation	cosmic	nvidia-580	alma9-cosmic-nvidia-580	recipes/images/workstation/cosmic/alma9/core-nvidia-legacy.yml
+server-images	alma9	server	server	nvidia-580	alma9-server-nvidia-580	recipes/images/server/alma9/full-nvidia-580.yml
+workstation-images	alma9	workstation	gnome	nvidia-580	alma9-gnome-nvidia-580	recipes/images/workstation/gnome/alma9/core-nvidia-580.yml
+workstation-images	alma9	workstation	cosmic	nvidia-580	alma9-cosmic-nvidia-580	recipes/images/workstation/cosmic/alma9/core-nvidia-580.yml
 server-images	alma10	server	server	standard	alma10-server	recipes/images/server/alma10/full.yml
 server-images	alma10	server	server	nvidia-open	alma10-server-nvidia-open	recipes/images/server/alma10/full-nvidia-open.yml
 workstation-images	alma10	workstation	gnome	standard	alma10-gnome	recipes/images/workstation/gnome/alma10/core.yml

@@ -1,7 +1,7 @@
 # Maintainers
 
-- [image-architecture.md](image-architecture.md): how the single-branch image matrix maps onto the role-first recipe tree.
-- [runtime-contracts.md](runtime-contracts.md): what core, full, end-user, and workstation layers are allowed to own.
+- [image-architecture.md](image-architecture.md): how the shipped image matrix maps onto the role-first recipe tree.
+- [runtime-contracts.md](runtime-contracts.md): what the core, server/admin, workstation, and environment layers are allowed to own.
 - [workstation-layering.md](workstation-layering.md): workstation-specific layering details and environment behavior.
 - [operator-flows.md](operator-flows.md): advanced server/admin flows.
 - [validation.md](validation.md): repo-local validation and CI expectations.

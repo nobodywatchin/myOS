@@ -1,0 +1,18 @@
+modules:
+  # Shared NVIDIA repo/bootstrap wiring reused by every NVIDIA image lane.
+  - type: files
+    files:
+      - source: agent/nvidia/etc
+        destination: /etc
+
+  - type: containerfile
+    snippets:
+      - RUN curl -fsSL https://nvidia.github.io/libnvidia-container/stable/rpm/nvidia-container-toolkit.repo -o /etc/yum.repos.d/nvidia-container-toolkit.repo
+      - RUN dnf config-manager --set-disabled "nvidia-container-toolkit"
+      - RUN dnf -y --enablerepo "nvidia-container-toolkit" install nvidia-container-toolkit nvidia-container-toolkit-base libnvidia-container-tools libnvidia-container1
+      - RUN ldconfig
+
+  - type: kargs
+    kargs:
+      - rd.driver.blacklist=nouveau
+      - modprobe.blacklist=nouveau

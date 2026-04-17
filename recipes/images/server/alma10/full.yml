@@ -1,4 +1,3 @@
----
 # yaml-language-server: $schema=https://schema.blue-build.org/recipe-v1.json
 name: alma10-server
 description: myOS AlmaLinux 10 stable server image with admin/operator tooling and optional per-user OpenClaw support.
@@ -8,6 +7,5 @@ modules:
   - from-file: layers/shared/core.yml
   - from-file: layers/alma10/core.yml
   - from-file: layers/shared/full.yml
-  - from-file: layers/alma10/full.yml
   - type: initramfs
   - type: signing

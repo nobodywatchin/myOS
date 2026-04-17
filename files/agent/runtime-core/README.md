@@ -9,4 +9,4 @@ It owns:
 - the shipped per-user OpenClaw template
 - ROCm runtime support files that are part of the shared core contract
 
-This is separate from `agent/platform-host/`, which is full-tier only.
+This is separate from `agent/platform-host/`, which is server/admin only.

@@ -1,15 +1,6 @@
----
 modules:
   - from-file: layers/shared/nvidia-common.yml
-
-  - type: containerfile
-    snippets:
-      - >-
-        # Some package transactions still expect the rpm-kmod helper path used by
-        # the traditional NVIDIA packaging flow. The open-driver lane does not
-        # need the real helper, so this no-op shim keeps those transactions from
-        # failing until the package expectation goes away.
-        RUN test -x /var/run/rpm-kmod-nvidia-open-modules || (mkdir -p /run && printf '#!/bin/sh\nexit 0\n' > /run/rpm-kmod-nvidia-open-modules && chmod 0755 /run/rpm-kmod-nvidia-open-modules)
+  - from-file: layers/shared/nvidia-open-common.yml
 
   - type: dnf
     install:

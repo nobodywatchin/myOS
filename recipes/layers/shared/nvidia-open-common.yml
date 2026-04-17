@@ -1,0 +1,9 @@
+modules:
+  # The open-driver lanes still need the rpm-kmod helper shim while package
+  # transactions depend on the traditional NVIDIA packaging flow.
+  - type: containerfile
+    snippets:
+      - >-
+        RUN test -x /var/run/rpm-kmod-nvidia-open-modules || (mkdir -p /run && printf '#!/bin/sh
+exit 0
+' > /run/rpm-kmod-nvidia-open-modules && chmod 0755 /run/rpm-kmod-nvidia-open-modules)

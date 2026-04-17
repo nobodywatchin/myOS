@@ -1,23 +1,6 @@
----
 modules:
-  # CUDA repo bootstrap also stays inline for now. The useful boundary here is
-  # that CUDA repo/toolkit content belongs only to the NVIDIA image lanes, not
-  # the plain non-NVIDIA core images.
+  # CUDA repo bootstrap belongs only to the NVIDIA image lanes.
   - type: containerfile
     snippets:
       - >-
-        RUN . /usr/share/myos/os-release-meta.env && \
-          arch="$(uname -m)" && \
-          repo_id="cuda-rhel${EL_MAJOR}-${arch}" && \
-          repo_url="https://developer.download.nvidia.com/compute/cuda/repos/rhel${EL_MAJOR}/${arch}/cuda-rhel${EL_MAJOR}.repo" && \
-          curl -fsSL "${repo_url}" -o /etc/yum.repos.d/cuda.repo && \
-          dnf config-manager --set-disabled "${repo_id}"
-
-  - type: files
-    files:
-      - source: agent/nvidia/etc
-        destination: /etc
-
-  - type: containerfile
-    snippets:
-      - RUN ldconfig
+        RUN . /usr/share/myos/os-release-meta.env &&           arch="$(uname -m)" &&           repo_id="cuda-rhel${EL_MAJOR}-${arch}" &&           repo_url="https://developer.download.nvidia.com/compute/cuda/repos/rhel${EL_MAJOR}/${arch}/cuda-rhel${EL_MAJOR}.repo" &&           curl -fsSL "${repo_url}" -o /etc/yum.repos.d/cuda.repo &&           dnf config-manager --set-disabled "${repo_id}"

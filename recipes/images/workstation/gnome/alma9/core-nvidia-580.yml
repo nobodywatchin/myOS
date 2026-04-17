@@ -1,13 +1,12 @@
----
 # yaml-language-server: $schema=https://schema.blue-build.org/recipe-v1.json
 name: alma9-gnome-nvidia-580
-description: myOS AlmaLinux 9 GNOME workstation image for the legacy NVIDIA 580 lane.
+description: myOS AlmaLinux 9 GNOME workstation image for the NVIDIA 580 lane.
 base-image: quay.io/almalinuxorg/almalinux-bootc
 image-version: latest
 modules:
   - from-file: layers/shared/core.yml
   - from-file: layers/alma9/core.yml
-  - from-file: layers/alma9/nvidia-legacy.yml
+  - from-file: layers/alma9/nvidia-580.yml
   - from-file: layers/shared/end-user-common.yml
   - from-file: layers/shared/workstation-common.yml
   - from-file: layers/alma9/workstation.yml

@@ -9,7 +9,7 @@ Choose in this order.
 
 ## 1. Pick a lane
 
-- `alma9`: legacy NVIDIA 580 compatibility lane
+- `alma9`: NVIDIA 580 compatibility lane
 - `alma10`: stable lane
 - `fedora43`: edge lane
 
@@ -23,15 +23,17 @@ Choose in this order.
 
 - images without a driver suffix are the standard lane
 - `nvidia-open`: newer supported NVIDIA GPUs on supported Alma 10 and Fedora 43 images
-- `nvidia-580`: Alma 9 only, for the supported proprietary R580 legacy lane
+- `nvidia-580`: Alma 9 only, for the supported proprietary R580 lane
 
 ## Supported images
 
-| Lane | Purpose | Images |
-| --- | --- | --- |
-| `alma9` | legacy NVIDIA 580 compatibility | `alma9-gnome-nvidia-580`, `alma9-cosmic-nvidia-580`, `alma9-server-nvidia-580` |
-| `alma10` | stable baseline | `alma10-gnome`, `alma10-gnome-nvidia-open`, `alma10-cosmic`, `alma10-cosmic-nvidia-open`, `alma10-server`, `alma10-server-nvidia-open` |
-| `fedora43` | edge lane | `fedora43-gnome`, `fedora43-gnome-nvidia-open`, `fedora43-cosmic`, `fedora43-cosmic-nvidia-open`, `fedora43-server` |
+The exact supported image list comes from `files/base/runtime/usr/share/myos/image-matrix.tsv`.
+
+Current lanes:
+
+- `alma9`: `alma9-gnome-nvidia-580`, `alma9-cosmic-nvidia-580`, `alma9-server-nvidia-580`
+- `alma10`: `alma10-gnome`, `alma10-gnome-nvidia-open`, `alma10-cosmic`, `alma10-cosmic-nvidia-open`, `alma10-server`, `alma10-server-nvidia-open`
+- `fedora43`: `fedora43-gnome`, `fedora43-gnome-nvidia-open`, `fedora43-cosmic`, `fedora43-cosmic-nvidia-open`, `fedora43-server`
 
 Unsupported combinations are intentional.
 
@@ -45,7 +47,7 @@ Unsupported combinations are intentional.
 - Stable GNOME workstation on Alma 10: `alma10-gnome`
 - Stable COSMIC workstation on Alma 10 with the open NVIDIA lane: `alma10-cosmic-nvidia-open`
 - Edge GNOME workstation on Fedora 43: `fedora43-gnome`
-- Legacy NVIDIA 580 GNOME workstation on Alma 9: `alma9-gnome-nvidia-580`
+- NVIDIA 580 GNOME workstation on Alma 9: `alma9-gnome-nvidia-580`
 - Stable server on Alma 10: `alma10-server`
 - Edge server on Fedora 43: `fedora43-server`
 

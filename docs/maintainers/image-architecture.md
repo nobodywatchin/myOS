@@ -1,6 +1,6 @@
 # Image Architecture
 
-The repo models myOS by role first, and the supported image set is now rendered from a single-branch matrix that separates the distros into their own lanes.
+The repo models myOS by role first, and the supported image set is rendered directly from the shipped matrix manifest.
 
 ## Authoritative image tree
 
@@ -23,35 +23,36 @@ recipes/images/
 
 This is the authoritative repo shape.
 
-Internal filenames like `core.yml`, `full.yml`, and `nvidia-legacy.yml` remain maintenance details. They no longer define the public product model.
+Internal filenames like `core.yml`, `full.yml`, and `nvidia-580.yml` are maintenance details. The public product model comes from the manifest and the recipe `name:` fields.
 
 ## Product model
-
-Supported public tags are lane-scoped and short:
-
-- `alma9` lane: `alma9-gnome-nvidia-580`, `alma9-cosmic-nvidia-580`, `alma9-server-nvidia-580`
-- `alma10` lane: `alma10-gnome`, `alma10-gnome-nvidia-open`, `alma10-cosmic`, `alma10-cosmic-nvidia-open`, `alma10-server`, `alma10-server-nvidia-open`
-- `fedora43` lane: `fedora43-gnome`, `fedora43-gnome-nvidia-open`, `fedora43-cosmic`, `fedora43-cosmic-nvidia-open`, `fedora43-server`
 
 Public names follow this grammar:
 
 - `<platform>-<environment>`
 - `<platform>-<environment>-<driver>`
 
-Unsupported combinations stay absent from recipes and CI.
+The exact supported set lives in `files/base/runtime/usr/share/myos/image-matrix.tsv`.
+
+The renderer and CI treat that TSV as the canonical support contract for:
+
+- published image names
+- supported recipe paths
+- workflow matrix expansion
+- `myos rebase` output
 
 ## Machine-readable matrix
 
-`files/base/runtime/usr/share/myos/image-matrix.tsv` is the authoritative supported-image manifest.
+`files/base/runtime/usr/share/myos/image-matrix.tsv` is shipped into images at `/usr/share/myos/image-matrix.tsv`.
 
-It is shipped into images at `/usr/share/myos/image-matrix.tsv` and consumed by:
+It is consumed by:
 
 - `scripts/render-image-matrix.py`
 - `scripts/validate-image-matrix.sh`
 - `.github/workflows/build.yml`
 - `myos rebase`
 
-The TSV schema is intentionally small and single-branch:
+The TSV schema is intentionally small:
 
 - `job`
 - `platform`
@@ -61,30 +62,30 @@ The TSV schema is intentionally small and single-branch:
 - `image`
 - `recipe`
 
-The docs stay human-authored, but that TSV is the machine-readable source of truth for supported recipe paths, workflow matrices, and rebase targets.
+## Layer ownership
 
-## Base relationships
+### Cross-distro core baseline
 
-### Shared core substrate
-
-`recipes/layers/shared/core.yml` is the shared boring base for every Alma image.
+`recipes/layers/shared/core-base.yml` owns the cross-distro core baseline shared by Alma and Fedora builds.
 
 It owns:
 
-- common EL identity and base packages
-- base runtime defaults and branding payloads
-- host Vulkan userland/tooling
-- shared ROCm userspace
+- common core packages
+- base runtime payloads and branding
+- distrobox helper symlinks
 - shared Tailscale baseline
-- optional per-user OpenClaw runtime payloads under `files/agent/runtime-core/`
+- shared kernel args and masked system services
+- per-user OpenClaw runtime payloads under `files/agent/runtime-core/`
 
-`recipes/layers/fedora43/core.yml` is the Fedora 43 counterpart for the same role contract on the official Fedora BootC base.
+### Distro core delta
 
-### Admin/operator layer
+- `recipes/layers/shared/core.yml` adds the Alma-specific core delta.
+- `recipes/layers/fedora43/core.yml` adds the Fedora 43 edge-lane delta.
+- `recipes/layers/alma10/core.yml` and `recipes/layers/alma9/core.yml` keep the remaining Alma-only drift after the shared Alma core layer.
 
-`recipes/layers/shared/full.yml` is the distro-neutral admin/operator layer.
+### Server/admin layer
 
-It now stacks on top of an explicit distro core instead of pulling one in implicitly, which is what allows `fedora43-server` to exist cleanly.
+`recipes/layers/shared/full.yml` is the distro-neutral server/admin layer.
 
 It owns:
 
@@ -94,42 +95,39 @@ It owns:
 - platform-host payloads under `files/agent/platform-host/`
 - tenant, persistent-user, and `openclaw-host` filesystem scaffolding
 
-### End-user substrate
+Server recipes now stack an explicit distro core directly into `shared/full.yml`; there are no empty distro-specific `full.yml` layers left in the tree.
 
-`recipes/layers/shared/end-user-common.yml` holds workstation runtime pieces that do not belong on server images.
+### Workstation layers
 
-It owns:
+`recipes/layers/shared/workstation-common.yml` owns the DE-agnostic workstation substrate.
 
-- Flatpak base packaging and policy payloads
-- shared end-user files under `files/end-user/shared/`
+`recipes/layers/shared/workstation-modern.yml` carries the shared workstation delta reused by the Alma 10 and Fedora 43 lanes.
 
-### Workstation role
+`recipes/layers/shared/workstation-gnome.yml` and `recipes/layers/shared/workstation-cosmic.yml` own environment identity and session behavior.
 
-`recipes/layers/shared/workstation-common.yml` remains the DE-agnostic workstation substrate.
+`recipes/layers/shared/workstation-gnome-modern.yml` carries the shared GNOME app delta reused by the Alma 10 and Fedora 43 lanes.
 
-It is followed by:
+Remaining distro workstation layers only add real drift:
 
-- `recipes/layers/alma9/workstation.yml` or `recipes/layers/alma10/workstation.yml`
-- `recipes/layers/fedora43/workstation.yml`
-- `recipes/layers/shared/workstation-gnome.yml` or `recipes/layers/shared/workstation-cosmic.yml`
-- `recipes/layers/fedora43/cosmic.yml` for Fedora COSMIC-specific drift
-- `recipes/layers/alma9/gnome.yml`, `recipes/layers/alma10/gnome.yml`, or `recipes/layers/fedora43/gnome.yml` for GNOME-only drift
+- `alma9/workstation.yml` and `alma9/gnome.yml` for the Alma 9 compatibility lane
+- `alma10/workstation.yml` and `alma10/gnome.yml` for the Alma 10 stable lane
+- `fedora43/workstation.yml` and `fedora43/cosmic.yml` for Fedora 43 edge-lane drift
 
-### Server role
+### NVIDIA layers
 
-Server is the headless/admin/operator environment in the public naming model.
+NVIDIA ownership is split three ways:
 
-- Alma 9 server exists only on the legacy NVIDIA 580 lane.
-- Alma 10 server is the stable admin/operator baseline, with optional `nvidia-open`.
-- Fedora 43 server is the edge admin/operator lane without a parallel open-driver variant.
+- `shared/nvidia-base.yml`: common repo bootstrap, copied config, and kernel args
+- `shared/nvidia-common.yml` / `shared/nvidia-open.yml`: Alma-family NVIDIA lane wiring
+- `fedora43/nvidia-open.yml`: Fedora 43 open-driver delta on top of the shared NVIDIA base
+
+That keeps the repo bootstrap, copied files, and open-driver shim owned once instead of repeated across distro layers.
 
 ## Naming
 
-The public tags are now uniform and short.
+The public tags are uniform and short.
 
 - no `workstation-*` prefix
 - no `core-*` or `full-*` published tags
 - no `default` suffix in published names
-- no public `nvidia-legacy` wording; the Alma 9 lane is published as `nvidia-580`
-
-Internal filenames may stay descriptive where that reduces churn, but the published names, matrix rows, workflow output, and rebase picker are now aligned.
+- no `nvidia-legacy` naming in the supported recipe tree or manifest

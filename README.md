@@ -12,8 +12,8 @@ Workstation remains the flagship user-facing role. Server is the headless admin/
 
 ## Why myOS
 
-- Stable where it should be: Alma 10 is the stable baseline, Fedora 43 is the edge lane, and Alma 9 is reserved for legacy NVIDIA 580 compatibility.
-- Curated image boundaries: workstation images keep the modern desktop/runtime model, while admin/operator tooling lives in the server lane instead of quietly bleeding everywhere.
+- Stable where it should be: Alma 10 is the stable baseline, Fedora 43 is the edge lane, and Alma 9 is reserved for NVIDIA 580 compatibility.
+- Curated image boundaries: workstation images keep the modern desktop/runtime model, while admin/operator tooling lives only in the server lane.
 - Explicit GPU policy: standard images have no driver suffix, `nvidia-open` is opt-in where supported, and Alma 9 uses a dedicated `nvidia-580` lane.
 - One source of truth: the shipped image matrix feeds CI, validation, and `myos rebase`.
 - AI-ready, not AI-bloated: ROCm userspace and host Vulkan tooling stay in the shared core contract, and optional per-user OpenClaw remains available without turning every image into a hosted platform stack.
@@ -25,13 +25,13 @@ Public image names follow this grammar:
 - `<platform>-<environment>`
 - `<platform>-<environment>-<driver>`
 
-Supported images by distro lane:
+Lane summary:
 
-| Lane | Purpose | Images |
-| --- | --- | --- |
-| `alma9` | legacy NVIDIA 580 lane | `alma9-gnome-nvidia-580`, `alma9-cosmic-nvidia-580`, `alma9-server-nvidia-580` |
-| `alma10` | stable lane | `alma10-gnome`, `alma10-gnome-nvidia-open`, `alma10-cosmic`, `alma10-cosmic-nvidia-open`, `alma10-server`, `alma10-server-nvidia-open` |
-| `fedora43` | edge lane | `fedora43-gnome`, `fedora43-gnome-nvidia-open`, `fedora43-cosmic`, `fedora43-cosmic-nvidia-open`, `fedora43-server` |
+- `alma9`: NVIDIA 580 compatibility only for `gnome`, `cosmic`, and `server`
+- `alma10`: stable `gnome`, `cosmic`, and `server`, with optional `nvidia-open`
+- `fedora43`: edge `gnome`, `cosmic`, and `server`, with optional `nvidia-open` on workstation images
+
+The exact supported tags live in the shipped manifest at `files/base/runtime/usr/share/myos/image-matrix.tsv` and are summarized for users in [docs/user/choose-an-image.md](docs/user/choose-an-image.md).
 
 Unsupported by design:
 
@@ -117,7 +117,7 @@ files/
   justfiles/
 ```
 
-The authoritative repo shape stays role-first. Workstation keeps clean GNOME and COSMIC layering underneath that role, while the machine-readable matrix defines which combinations are actually supported within a single branch.
+The authoritative repo shape stays role-first. Workstation keeps clean GNOME and COSMIC layering underneath that role, while the shipped manifest decides which combinations are actually supported.
 
 ## Advanced Docs
 

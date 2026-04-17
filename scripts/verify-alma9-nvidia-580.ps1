@@ -2,17 +2,28 @@ $ErrorActionPreference = "Stop"
 Set-StrictMode -Version Latest
 
 $repoRoot = Split-Path -Parent $PSScriptRoot
-$legacyLayerPath = Join-Path $repoRoot "recipes/layers/alma9/nvidia-legacy.yml"
+$matrixPath = Join-Path $repoRoot "files/base/runtime/usr/share/myos/image-matrix.tsv"
+$laneLayerPath = Join-Path $repoRoot "recipes/layers/alma9/nvidia-580.yml"
 
-if (-not (Test-Path $legacyLayerPath)) {
-    throw "Missing Alma 9 NVIDIA 580 layer: $legacyLayerPath"
+if (-not (Test-Path $laneLayerPath)) {
+    throw "Missing Alma 9 NVIDIA 580 layer: $laneLayerPath"
 }
 
-$expectedRecipes = @(
-    "recipes/images/server/alma9/full-nvidia-legacy.yml",
-    "recipes/images/workstation/gnome/alma9/core-nvidia-legacy.yml",
-    "recipes/images/workstation/cosmic/alma9/core-nvidia-legacy.yml"
-) | ForEach-Object { Join-Path $repoRoot $_ }
+if (-not (Test-Path $matrixPath)) {
+    throw "Missing image matrix manifest: $matrixPath"
+}
+
+$laneRows = Import-Csv -Delimiter "`t" -Path $matrixPath | Where-Object {
+    $_.platform -eq 'alma9' -and $_.driver -eq 'nvidia-580'
+}
+
+if ($laneRows.Count -ne 3) {
+    throw "Expected exactly three Alma 9 NVIDIA 580 rows in the image matrix, found $($laneRows.Count)."
+}
+
+$expectedRecipes = $laneRows | Select-Object -ExpandProperty recipe -Unique | ForEach-Object {
+    Join-Path $repoRoot $_
+}
 
 foreach ($recipePath in $expectedRecipes) {
     if (-not (Test-Path $recipePath)) {
@@ -20,7 +31,19 @@ foreach ($recipePath in $expectedRecipes) {
     }
 }
 
-$legacyLayer = Get-Content $legacyLayerPath -Raw
+$laneRowsByImage = @{}
+foreach ($row in $laneRows) {
+    $laneRowsByImage[$row.image] = $row
+}
+
+$serverImages = $laneRows | Where-Object { $_.role -eq 'server' } | Select-Object -ExpandProperty image
+$workstationImages = $laneRows | Where-Object { $_.role -eq 'workstation' } | Select-Object -ExpandProperty image
+
+if ($serverImages.Count -ne 1 -or $workstationImages.Count -ne 2) {
+    throw "Unexpected Alma 9 NVIDIA 580 role split in the image matrix."
+}
+
+$laneLayer = Get-Content $laneLayerPath -Raw
 
 $requiredSnippets = @(
     "RUN dnf -y module reset nvidia-driver",
@@ -33,12 +56,12 @@ $requiredSnippets = @(
 )
 
 foreach ($snippet in $requiredSnippets) {
-    if (-not $legacyLayer.Contains($snippet)) {
+    if (-not $laneLayer.Contains($snippet)) {
         throw "Alma 9 NVIDIA 580 layer is missing required snippet: $snippet"
     }
 }
 
-if ($legacyLayer -match "nvidia-driver:latest/default" -or $legacyLayer -match "nvidia-driver:latest") {
+if ($laneLayer -match "nvidia-driver:latest/default" -or $laneLayer -match "nvidia-driver:latest") {
     throw "Alma 9 NVIDIA 580 layer must not use the floating nvidia-driver:latest stream."
 }
 
@@ -56,19 +79,14 @@ $driverStream = "580"
 
 $transactions = @(
     [PSCustomObject]@{
-        Images = @(
-            "alma9-server-nvidia-580"
-        )
+        Images = @($serverImages)
         Packages = @(
             "nvidia-driver",
             "nvidia-driver-cuda"
         )
     },
     [PSCustomObject]@{
-        Images = @(
-            "alma9-gnome-nvidia-580",
-            "alma9-cosmic-nvidia-580"
-        )
+        Images = @($workstationImages)
         Packages = @(
             "nvidia-driver",
             "nvidia-driver-cuda",
@@ -80,7 +98,7 @@ $transactions = @(
     }
 )
 
-function Invoke-LegacyTransaction {
+function Invoke-LaneTransaction {
     param(
         [string[]]$Packages
     )
@@ -99,7 +117,7 @@ dnf -y --assumeno install $packageList 2>&1 || true
     return ($output | Out-String)
 }
 
-function Parse-LegacyResult {
+function Parse-LaneResult {
     param(
         [string]$TransactionOutput
     )
@@ -147,35 +165,19 @@ function Parse-LegacyResult {
     }
 }
 
-function Get-EnvironmentName {
-    param(
-        [string]$Image
-    )
-
-    if ($Image -like '*-gnome-*') {
-        return 'gnome'
-    }
-    if ($Image -like '*-cosmic-*') {
-        return 'cosmic'
-    }
-    if ($Image -like '*-server-*') {
-        return 'server'
-    }
-    return 'unknown'
-}
-
 $failures = New-Object System.Collections.Generic.List[string]
 
 foreach ($transaction in $transactions) {
-    $transactionOutput = Invoke-LegacyTransaction -Packages $transaction.Packages
-    $result = Parse-LegacyResult -TransactionOutput $transactionOutput
+    $transactionOutput = Invoke-LaneTransaction -Packages $transaction.Packages
+    $result = Parse-LaneResult -TransactionOutput $transactionOutput
 
     foreach ($image in $transaction.Images) {
+        $row = $laneRowsByImage[$image]
         Write-Output "IMAGE=$image"
-        Write-Output "PLATFORM=alma9"
-        Write-Output "ROLE=$(if ($image -like '*-server-*') { 'server' } else { 'workstation' })"
-        Write-Output "ENVIRONMENT=$(Get-EnvironmentName -Image $image)"
-        Write-Output "DRIVER=nvidia-580"
+        Write-Output "PLATFORM=$($row.platform)"
+        Write-Output "ROLE=$($row.role)"
+        Write-Output "ENVIRONMENT=$($row.environment)"
+        Write-Output "DRIVER=$($row.driver)"
         Write-Output "DRIVER_STREAM=$driverStream"
         Write-Output "KERNEL_CORE=$($result.Kernel)"
         Write-Output "PREBUILT_KMODS=$($result.Prebuilt)"

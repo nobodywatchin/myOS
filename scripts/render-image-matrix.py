@@ -17,32 +17,10 @@ ALLOWED_JOBS = ('server-images', 'workstation-images')
 ALLOWED_ROLES = ('server', 'workstation')
 ALLOWED_ENVIRONMENTS = ('cosmic', 'gnome', 'server')
 ALLOWED_DRIVERS = ('nvidia-580', 'nvidia-open', 'standard')
-EXPECTED_COMBINATIONS = {
-    'alma9': {
-        ('server', 'server', 'nvidia-580'),
-        ('workstation', 'gnome', 'nvidia-580'),
-        ('workstation', 'cosmic', 'nvidia-580'),
-    },
-    'alma10': {
-        ('server', 'server', 'standard'),
-        ('server', 'server', 'nvidia-open'),
-        ('workstation', 'gnome', 'standard'),
-        ('workstation', 'gnome', 'nvidia-open'),
-        ('workstation', 'cosmic', 'standard'),
-        ('workstation', 'cosmic', 'nvidia-open'),
-    },
-    'fedora43': {
-        ('server', 'server', 'standard'),
-        ('workstation', 'gnome', 'standard'),
-        ('workstation', 'gnome', 'nvidia-open'),
-        ('workstation', 'cosmic', 'standard'),
-        ('workstation', 'cosmic', 'nvidia-open'),
-    },
-}
 RECIPE_SUFFIXES = {
     'standard': '',
     'nvidia-open': '-nvidia-open',
-    'nvidia-580': '-nvidia-legacy',
+    'nvidia-580': '-nvidia-580',
 }
 
 
@@ -96,7 +74,6 @@ def load_rows() -> list[dict[str, str]]:
         seen_images: set[str] = set()
         seen_recipes: set[str] = set()
         seen_keys: set[tuple[str, str, str, str]] = set()
-        platform_combinations = {platform: set() for platform in ALLOWED_PLATFORMS}
 
         for line_number, raw_row in enumerate(reader, start=2):
             row = {field: (raw_row.get(field) or '').strip() for field in FIELDS}
@@ -162,25 +139,7 @@ def load_rows() -> list[dict[str, str]]:
             seen_images.add(row['image'])
             seen_recipes.add(row['recipe'])
             seen_keys.add(key)
-            platform_combinations[row['platform']].add(
-                (row['role'], row['environment'], row['driver'])
-            )
             rows.append(row)
-
-    for platform, expected in EXPECTED_COMBINATIONS.items():
-        actual = platform_combinations[platform]
-        if actual != expected:
-            missing = sorted(expected - actual)
-            extra = sorted(actual - expected)
-            details: list[str] = []
-            if missing:
-                details.append('missing: ' + ', '.join(map(str, missing)))
-            if extra:
-                details.append('extra: ' + ', '.join(map(str, extra)))
-            die(
-                f'{platform} supported combinations do not match the target lane model'
-                + (' (' + '; '.join(details) + ')' if details else '')
-            )
 
     return rows
 

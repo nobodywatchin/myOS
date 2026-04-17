@@ -1,5 +1,5 @@
 ---
-# Shared Kubernetes CLI composition reused by the published full-core images.
+# Shared Kubernetes CLI composition reused by the published server/admin images.
 modules:
   - type: dnf
     repos:

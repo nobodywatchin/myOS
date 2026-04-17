@@ -1,4 +1,3 @@
----
 # yaml-language-server: $schema=https://schema.blue-build.org/recipe-v1.json
 name: fedora43-gnome
 description: myOS Fedora 43 edge GNOME workstation image.
@@ -10,6 +9,6 @@ modules:
   - from-file: layers/shared/workstation-common.yml
   - from-file: layers/fedora43/workstation.yml
   - from-file: layers/shared/workstation-gnome.yml
-  - from-file: layers/fedora43/gnome.yml
+  - from-file: layers/shared/workstation-gnome-modern.yml
   - type: initramfs
   - type: signing

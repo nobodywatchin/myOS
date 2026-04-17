@@ -1,47 +1,8 @@
----
 modules:
+  - from-file: layers/shared/workstation-modern.yml
+
   - type: dnf
     install:
       install-weak-deps: false
       packages:
-        - atheros-firmware
-        - bash-color-prompt
-        - bc
-        - bind-utils
-        - bluez-cups
-        - brcmfmac-firmware
-        - google-noto-sans-cjk-fonts
-        - hidapi
-        - ifuse
-        - iwlwifi-dvm-firmware
-        - iwlwifi-mvm-firmware
-        - iwlegacy-firmware
-        - jetbrains-mono-fonts-all
-        - libcamera-v4l2
-        - libertas-firmware
-        - libgphoto2
-        - libimobiledevice
-        - libimobiledevice-glue
-        - libimobiledevice-utils
-        - libmtp
-        - libplist
-        - libusbmuxd
-        - libusbmuxd-utils
-        - man-pages
-        - mt7xxx-firmware
-        - nmap-ncat
-        - nxpwireless-firmware
-        - plymouth-plugin-script
-        - powertop
-        - qt6-qtbase
-        - qt6-qtbase-gui
-        - qt6-qtdeclarative
-        - realmd
-        - realtek-firmware
-        - sssd
         - systemd-oomd-defaults
-        - tiwilink-firmware
-        - tree
-        - tuned-ppd
-        - usbmuxd
-        - xorg-x11-xinit

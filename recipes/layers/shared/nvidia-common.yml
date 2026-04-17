@@ -1,22 +1,8 @@
----
 modules:
+  - from-file: layers/shared/nvidia-base.yml
   - from-file: layers/shared/nvidia-cuda.yml
 
   - type: dnf
     install:
       packages:
         - almalinux-release-nvidia-driver
-
-  # Keep NVIDIA container toolkit repo bootstrap inline for now so the exact
-  # upstream repo file remains visible in the layer. If third-party repo policy
-  # is later unified around vendored files under files/dnf/, move this there.
-  - type: containerfile
-    snippets:
-      - RUN curl -fsSL https://nvidia.github.io/libnvidia-container/stable/rpm/nvidia-container-toolkit.repo -o /etc/yum.repos.d/nvidia-container-toolkit.repo
-      - RUN dnf config-manager --set-disabled "nvidia-container-toolkit"
-      - RUN dnf -y --enablerepo "nvidia-container-toolkit" install nvidia-container-toolkit nvidia-container-toolkit-base libnvidia-container-tools libnvidia-container1
-
-  - type: kargs
-    kargs:
-      - rd.driver.blacklist=nouveau
-      - modprobe.blacklist=nouveau

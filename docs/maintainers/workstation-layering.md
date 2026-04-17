@@ -4,23 +4,19 @@ Workstation is the product role. GNOME and COSMIC are implementations of that ro
 
 ## Layer order
 
-Core Workstation recipes build in this order:
+All workstation recipes build in this order:
 
-1. `layers/shared/core.yml`
-2. distro core drift
-3. `layers/shared/end-user-common.yml`
-4. `layers/shared/workstation-common.yml`
-5. distro workstation drift
-6. workstation family layer
-7. optional workstation NVIDIA layer when applicable
+1. distro core stack
+2. `layers/shared/end-user-common.yml`
+3. `layers/shared/workstation-common.yml`
+4. distro workstation drift
+5. environment layer
+6. optional workstation NVIDIA layer when applicable
 
-Full Workstation recipes start from the published full Server image and then add:
+Alma 10 and Fedora 43 add one more shared layer in the middle:
 
-1. `layers/shared/end-user-common.yml`
-2. `layers/shared/workstation-common.yml`
-3. distro workstation drift
-4. workstation family layer
-5. optional workstation NVIDIA layer when applicable
+- `layers/shared/workstation-modern.yml` after `workstation-common`
+- `layers/shared/workstation-gnome-modern.yml` for GNOME images after `workstation-gnome.yml`
 
 ## Why workstation-common stays
 
@@ -28,34 +24,42 @@ Full Workstation recipes start from the published full Server image and then add
 
 - package baseline
 - display-manager reconciliation helper
-- workstation-only admin and diagnostics packages
-- managed system Flatpak set for Workstation
+- workstation-only diagnostics and admin tools
+- shared workstation Flatpak defaults
 
 That prevents GNOME and COSMIC from duplicating the same substrate.
 
-## GNOME family
+## GNOME layering
 
-GNOME Workstation is:
+GNOME workstation is:
 
 - `workstation-common`
+- optional `workstation-modern`
 - distro workstation drift
 - `workstation-gnome`
-- Alma-specific GNOME drift where needed
+- optional `workstation-gnome-modern`
+- distro-specific GNOME drift where needed
 
-GNOME-only behavior such as session helpers, shell integration, and GNOME markers stays under `recipes/layers/shared/workstation-gnome.yml` and `files/gnome/**`.
+Alma 9 keeps its extra GNOME delta in `recipes/layers/alma9/gnome.yml` because that compatibility lane still needs older GNOME-specific packages and Flatpak defaults.
 
-## COSMIC family
+Alma 10 keeps only shell-version-specific dconf drift in `recipes/layers/alma10/gnome.yml`.
 
-COSMIC Workstation is:
+Fedora 43 no longer needs a dedicated GNOME layer because the shared GNOME layers already cover its supported delta.
+
+## COSMIC layering
+
+COSMIC workstation is:
 
 - `workstation-common`
+- optional `workstation-modern`
 - distro workstation drift
 - `workstation-cosmic`
+- Fedora-only COSMIC drift where needed
 
 COSMIC-specific behavior such as greeter wiring, session bits, and COSMIC markers stays under `recipes/layers/shared/workstation-cosmic.yml` and `files/cosmic/**`.
 
 ## NVIDIA workstation extras
 
-`recipes/layers/shared/nvidia-workstation.yml` remains the shared workstation-display NVIDIA add-on for both families.
+`recipes/layers/shared/nvidia-workstation.yml` remains the shared workstation-display NVIDIA add-on for both environments.
 
-That keeps display/session NVIDIA extras separate from the server-side NVIDIA lane logic.
+That keeps display/session NVIDIA extras separate from the core lane plumbing in the shared NVIDIA layers.

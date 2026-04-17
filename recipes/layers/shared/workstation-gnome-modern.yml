@@ -1,18 +1,15 @@
----
 modules:
+  # Shared modern GNOME app delta used by the Alma 10 and Fedora 43 lanes.
   - type: dnf
     install:
       install-weak-deps: false
       packages:
+        - baobab
         - gnome-text-editor
         - loupe
         - ptyxis
-        - baobab
 
   - type: gnome-extensions
     install:
       - 7535 # Accent Icons
       - 6051 # Quick Web Search
-
-  # Fedora 43 starts without lane-specific dconf overrides until GNOME-shell
-  # behavior diverges enough from the shared baseline to justify them.

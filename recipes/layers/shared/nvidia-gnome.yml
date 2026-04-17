@@ -1,5 +1,0 @@
----
-modules:
-  # Compatibility wrapper retained while workstation images move to the new
-  # workstation-wide NVIDIA layer.
-  - from-file: layers/shared/nvidia-workstation.yml
