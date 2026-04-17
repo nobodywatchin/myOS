@@ -91,7 +91,7 @@
       'server_images: ${{ steps.render.outputs.server_images }}'
       'workstation_images: ${{ steps.render.outputs.workstation_images }}'
       'github.base_ref || github.ref_name'
-      'contains(fromJson('["stable","alma9","alma10","fedora43"]'), github.base_ref || github.ref_name)'
+      "contains(fromJson('[\"stable\",\"alma9\",\"alma10\",\"fedora43\"]'), github.base_ref || github.ref_name)"
       'raw_branch="${{ github.base_ref || github.ref_name }}"'
       'stable) active_branch="alma10" ;;'
       'emit_output server_images python3 ./scripts/render-image-matrix.py gha --branch "$active_branch" server-images'
