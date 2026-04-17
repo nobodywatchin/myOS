@@ -93,7 +93,7 @@ if [[ "${distro_id}" == "centos" ]]; then
   is_centos_stream=true
 fi
 
-install -d "$(dirname "${env_output_path}")" "${dnf_vars_dir}"
+install -d "$(dirname "${env_output_path}")"
 
 {
   printf 'DISTRO_ID=%q\n' "${distro_id}"
@@ -108,5 +108,10 @@ install -d "$(dirname "${env_output_path}")" "${dnf_vars_dir}"
   printf 'IS_CENTOS_STREAM=%q\n' "${is_centos_stream}"
 } > "${env_output_path}"
 
-printf '%s\n' "${version_major}" > "${dnf_vars_dir}/releasever_major"
-printf '%s\n' "${version_minor}" > "${dnf_vars_dir}/releasever_minor"
+if [[ "${el_family}" == true ]]; then
+  install -d "${dnf_vars_dir}"
+  printf '%s\n' "${version_major}" > "${dnf_vars_dir}/releasever_major"
+  printf '%s\n' "${version_minor}" > "${dnf_vars_dir}/releasever_minor"
+else
+  rm -f "${dnf_vars_dir}/releasever_major" "${dnf_vars_dir}/releasever_minor"
+fi

@@ -48,8 +48,13 @@ run_os_release_meta_smoke() {
     [ "${EL_MINOR}" = "${expected_el_minor}" ]
   )
 
-  [ "$(cat "${root}/etc/dnf/vars/releasever_major")" = "${expected_major}" ]
-  [ "$(cat "${root}/etc/dnf/vars/releasever_minor")" = "${expected_minor}" ]
+  if [[ "${expected_el_family}" == true ]]; then
+    [ "$(cat "${root}/etc/dnf/vars/releasever_major")" = "${expected_major}" ]
+    [ "$(cat "${root}/etc/dnf/vars/releasever_minor")" = "${expected_minor}" ]
+  else
+    [ ! -e "${root}/etc/dnf/vars/releasever_major" ]
+    [ ! -e "${root}/etc/dnf/vars/releasever_minor" ]
+  fi
 }
 
 run_os_release_meta_smoke \
