@@ -48,7 +48,7 @@
 
       define-image-matrix:
         name: Define image matrix
-        if: ${{ contains(fromJson('["alma9","alma10","fedora43"]'), github.base_ref || github.ref_name) }}
+        if: ${{ contains(fromJson('["stable","alma9","alma10","fedora43"]'), github.base_ref || github.ref_name) }}
         runs-on: ubuntu-latest
         outputs:
           server_images: ${{ steps.render.outputs.server_images }}
@@ -59,7 +59,11 @@
             name: Render supported image matrices
             run: |
               set -euo pipefail
-              active_branch="${{ github.base_ref || github.ref_name }}"
+              raw_branch="${{ github.base_ref || github.ref_name }}"
+              case "$raw_branch" in
+                stable) active_branch="alma10" ;;
+                *) active_branch="$raw_branch" ;;
+              esac
 
               emit_output() {
                 local name="$1"

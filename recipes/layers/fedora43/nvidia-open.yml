@@ -1,8 +1,9 @@
 ---
 modules:
   # Fedora 43 uses NVIDIA's Fedora CUDA repo directly instead of the AlmaLinux
-  # NVIDIA release package. The rest of the lane keeps the same myOS open-driver
-  # intent and workstation extras layering.
+  # NVIDIA release package. Keep the same myOS pattern as EL: add the repo,
+  # disable it by default, and opt into it only for the package transaction that
+  # actually needs NVIDIA's packages.
   - type: files
     files:
       - source: agent/nvidia/etc
@@ -13,13 +14,13 @@ modules:
       - >-
         RUN curl -fsSL https://developer.download.nvidia.com/compute/cuda/repos/fedora43/$(uname -m)/cuda-fedora43.repo \
           -o /etc/yum.repos.d/cuda.repo && \
-          sed -i 's/^enabled=1$/enabled=0/' /etc/yum.repos.d/cuda.repo
+          dnf config-manager --set-disabled "cuda-fedora43-x86_64"
       - >-
         RUN curl -fsSL https://nvidia.github.io/libnvidia-container/stable/rpm/nvidia-container-toolkit.repo \
           -o /etc/yum.repos.d/nvidia-container-toolkit.repo && \
-          sed -i 's/^enabled=1$/enabled=0/' /etc/yum.repos.d/nvidia-container-toolkit.repo
+          dnf config-manager --set-disabled "nvidia-container-toolkit"
       - >-
-        RUN dnf -y --enablerepo nvidia-container-toolkit install \
+        RUN dnf -y --enablerepo "nvidia-container-toolkit" install \
           nvidia-container-toolkit nvidia-container-toolkit-base \
           libnvidia-container-tools libnvidia-container1
       - >-
@@ -28,16 +29,10 @@ modules:
         # need the real helper, so this no-op shim keeps those transactions from
         # failing until the package expectation goes away.
         RUN test -x /var/run/rpm-kmod-nvidia-open-modules || (mkdir -p /run && printf '#!/bin/sh\nexit 0\n' > /run/rpm-kmod-nvidia-open-modules && chmod 0755 /run/rpm-kmod-nvidia-open-modules)
-
-  - type: dnf
-    install:
-      install-weak-deps: false
-      packages:
-        - kmod-nvidia-open-dkms
-        - nvidia-open
-        - nvidia-driver
-        - nvidia-driver-cuda
-        - cuda-toolkit
+      - >-
+        RUN dnf -y --setopt=install_weak_deps=False --enablerepo "cuda-fedora43-x86_64" install \
+          kmod-nvidia-open-dkms nvidia-open nvidia-driver \
+          nvidia-driver-cuda cuda-toolkit
 
   - type: containerfile
     snippets:
