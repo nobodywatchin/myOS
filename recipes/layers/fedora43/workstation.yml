@@ -39,6 +39,7 @@ modules:
         - realmd
         - realtek-firmware
         - sssd
+        - systemd-oomd-defaults
         - tiwilink-firmware
         - tree
         - tuned-ppd

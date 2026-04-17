@@ -3,9 +3,8 @@ modules:
   # Shared core substrate used by every myOS image.
   #
   # This is the boring stable base: common EL identity, container/runtime
-  # tooling, user-owned local AI/runtime support, shared ROCm userspace, update
-  # policy, and image branding. Role-specific end-user or host/operator surface
-  # is layered later.
+  # tooling, user-owned local AI/runtime support, update policy, and image
+  # branding. Distro-specific GPU userspace drift is layered later.
   - type: os-release-meta
     source: local
 
@@ -124,29 +123,6 @@ modules:
         destination: /usr
       - source: base/branding
         destination: /
-
-  # ROCm and host Vulkan stay in core by design so every image keeps the same
-  # local GPU/runtime baseline without forcing hosted tooling, model services,
-  # or NVIDIA-specific choices.
-  - type: dnf
-    repos:
-      files:
-        - rocm.repo
-      keys:
-        - https://repo.radeon.com/rocm/rocm.gpg.key
-    install:
-      install-weak-deps: false
-      skip-broken: true
-      packages:
-        - clinfo
-        - repo: rocm
-          packages:
-            - amd-smi-lib
-            - rocminfo
-            - rocm-hip-sdk
-            - rocm-ml-sdk
-            - rocm-opencl-sdk
-            - rocm-smi-lib
 
   - type: containerfile
     snippets:

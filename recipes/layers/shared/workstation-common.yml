@@ -94,7 +94,6 @@ modules:
         - switcheroo-control
         - system-config-printer-udev
         - systemd-container
-        - systemd-oomd
         - thermald
         - usbutils
         - vim-enhanced
