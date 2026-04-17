@@ -4,10 +4,20 @@ modules:
   # belong in the common NVIDIA layers.
   - from-file: layers/shared/nvidia-base.yml
   - from-file: layers/shared/nvidia-open-common.yml
-
   - type: containerfile
     snippets:
       - >-
-        RUN curl -fsSL https://developer.download.nvidia.com/compute/cuda/repos/fedora43/$(uname -m)/cuda-fedora43.repo           -o /etc/yum.repos.d/cuda.repo &&           dnf config-manager --set-disabled "cuda-fedora43-x86_64"
+        RUN curl -fsSL
+        "https://developer.download.nvidia.com/compute/cuda/repos/fedora43/$(uname -m)/cuda-fedora43.repo"
+        -o /etc/yum.repos.d/cuda.repo &&
+        dnf config-manager setopt cuda-fedora43-x86_64.enabled=0
+
       - >-
-        RUN dnf -y --setopt=install_weak_deps=False --enablerepo "cuda-fedora43-x86_64" install           kmod-nvidia-open-dkms nvidia-open nvidia-driver           nvidia-driver-cuda cuda-toolkit
+        RUN dnf -y --setopt=install_weak_deps=False
+        --enablerepo=cuda-fedora43-x86_64
+        install
+        kmod-nvidia-open-dkms
+        nvidia-open
+        nvidia-driver
+        nvidia-driver-cuda
+        cuda-toolkit
