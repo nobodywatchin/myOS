@@ -61,6 +61,13 @@ modules:
               cosmic-icon-theme \
               cosmic-initial-setup \
               cosmic-greeter \
+              cosmic-ext-applet-tailscale \
+              cosmic-ext-applet-clipboard-manager \
+              cosmic-ext-applet-system-monitor \
+              cosmic-ext-applet-ollama \
+              cosmic-ext-applet-emoji-selector \
+              cosmic-ext-applet-sysinfo \
+              cosmic-ext-applet-minimon \
               greetd \
               gnome-keyring \
               gnome-keyring-pam \
