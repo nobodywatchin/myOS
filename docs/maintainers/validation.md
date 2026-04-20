@@ -2,7 +2,7 @@
 
 Validation stays tied to the actual supported matrix.
 
-The authoritative machine-readable source is `files/base/runtime/usr/share/myos/image-matrix.tsv`, rendered through `scripts/render-image-matrix.py` for CI and `myos rebase`.
+The authoritative machine-readable source is `files/base/runtime/usr/share/myos/image-matrix.tsv`, rendered through `scripts/render-image-matrix.py` for CI. `myos rebase` downloads the same TSV path from the GitHub repo at runtime.
 
 ## Repo-local checks
 
@@ -59,7 +59,7 @@ Each build job consumes a JSON matrix rendered from the shared TSV manifest in a
 
 ## Change-specific guidance
 
-- If you change `files/base/runtime/usr/share/myos/image-matrix.tsv`, re-check validation, CI, and `myos rebase` together.
+- If you change `files/base/runtime/usr/share/myos/image-matrix.tsv`, re-check validation, CI, and the online `myos rebase` picker together.
 - If you change `shared/core-base.yml`, re-check every role contract and the shared PCP service contract.
 - If you change `shared/core.yml` or `fedora43/core.yml`, re-check the matching distro core delta.
 - If you change `shared/full.yml`, re-check server/admin docs and validation.

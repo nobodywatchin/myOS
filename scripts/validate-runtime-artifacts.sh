@@ -104,6 +104,9 @@ grep -q '^ExecStart=/usr/local/libexec/myos/myos-pcp-nvidia-pmda-apply$' files/a
 grep -q '^Before=pmlogger.service$' files/agent/nvidia/usr/lib/systemd/system/myos-pcp-nvidia-pmda-apply.service
 
 grep -q "import '/usr/share/myos/just/rebase.just'" files/justfiles/usr/share/myos/just/index.just
+grep -q 'raw.githubusercontent.com/myos-dev/myOS/stable/files/base/runtime/usr/share/myos/image-matrix.tsv' files/justfiles/usr/share/myos/just/rebase.just
+grep -q 'Could not reach GitHub to download the image matrix' files/justfiles/usr/share/myos/just/rebase.just
+grep -q 'No image matrix found at' files/justfiles/usr/share/myos/just/rebase.just
 grep -q "import '/usr/share/myos/just/tenant.just'" files/agent/justfiles/usr/share/myos/just/index.just
 grep -q "import '/usr/share/myos/just/openclaw-host.just'" files/agent/justfiles/usr/share/myos/just/index.just
 grep -q '^tenant-list ' files/agent/justfiles/usr/share/myos/just/tenant.just

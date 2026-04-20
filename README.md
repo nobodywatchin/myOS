@@ -15,7 +15,7 @@ Workstation remains the flagship user-facing role. Server is the headless admin/
 - Stable where it should be: Alma 10 is the stable baseline, Fedora 43 is the edge lane, and Alma 9 is reserved for NVIDIA 580 compatibility.
 - Curated image boundaries: workstation images keep the modern desktop/runtime model, while admin/operator tooling lives only in the server lane.
 - Explicit GPU policy: standard images have no driver suffix, `nvidia-open` is opt-in where supported, and Alma 9 uses a dedicated `nvidia-580` lane.
-- One source of truth: the shipped image matrix feeds CI, validation, and `myos rebase`.
+- One source of truth: the repository image matrix feeds CI, validation, and `myos rebase`.
 - AI-ready, not AI-bloated: ROCm userspace and host Vulkan tooling stay in the shared core contract, and optional per-user OpenClaw remains available without turning every image into a hosted platform stack.
 
 ## Supported Lanes
@@ -74,7 +74,7 @@ myos rebase
 ```
 
 That picker is grouped by role, environment, platform, and driver.
-It reads the same shipped image matrix that CI validates, so the supported lanes and published tags stay in sync.
+It downloads the same image matrix from the GitHub repo that CI validates, so the supported lanes and published tags stay in sync.
 
 For manual switching:
 

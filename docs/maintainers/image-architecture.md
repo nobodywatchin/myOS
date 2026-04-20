@@ -1,6 +1,6 @@
 # Image Architecture
 
-The repo models myOS by role first, and the supported image set is rendered directly from the shipped matrix manifest.
+The repo models myOS by role first, and the supported image set is rendered directly from the matrix manifest.
 
 ## Authoritative image tree
 
@@ -43,14 +43,14 @@ The renderer and CI treat that TSV as the canonical support contract for:
 
 ## Machine-readable matrix
 
-`files/base/runtime/usr/share/myos/image-matrix.tsv` is shipped into images at `/usr/share/myos/image-matrix.tsv`.
+`files/base/runtime/usr/share/myos/image-matrix.tsv` is shipped into images at `/usr/share/myos/image-matrix.tsv`. `myos rebase` downloads the same path from the GitHub repo at runtime so the picker can reflect the online support matrix.
 
 It is consumed by:
 
 - `scripts/render-image-matrix.py`
 - `scripts/validate-image-matrix.sh`
 - `.github/workflows/build.yml`
-- `myos rebase`
+- `myos rebase` through the raw GitHub copy
 
 The TSV schema is intentionally small:
 
