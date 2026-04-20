@@ -32,6 +32,13 @@ modules:
             dnf -y --setopt=install_weak_deps=False install \
               cosmic-desktop \
               cosmic-greeter \
+              cosmic-ext-applet-tailscale \
+              cosmic-ext-applet-clipboard-manager \
+              cosmic-ext-applet-system-monitor \
+              cosmic-ext-applet-ollama \
+              cosmic-ext-applet-emoji-selector \
+              cosmic-ext-applet-sysinfo \
+              cosmic-ext-applet-minimon \
               greetd \
               gnome-keyring \
               gnome-keyring-pam \
@@ -99,4 +106,13 @@ modules:
         repo:
           url: https://apt.pop-os.org/cosmic/cosmic.flatpakrepo
           name: cosmic
-          title: COSMIC
+          title: COSMIC (system)
+
+  - type: default-flatpaks
+    configurations:
+      - scope: user
+        notify: false
+        repo:
+          url: https://apt.pop-os.org/cosmic/cosmic.flatpakrepo
+          name: cosmic
+          title: COSMIC (user)
