@@ -43,6 +43,7 @@ modules:
         - NetworkManager
         - openssh-server
         - p11-kit
+        - pcp
         - chrony
         - dosfstools
         - lvm2
@@ -110,6 +111,8 @@ modules:
     system:
       enabled:
         - tailscaled.service
+        - pmcd.service
+        - pmlogger.service
 
   - type: kargs
     kargs:

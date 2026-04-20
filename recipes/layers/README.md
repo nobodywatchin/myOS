@@ -4,7 +4,7 @@ These files are the reusable composition units included from image recipes with 
 
 ## Shared layers
 
-- `shared/core-base.yml`: cross-distro core baseline shared by every supported image.
+- `shared/core-base.yml`: cross-distro core baseline shared by every supported image, including PCP live metrics and local history.
 - `shared/core.yml`: Alma-specific core delta layered on top of `shared/core-base.yml`.
 - `shared/full.yml`: the distro-neutral admin/operator layer stacked on top of a distro core.
 - `shared/end-user-common.yml`: Flatpak governance and end-user runtime pieces shared by workstation images.
@@ -13,7 +13,7 @@ These files are the reusable composition units included from image recipes with 
 - `shared/workstation-gnome.yml`: GNOME workstation layer.
 - `shared/workstation-gnome-modern.yml`: shared GNOME app delta reused by the Alma 10 and Fedora 43 lanes.
 - `shared/workstation-cosmic.yml`: COSMIC workstation layer.
-- `shared/nvidia-base.yml`, `shared/nvidia-common.yml`, `shared/nvidia-open-common.yml`, `shared/nvidia-open.yml`, `shared/nvidia-workstation.yml`: shared NVIDIA lane plumbing.
+- `shared/nvidia-base.yml`, `shared/nvidia-common.yml`, `shared/nvidia-open-common.yml`, `shared/nvidia-open.yml`, `shared/nvidia-workstation.yml`: shared NVIDIA lane plumbing, including the NVIDIA PCP PMDA on NVIDIA images only.
 
 ## Distro-specific layers
 

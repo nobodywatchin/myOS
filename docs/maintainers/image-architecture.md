@@ -74,6 +74,7 @@ It owns:
 - base runtime payloads and branding
 - distrobox helper symlinks
 - shared Tailscale baseline
+- shared PCP collection and local history through `pmcd.service` and `pmlogger.service`
 - shared kernel args and masked system services
 - per-user OpenClaw runtime payloads under `files/agent/runtime-core/`
 
@@ -117,11 +118,11 @@ Remaining distro workstation layers only add real drift:
 
 NVIDIA ownership is split three ways:
 
-- `shared/nvidia-base.yml`: common repo bootstrap, copied config, and kernel args
+- `shared/nvidia-base.yml`: common repo bootstrap, copied config, NVIDIA PCP PMDA wiring, and kernel args
 - `shared/nvidia-common.yml` / `shared/nvidia-open.yml`: Alma-family NVIDIA lane wiring
 - `fedora43/nvidia-open.yml`: Fedora 43 open-driver delta on top of the shared NVIDIA base
 
-That keeps the repo bootstrap, copied files, and open-driver shim owned once instead of repeated across distro layers.
+That keeps the repo bootstrap, copied files, NVIDIA PCP PMDA wiring, and open-driver shim owned once instead of repeated across distro layers.
 
 ## Naming
 

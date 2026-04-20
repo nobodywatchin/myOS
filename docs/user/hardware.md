@@ -18,6 +18,12 @@ Choose `nvidia-580` only on Alma 9.
 
 That lane is intentionally pinned to the proprietary `nvidia-driver:580` stream for supported older GPUs. It is not available on Alma 10 or Fedora 43.
 
+## PCP monitoring
+
+All images include Performance Co-Pilot with `pmcd` for live metrics and `pmlogger` for local history.
+
+NVIDIA images also include the NVIDIA GPU PMDA and register it automatically on boot so NVIDIA metrics are available through PCP without a manual PMDA install step.
+
 ## AMD and ROCm
 
 ROCm userspace stays in the shared core contract across all roles.

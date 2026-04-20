@@ -76,6 +76,105 @@ done < <(tail -n +2 "$matrix_file" | cut -f1,2 | sort -u)
 
 python3 "$matrix_script" rebase | grep -q .
 
+python3 <<'PY'
+from __future__ import annotations
+
+import csv
+import re
+from pathlib import Path
+
+root = Path('.')
+matrix_file = root / 'files/base/runtime/usr/share/myos/image-matrix.tsv'
+include_re = re.compile(r'^\s*-\s+from-file:\s+([^\s#]+)\s*(?:#.*)?$')
+core_base = root / 'recipes/layers/shared/core-base.yml'
+nvidia_base = root / 'recipes/layers/shared/nvidia-base.yml'
+recipe_ymls = sorted((root / 'recipes').rglob('*.yml'))
+
+
+def die(message: str) -> None:
+    raise SystemExit(message)
+
+
+def include_path(ref: str, owner: Path) -> Path:
+    ref = ref.strip().strip('\"\'')
+    if ref.startswith('layers/'):
+        return root / 'recipes' / ref
+    if ref.startswith('recipes/'):
+        return root / ref
+    die(f'{owner}: unsupported from-file path: {ref}')
+
+
+def direct_includes(path: Path) -> list[Path]:
+    if not path.is_file():
+        die(f'missing recipe/layer included by the matrix graph: {path}')
+    includes: list[Path] = []
+    for line in path.read_text(encoding='utf-8').splitlines():
+        match = include_re.match(line)
+        if match:
+            includes.append(include_path(match.group(1), path))
+    return includes
+
+
+def recipe_graph(path: Path, stack: tuple[Path, ...] = ()) -> list[Path]:
+    if path in stack:
+        cycle = ' -> '.join(str(item) for item in (*stack, path))
+        die(f'recursive from-file graph: {cycle}')
+
+    graph = [path]
+    for include in direct_includes(path):
+        graph.extend(recipe_graph(include, (*stack, path)))
+    return graph
+
+
+def exact_line_count(pattern: str, paths: list[Path]) -> int:
+    line_re = re.compile(pattern)
+    total = 0
+    for candidate in paths:
+        total += sum(
+            1
+            for line in candidate.read_text(encoding='utf-8').splitlines()
+            if line_re.match(line)
+        )
+    return total
+
+
+with matrix_file.open('r', encoding='utf-8', newline='') as handle:
+    rows = list(csv.DictReader(handle, delimiter='\t'))
+
+for row in rows:
+    recipe = root / row['recipe']
+    graph = recipe_graph(recipe)
+    core_count = graph.count(core_base)
+    if core_count != 1:
+        die(f"{row['image']} must include shared/core-base.yml exactly once; found {core_count}")
+
+    nvidia_count = graph.count(nvidia_base)
+    if row['driver'] == 'standard':
+        if nvidia_count != 0:
+            die(f"standard image {row['image']} must not include shared/nvidia-base.yml")
+    elif nvidia_count != 1:
+        die(f"NVIDIA image {row['image']} must include shared/nvidia-base.yml exactly once; found {nvidia_count}")
+
+expected_singletons = {
+    'pcp package': (r'^\s*-\s+pcp\s*$', 1),
+    'NVIDIA PCP PMDA package': (r'^\s*-\s+pcp-pmda-nvidia-gpu\s*$', 1),
+    'pmcd service enablement': (r'^\s*-\s+pmcd\.service\s*$', 1),
+    'pmlogger service enablement': (r'^\s*-\s+pmlogger\.service\s*$', 1),
+    'NVIDIA PMDA registration service enablement': (
+        r'^\s*-\s+myos-pcp-nvidia-pmda-apply\.service\s*$',
+        1,
+    ),
+}
+
+for label, (pattern, expected) in expected_singletons.items():
+    count = exact_line_count(pattern, recipe_ymls)
+    if count != expected:
+        die(f'{label} must appear exactly {expected} time in recipes/**/*.yml; found {count}')
+
+if any('cockpit-pcp' in item.read_text(encoding='utf-8') for item in recipe_ymls):
+    die('cockpit-pcp must not be layered into myOS recipes')
+PY
+
 required_workflow_snippets=(
   'define-image-matrix:'
   'server_images: ${{ steps.render.outputs.server_images }}'

@@ -14,6 +14,7 @@ bash -n files/agent/runtime-core/usr/local/bin/openquad
 bash -n files/agent/platform-host/etc/myos/templates/apps/openclaw/scripts/openclaw-start.sh
 bash -n files/scripts/just-el9.sh
 bash -n files/workstation/shared/usr/libexec/myos-workstation-dm-apply
+bash -n files/agent/nvidia/usr/local/libexec/myos/myos-pcp-nvidia-pmda-apply
 bash -n modules/os-release-meta/os-release-meta.sh
 
 tmpdir="$(mktemp -d)"
@@ -97,6 +98,10 @@ grep -q 'TAG+="uaccess"' files/agent/runtime-core/etc/udev/rules.d/70-amdgpu.rul
 grep -q "for group in render video; do" files/agent/platform-host/usr/local/libexec/myos/persistent-user-enroll
 grep -q "podman info --format" files/agent/runtime-core/usr/local/bin/openquad
 grep -q 'groups = \["wheel", "render", "video"\]' image.toml
+test -f files/agent/nvidia/usr/local/libexec/myos/myos-pcp-nvidia-pmda-apply
+test -f files/agent/nvidia/usr/lib/systemd/system/myos-pcp-nvidia-pmda-apply.service
+grep -q '^ExecStart=/usr/local/libexec/myos/myos-pcp-nvidia-pmda-apply$' files/agent/nvidia/usr/lib/systemd/system/myos-pcp-nvidia-pmda-apply.service
+grep -q '^Before=pmlogger.service$' files/agent/nvidia/usr/lib/systemd/system/myos-pcp-nvidia-pmda-apply.service
 
 grep -q "import '/usr/share/myos/just/rebase.just'" files/justfiles/usr/share/myos/just/index.just
 grep -q "import '/usr/share/myos/just/tenant.just'" files/agent/justfiles/usr/share/myos/just/index.just

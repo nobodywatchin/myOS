@@ -69,7 +69,7 @@ GNOME and COSMIC are workstation-environment implementations.
 
 ## NVIDIA contract
 
-- `shared/nvidia-base.yml` owns the common NVIDIA repo bootstrap, copied config, and kernel args.
+- `shared/nvidia-base.yml` owns the common NVIDIA repo bootstrap, copied config, NVIDIA PCP PMDA registration, and kernel args.
 - `shared/nvidia-open-common.yml` owns the open-driver helper shim.
 - `shared/nvidia-common.yml` and `shared/nvidia-open.yml` own the Alma-family NVIDIA lanes.
 - `fedora43/nvidia-open.yml` owns only the Fedora-specific open-driver delta on top of the shared NVIDIA layers.

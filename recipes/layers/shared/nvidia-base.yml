@@ -4,6 +4,14 @@ modules:
     files:
       - source: agent/nvidia/etc
         destination: /etc
+      - source: agent/nvidia/usr
+        destination: /usr
+
+  - type: dnf
+    install:
+      install-weak-deps: false
+      packages:
+        - pcp-pmda-nvidia-gpu
 
   - type: containerfile
     snippets:
@@ -11,6 +19,11 @@ modules:
       - RUN dnf config-manager --set-disabled "nvidia-container-toolkit"
       - RUN dnf -y --enablerepo "nvidia-container-toolkit" install nvidia-container-toolkit nvidia-container-toolkit-base libnvidia-container-tools libnvidia-container1
       - RUN ldconfig
+
+  - type: systemd
+    system:
+      enabled:
+        - myos-pcp-nvidia-pmda-apply.service
 
   - type: kargs
     kargs:

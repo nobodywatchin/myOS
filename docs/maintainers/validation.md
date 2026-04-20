@@ -19,6 +19,7 @@ bash ./scripts/validate-image-matrix.sh
 - `files/agent/runtime-core/**`
 - `files/agent/platform-host/**`
 - shared Vulkan packaging in `shared/core-base.yml`
+- NVIDIA PCP PMDA registration payloads
 - explicit AMD `uaccess` tagging in the shared DRM/KFD rule
 - persistent-user GPU group enrollment wiring
 - workstation DM helper wiring
@@ -33,6 +34,8 @@ bash ./scripts/validate-image-matrix.sh
 - the workflow uses manifest-driven JSON matrices for only `server-images` and `workstation-images`
 - the renderer can emit per-lane recipe lists, workflow matrices, and `myos rebase` output directly from the manifest
 - legacy NVIDIA naming no longer leaks into the active manifest or recipe tree
+- every supported recipe inherits shared PCP exactly once through `shared/core-base.yml`
+- every NVIDIA recipe inherits NVIDIA PCP exactly once through `shared/nvidia-base.yml` while standard recipes do not
 
 ## Alma 9 NVIDIA 580
 
@@ -57,12 +60,12 @@ Each build job consumes a JSON matrix rendered from the shared TSV manifest in a
 ## Change-specific guidance
 
 - If you change `files/base/runtime/usr/share/myos/image-matrix.tsv`, re-check validation, CI, and `myos rebase` together.
-- If you change `shared/core-base.yml`, re-check every role contract.
+- If you change `shared/core-base.yml`, re-check every role contract and the shared PCP service contract.
 - If you change `shared/core.yml` or `fedora43/core.yml`, re-check the matching distro core delta.
 - If you change `shared/full.yml`, re-check server/admin docs and validation.
 - If you change `shared/end-user-common.yml`, re-check workstation images together.
 - If you change `shared/workstation-common.yml`, re-check both GNOME and COSMIC expectations.
-- If you change the shared NVIDIA layers, re-check both the Alma and Fedora NVIDIA lanes.
+- If you change the shared NVIDIA layers, re-check both the Alma and Fedora NVIDIA lanes, including NVIDIA PCP PMDA registration.
 - If you change Alma-specific drift, update `docs/maintainers/alma-drift.md` in the same change.
 
 ## Runtime diagnostics

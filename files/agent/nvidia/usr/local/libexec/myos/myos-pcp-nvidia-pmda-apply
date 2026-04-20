@@ -1,0 +1,26 @@
+#!/bin/sh
+set -eu
+
+PCP_CONF=${PCP_CONF:-/etc/pcp.conf}
+if [ -r "$PCP_CONF" ]; then
+  # shellcheck disable=SC1090
+  . "$PCP_CONF"
+fi
+
+pmcd_conf=${PCP_PMCDCONF_PATH:-/etc/pcp/pmcd/pmcd.conf}
+pmdas_dir=${PCP_PMDAS_DIR:-/var/lib/pcp/pmdas}
+
+if [ -r "$pmcd_conf" ] && awk '$1 == "nvidia" { found = 1 } END { exit found ? 0 : 1 }' "$pmcd_conf"; then
+  exit 0
+fi
+
+for dir in "$pmdas_dir/nvidia" /var/lib/pcp/pmdas/nvidia /usr/libexec/pcp/pmdas/nvidia; do
+  if [ -x "$dir/Install" ]; then
+    cd "$dir"
+    yes '' | ./Install
+    exit 0
+  fi
+done
+
+printf '%s\n' 'NVIDIA PCP PMDA Install script was not found.' >&2
+exit 1
