@@ -47,6 +47,8 @@ myOS keeps two Flatpak lanes on workstation images:
 - user-managed `flathub` for personal installs
 - admin-managed `org-system` for curated shared apps
 
+`org-system` is hidden from normal app and source enumeration, but remains available for system runtime dependency resolution.
+
 That keeps normal app installs user-owned while still giving the image a clean place for system-wide apps the project or an admin wants to curate.
 
 Details live in [docs/user/apps-and-flatpak.md](docs/user/apps-and-flatpak.md).
@@ -82,7 +84,7 @@ For manual switching:
 sudo bootc switch ghcr.io/myos-dev/alma10-gnome:latest
 ```
 
-myOS disables unattended `bootc` auto-apply. Update or rebase when you choose, then reboot when you are ready.
+myOS disables unattended `bootc` auto-apply. Use `myos update-system` to update managed system Flatpaks, prune unused system Flatpak refs, and stage a bootc image update. Rebase when you choose, then reboot when you are ready.
 
 More user docs:
 

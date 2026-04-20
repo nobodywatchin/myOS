@@ -185,6 +185,7 @@ modules:
           - io.github.giantpinkrobots.flatsweep
           - it.mijorus.gearlever
           - net.nokyan.Resources
+          - org.indii.mendingwall
 
   - type: kargs
     kargs:

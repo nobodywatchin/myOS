@@ -12,6 +12,8 @@ That means the default path for a user-installed app is still the user's own hom
 
 `org-system` is the image-managed system scope for curated shared apps.
 
+It is hidden from app and source enumeration, but Flatpak can still use it for automatic runtime dependency resolution for managed system apps.
+
 This is where the distro or an admin can keep a clean shared app set without turning every machine into an anything-goes system-wide app bucket.
 
 ## Why this split exists

@@ -4,16 +4,22 @@ myOS keeps updates explicit.
 
 ## Updates
 
-Use the project wrapper or plain `bootc`:
+Use the project wrapper to update managed system Flatpaks, remove unused system Flatpak refs, and stage an OS image update:
 
 ```bash
 myos update-system
 ```
 
-or
+If you only want to stage the OS image update, use plain `bootc`:
 
 ```bash
 sudo bootc upgrade
+```
+
+To only remove unused system Flatpak refs:
+
+```bash
+myos clean-system
 ```
 
 myOS disables the stock `bootc-fetch-apply-updates` timer and service. Updates are downloaded and applied when you choose, then activated on reboot.

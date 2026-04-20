@@ -89,6 +89,8 @@ grep -q '^WantedBy=default.target$' files/agent/runtime-core/etc/myos/templates/
 
 test -f files/end-user/shared/etc/profile.d/flatpak-user-default.sh
 test -f files/end-user/shared/etc/systemd/system/system-flatpak-setup.service.d/10-hide-org-system.conf
+grep -q -- "--no-enumerate --use-for-deps org-system" files/end-user/shared/etc/systemd/system/system-flatpak-setup.service.d/10-hide-org-system.conf
+! grep -q -- "--no-use-for-deps" files/end-user/shared/etc/systemd/system/system-flatpak-setup.service.d/10-hide-org-system.conf
 test -f files/end-user/shared/usr/lib/environment.d/60-myos-flatpak-exports.conf
 test -f files/end-user/shared/usr/share/polkit-1/rules.d/org.freedesktop.Flatpak.rules
 test -f files/workstation/shared/usr/lib/tmpfiles.d/myos-tuned-selinux.conf
@@ -109,6 +111,9 @@ grep -q '^ExecStart=/usr/local/libexec/myos/myos-pcp-nvidia-pmda-apply$' files/a
 grep -q '^Before=pmlogger.service$' files/agent/nvidia/usr/lib/systemd/system/myos-pcp-nvidia-pmda-apply.service
 
 grep -q "import '/usr/share/myos/just/rebase.just'" files/justfiles/usr/share/myos/just/index.just
+grep -q "import '/usr/share/myos/just/update.just'" files/justfiles/usr/share/myos/just/index.just
+grep -q "^clean-system:$" files/justfiles/usr/share/myos/just/update.just
+grep -q "sudo flatpak uninstall --system --unused -y" files/justfiles/usr/share/myos/just/update.just
 grep -q '^rebase:$' files/justfiles/usr/share/myos/just/rebase.just
 grep -q 'raw.githubusercontent.com/myos-dev/myOS/stable/files/base/runtime/usr/share/myos/image-matrix.tsv' files/justfiles/usr/share/myos/just/rebase.just
 grep -q 'Could not reach GitHub to download the image matrix' files/justfiles/usr/share/myos/just/rebase.just
