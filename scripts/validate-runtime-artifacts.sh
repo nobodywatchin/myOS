@@ -91,6 +91,11 @@ test -f files/end-user/shared/etc/profile.d/flatpak-user-default.sh
 test -f files/end-user/shared/etc/systemd/system/system-flatpak-setup.service.d/10-hide-org-system.conf
 test -f files/end-user/shared/usr/lib/environment.d/60-myos-flatpak-exports.conf
 test -f files/end-user/shared/usr/share/polkit-1/rules.d/org.freedesktop.Flatpak.rules
+test -f files/workstation/shared/usr/lib/tmpfiles.d/myos-tuned-selinux.conf
+grep -q "^z /etc/tuned/active_profile - - - -$" files/workstation/shared/usr/lib/tmpfiles.d/myos-tuned-selinux.conf
+grep -q "^d /var/log/tuned 0755 root root -$" files/workstation/shared/usr/lib/tmpfiles.d/myos-tuned-selinux.conf
+grep -q "^Z /var/log/tuned - - - -$" files/workstation/shared/usr/lib/tmpfiles.d/myos-tuned-selinux.conf
+
 grep -q "mesa-vulkan-drivers" recipes/layers/shared/core-base.yml
 grep -q "vulkan-loader" recipes/layers/shared/core-base.yml
 grep -q "vulkan-tools" recipes/layers/shared/core-base.yml

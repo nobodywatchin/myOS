@@ -34,6 +34,7 @@ with `pam_gnome_keyring.so` when the module is installed, which keeps keyring
 unlock support aligned even when `/etc` persists across image switches.
 
 The shared tmpfiles payload also restores the policy-defined writable labels for
-TuneD runtime state files under `/etc/tuned`, which avoids SELinux denials when
-`tuned-ppd` updates the power-profile state on deployments that retained generic
-`/etc` labels.
+TuneD runtime state files under `/etc/tuned` and the TuneD log tree under
+`/var/log/tuned`, which avoids SELinux denials when `tuned-ppd` updates the
+power-profile state or opens its log on deployments that retained generic
+labels.
