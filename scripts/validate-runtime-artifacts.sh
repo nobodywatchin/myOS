@@ -92,6 +92,8 @@ test -f files/end-user/shared/etc/systemd/system/system-flatpak-setup.service.d/
 grep -q -- "--no-enumerate --use-for-deps org-system" files/end-user/shared/etc/systemd/system/system-flatpak-setup.service.d/10-hide-org-system.conf
 ! grep -q -- "--no-use-for-deps" files/end-user/shared/etc/systemd/system/system-flatpak-setup.service.d/10-hide-org-system.conf
 test -f files/end-user/shared/usr/lib/environment.d/60-myos-flatpak-exports.conf
+grep -q "xdg-desktop-portal-gtk" recipes/layers/shared/workstation-cosmic.yml
+grep -q "rpm -q flatpak flatpak-selinux xdg-desktop-portal xdg-desktop-portal-cosmic xdg-desktop-portal-gtk" recipes/layers/shared/workstation-cosmic.yml
 test -f files/end-user/shared/usr/share/polkit-1/rules.d/org.freedesktop.Flatpak.rules
 test -f files/workstation/shared/usr/lib/tmpfiles.d/myos-tuned-selinux.conf
 grep -q "^z /etc/tuned/active_profile - - - -$" files/workstation/shared/usr/lib/tmpfiles.d/myos-tuned-selinux.conf

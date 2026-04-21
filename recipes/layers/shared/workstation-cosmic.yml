@@ -43,6 +43,7 @@ modules:
               gnome-keyring \
               gnome-keyring-pam \
               xdg-desktop-portal-cosmic \
+              xdg-desktop-portal-gtk \
               adw-gtk3-theme \
               $optional_packages; \
           else \
@@ -79,6 +80,7 @@ modules:
               gnome-keyring \
               gnome-keyring-pam \
               xdg-desktop-portal-cosmic \
+              xdg-desktop-portal-gtk \
               adw-gtk3-theme \
               $optional_packages; \
           fi; \
@@ -91,6 +93,7 @@ modules:
           command -v cosmic-greeter-start >/dev/null; \
           command -v cosmic-greeter-daemon >/dev/null; \
           command -v gnome-keyring-daemon >/dev/null; \
+          rpm -q flatpak flatpak-selinux xdg-desktop-portal xdg-desktop-portal-cosmic xdg-desktop-portal-gtk >/dev/null; \
           find /usr/share/wayland-sessions -maxdepth 1 -type f -iname '*cosmic*.desktop' | grep -q .; \
           test -f /usr/lib/systemd/system/cosmic-greeter.service; \
           test -f /usr/lib/systemd/system/greetd.service; \
