@@ -53,10 +53,10 @@ COSMIC workstation is:
 - `workstation-common`
 - optional `workstation-modern`
 - distro workstation drift
+- distro COSMIC source layer (`alma/cosmic.yml` or `fedora43/cosmic.yml`)
 - `workstation-cosmic`
-- Fedora-only COSMIC drift where needed
 
-COSMIC-specific behavior such as greeter wiring, session bits, and COSMIC markers stays under `recipes/layers/shared/workstation-cosmic.yml` and `files/cosmic/**`.
+COSMIC-specific behavior such as greeter wiring, session bits, common packages, validation, and COSMIC markers stays under `recipes/layers/shared/workstation-cosmic.yml` and `files/cosmic/**`. Alma-specific COPR setup and selected COPR applets stay in `recipes/layers/alma/cosmic.yml`; Fedora keeps only native COSMIC config drift in `recipes/layers/fedora43/cosmic.yml`.
 
 ## NVIDIA workstation extras
 

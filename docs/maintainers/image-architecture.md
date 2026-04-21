@@ -112,6 +112,7 @@ Remaining distro workstation layers only add real drift:
 
 - `alma9/workstation.yml` and `alma9/gnome.yml` for the Alma 9 compatibility lane
 - `alma10/workstation.yml` and `alma10/gnome.yml` for the Alma 10 stable lane
+- `alma/cosmic.yml` for Alma-family COSMIC COPR setup shared by Alma 9 and Alma 10
 - `fedora43/workstation.yml` and `fedora43/cosmic.yml` for Fedora 43 edge-lane drift
 
 ### NVIDIA layers

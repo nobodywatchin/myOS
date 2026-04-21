@@ -1,10 +1,41 @@
 ---
 modules:
-  # Shared COSMIC workstation layer. The package source stays shared, but the
-  # COPR target string is EL-major aware because COPR names the EL9 and EL10
-  # chroots differently. COSMIC prefers the packaged cosmic-greeter service,
-  # which wraps greetd with the upstream COSMIC config, so this layer validates
-  # both the desktop session pieces and the greetd-side integration files.
+  # Shared COSMIC workstation layer. Distro-specific COSMIC layers select the
+  # package source before this layer runs; this layer owns the common COSMIC
+  # session stack, COSMIC payloads, validation, and Flatpak remotes.
+  - type: dnf
+    install:
+      install-weak-deps: false
+      packages:
+        - cosmic-session
+        - cosmic-comp
+        - cosmic-panel
+        - cosmic-app-library
+        - cosmic-applets
+        - cosmic-files
+        - cosmic-launcher
+        - cosmic-notifications
+        - cosmic-osd
+        - cosmic-settings
+        - cosmic-settings-daemon
+        - cosmic-store
+        - cosmic-term
+        - cosmic-workspaces
+        - cosmic-randr
+        - cosmic-screenshot
+        - cosmic-bg
+        - cosmic-wallpapers
+        - cosmic-icon-theme
+        - cosmic-initial-setup
+        - cosmic-greeter
+        - greetd
+        - gnome-keyring
+        - gnome-keyring-pam
+        - xdg-desktop-portal-cosmic
+        - xdg-desktop-portal-gtk
+        - adw-gtk3-theme
+        - gui-scale-applet
+
   - type: files
     files:
       - source: cosmic/shared
@@ -14,76 +45,6 @@ modules:
     snippets:
       - >-
         RUN set -eux; \
-          . /usr/share/myos/os-release-meta.env; \
-          arch="$(uname -m)"; \
-          case "$EL_MAJOR" in \
-            9) copr_target="epel-9-${arch}" ;; \
-            10) copr_target="rhel+epel-10-${arch}" ;; \
-            *) echo "Unsupported EL major for COSMIC: $EL_MAJOR" >&2; exit 1 ;; \
-          esac; \
-          dnf -y copr enable "ligenix/enterprise-cosmic" "$copr_target"
-      - >-
-        RUN set -eux; \
-          optional_packages=""; \
-          if dnf -q repoquery cosmic-config-fedora >/dev/null 2>&1; then \
-            optional_packages="$optional_packages cosmic-config-fedora"; \
-          fi; \
-          if dnf -q repoquery cosmic-desktop >/dev/null 2>&1; then \
-            dnf -y --setopt=install_weak_deps=False install \
-              cosmic-desktop \
-              cosmic-greeter \
-              cosmic-ext-applet-tailscale \
-              cosmic-ext-applet-clipboard-manager \
-              cosmic-ext-applet-system-monitor \
-              cosmic-ext-applet-ollama \
-              cosmic-ext-applet-emoji-selector \
-              cosmic-ext-applet-sysinfo \
-              cosmic-ext-applet-minimon \
-              greetd \
-              gnome-keyring \
-              gnome-keyring-pam \
-              xdg-desktop-portal-cosmic \
-              xdg-desktop-portal-gtk \
-              adw-gtk3-theme \
-              $optional_packages; \
-          else \
-            dnf -y --setopt=install_weak_deps=False install \
-              cosmic-session \
-              cosmic-comp \
-              cosmic-panel \
-              cosmic-app-library \
-              cosmic-applets \
-              cosmic-files \
-              cosmic-launcher \
-              cosmic-notifications \
-              cosmic-osd \
-              cosmic-settings \
-              cosmic-settings-daemon \
-              cosmic-store \
-              cosmic-term \
-              cosmic-workspaces \
-              cosmic-randr \
-              cosmic-screenshot \
-              cosmic-bg \
-              cosmic-wallpapers \
-              cosmic-icon-theme \
-              cosmic-initial-setup \
-              cosmic-greeter \
-              cosmic-ext-applet-tailscale \
-              cosmic-ext-applet-clipboard-manager \
-              cosmic-ext-applet-system-monitor \
-              cosmic-ext-applet-ollama \
-              cosmic-ext-applet-emoji-selector \
-              cosmic-ext-applet-sysinfo \
-              cosmic-ext-applet-minimon \
-              greetd \
-              gnome-keyring \
-              gnome-keyring-pam \
-              xdg-desktop-portal-cosmic \
-              xdg-desktop-portal-gtk \
-              adw-gtk3-theme \
-              $optional_packages; \
-          fi; \
           command -v cosmic-session >/dev/null; \
           command -v cosmic-panel >/dev/null; \
           command -v cosmic-app-library >/dev/null; \

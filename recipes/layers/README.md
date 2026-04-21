@@ -12,7 +12,7 @@ These files are the reusable composition units included from image recipes with 
 - `shared/workstation-modern.yml`: shared workstation delta reused by the Alma 10 and Fedora 43 lanes.
 - `shared/workstation-gnome.yml`: GNOME workstation layer.
 - `shared/workstation-gnome-modern.yml`: shared GNOME app delta reused by the Alma 10 and Fedora 43 lanes.
-- `shared/workstation-cosmic.yml`: COSMIC workstation layer.
+- `shared/workstation-cosmic.yml`: common COSMIC workstation package list, payloads, validation, and Flatpak remotes.
 - `shared/nvidia-base.yml`, `shared/nvidia-common.yml`, `shared/nvidia-open-common.yml`, `shared/nvidia-open.yml`, `shared/nvidia-workstation.yml`: shared NVIDIA lane plumbing, including the NVIDIA PCP PMDA on NVIDIA images only.
 
 ## Distro-specific layers
@@ -20,6 +20,7 @@ These files are the reusable composition units included from image recipes with 
 - `alma9/core.yml`, `alma10/core.yml`, `fedora43/core.yml`: distro-specific core drift layered on top of the shared core baseline.
 - `alma9/workstation.yml`, `alma10/workstation.yml`, `fedora43/workstation.yml`: distro workstation drift layered after the shared workstation substrate.
 - `alma9/gnome.yml`, `alma10/gnome.yml`: GNOME-only distro drift where the shared GNOME layers are not enough.
+- `alma/cosmic.yml`: Alma-family COSMIC source and COPR-scoped COSMIC extras shared by Alma 9 and Alma 10.
 - `fedora43/cosmic.yml`, `fedora43/nvidia-open.yml`: Fedora 43 edge-lane drift.
 - `alma9/nvidia-580.yml`: the Alma 9 implementation of the public NVIDIA 580 lane.
 

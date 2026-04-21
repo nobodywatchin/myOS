@@ -11,6 +11,7 @@ modules:
   - from-file: layers/shared/workstation-common.yml
   - from-file: layers/fedora43/workstation.yml
   - from-file: layers/fedora43/cosmic.yml
+  - from-file: layers/shared/workstation-cosmic.yml
   - from-file: layers/shared/nvidia-workstation.yml
   - type: initramfs
   - type: signing

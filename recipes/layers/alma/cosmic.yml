@@ -1,0 +1,31 @@
+---
+modules:
+  # Alma COSMIC packages come from the ligenix Enterprise COSMIC COPR. No
+  # chroot is specified so Alma 9 and Alma 10 can share this layer.
+  - type: dnf
+    repos:
+      copr:
+        - ligenix/enterprise-cosmic
+    install:
+      install-weak-deps: false
+      packages:
+        - repo: copr:copr.fedorainfracloud.org:ligenix:enterprise-cosmic
+          install-weak-deps: false
+          packages:
+            - cosmic-config-fedora
+            - cosmic-ext-applet-tailscale
+            - cosmic-ext-applet-clipboard-manager
+            - cosmic-ext-applet-ollama
+            - cosmic-ext-applet-minimon
+            - cosmic-ext-applet-classic-menu
+            - pop-gtk-theme
+            - cosmic-ext-tweaks
+            - cosmic-ext-storage
+            - cosmic-ext-examine
+            - cosmic-ext-fan-control
+            - cosmic-ext-applet-places-menu
+            - gvfs-nfs
+            - pipewire-v4l2
+            - pipewire-plugin-camera
+            - inputplumber
+            - openconnect-gui
