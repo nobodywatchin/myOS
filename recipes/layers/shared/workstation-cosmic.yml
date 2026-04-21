@@ -34,7 +34,6 @@ modules:
         - xdg-desktop-portal-cosmic
         - xdg-desktop-portal-gtk
         - adw-gtk3-theme
-        - gui-scale-applet
 
   - type: files
     files:
