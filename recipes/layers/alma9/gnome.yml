@@ -22,18 +22,7 @@ modules:
     snippets:
       - RUN ext=/usr/share/gnome-shell/extensions/workspace-indicator@gnome-shell-extensions.gcampax.github.com; js="$ext/extension.js"; grep -q "addToStatusArea('workspace-indicator', _indicator, 0, 'left')" "$js" || sed -i "s/Main\\.panel\\.addToStatusArea('workspace-indicator', _indicator);/Main.panel.addToStatusArea('workspace-indicator', _indicator, 0, 'left');/" "$js"
 
-  - type: default-flatpaks
-    configurations:
-      - scope: system
-        notify: false
-        repo:
-          url: https://dl.flathub.org/repo/flathub.flatpakrepo
-          name: org-system
-          title: Flathub (system, managed)
-        install:
-          - org.gnome.TextEditor
-          - org.gnome.Loupe
-          - app.devsuite.Ptyxis
+  - from-file: layers/shared/flatpak-gnome-legacy.yml
 
   # Alma 9 GNOME-only dconf overrides live under `gnome/alma9/`
   - type: files

@@ -7,7 +7,7 @@ modules:
   - from-file: layers/shared/core.yml
   - from-file: layers/alma9/core.yml
   - from-file: layers/alma9/nvidia-580.yml
-  - from-file: layers/shared/end-user-common.yml
+  - from-file: layers/shared/flatpak-base.yml
   - from-file: layers/shared/workstation-common.yml
   - from-file: layers/alma9/workstation.yml
   - from-file: layers/alma/cosmic.yml

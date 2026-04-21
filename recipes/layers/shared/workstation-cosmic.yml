@@ -2,7 +2,7 @@
 modules:
   # Shared COSMIC workstation layer. Distro-specific COSMIC layers select the
   # package source before this layer runs; this layer owns the common COSMIC
-  # session stack, COSMIC payloads, validation, and Flatpak remotes.
+  # session stack, COSMIC payloads, and validation.
   - type: dnf
     install:
       install-weak-deps: false
@@ -29,16 +29,14 @@ modules:
         - cosmic-initial-setup
         - cosmic-greeter
         - greetd
-        - gnome-keyring
-        - gnome-keyring-pam
-        - xdg-desktop-portal-cosmic
-        - xdg-desktop-portal-gtk
         - adw-gtk3-theme
 
   - type: files
     files:
       - source: cosmic/shared
         destination: /
+
+  - from-file: layers/shared/flatpak-cosmic.yml
 
   - type: containerfile
     snippets:
@@ -53,7 +51,6 @@ modules:
           command -v cosmic-greeter-start >/dev/null; \
           command -v cosmic-greeter-daemon >/dev/null; \
           command -v gnome-keyring-daemon >/dev/null; \
-          rpm -q flatpak flatpak-selinux xdg-desktop-portal xdg-desktop-portal-cosmic xdg-desktop-portal-gtk >/dev/null; \
           find /usr/share/wayland-sessions -maxdepth 1 -type f -iname '*cosmic*.desktop' | grep -q .; \
           test -f /usr/lib/systemd/system/cosmic-greeter.service; \
           test -f /usr/lib/systemd/system/greetd.service; \
@@ -61,21 +58,3 @@ modules:
           test -f /etc/pam.d/cosmic-greeter; \
           find /usr/lib /usr/lib64 -path '*/security/pam_gnome_keyring.so' -type f | grep -q .; \
           grep -q 'command = "cosmic-greeter-start"' /etc/greetd/cosmic-greeter.toml
-
-  - type: default-flatpaks
-    configurations:
-      - scope: system
-        notify: false
-        repo:
-          url: https://apt.pop-os.org/cosmic/cosmic.flatpakrepo
-          name: cosmic
-          title: COSMIC (system)
-
-  - type: default-flatpaks
-    configurations:
-      - scope: user
-        notify: false
-        repo:
-          url: https://apt.pop-os.org/cosmic/cosmic.flatpakrepo
-          name: cosmic
-          title: COSMIC (user)

@@ -1,0 +1,115 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+export PATH="/usr/sbin:/usr/bin:/sbin:/bin:${PATH:-}"
+
+log() {
+  printf 'myos-flatpak-system-maintenance: %s\n' "$*" >&2
+}
+
+require_flatpak() {
+  if ! command -v flatpak >/dev/null 2>&1; then
+    log "flatpak is not installed; nothing to do"
+    exit 0
+  fi
+}
+
+org_system_exists() {
+  flatpak --system remotes --columns=name 2>/dev/null | grep -qx org-system
+}
+
+hide_org_system() {
+  if org_system_exists; then
+    flatpak --system remote-modify --no-enumerate --use-for-deps org-system || \
+      log "could not update org-system remote visibility flags"
+  fi
+}
+
+installed_freedesktop_branches() {
+  flatpak --system list --runtime --columns=application,branch 2>/dev/null | \
+    awk -F '\t' '$1 == "org.freedesktop.Platform" && $2 != "" { print $2 }' | sort -u
+}
+
+common_extension_refs() {
+  local branch
+  while IFS= read -r branch; do
+    [ -n "${branch}" ] || continue
+    printf '%s\n' \
+      "org.freedesktop.Platform.GL.default//${branch}" \
+      "org.freedesktop.Platform.VAAPI.Intel//${branch}"
+  done < <(installed_freedesktop_branches)
+}
+
+ref_installed() {
+  flatpak --system info --runtime "$1" >/dev/null 2>&1
+}
+
+install_common_extensions() {
+  local ref
+
+  if ! org_system_exists; then
+    log "org-system remote is not present; skipping runtime-extension baseline"
+    return 0
+  fi
+
+  while IFS= read -r ref; do
+    [ -n "${ref}" ] || continue
+    if ref_installed "${ref}"; then
+      continue
+    fi
+    if ! flatpak --system install -y --noninteractive --runtime org-system "${ref}"; then
+      log "skipped unavailable system Flatpak extension: ${ref}"
+    fi
+  done < <(common_extension_refs | sort -u)
+}
+
+ensure_system() {
+  require_flatpak
+  hide_org_system
+  install_common_extensions
+}
+
+cleanup_system() {
+  local pin
+
+  require_flatpak
+
+  flatpak pin --system 2>/dev/null | while IFS=' ' read -r pin _; do
+    case "${pin}" in
+      runtime/*) flatpak pin --system --remove "${pin}" || true ;;
+    esac
+  done
+
+  flatpak uninstall --system --unused -y --noninteractive
+}
+
+repair_system() {
+  require_flatpak
+  flatpak repair --system
+  ensure_system
+}
+
+status_system() {
+  require_flatpak
+  printf 'System Flatpak remotes:\n'
+  flatpak --system remotes --show-details || true
+  printf '\nSystem Flatpak apps:\n'
+  flatpak --system list --app --columns=application,branch,origin,installation || true
+  printf '\nSystem Flatpak runtimes and extensions:\n'
+  flatpak --system list --runtime --columns=application,branch,origin,installation || true
+}
+
+case "${1:-}" in
+  ensure) ensure_system ;;
+  cleanup) cleanup_system ;;
+  repair) repair_system ;;
+  status) status_system ;;
+  *)
+    cat >&2 <<'EOF'
+Usage: myos-flatpak-system-maintenance ensure|cleanup|repair|status
+
+Commands operate only on the system Flatpak installation.
+EOF
+    exit 64
+    ;;
+esac

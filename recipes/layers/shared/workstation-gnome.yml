@@ -26,13 +26,14 @@ modules:
         - morewaita-icon-theme
         - nautilus
         - pinentry-gnome3
-        - xdg-desktop-portal-gnome
         - xdg-user-dirs-gtk
 
   - type: files
     files:
       - source: gnome/shared
         destination: /
+
+  - from-file: layers/shared/flatpak-gnome.yml
 
   - type: bling
     install:
@@ -49,23 +50,6 @@ modules:
         "$plugin_dir/libgs_plugin_fedora-pkgdb-collections.so"
         /usr/share/applications/gnome-software-local-file-packagekit.desktop
         /usr/share/applications/gnome-software-local-file-fwupd.desktop
-
-  - type: default-flatpaks
-    configurations:
-      - scope: system
-        notify: false
-        repo:
-          url: https://dl.flathub.org/repo/flathub.flatpakrepo
-          name: org-system
-          title: Flathub (system, managed)
-        install:
-          - com.mattjakeman.ExtensionManager
-          - org.gnome.Decibels
-          - org.gnome.Epiphany
-          - org.gnome.FileRoller
-          - org.gnome.Firmware
-          - org.gnome.Logs
-          - org.gnome.Showtime
 
   - type: dnf
     install:

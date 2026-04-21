@@ -1,0 +1,31 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+flatpak_user_exports="${HOME}/.local/share/flatpak/exports/share"
+flatpak_system_exports="/var/lib/flatpak/exports/share"
+default_xdg_data_dirs="/usr/local/share:/usr/share"
+
+contains_path() {
+  local haystack=":${1:-}:"
+  local needle="$2"
+  [[ "${haystack}" == *":${needle}:"* ]]
+}
+
+xdg_data_dirs="${XDG_DATA_DIRS:-${default_xdg_data_dirs}}"
+if ! contains_path "${xdg_data_dirs}" "${flatpak_system_exports}"; then
+  xdg_data_dirs="${flatpak_system_exports}:${xdg_data_dirs}"
+fi
+if ! contains_path "${xdg_data_dirs}" "${flatpak_user_exports}"; then
+  xdg_data_dirs="${flatpak_user_exports}:${xdg_data_dirs}"
+fi
+export XDG_DATA_DIRS="${xdg_data_dirs}"
+
+env_names=(DISPLAY WAYLAND_DISPLAY XDG_CURRENT_DESKTOP XDG_DATA_DIRS PATH)
+
+if command -v dbus-update-activation-environment >/dev/null 2>&1; then
+  dbus-update-activation-environment --systemd "${env_names[@]}" >/dev/null 2>&1 || true
+fi
+
+if command -v systemctl >/dev/null 2>&1; then
+  systemctl --user import-environment "${env_names[@]}" >/dev/null 2>&1 || true
+fi

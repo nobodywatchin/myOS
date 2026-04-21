@@ -1,6 +1,6 @@
 # Apps And Flatpak
 
-myOS keeps two Flatpak lanes on end-user images.
+myOS keeps two Flatpak lanes on workstation images.
 
 ## User-managed apps
 
@@ -15,6 +15,25 @@ That means the default path for a user-installed app is still the user's own hom
 It is hidden from app and source enumeration, but Flatpak can still use it for automatic runtime dependency resolution for managed system apps.
 
 This is where the distro or an admin can keep a clean shared app set without turning every machine into an anything-goes system-wide app bucket.
+
+## Startup behavior
+
+Workstation sessions import `DISPLAY`, `WAYLAND_DISPLAY`, `XDG_CURRENT_DESKTOP`, `XDG_DATA_DIRS`, and `PATH` into D-Bus activation and `systemd --user` early in the graphical login.
+
+That keeps portal backends and D-Bus activated Flatpak helpers aligned with the real desktop session instead of inheriting a stale or incomplete environment.
+
+## Maintenance helpers
+
+System-scope maintenance never touches user Flatpak installs.
+
+Useful targets:
+
+- `myos flatpak-status` shows system remotes, apps, runtimes, and extensions.
+- `myos flatpak-clean-system` removes unused system-scope Flatpak runtime content.
+- `myos flatpak-repair-system` runs system-scope Flatpak repair and reapplies the system baseline.
+- `myos flatpak-portal-status` shows the current user's portal service state.
+
+`myos update-system` updates system Flatpaks, safely cleans unused system runtime content, reapplies the baseline extension warmup, then stages the bootc image update.
 
 ## Why this split exists
 

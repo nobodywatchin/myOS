@@ -1,0 +1,16 @@
+---
+modules:
+  # Alma 9 GNOME keeps these modern GNOME apps as managed Flatpaks because
+  # the native RPM set is older than the shared modern GNOME lanes.
+  - type: default-flatpaks
+    configurations:
+      - scope: system
+        notify: false
+        repo:
+          url: https://dl.flathub.org/repo/flathub.flatpakrepo
+          name: org-system
+          title: Flathub (system, managed)
+        install:
+          - org.gnome.TextEditor
+          - org.gnome.Loupe
+          - app.devsuite.Ptyxis

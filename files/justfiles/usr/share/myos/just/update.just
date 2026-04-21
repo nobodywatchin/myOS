@@ -1,21 +1,40 @@
 # Update System Flatpaks and OS Image
 update-system:
   sudo flatpak update --system -y
-  myos clean-system
+  myos flatpak-clean-system
+  sudo /usr/libexec/myos-flatpak-system-maintenance ensure
   sudo bootc upgrade
   @echo "bootc auto-apply is disabled in myOS; reboot during your maintenance window to activate the staged image update"
 
 # Clean Unused System Flatpaks
+flatpak-clean-system:
+  sudo /usr/libexec/myos-flatpak-system-maintenance cleanup
+
+# Backward-compatible alias for older muscle memory.
 clean-system:
+  myos flatpak-clean-system
+
+# Repair System Flatpaks
+flatpak-repair-system:
+  sudo /usr/libexec/myos-flatpak-system-maintenance repair
+
+# Show System Flatpak State
+flatpak-status:
+  /usr/libexec/myos-flatpak-system-maintenance status
+
+# Show Current User Portal Service State
+flatpak-portal-status:
     #!/usr/bin/env bash
     set -euo pipefail
 
-    flatpak pin --system | while IFS=" " read -r pin _; do
-      case "$pin" in
-        runtime/*) sudo flatpak pin --system --remove "$pin" ;;
-      esac
-    done
-    sudo flatpak uninstall --system --unused -y
+    systemctl --user --no-pager status \
+      xdg-desktop-portal.service \
+      xdg-document-portal.service \
+      xdg-permission-store.service || true
+    systemctl --user --no-pager status \
+      xdg-desktop-portal-gnome.service \
+      xdg-desktop-portal-cosmic.service \
+      xdg-desktop-portal-gtk.service 2>/dev/null || true
 
 # Update User Flatpaks, the per-user OpenClaw quadlet/runtime, and Distrobox Containers
 update-user:

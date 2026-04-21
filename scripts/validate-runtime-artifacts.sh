@@ -14,6 +14,8 @@ bash -n files/agent/runtime-core/usr/local/bin/openquad
 bash -n files/agent/platform-host/etc/myos/templates/apps/openclaw/scripts/openclaw-start.sh
 bash -n files/scripts/just-el9.sh
 bash -n files/workstation/shared/usr/libexec/myos-workstation-dm-apply
+bash -n files/flatpak/base/usr/libexec/myos-flatpak-session-env
+bash -n files/flatpak/cleanup/usr/libexec/myos-flatpak-system-maintenance
 bash -n files/agent/nvidia/usr/local/libexec/myos/myos-pcp-nvidia-pmda-apply
 bash -n modules/os-release-meta/os-release-meta.sh
 
@@ -87,14 +89,26 @@ grep -q '^Volume=%h/.local/share/openclaw:/home/node/.openclaw:rw,Z$' files/agen
 grep -q '^TimeoutStartSec=15min$' files/agent/runtime-core/etc/myos/templates/apps/openclaw/user/openclaw.container
 grep -q '^WantedBy=default.target$' files/agent/runtime-core/etc/myos/templates/apps/openclaw/user/openclaw.container
 
-test -f files/end-user/shared/etc/profile.d/flatpak-user-default.sh
-test -f files/end-user/shared/etc/systemd/system/system-flatpak-setup.service.d/10-hide-org-system.conf
-grep -q -- "--no-enumerate --use-for-deps org-system" files/end-user/shared/etc/systemd/system/system-flatpak-setup.service.d/10-hide-org-system.conf
-! grep -q -- "--no-use-for-deps" files/end-user/shared/etc/systemd/system/system-flatpak-setup.service.d/10-hide-org-system.conf
-test -f files/end-user/shared/usr/lib/environment.d/60-myos-flatpak-exports.conf
-grep -q "xdg-desktop-portal-gtk" recipes/layers/shared/workstation-cosmic.yml
-grep -q "rpm -q flatpak flatpak-selinux xdg-desktop-portal xdg-desktop-portal-cosmic xdg-desktop-portal-gtk" recipes/layers/shared/workstation-cosmic.yml
-test -f files/end-user/shared/usr/share/polkit-1/rules.d/org.freedesktop.Flatpak.rules
+test -f files/flatpak/base/etc/profile.d/flatpak-user-default.sh
+test -f files/flatpak/base/etc/systemd/system/system-flatpak-setup.service.d/10-managed-org-system.conf
+grep -q "myos-flatpak-system-maintenance ensure" files/flatpak/base/etc/systemd/system/system-flatpak-setup.service.d/10-managed-org-system.conf
+grep -q -- "--no-enumerate --use-for-deps org-system" files/flatpak/cleanup/usr/libexec/myos-flatpak-system-maintenance
+! grep -q -- "--no-use-for-deps" files/flatpak/cleanup/usr/libexec/myos-flatpak-system-maintenance
+test -f files/flatpak/base/usr/lib/environment.d/60-myos-flatpak-exports.conf
+test -f files/flatpak/base/etc/xdg/autostart/myos-flatpak-session-env.desktop
+grep -q "dbus-update-activation-environment --systemd" files/flatpak/base/usr/libexec/myos-flatpak-session-env
+grep -q "systemctl --user import-environment" files/flatpak/base/usr/libexec/myos-flatpak-session-env
+test -f files/gnome/shared/usr/share/xdg-desktop-portal/gnome-portals.conf
+grep -q "default=gnome;gtk;" files/gnome/shared/usr/share/xdg-desktop-portal/gnome-portals.conf
+test -f files/cosmic/shared/usr/share/xdg-desktop-portal/cosmic-portals.conf
+grep -q "default=cosmic;gtk;" files/cosmic/shared/usr/share/xdg-desktop-portal/cosmic-portals.conf
+grep -q "xdg-desktop-portal-gtk" recipes/layers/shared/flatpak-cosmic.yml
+grep -q "xdg-desktop-portal-gnome" recipes/layers/shared/flatpak-gnome.yml
+grep -q "rpm -q flatpak flatpak-selinux xdg-desktop-portal xdg-desktop-portal-cosmic xdg-desktop-portal-gtk" recipes/layers/shared/flatpak-cosmic.yml
+test -f files/flatpak/base/usr/share/polkit-1/rules.d/org.freedesktop.Flatpak.rules
+! grep -q "default-flatpaks" recipes/layers/shared/workstation-common.yml
+! grep -q "default-flatpaks" recipes/layers/shared/workstation-gnome.yml
+! grep -q "default-flatpaks" recipes/layers/shared/workstation-cosmic.yml
 test -f files/workstation/shared/usr/lib/tmpfiles.d/myos-tuned-selinux.conf
 grep -q "^z /etc/tuned/active_profile - - - -$" files/workstation/shared/usr/lib/tmpfiles.d/myos-tuned-selinux.conf
 grep -q "^d /var/log/tuned 0755 root root -$" files/workstation/shared/usr/lib/tmpfiles.d/myos-tuned-selinux.conf
@@ -114,10 +128,16 @@ grep -q '^Before=pmlogger.service$' files/agent/nvidia/usr/lib/systemd/system/my
 
 grep -q "import '/usr/share/myos/just/rebase.just'" files/justfiles/usr/share/myos/just/index.just
 grep -q "import '/usr/share/myos/just/update.just'" files/justfiles/usr/share/myos/just/index.just
+grep -q "^flatpak-clean-system:$" files/justfiles/usr/share/myos/just/update.just
 grep -q "^clean-system:$" files/justfiles/usr/share/myos/just/update.just
-grep -q "myos clean-system" files/justfiles/usr/share/myos/just/update.just
-grep -q "flatpak pin --system --remove" files/justfiles/usr/share/myos/just/update.just
-grep -q "sudo flatpak uninstall --system --unused -y" files/justfiles/usr/share/myos/just/update.just
+grep -q "myos flatpak-clean-system" files/justfiles/usr/share/myos/just/update.just
+grep -q "^flatpak-repair-system:$" files/justfiles/usr/share/myos/just/update.just
+grep -q "^flatpak-status:$" files/justfiles/usr/share/myos/just/update.just
+grep -q "myos-flatpak-system-maintenance cleanup" files/justfiles/usr/share/myos/just/update.just
+grep -q "myos-flatpak-system-maintenance repair" files/justfiles/usr/share/myos/just/update.just
+grep -q "flatpak pin --system --remove" files/flatpak/cleanup/usr/libexec/myos-flatpak-system-maintenance
+grep -q "flatpak uninstall --system --unused -y --noninteractive" files/flatpak/cleanup/usr/libexec/myos-flatpak-system-maintenance
+grep -q "flatpak repair --system" files/flatpak/cleanup/usr/libexec/myos-flatpak-system-maintenance
 grep -q '^rebase:$' files/justfiles/usr/share/myos/just/rebase.just
 grep -q 'raw.githubusercontent.com/myos-dev/myOS/stable/files/base/runtime/usr/share/myos/image-matrix.tsv' files/justfiles/usr/share/myos/just/rebase.just
 grep -q 'Could not reach GitHub to download the image matrix' files/justfiles/usr/share/myos/just/rebase.just

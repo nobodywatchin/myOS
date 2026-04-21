@@ -1,0 +1,50 @@
+---
+modules:
+  # Shared Flatpak base for desktop-capable workstation images.
+  - from-file: layers/shared/flatpak-cleanup.yml
+
+  - type: dnf
+    install:
+      install-weak-deps: false
+      packages:
+        - flatpak
+        - flatpak-selinux
+        - xdg-desktop-portal
+
+  - type: files
+    files:
+      - source: flatpak/base
+        destination: /
+
+  - type: containerfile
+    snippets:
+      - RUN rm -f /usr/share/flatpak/remotes.d/*.flatpakrepo || true
+      - RUN rm -f /etc/flatpak/remotes.d/*.flatpakrepo || true
+
+  - type: default-flatpaks
+    configurations:
+      - scope: user
+        notify: false
+        repo:
+          url: https://dl.flathub.org/repo/flathub.flatpakrepo
+          name: flathub
+          title: Flathub (user)
+      - scope: system
+        notify: false
+        repo:
+          url: https://dl.flathub.org/repo/flathub.flatpakrepo
+          name: org-system
+          title: Flathub (system, managed)
+        install:
+          # Common shared app baseline. Runtime dependencies are installed by
+          # Flatpak, and the startup hook warms common extensions for the
+          # installed freedesktop runtime branches.
+          - com.github.marhkb.Pods
+          - com.usebottles.bottles
+          - io.github.dvlv.boxbuddyrs
+          - io.github.flattool.Ignition
+          - io.github.flattool.Warehouse
+          - io.github.giantpinkrobots.flatsweep
+          - it.mijorus.gearlever
+          - net.nokyan.Resources
+          - org.indii.mendingwall

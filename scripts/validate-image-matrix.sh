@@ -29,7 +29,7 @@ do
   }
 done
 
-for retired_path in   recipes/images/console   recipes/layers/shared/console.yml   files/console/shared/usr/share/myos/console/role.env   recipes/layers/alma9/full.yml   recipes/layers/alma10/full.yml   recipes/layers/fedora43/gnome.yml   recipes/layers/shared/gnome-base.yml   recipes/layers/shared/nvidia-gnome.yml   recipes/layers/features/rocm-developer-tools.yml   files/gnome/flatpak/README.md   scripts/verify-alma9-nvidia-legacy.ps1
+for retired_path in   recipes/images/console   recipes/layers/shared/console.yml   files/console/shared/usr/share/myos/console/role.env   recipes/layers/alma9/full.yml   recipes/layers/alma10/full.yml   recipes/layers/fedora43/gnome.yml   recipes/layers/shared/gnome-base.yml   recipes/layers/shared/nvidia-gnome.yml   recipes/layers/features/rocm-developer-tools.yml   files/gnome/flatpak/README.md   recipes/layers/shared/end-user-common.yml   files/end-user/shared/README.md   scripts/verify-alma9-nvidia-legacy.ps1
 
 do
   [ ! -e "$retired_path" ] || {

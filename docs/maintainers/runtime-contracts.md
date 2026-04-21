@@ -34,16 +34,24 @@ It owns:
 - `openclaw-host`
 - shared server/admin filesystem scaffolding under `/etc/myos`, `/srv/tenants`, and `/var/tmp/myos-podman`
 
-## End-user contract
+## Flatpak contract
 
-`recipes/layers/shared/end-user-common.yml` is for workstation runtime and app governance.
+`recipes/layers/shared/flatpak-base.yml` is for workstation Flatpak runtime and app governance.
 
 It owns:
 
-- Flatpak packaging baseline
-- system-vs-user Flatpak policy payloads
+- Flatpak and `xdg-desktop-portal` package baseline
+- user `flathub` remote for personal installs
+- hidden admin-managed `org-system` remote for curated system apps and dependency resolution
+- shared managed system app set
+- Flatpak policy payloads under `files/flatpak/base/`
+- graphical session environment import for D-Bus activation and `systemd --user`
 
-Server recipes do not consume this layer.
+`recipes/layers/shared/flatpak-cleanup.yml` owns the system-scope maintenance helper used by startup hooks and Justfile targets.
+
+`recipes/layers/shared/flatpak-gnome.yml` and `recipes/layers/shared/flatpak-cosmic.yml` own desktop portal backend selection and environment-specific Flatpak remotes/apps.
+
+Server recipes do not consume these layers and should not receive desktop portal backend logic.
 
 ## Workstation contract
 
@@ -54,7 +62,6 @@ That includes:
 - workstation packages and desktop-oriented diagnostics
 - boot target selection
 - shared display-manager reconciliation
-- the common user/system Flatpak remotes and shared workstation app set
 
 `recipes/layers/shared/workstation-modern.yml` owns the extra workstation delta shared by the Alma 10 and Fedora 43 lanes.
 
@@ -62,9 +69,9 @@ That includes:
 
 GNOME and COSMIC are workstation-environment implementations.
 
-- `workstation-gnome.yml` owns GNOME session, portal, extension, and Software integration behavior.
+- `workstation-gnome.yml` owns GNOME session, extension, and Software integration behavior; `flatpak-gnome.yml` owns GNOME portal selection and GNOME-specific Flatpaks.
 - `workstation-gnome-modern.yml` owns the extra GNOME app delta shared by the Alma 10 and Fedora 43 lanes.
-- `workstation-cosmic.yml` owns common COSMIC session, greeter, portal, validation, and COSMIC Flatpak behavior; `alma/cosmic.yml` and `fedora43/cosmic.yml` own distro source/config drift.
+- `workstation-cosmic.yml` owns common COSMIC session, greeter, and validation; `flatpak-cosmic.yml` owns COSMIC portal selection and COSMIC Flatpak remotes; `alma/cosmic.yml` and `fedora43/cosmic.yml` own distro source/config drift.
 - `files/gnome/shared/usr/share/myos/workstation/desktop.env` and `files/cosmic/shared/usr/share/myos/workstation/desktop.env` are the family markers consumed by the shared DM helper.
 
 ## NVIDIA contract

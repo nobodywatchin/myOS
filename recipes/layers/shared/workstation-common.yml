@@ -1,6 +1,6 @@
 modules:
   # Shared workstation substrate used by every workstation image.
-  # It expects the shared end-user layer to be present first, then keeps
+  # It expects the shared Flatpak base layer to be present first, then keeps
   # distro-specific workstation drift in the distro workstation layers and
   # DE-specific session logic in `workstation-gnome.yml` and
   # `workstation-cosmic.yml`.
@@ -99,7 +99,6 @@ modules:
         - wireplumber
         - wl-clipboard
         - wpa_supplicant
-        - xdg-desktop-portal
         - xdg-user-dirs
 
   - type: files
@@ -161,31 +160,6 @@ modules:
     system:
       enabled:
         - myos-workstation-dm-apply.service
-
-  - type: default-flatpaks
-    configurations:
-      - scope: user
-        notify: false
-        repo:
-          url: https://dl.flathub.org/repo/flathub.flatpakrepo
-          name: flathub
-          title: Flathub (user)
-      - scope: system
-        notify: false
-        repo:
-          url: https://dl.flathub.org/repo/flathub.flatpakrepo
-          name: org-system
-          title: Flathub (system, managed)
-        install:
-          - com.github.marhkb.Pods
-          - com.usebottles.bottles
-          - io.github.dvlv.boxbuddyrs
-          - io.github.flattool.Ignition
-          - io.github.flattool.Warehouse
-          - io.github.giantpinkrobots.flatsweep
-          - it.mijorus.gearlever
-          - net.nokyan.Resources
-          - org.indii.mendingwall
 
   - type: kargs
     kargs:

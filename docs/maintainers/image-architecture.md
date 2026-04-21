@@ -100,11 +100,13 @@ Server recipes now stack an explicit distro core directly into `shared/full.yml`
 
 ### Workstation layers
 
+`recipes/layers/shared/flatpak-base.yml` owns the workstation Flatpak baseline, remotes, managed shared apps, policy payloads, session environment import hook, and cleanup helper inclusion.
+
 `recipes/layers/shared/workstation-common.yml` owns the DE-agnostic workstation substrate.
 
 `recipes/layers/shared/workstation-modern.yml` carries the shared workstation delta reused by the Alma 10 and Fedora 43 lanes.
 
-`recipes/layers/shared/workstation-gnome.yml` and `recipes/layers/shared/workstation-cosmic.yml` own environment identity and session behavior.
+`recipes/layers/shared/workstation-gnome.yml` and `recipes/layers/shared/workstation-cosmic.yml` own environment identity and session behavior. Their nested Flatpak layers own portal backend selection and environment-specific Flatpak app/remote drift.
 
 `recipes/layers/shared/workstation-gnome-modern.yml` carries the shared GNOME app delta reused by the Alma 10 and Fedora 43 lanes.
 

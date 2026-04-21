@@ -1,0 +1,8 @@
+---
+modules:
+  # Shared system-scope Flatpak maintenance helper. User installs are not
+  # cleaned or repaired by this layer.
+  - type: files
+    files:
+      - source: flatpak/cleanup
+        destination: /

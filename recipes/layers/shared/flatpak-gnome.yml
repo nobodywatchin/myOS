@@ -1,0 +1,33 @@
+---
+modules:
+  # GNOME portal backend and GNOME-specific managed system Flatpaks.
+  - type: dnf
+    install:
+      install-weak-deps: false
+      packages:
+        - gnome-keyring
+        - gnome-keyring-pam
+        - xdg-desktop-portal-gnome
+        - xdg-desktop-portal-gtk
+
+  - type: containerfile
+    snippets:
+      - >-
+        RUN set -eux;           rpm -q flatpak flatpak-selinux xdg-desktop-portal xdg-desktop-portal-gnome xdg-desktop-portal-gtk gnome-keyring >/dev/null;           test -f /usr/share/xdg-desktop-portal/gnome-portals.conf;           grep -q '^default=gnome;gtk;' /usr/share/xdg-desktop-portal/gnome-portals.conf;           grep -q '^org.freedesktop.impl.portal.Secret=gnome-keyring;' /usr/share/xdg-desktop-portal/gnome-portals.conf
+
+  - type: default-flatpaks
+    configurations:
+      - scope: system
+        notify: false
+        repo:
+          url: https://dl.flathub.org/repo/flathub.flatpakrepo
+          name: org-system
+          title: Flathub (system, managed)
+        install:
+          - com.mattjakeman.ExtensionManager
+          - org.gnome.Decibels
+          - org.gnome.Epiphany
+          - org.gnome.FileRoller
+          - org.gnome.Firmware
+          - org.gnome.Logs
+          - org.gnome.Showtime

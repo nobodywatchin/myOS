@@ -1,0 +1,35 @@
+---
+modules:
+  # COSMIC portal backend and COSMIC Flatpak remotes. The gtk fallback and
+  # gnome-keyring Secret backend match COSMIC upstream portal configuration.
+  - type: dnf
+    install:
+      install-weak-deps: false
+      packages:
+        - gnome-keyring
+        - gnome-keyring-pam
+        - xdg-desktop-portal-cosmic
+        - xdg-desktop-portal-gtk
+
+  - type: containerfile
+    snippets:
+      - >-
+        RUN set -eux;           rpm -q flatpak flatpak-selinux xdg-desktop-portal xdg-desktop-portal-cosmic xdg-desktop-portal-gtk gnome-keyring >/dev/null;           test -f /usr/share/xdg-desktop-portal/cosmic-portals.conf;           grep -q '^default=cosmic;gtk;' /usr/share/xdg-desktop-portal/cosmic-portals.conf;           grep -q '^org.freedesktop.impl.portal.Secret=gnome-keyring;' /usr/share/xdg-desktop-portal/cosmic-portals.conf
+
+  - type: default-flatpaks
+    configurations:
+      - scope: system
+        notify: false
+        repo:
+          url: https://apt.pop-os.org/cosmic/cosmic.flatpakrepo
+          name: cosmic
+          title: COSMIC (system)
+
+  - type: default-flatpaks
+    configurations:
+      - scope: user
+        notify: false
+        repo:
+          url: https://apt.pop-os.org/cosmic/cosmic.flatpakrepo
+          name: cosmic
+          title: COSMIC (user)

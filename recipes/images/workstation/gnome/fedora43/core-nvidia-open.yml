@@ -6,7 +6,7 @@ image-version: 43
 modules:
   - from-file: layers/fedora43/core.yml
   - from-file: layers/fedora43/nvidia-open.yml
-  - from-file: layers/shared/end-user-common.yml
+  - from-file: layers/shared/flatpak-base.yml
   - from-file: layers/shared/workstation-common.yml
   - from-file: layers/fedora43/workstation.yml
   - from-file: layers/shared/workstation-gnome.yml

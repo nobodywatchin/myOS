@@ -37,6 +37,37 @@ bash ./scripts/validate-image-matrix.sh
 - every supported recipe inherits shared PCP exactly once through `shared/core-base.yml`
 - every NVIDIA recipe inherits NVIDIA PCP exactly once through `shared/nvidia-base.yml` while standard recipes do not
 
+## Flatpak And Portal Runtime Checks
+
+On a booted workstation image, validate the system Flatpak lane and portal session state with:
+
+```bash
+myos flatpak-status
+myos flatpak-portal-status
+systemctl --user show-environment | grep -E '^(DISPLAY|WAYLAND_DISPLAY|XDG_CURRENT_DESKTOP|XDG_DATA_DIRS|PATH)='
+journalctl --user -b -u xdg-desktop-portal.service -u xdg-document-portal.service -u xdg-permission-store.service --no-pager
+```
+
+For GNOME lanes, also inspect the active backend and a cold/warm app launch:
+
+```bash
+grep -R . /usr/share/xdg-desktop-portal/gnome-portals.conf
+systemctl --user status xdg-desktop-portal-gnome.service xdg-desktop-portal-gtk.service --no-pager || true
+time flatpak run --command=sh net.nokyan.Resources -c 'true'
+time flatpak run --command=sh net.nokyan.Resources -c 'true'
+```
+
+For COSMIC lanes, verify the COSMIC backend/fallback pair and applet-facing desktop export behavior:
+
+```bash
+grep -R . /usr/share/xdg-desktop-portal/cosmic-portals.conf
+systemctl --user status xdg-desktop-portal-cosmic.service xdg-desktop-portal-gtk.service --no-pager || true
+printf '%s\n' "$XDG_DATA_DIRS" | tr ':' '\n' | grep -Fx /var/lib/flatpak/exports/share
+journalctl --user -b --no-pager | grep -Ei 'cosmic.*(flatpak|applet|portal)|xdg-desktop-portal'
+```
+
+The COSMIC App Library and panel applet picker should see system Flatpak desktop exports from `/var/lib/flatpak/exports/share/applications`. If validating a COSMIC Flatpak applet from the `cosmic` remote, install it in system scope for the test, confirm the panel embeds it, then remove that explicit test ref.
+
 ## Alma 9 NVIDIA 580
 
 When that path changes and the tooling is available, run:
@@ -63,7 +94,7 @@ Each build job consumes a JSON matrix rendered from the shared TSV manifest in a
 - If you change `shared/core-base.yml`, re-check every role contract and the shared PCP service contract.
 - If you change `shared/core.yml` or `fedora43/core.yml`, re-check the matching distro core delta.
 - If you change `shared/full.yml`, re-check server/admin docs and validation.
-- If you change `shared/end-user-common.yml`, re-check workstation images together.
+- If you change `shared/flatpak-base.yml` or `shared/flatpak-cleanup.yml`, re-check workstation images, Flatpak startup hooks, and system-scope cleanup/repair behavior together.
 - If you change `shared/workstation-common.yml`, re-check both GNOME and COSMIC expectations.
 - If you change the shared NVIDIA layers, re-check both the Alma and Fedora NVIDIA lanes, including NVIDIA PCP PMDA registration.
 - If you change Alma-specific drift, update `docs/maintainers/alma-drift.md` in the same change.
