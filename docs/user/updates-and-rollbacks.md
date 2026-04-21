@@ -16,11 +16,13 @@ If you only want to stage the OS image update, use plain `bootc`:
 sudo bootc upgrade
 ```
 
-To only remove unused system Flatpak refs:
+To remove unused system Flatpak refs, including stale pinned runtimes that are no longer needed by installed system apps:
 
 ```bash
 myos clean-system
 ```
+
+`myos clean-system` clears system runtime pins first, then lets Flatpak remove only refs it considers unused.
 
 myOS disables the stock `bootc-fetch-apply-updates` timer and service. Updates are downloaded and applied when you choose, then activated on reboot.
 

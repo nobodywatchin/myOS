@@ -1,13 +1,21 @@
 # Update System Flatpaks and OS Image
 update-system:
   sudo flatpak update --system -y
-  sudo flatpak uninstall --system --unused -y
+  myos clean-system
   sudo bootc upgrade
   @echo "bootc auto-apply is disabled in myOS; reboot during your maintenance window to activate the staged image update"
 
 # Clean Unused System Flatpaks
 clean-system:
-  sudo flatpak uninstall --system --unused -y
+    #!/usr/bin/env bash
+    set -euo pipefail
+
+    flatpak pin --system | while IFS=" " read -r pin _; do
+      case "$pin" in
+        runtime/*) sudo flatpak pin --system --remove "$pin" ;;
+      esac
+    done
+    sudo flatpak uninstall --system --unused -y
 
 # Update User Flatpaks, the per-user OpenClaw quadlet/runtime, and Distrobox Containers
 update-user:

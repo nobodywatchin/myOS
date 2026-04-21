@@ -113,6 +113,8 @@ grep -q '^Before=pmlogger.service$' files/agent/nvidia/usr/lib/systemd/system/my
 grep -q "import '/usr/share/myos/just/rebase.just'" files/justfiles/usr/share/myos/just/index.just
 grep -q "import '/usr/share/myos/just/update.just'" files/justfiles/usr/share/myos/just/index.just
 grep -q "^clean-system:$" files/justfiles/usr/share/myos/just/update.just
+grep -q "myos clean-system" files/justfiles/usr/share/myos/just/update.just
+grep -q "flatpak pin --system --remove" files/justfiles/usr/share/myos/just/update.just
 grep -q "sudo flatpak uninstall --system --unused -y" files/justfiles/usr/share/myos/just/update.just
 grep -q '^rebase:$' files/justfiles/usr/share/myos/just/rebase.just
 grep -q 'raw.githubusercontent.com/myos-dev/myOS/stable/files/base/runtime/usr/share/myos/image-matrix.tsv' files/justfiles/usr/share/myos/just/rebase.just
