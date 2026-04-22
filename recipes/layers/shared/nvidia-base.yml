@@ -16,7 +16,12 @@ modules:
   - type: containerfile
     snippets:
       - RUN curl -fsSL https://nvidia.github.io/libnvidia-container/stable/rpm/nvidia-container-toolkit.repo -o /etc/yum.repos.d/nvidia-container-toolkit.repo
-      - RUN dnf config-manager --set-disabled "nvidia-container-toolkit"
+      - >-
+        RUN if dnf config-manager --help 2>&1 | grep -q -- '--set-disabled'; then
+        dnf config-manager --set-disabled "nvidia-container-toolkit";
+        else
+        dnf config-manager setopt nvidia-container-toolkit.enabled=0;
+        fi
       - RUN dnf -y --enablerepo "nvidia-container-toolkit" install nvidia-container-toolkit nvidia-container-toolkit-base libnvidia-container-tools libnvidia-container1
       - RUN ldconfig
 

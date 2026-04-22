@@ -3,4 +3,4 @@ modules:
   - type: containerfile
     snippets:
       - >-
-        RUN . /usr/share/myos/os-release-meta.env &&           arch="$(uname -m)" &&           repo_id="cuda-rhel${EL_MAJOR}-${arch}" &&           repo_url="https://developer.download.nvidia.com/compute/cuda/repos/rhel${EL_MAJOR}/${arch}/cuda-rhel${EL_MAJOR}.repo" &&           curl -fsSL "${repo_url}" -o /etc/yum.repos.d/cuda.repo &&           dnf config-manager --set-disabled "${repo_id}"
+        RUN . /usr/share/myos/os-release-meta.env &&           arch="$(uname -m)" &&           repo_id="cuda-rhel${EL_MAJOR}-${arch}" &&           repo_url="https://developer.download.nvidia.com/compute/cuda/repos/rhel${EL_MAJOR}/${arch}/cuda-rhel${EL_MAJOR}.repo" &&           curl -fsSL "${repo_url}" -o /etc/yum.repos.d/cuda.repo &&           if dnf config-manager --help 2>&1 | grep -q -- '--set-disabled'; then dnf config-manager --set-disabled "${repo_id}"; else dnf config-manager setopt "${repo_id}.enabled=0"; fi
