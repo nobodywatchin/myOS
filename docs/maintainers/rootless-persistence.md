@@ -15,6 +15,8 @@ That path is:
 
 This is the local self-service OpenClaw plane. The per-user Quadlet consumes the OpenQuad image (`ghcr.io/myos-dev/openquad:latest`) while preserving the existing `openclaw.service`, `openclaw` container name, and user-owned state directories.
 
+The stock per-user template uses `host.containers.internal` for local Ollama and SearXNG because it targets the existing host-published rootless service pattern. A shared user-defined Podman network remains a supported customization when OpenQuad/OpenClaw and sibling services are all managed as local Quadlets on the same network.
+
 ## Plane 2: persistent-user and tenant flows on server/admin images
 
 Server/admin images add the admin-managed persistent service plane.
