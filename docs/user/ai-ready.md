@@ -7,10 +7,10 @@ In myOS, AI-ready means local capability without forced platform identity.
 - ROCm userspace
 - host Vulkan tooling (`mesa-vulkan-drivers`, `vulkan-loader`, and `vulkaninfo`)
 - the `openquad` command
-- the shipped per-user OpenClaw Quadlet template
+- the shipped per-user OpenClaw Quadlet template, rendered with `ghcr.io/myos-dev/openquad:latest` by default
 - user-owned runtime paths under the user's home directory
 
-The per-user runtime stays inert until the user chooses to install and start it.
+The per-user runtime stays inert until the user chooses to install and start it. It publishes the OpenClaw gateway on `127.0.0.1:18789` and defaults local Ollama/SearXNG endpoints to `host.containers.internal`, matching the current rootless Podman flow where those sibling services are host-published rather than joined to a managed MyOS bridge network.
 
 ## What full images add
 

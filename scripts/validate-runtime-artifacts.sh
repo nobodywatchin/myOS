@@ -82,9 +82,19 @@ grep -q '^Volume=__TENANT_ROOT__/zone-c/storage:/home/node/.openclaw/workspace:Z
 grep -q '^WantedBy=default.target$' files/agent/platform-host/etc/myos/templates/apps/openclaw/quadlets/openclaw.container
 
 grep -q '^\[Container\]$' files/agent/runtime-core/etc/myos/templates/apps/openclaw/user/openclaw.container
+grep -q 'DEFAULT_OPENQUAD_IMAGE="${DEFAULT_OPENQUAD_IMAGE:-ghcr.io/myos-dev/openquad:latest}"' files/agent/runtime-core/usr/local/libexec/myos/common.sh
+grep -q 'DEFAULT_OPENCLAW_IMAGE="${DEFAULT_OPENCLAW_IMAGE:-ghcr.io/openclaw/openclaw:latest}"' files/agent/runtime-core/usr/local/libexec/myos/common.sh
+grep -q 'image="${OPENQUAD_IMAGE:-${OPENCLAW_IMAGE:-$DEFAULT_OPENQUAD_IMAGE}}"' files/agent/runtime-core/usr/local/libexec/myos/lib/user-runtime.sh
 grep -q '^Image=' files/agent/runtime-core/etc/myos/templates/apps/openclaw/user/openclaw.container
 grep -q '^Pull=missing$' files/agent/runtime-core/etc/myos/templates/apps/openclaw/user/openclaw.container
+grep -q '^Network=slirp4netns:allow_host_loopback=true$' files/agent/runtime-core/etc/myos/templates/apps/openclaw/user/openclaw.container
+grep -q '^PublishPort=127.0.0.1:18789:18789$' files/agent/runtime-core/etc/myos/templates/apps/openclaw/user/openclaw.container
+grep -q '^Environment=OLLAMA_BASE_URL=http://host.containers.internal:11434$' files/agent/runtime-core/etc/myos/templates/apps/openclaw/user/openclaw.container
+grep -q '^Environment=SEARXNG_BASE_URL=http://host.containers.internal:8888$' files/agent/runtime-core/etc/myos/templates/apps/openclaw/user/openclaw.container
+grep -q '^Environment=CODEX_HOME=/home/node/.openclaw/.codex$' files/agent/runtime-core/etc/myos/templates/apps/openclaw/user/openclaw.container
 grep -q '^Exec=openclaw gateway --allow-unconfigured$' files/agent/runtime-core/etc/myos/templates/apps/openclaw/user/openclaw.container
+grep -q '^Volume=%h/.local/share/openclaw/.npm:/home/node/.npm:rw,Z$' files/agent/runtime-core/etc/myos/templates/apps/openclaw/user/openclaw.container
+grep -q '^Volume=%h/.local/share/openclaw/.cache:/home/node/.cache:rw,Z$' files/agent/runtime-core/etc/myos/templates/apps/openclaw/user/openclaw.container
 grep -q '^Volume=%h/.local/share/openclaw:/home/node/.openclaw:rw,Z$' files/agent/runtime-core/etc/myos/templates/apps/openclaw/user/openclaw.container
 grep -q '^TimeoutStartSec=15min$' files/agent/runtime-core/etc/myos/templates/apps/openclaw/user/openclaw.container
 grep -q '^WantedBy=default.target$' files/agent/runtime-core/etc/myos/templates/apps/openclaw/user/openclaw.container

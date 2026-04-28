@@ -61,7 +61,7 @@ render_openclaw_user_quadlet() {
   template="$(openclaw_user_quadlet_template_path)"
   [ -f "$template" ] || return 1
 
-  image="${OPENCLAW_IMAGE:-$DEFAULT_OPENCLAW_IMAGE}"
+  image="${OPENQUAD_IMAGE:-${OPENCLAW_IMAGE:-$DEFAULT_OPENQUAD_IMAGE}}"
   ACCOUNT="$(id -un)" \
   ACCOUNT_HOME="$HOME" \
   ACCOUNT_UID="$(id -u)" \

@@ -13,7 +13,7 @@ That path is:
 - installed by the user on demand from the shipped template
 - stored in user-owned locations under the user's home directory
 
-This is the local self-service OpenClaw plane.
+This is the local self-service OpenClaw plane. The per-user Quadlet consumes the OpenQuad image (`ghcr.io/myos-dev/openquad:latest`) while preserving the existing `openclaw.service`, `openclaw` container name, and user-owned state directories.
 
 ## Plane 2: persistent-user and tenant flows on server/admin images
 
