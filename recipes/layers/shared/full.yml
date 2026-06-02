@@ -67,5 +67,9 @@ modules:
           packages:
             - tofu
 
+  # Shared server-lane Ceph host prerequisites belong on server images only;
+  # the Ceph control plane still lives in the cluster operator layer.
+  - from-file: layers/features/ceph-host.yml
+
   # Full images should be ready to administer and automate against Kubernetes.
   - from-file: layers/features/kubernetes-cli.yml

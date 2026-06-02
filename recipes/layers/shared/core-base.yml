@@ -46,7 +46,6 @@ modules:
         - pcp
         - chrony
         - dosfstools
-        - lvm2
         - sg3_utils
         - sg3_utils-libs
         - dbus
@@ -96,6 +95,8 @@ modules:
         destination: /usr
       - source: base/branding
         destination: /
+
+  - from-file: layers/features/k3s.yml
 
   - type: containerfile
     snippets:

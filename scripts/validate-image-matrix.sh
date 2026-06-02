@@ -87,6 +87,15 @@ root = Path('.')
 matrix_file = root / 'files/base/runtime/usr/share/myos/image-matrix.tsv'
 include_re = re.compile(r'^\s*-\s+from-file:\s+([^\s#]+)\s*(?:#.*)?$')
 core_base = root / 'recipes/layers/shared/core-base.yml'
+shared_core = root / 'recipes/layers/shared/core.yml'
+shared_full = root / 'recipes/layers/shared/full.yml'
+k3s_feature = root / 'recipes/layers/features/k3s.yml'
+ceph_host_feature = root / 'recipes/layers/features/ceph-host.yml'
+platform_ceph_layers = {
+    'alma9': root / 'recipes/layers/alma9/ceph-host.yml',
+    'alma10': root / 'recipes/layers/alma10/ceph-host.yml',
+    'fedora43': root / 'recipes/layers/fedora43/ceph-host.yml',
+}
 nvidia_base = root / 'recipes/layers/shared/nvidia-base.yml'
 recipe_ymls = sorted((root / 'recipes').rglob('*.yml'))
 
@@ -147,6 +156,48 @@ for row in rows:
     core_count = graph.count(core_base)
     if core_count != 1:
         die(f"{row['image']} must include shared/core-base.yml exactly once; found {core_count}")
+
+    k3s_count = graph.count(k3s_feature)
+    if k3s_count != 1:
+        die(f"{row['image']} must include features/k3s.yml exactly once; found {k3s_count}")
+
+    is_alma_lane = row['platform'].startswith('alma')
+    shared_core_count = graph.count(shared_core)
+    if is_alma_lane:
+        if shared_core_count != 1:
+            die(f"Alma image {row['image']} must include shared/core.yml exactly once; found {shared_core_count}")
+    elif shared_core_count != 0:
+        die(f"Non-Alma image {row['image']} must not include shared/core.yml; found {shared_core_count}")
+
+    shared_full_count = graph.count(shared_full)
+    if row['role'] == 'server':
+        if shared_full_count != 1:
+            die(f"Server image {row['image']} must include shared/full.yml exactly once; found {shared_full_count}")
+    elif shared_full_count != 0:
+        die(f"Workstation image {row['image']} must not include shared/full.yml; found {shared_full_count}")
+
+    expected_platform_ceph = platform_ceph_layers.get(row['platform'])
+    if expected_platform_ceph is None:
+        die(f"No ceph-host validation mapping exists for platform {row['platform']}")
+    expected_platform_ceph_count = graph.count(expected_platform_ceph)
+    unexpected_platform_ceph = {
+        path.relative_to(root).as_posix(): graph.count(path)
+        for path in platform_ceph_layers.values()
+        if path != expected_platform_ceph and graph.count(path) != 0
+    }
+    ceph_feature_count = graph.count(ceph_host_feature)
+    if row['role'] == 'server':
+        if ceph_feature_count != 1:
+            die(f"Server image {row['image']} must include features/ceph-host.yml exactly once; found {ceph_feature_count}")
+        if expected_platform_ceph_count != 1:
+            die(f"Server image {row['image']} must include {expected_platform_ceph.relative_to(root)} exactly once; found {expected_platform_ceph_count}")
+        if unexpected_platform_ceph:
+            die(f"Server image {row['image']} must not include non-matching ceph-host layers: {unexpected_platform_ceph}")
+    else:
+        if ceph_feature_count != 0:
+            die(f"Workstation image {row['image']} must not include features/ceph-host.yml; found {ceph_feature_count}")
+        if expected_platform_ceph_count != 0 or unexpected_platform_ceph:
+            die(f"Workstation image {row['image']} must not include any ceph-host package layers")
 
     nvidia_count = graph.count(nvidia_base)
     if row['driver'] == 'standard':

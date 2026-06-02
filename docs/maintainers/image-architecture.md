@@ -73,6 +73,7 @@ It owns:
 - common core packages
 - base runtime payloads and branding
 - distrobox helper symlinks
+- shared k3s runtime capability, service units, and kernel/network baseline through `recipes/layers/features/k3s.yml`
 - shared Tailscale baseline
 - shared PCP collection and local history through `pmcd.service` and `pmlogger.service`
 - shared kernel args and masked system services
@@ -93,10 +94,11 @@ It owns:
 - Cockpit
 - OpenTofu
 - Kubernetes CLI
+- server-only Ceph host config baseline through `recipes/layers/features/ceph-host.yml`
 - platform-host payloads under `files/agent/platform-host/`
 - tenant, persistent-user, and `openclaw-host` filesystem scaffolding
 
-Server recipes now stack an explicit distro core directly into `shared/full.yml`; there are no empty distro-specific `full.yml` layers left in the tree.
+Server recipes now stack an explicit distro core directly into `shared/full.yml`, plus a distro-specific `ceph-host.yml` package delta when that server lane needs Ceph/RBD host modules and LVM userspace. There are no empty distro-specific `full.yml` layers left in the tree.
 
 ### Workstation layers
 

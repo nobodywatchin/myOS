@@ -19,6 +19,8 @@ bash ./scripts/validate-image-matrix.sh
 - `files/agent/runtime-core/**`
 - `files/agent/platform-host/**`
 - shared Vulkan packaging in `shared/core-base.yml`
+- shared k3s install wiring, sysctls/modules, and `myos cluster` CLI wiring
+- server-only Ceph host module autoloading and server-lane package placement
 - NVIDIA PCP PMDA registration payloads
 - explicit AMD `uaccess` tagging in the shared DRM/KFD rule
 - persistent-user GPU group enrollment wiring
@@ -35,6 +37,8 @@ bash ./scripts/validate-image-matrix.sh
 - the renderer can emit per-lane recipe lists, workflow matrices, and `myos rebase` output directly from the manifest
 - legacy NVIDIA naming no longer leaks into the active manifest or recipe tree
 - every supported recipe inherits shared PCP exactly once through `shared/core-base.yml`
+- every supported recipe inherits shared k3s capability exactly once through `features/k3s.yml`
+- server recipes inherit `shared/full.yml`, `features/ceph-host.yml`, and the matching distro `ceph-host.yml` exactly once while workstation recipes inherit none of them
 - every NVIDIA recipe inherits NVIDIA PCP exactly once through `shared/nvidia-base.yml` while standard recipes do not
 
 ## Flatpak And Portal Runtime Checks
@@ -91,9 +95,9 @@ Each build job consumes a JSON matrix rendered from the shared TSV manifest in a
 ## Change-specific guidance
 
 - If you change `files/base/runtime/usr/share/myos/image-matrix.tsv`, re-check validation, CI, and the online `myos rebase` picker together.
-- If you change `shared/core-base.yml`, re-check every role contract and the shared PCP service contract.
+- If you change `shared/core-base.yml`, re-check every role contract, the shared PCP service contract, and the all-lanes k3s feature wiring.
 - If you change `shared/core.yml` or `fedora43/core.yml`, re-check the matching distro core delta.
-- If you change `shared/full.yml`, re-check server/admin docs and validation.
+- If you change `shared/full.yml` or any `ceph-host.yml`, re-check the server-only Ceph host boundary and matrix validation.
 - If you change `shared/flatpak-base.yml` or `shared/flatpak-cleanup.yml`, re-check workstation images, Flatpak startup hooks, and system-scope cleanup/repair behavior together.
 - If you change `shared/workstation-common.yml`, re-check both GNOME and COSMIC expectations.
 - If you change the shared NVIDIA layers, re-check both the Alma and Fedora NVIDIA lanes, including NVIDIA PCP PMDA registration.

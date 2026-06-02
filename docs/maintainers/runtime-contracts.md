@@ -10,6 +10,7 @@ That includes:
 
 - common core packages and runtime defaults
 - branding and `os-release` metadata
+- k3s binary, k3s server/agent service units, and shared kernel/network prerequisites through `recipes/layers/features/k3s.yml`
 - Tailscale system daemon baseline
 - host Vulkan userland/tooling
 - the `openquad` command and its supporting runtime-core library files
@@ -29,6 +30,7 @@ It owns:
 
 - Cockpit admin surface
 - OpenTofu and Kubernetes CLI
+- shared Ceph host config baseline; distro-specific Ceph/RBD module and LVM package drift stays in each server lane's `ceph-host.yml`
 - tenant runtime helpers and templates
 - persistent-user admin helpers and templates
 - `openclaw-host`

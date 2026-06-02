@@ -127,6 +127,34 @@ grep -q "^Z /var/log/tuned - - - -$" files/workstation/shared/usr/lib/tmpfiles.d
 grep -q "mesa-vulkan-drivers" recipes/layers/shared/core-base.yml
 grep -q "vulkan-loader" recipes/layers/shared/core-base.yml
 grep -q "vulkan-tools" recipes/layers/shared/core-base.yml
+grep -q "from-file: layers/features/k3s.yml" recipes/layers/shared/core-base.yml
+! grep -q '^        - lvm2$' recipes/layers/shared/core-base.yml
+test -f files/k3s/shared/usr/lib/modules-load.d/90-myos-k3s.conf
+test -f files/k3s/shared/usr/lib/sysctl.d/90-myos-k3s.conf
+grep -q '^overlay$' files/k3s/shared/usr/lib/modules-load.d/90-myos-k3s.conf
+grep -q '^br_netfilter$' files/k3s/shared/usr/lib/modules-load.d/90-myos-k3s.conf
+grep -q '^net.bridge.bridge-nf-call-iptables=1$' files/k3s/shared/usr/lib/sysctl.d/90-myos-k3s.conf
+grep -q '^net.bridge.bridge-nf-call-ip6tables=1$' files/k3s/shared/usr/lib/sysctl.d/90-myos-k3s.conf
+grep -q '^net.ipv4.ip_forward=1$' files/k3s/shared/usr/lib/sysctl.d/90-myos-k3s.conf
+test -f files/k3s/shared/usr/lib/systemd/system/k3s.service
+test -f files/k3s/shared/usr/lib/systemd/system/k3s-agent.service
+grep -q '^ExecStart=/usr/local/bin/k3s server$' files/k3s/shared/usr/lib/systemd/system/k3s.service
+grep -q '^ExecStart=/usr/local/bin/k3s agent$' files/k3s/shared/usr/lib/systemd/system/k3s-agent.service
+grep -q "version='v1.36.1+k3s1'" recipes/layers/features/k3s.yml
+grep -q 'sha256sum-amd64.txt' recipes/layers/features/k3s.yml
+grep -q 'sha256sum-arm64.txt' recipes/layers/features/k3s.yml
+grep -q 'sha256sum -c' recipes/layers/features/k3s.yml
+grep -q 'k3s-agent.service' recipes/layers/features/k3s.yml
+test -f files/ceph-host/shared/usr/lib/modules-load.d/90-myos-ceph-host.conf
+grep -q '^ceph$' files/ceph-host/shared/usr/lib/modules-load.d/90-myos-ceph-host.conf
+grep -q '^rbd$' files/ceph-host/shared/usr/lib/modules-load.d/90-myos-ceph-host.conf
+grep -q 'from-file: layers/features/ceph-host.yml' recipes/layers/shared/full.yml
+grep -q '^        - kernel-modules-core$' recipes/layers/alma9/ceph-host.yml
+grep -q '^        - kernel-modules-core$' recipes/layers/alma10/ceph-host.yml
+grep -q '^        - kernel-modules-core$' recipes/layers/fedora43/ceph-host.yml
+grep -q '^        - lvm2$' recipes/layers/alma9/ceph-host.yml
+grep -q '^        - lvm2$' recipes/layers/alma10/ceph-host.yml
+grep -q '^        - lvm2$' recipes/layers/fedora43/ceph-host.yml
 grep -q 'TAG+="uaccess"' files/agent/runtime-core/etc/udev/rules.d/70-amdgpu.rules
 grep -q "for group in render video; do" files/agent/platform-host/usr/local/libexec/myos/persistent-user-enroll
 grep -q "podman info --format" files/agent/runtime-core/usr/local/bin/openquad
@@ -137,7 +165,12 @@ grep -q '^ExecStart=/usr/local/libexec/myos/myos-pcp-nvidia-pmda-apply$' files/a
 grep -q '^Before=pmlogger.service$' files/agent/nvidia/usr/lib/systemd/system/myos-pcp-nvidia-pmda-apply.service
 
 grep -q "import '/usr/share/myos/just/rebase.just'" files/justfiles/usr/share/myos/just/index.just
+grep -q "import '/usr/share/myos/just/cluster.just'" files/justfiles/usr/share/myos/just/index.just
 grep -q "import '/usr/share/myos/just/update.just'" files/justfiles/usr/share/myos/just/index.just
+grep -q '^cluster \*args:$' files/justfiles/usr/share/myos/just/cluster.just
+grep -q '/usr/local/libexec/myos/cluster' files/justfiles/usr/share/myos/just/cluster.just
+grep -q '^NODE_TOKEN_FILE="/var/lib/rancher/k3s/server/node-token"$' files/agent/runtime-core/usr/local/libexec/myos/cluster
+grep -q 'k3s join endpoints must use https://' files/agent/runtime-core/usr/local/libexec/myos/cluster
 grep -q "^flatpak-clean-system:$" files/justfiles/usr/share/myos/just/update.just
 grep -q "^clean-system:$" files/justfiles/usr/share/myos/just/update.just
 grep -q "myos flatpak-clean-system" files/justfiles/usr/share/myos/just/update.just
@@ -153,6 +186,7 @@ grep -q 'raw.githubusercontent.com/myos-dev/myOS/stable/files/base/runtime/usr/s
 grep -q 'Could not reach GitHub to download the image matrix' files/justfiles/usr/share/myos/just/rebase.just
 grep -q 'No image matrix found at' files/justfiles/usr/share/myos/just/rebase.just
 grep -q "import '/usr/share/myos/just/tenant.just'" files/agent/justfiles/usr/share/myos/just/index.just
+grep -q "import '/usr/share/myos/just/cluster.just'" files/agent/justfiles/usr/share/myos/just/index.just
 grep -q "import '/usr/share/myos/just/openclaw-host.just'" files/agent/justfiles/usr/share/myos/just/index.just
 grep -q '^tenant-list ' files/agent/justfiles/usr/share/myos/just/tenant.just
 grep -q '^tenant-dashboard ' files/agent/justfiles/usr/share/myos/just/tenant.just
