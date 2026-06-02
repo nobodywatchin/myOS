@@ -1,5 +1,5 @@
 modules:
-  # Fedora 43 distro delta layered after shared/core.yml.
+  # Fedora distro delta layered after shared/core.yml.
 
   - type: dnf
     install:

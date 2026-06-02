@@ -1,6 +1,6 @@
 ---
 modules:
-  # Fedora 43 ships COSMIC packages directly, so this lane keeps only
+  # Fedora ships COSMIC packages directly, so this lane keeps only
   # Fedora-native COSMIC config drift and leaves the common stack to the
   # shared COSMIC layer.
   - type: dnf

@@ -64,9 +64,9 @@ ID_LIKE="rhel centos fedora"
 VERSION_ID="10.1"
 PLATFORM_ID="platform:el10"'   almalinux   10   1   true   10   1
 
-run_os_release_meta_smoke   fedora43   $'ID="fedora"
-VERSION_ID="43"
-NAME="Fedora Linux"'   fedora   43   0   false   ''   ''
+run_os_release_meta_smoke   fedora   $'ID="fedora"
+VERSION_ID="44"
+NAME="Fedora Linux"'   fedora   44   0   false   ''   ''
 
 node --check files/agent/platform-host/etc/myos/templates/apps/openclaw/scripts/openclaw-ui-server.mjs
 python3 -m json.tool files/agent/platform-host/etc/myos/templates/apps/openclaw/config/openclaw.json.example >/dev/null
@@ -145,10 +145,10 @@ grep -q '^rbd$' files/ceph-host/shared/usr/lib/modules-load.d/90-myos-ceph-host.
 grep -q 'from-file: layers/features/ceph-host.yml' recipes/layers/shared/full.yml
 grep -q '^        - kernel-modules-core$' recipes/layers/alma9/ceph-host.yml
 grep -q '^        - kernel-modules-core$' recipes/layers/alma10/ceph-host.yml
-grep -q '^        - kernel-modules-core$' recipes/layers/fedora43/ceph-host.yml
+grep -q '^        - kernel-modules-core$' recipes/layers/fedora/ceph-host.yml
 grep -q '^        - lvm2$' recipes/layers/alma9/ceph-host.yml
 grep -q '^        - lvm2$' recipes/layers/alma10/ceph-host.yml
-grep -q '^        - lvm2$' recipes/layers/fedora43/ceph-host.yml
+grep -q '^        - lvm2$' recipes/layers/fedora/ceph-host.yml
 grep -q 'TAG+="uaccess"' files/agent/runtime-core/etc/udev/rules.d/70-amdgpu.rules
 grep -q "for group in render video; do" files/agent/platform-host/usr/local/libexec/myos/persistent-user-enroll
 test -d files/agent/platform-host/etc/myos/templates/persistent-users/baseline/quadlets

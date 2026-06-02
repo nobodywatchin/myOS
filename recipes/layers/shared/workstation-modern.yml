@@ -1,5 +1,5 @@
 modules:
-  # Shared workstation delta used by the Alma 10 and Fedora 43 lanes.
+  # Shared workstation delta used by the Alma 10 and Fedora lanes.
   - type: dnf
     install:
       install-weak-deps: false

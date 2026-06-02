@@ -13,7 +13,7 @@ All workstation recipes build in this order:
 5. environment layer
 6. optional workstation NVIDIA layer when applicable
 
-Alma 10 and Fedora 43 add one more shared layer in the middle:
+Alma 10 and Fedora add one more shared layer in the middle:
 
 - `layers/shared/workstation-modern.yml` after `workstation-common`
 - `layers/shared/workstation-gnome-modern.yml` for GNOME images after `workstation-gnome.yml`
@@ -55,7 +55,7 @@ Alma 9 keeps its extra GNOME delta in `recipes/layers/alma9/gnome.yml`; its mode
 
 Alma 10 keeps only shell-version-specific dconf drift in `recipes/layers/alma10/gnome.yml`.
 
-Fedora 43 no longer needs a dedicated GNOME layer because the shared GNOME layers already cover its supported delta.
+Fedora no longer needs a dedicated GNOME layer because the shared GNOME layers already cover its supported delta.
 
 ## COSMIC layering
 
@@ -65,10 +65,10 @@ COSMIC workstation is:
 - `workstation-common`
 - optional `workstation-modern`
 - distro workstation drift
-- distro COSMIC source layer (`alma/cosmic.yml` or `fedora43/cosmic.yml`)
+- distro COSMIC source layer (`alma/cosmic.yml` or `fedora/cosmic.yml`)
 - `workstation-cosmic`, which includes `flatpak-cosmic`
 
-COSMIC-specific behavior such as greeter wiring, session bits, common packages, validation, and COSMIC markers stays under `recipes/layers/shared/workstation-cosmic.yml` and `files/cosmic/**`. Alma-specific COPR source setup and selected COPR applets stay in `recipes/layers/alma/cosmic.yml`; Fedora keeps only native COSMIC config drift in `recipes/layers/fedora43/cosmic.yml`.
+COSMIC-specific behavior such as greeter wiring, session bits, common packages, validation, and COSMIC markers stays under `recipes/layers/shared/workstation-cosmic.yml` and `files/cosmic/**`. Alma-specific COPR source setup and selected COPR applets stay in `recipes/layers/alma/cosmic.yml`; Fedora keeps only native COSMIC config drift in `recipes/layers/fedora/cosmic.yml`.
 
 ## NVIDIA workstation extras
 

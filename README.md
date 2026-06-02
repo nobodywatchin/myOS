@@ -12,7 +12,7 @@ Workstation remains the flagship user-facing role. Server is the headless admin/
 
 ## Why myOS
 
-- Stable where it should be: Alma 10 is the stable baseline, Fedora 43 is the edge lane, and Alma 9 is reserved for NVIDIA 580 compatibility.
+- Stable where it should be: Alma 10 is the stable baseline, Fedora is the edge lane, and Alma 9 is reserved for NVIDIA 580 compatibility.
 - Curated image boundaries: workstation images keep the modern desktop/runtime model, while admin/operator tooling lives only in the server lane.
 - Explicit GPU policy: standard images have no driver suffix, `nvidia-open` is opt-in where supported, and Alma 9 uses a dedicated `nvidia-580` lane.
 - One source of truth: the repository image matrix feeds CI, validation, and `myos rebase`.
@@ -29,7 +29,7 @@ Lane summary:
 
 - `alma9`: NVIDIA 580 compatibility only for `gnome`, `cosmic`, and `server`
 - `alma10`: stable `gnome`, `cosmic`, and `server`, with optional `nvidia-open`
-- `fedora43`: edge `gnome`, `cosmic`, and `server`, with optional `nvidia-open` on workstation images
+- `fedora`: edge `gnome`, `cosmic`, and `server`, with optional `nvidia-open` on workstation images
 
 The exact supported tags live in the shipped manifest at `files/base/runtime/usr/share/myos/image-matrix.tsv` and are summarized for users in [docs/user/choose-an-image.md](docs/user/choose-an-image.md).
 
@@ -38,7 +38,7 @@ Unsupported by design:
 - no console images
 - no workstation full split
 - no Alma 9 standard or `nvidia-open` images
-- no `fedora43-server-nvidia-open`
+- no `fedora-server-nvidia-open`
 
 ## App Model
 
@@ -103,7 +103,7 @@ recipes/
     shared/
     alma9/
     alma10/
-    fedora43/
+    fedora/
     features/
 
 files/

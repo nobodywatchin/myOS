@@ -12,7 +12,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 MATRIX_FILE = ROOT / 'files/base/runtime/usr/share/myos/image-matrix.tsv'
 FIELDS = ['job', 'platform', 'role', 'environment', 'driver', 'image', 'recipe']
-ALLOWED_PLATFORMS = ('alma9', 'alma10', 'fedora43')
+ALLOWED_PLATFORMS = ('alma9', 'alma10', 'fedora')
 ALLOWED_JOBS = ('server-images', 'workstation-images')
 ALLOWED_ROLES = ('server', 'workstation')
 ALLOWED_ENVIRONMENTS = ('cosmic', 'gnome', 'server')

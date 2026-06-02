@@ -5,7 +5,7 @@ myOS publishes a small image matrix with explicit contracts.
 ## Stability policy
 
 - `alma10` is the stable baseline lane.
-- `fedora43` is the edge lane.
+- `fedora` is the edge lane.
 - `alma9` is reserved for the legacy NVIDIA 580 compatibility lane.
 - role, environment, platform, and driver lanes are all explicit supported contracts.
 

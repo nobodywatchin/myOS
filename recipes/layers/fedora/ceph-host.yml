@@ -1,6 +1,6 @@
 ---
 modules:
-  # Current Fedora 43 package location for Ceph/RBD host kernel modules and LVM
+  # Current Fedora package location for Ceph/RBD host kernel modules and LVM
   # userspace needed by a Ceph operator on storage-capable server nodes.
   - type: dnf
     install:

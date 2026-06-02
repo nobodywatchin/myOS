@@ -1,18 +1,18 @@
 ---
 # yaml-language-server: $schema=https://schema.blue-build.org/recipe-v1.json
-name: fedora43-cosmic-nvidia-open
-description: myOS Fedora 43 edge COSMIC workstation image with the NVIDIA open kernel-module lane.
+name: fedora-cosmic-nvidia-open
+description: myOS Fedora edge COSMIC workstation image with the NVIDIA open kernel-module lane.
 base-image: quay.io/fedora/fedora-bootc
-image-version: 43
+image-version: latest
 modules:
   - from-file: layers/shared/core-base.yml
   - from-file: layers/shared/core.yml
-  - from-file: layers/fedora43/core.yml
-  - from-file: layers/fedora43/nvidia-open.yml
+  - from-file: layers/fedora/core.yml
+  - from-file: layers/fedora/nvidia-open.yml
   - from-file: layers/shared/flatpak-base.yml
   - from-file: layers/shared/workstation-common.yml
-  - from-file: layers/fedora43/workstation.yml
-  - from-file: layers/fedora43/cosmic.yml
+  - from-file: layers/fedora/workstation.yml
+  - from-file: layers/fedora/cosmic.yml
   - from-file: layers/shared/workstation-cosmic.yml
   - from-file: layers/shared/nvidia-workstation.yml
   - type: initramfs

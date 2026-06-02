@@ -10,13 +10,13 @@ Choose them when you do not need NVIDIA-specific packaging.
 
 ## NVIDIA open lane
 
-Choose `nvidia-open` for newer supported NVIDIA GPUs on supported Alma 10 and Fedora 43 images.
+Choose `nvidia-open` for newer supported NVIDIA GPUs on supported Alma 10 and Fedora images.
 
 ## NVIDIA 580 lane
 
 Choose `nvidia-580` only on Alma 9.
 
-That lane is intentionally pinned to the proprietary `nvidia-driver:580` stream for supported older GPUs. It is not available on Alma 10 or Fedora 43.
+That lane is intentionally pinned to the proprietary `nvidia-driver:580` stream for supported older GPUs. It is not available on Alma 10 or Fedora.
 
 ## PCP monitoring
 

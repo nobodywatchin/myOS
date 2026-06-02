@@ -10,15 +10,15 @@ recipes/images/
     gnome/
       alma9/
       alma10/
-      fedora43/
+      fedora/
     cosmic/
       alma9/
       alma10/
-      fedora43/
+      fedora/
   server/
     alma9/
     alma10/
-    fedora43/
+    fedora/
 ```
 
 This is the authoritative repo shape.
@@ -84,7 +84,7 @@ It owns:
 ### Distro core delta
 
 - `recipes/layers/alma/core.yml` adds Alma-family repository and package-manager setup.
-- `recipes/layers/fedora43/core.yml` adds the Fedora 43 edge-lane delta.
+- `recipes/layers/fedora/core.yml` adds the Fedora edge-lane delta.
 - `recipes/layers/alma10/core.yml` and `recipes/layers/alma9/core.yml` keep the remaining Alma-version drift after the Alma-family layer.
 
 ### Server/admin layer
@@ -108,18 +108,18 @@ Server recipes now stack an explicit distro core directly into `shared/full.yml`
 
 `recipes/layers/shared/workstation-common.yml` owns the DE-agnostic workstation substrate.
 
-`recipes/layers/shared/workstation-modern.yml` carries the shared workstation delta reused by the Alma 10 and Fedora 43 lanes.
+`recipes/layers/shared/workstation-modern.yml` carries the shared workstation delta reused by the Alma 10 and Fedora lanes.
 
 `recipes/layers/shared/workstation-gnome.yml` and `recipes/layers/shared/workstation-cosmic.yml` own environment identity and session behavior. Their nested Flatpak layers own portal backend selection and environment-specific Flatpak app/remote drift.
 
-`recipes/layers/shared/workstation-gnome-modern.yml` carries the shared GNOME app delta reused by the Alma 10 and Fedora 43 lanes.
+`recipes/layers/shared/workstation-gnome-modern.yml` carries the shared GNOME app delta reused by the Alma 10 and Fedora lanes.
 
 Remaining distro workstation layers only add real drift:
 
 - `alma9/workstation.yml` and `alma9/gnome.yml` for the Alma 9 compatibility lane
 - `alma10/workstation.yml` and `alma10/gnome.yml` for the Alma 10 stable lane
 - `alma/cosmic.yml` for Alma-family COSMIC COPR source setup shared by Alma 9 and Alma 10
-- `fedora43/workstation.yml` and `fedora43/cosmic.yml` for Fedora 43 edge-lane drift
+- `fedora/workstation.yml` and `fedora/cosmic.yml` for Fedora edge-lane drift
 
 ### NVIDIA layers
 
@@ -127,7 +127,7 @@ NVIDIA ownership is split three ways:
 
 - `shared/nvidia-base.yml`: common repo bootstrap, copied config, NVIDIA PCP PMDA wiring, and kernel args
 - `shared/nvidia-common.yml` / `shared/nvidia-open.yml`: Alma-family NVIDIA lane wiring
-- `fedora43/nvidia-open.yml`: Fedora 43 open-driver delta on top of the shared NVIDIA base
+- `fedora/nvidia-open.yml`: Fedora open-driver delta on top of the shared NVIDIA base
 
 That keeps the repo bootstrap, copied files, NVIDIA PCP PMDA wiring, and open-driver shim owned once instead of repeated across distro layers.
 

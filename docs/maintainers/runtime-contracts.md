@@ -20,7 +20,7 @@ That includes:
 ## Distro core deltas
 
 - `recipes/layers/alma/core.yml` owns Alma-family repository setup such as EPEL/CRB enablement and subscription-manager cleanup.
-- `recipes/layers/fedora43/core.yml` owns Fedora 43 edge-lane core delta such as `dnf5-plugins`, Fedora-native ROCm packages, and Fedora-specific package drift.
+- `recipes/layers/fedora/core.yml` owns Fedora edge-lane core delta such as `dnf5-plugins`, Fedora-native ROCm packages, and Fedora-specific package drift.
 - `recipes/layers/alma9/core.yml` and `recipes/layers/alma10/core.yml` own only the remaining Alma-version drift that does not belong in the shared Alma-family layer.
 
 ## Server/admin contract
@@ -66,15 +66,15 @@ That includes:
 - boot target selection
 - shared display-manager reconciliation
 
-`recipes/layers/shared/workstation-modern.yml` owns the extra workstation delta shared by the Alma 10 and Fedora 43 lanes.
+`recipes/layers/shared/workstation-modern.yml` owns the extra workstation delta shared by the Alma 10 and Fedora lanes.
 
 ## Workstation environment contract
 
 GNOME and COSMIC are workstation-environment implementations.
 
 - `workstation-gnome.yml` owns GNOME session, extension, and Software integration behavior; `flatpak-gnome.yml` owns GNOME portal selection and GNOME-specific Flatpaks.
-- `workstation-gnome-modern.yml` owns the extra GNOME app delta shared by the Alma 10 and Fedora 43 lanes.
-- `workstation-cosmic.yml` owns common COSMIC session, greeter, and validation; `flatpak-cosmic.yml` owns COSMIC portal selection and COSMIC Flatpak remotes; `alma/cosmic.yml` and `fedora43/cosmic.yml` own distro source/config drift.
+- `workstation-gnome-modern.yml` owns the extra GNOME app delta shared by the Alma 10 and Fedora lanes.
+- `workstation-cosmic.yml` owns common COSMIC session, greeter, and validation; `flatpak-cosmic.yml` owns COSMIC portal selection and COSMIC Flatpak remotes; `alma/cosmic.yml` and `fedora/cosmic.yml` own distro source/config drift.
 - `files/gnome/shared/usr/share/myos/workstation/desktop.env` and `files/cosmic/shared/usr/share/myos/workstation/desktop.env` are the family markers consumed by the shared DM helper.
 
 ## NVIDIA contract
@@ -82,4 +82,4 @@ GNOME and COSMIC are workstation-environment implementations.
 - `shared/nvidia-base.yml` owns the common NVIDIA repo bootstrap, copied config, NVIDIA PCP PMDA registration, and kernel args.
 - `shared/nvidia-open-common.yml` owns the open-driver helper shim.
 - `shared/nvidia-common.yml` and `shared/nvidia-open.yml` own the Alma-family NVIDIA lanes.
-- `fedora43/nvidia-open.yml` owns only the Fedora-specific open-driver delta on top of the shared NVIDIA layers.
+- `fedora/nvidia-open.yml` owns only the Fedora-specific open-driver delta on top of the shared NVIDIA layers.

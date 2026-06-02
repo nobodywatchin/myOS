@@ -29,7 +29,7 @@ do
   }
 done
 
-for retired_path in   recipes/images/console   recipes/layers/shared/console.yml   files/console/shared/usr/share/myos/console/role.env   recipes/layers/alma9/full.yml   recipes/layers/alma10/full.yml   recipes/layers/fedora43/gnome.yml   recipes/layers/shared/gnome-base.yml   recipes/layers/shared/nvidia-gnome.yml   recipes/layers/features/rocm-developer-tools.yml   files/gnome/flatpak/README.md   recipes/layers/shared/end-user-common.yml   files/end-user/shared/README.md   scripts/verify-alma9-nvidia-legacy.ps1
+for retired_path in   recipes/images/console   recipes/layers/shared/console.yml   files/console/shared/usr/share/myos/console/role.env   recipes/layers/alma9/full.yml   recipes/layers/alma10/full.yml   recipes/layers/fedora/gnome.yml   recipes/layers/shared/gnome-base.yml   recipes/layers/shared/nvidia-gnome.yml   recipes/layers/features/rocm-developer-tools.yml   files/gnome/flatpak/README.md   recipes/layers/shared/end-user-common.yml   files/end-user/shared/README.md   scripts/verify-alma9-nvidia-legacy.ps1
 
 do
   [ ! -e "$retired_path" ] || {
@@ -104,7 +104,7 @@ ceph_host_feature = root / 'recipes/layers/features/ceph-host.yml'
 platform_ceph_layers = {
     'alma9': root / 'recipes/layers/alma9/ceph-host.yml',
     'alma10': root / 'recipes/layers/alma10/ceph-host.yml',
-    'fedora43': root / 'recipes/layers/fedora43/ceph-host.yml',
+    'fedora': root / 'recipes/layers/fedora/ceph-host.yml',
 }
 nvidia_base = root / 'recipes/layers/shared/nvidia-base.yml'
 recipe_ymls = sorted((root / 'recipes').rglob('*.yml'))
