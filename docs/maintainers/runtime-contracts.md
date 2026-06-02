@@ -13,8 +13,7 @@ That includes:
 - k3s binary, k3s server/agent service units, and shared kernel/network prerequisites through `recipes/layers/features/k3s.yml`
 - Tailscale system daemon baseline
 - host Vulkan userland/tooling
-- the `openquad` command and its supporting runtime-core library files
-- the shipped per-user OpenClaw template under `files/agent/runtime-core/etc/myos/templates/apps/openclaw/user/`
+- shared runtime-core helper libraries, `myos cluster`, and AMD/ROCm access prerequisites
 
 ## Distro core deltas
 

@@ -14,8 +14,8 @@ Unsupported combinations should not be treated as soft promises. If they are mis
 
 ## Boundaries
 
-- Optional per-user OpenClaw through `openquad` is supported on every image, but it is inactive by default and user-owned.
 - Tenant tooling, persistent-user administration, and `openclaw-host` are full-tier advanced flows.
+- Built-in per-user OpenClaw is out of contract for current images.
 - Alma 9 NVIDIA legacy is first-class and intentionally validated.
 - Alma 10 does not support the NVIDIA legacy lane.
 

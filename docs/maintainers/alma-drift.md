@@ -20,7 +20,6 @@ The internal layer file now matches the public lane naming: `recipes/layers/alma
 ## Shared across both Alma lanes
 
 - workstation remains available with GNOME and COSMIC
-- optional per-user OpenClaw via `openquad` ships everywhere
 - ROCm userspace stays in the shared core contract
 - server/admin tooling remains the only supported place for tenant tooling, persistent-user administration, and `openclaw-host`
 

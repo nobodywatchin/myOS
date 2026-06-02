@@ -35,7 +35,7 @@ For actual device-node access:
 - local graphical sessions can use the DRM/KFD `uaccess` ACL path
 - headless or long-lived rootless service users on server images should use `myos persistent-user-enroll --user <name>`, which adds `render` and `video`
 
-The shipped OpenClaw and persistent-user helpers still do not auto-inject `/dev/dri` or `/dev/kfd` into every rootless container; local GPU containers must still opt into explicit device pass-through.
+myOS does not auto-inject `/dev/dri` or `/dev/kfd` into every rootless container; local GPU containers and hosted OpenClaw workloads must still opt into explicit device pass-through.
 
 ## Admin steps for GPU access
 

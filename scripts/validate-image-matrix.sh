@@ -46,8 +46,17 @@ if find recipes/images/workstation -type f -name 'full*.yml' 2>/dev/null | grep 
 fi
 
 if rg -n 'nvidia-legacy' files/base/runtime/usr/share/myos/image-matrix.tsv recipes/images scripts/render-image-matrix.py >/dev/null; then
-  printf 'Legacy NVIDIA naming still leaks into the active matrix or recipe tree.
-' >&2
+  printf 'Legacy NVIDIA naming still leaks into the active matrix or recipe tree.\n' >&2
+  exit 1
+fi
+
+if rg -n '(open[q]uad|Open[Q]uad|OPEN[Q]UAD|open[-_]quad)' "$matrix_file" recipes/images >/dev/null; then
+  printf 'Removed per-user runtime references must not appear in the active image matrix or recipe descriptions.\n' >&2
+  exit 1
+fi
+
+if rg -n 'per-user OpenClaw' recipes/images >/dev/null; then
+  printf 'Built-in per-user OpenClaw claims must not appear in active image recipes.\n' >&2
   exit 1
 fi
 

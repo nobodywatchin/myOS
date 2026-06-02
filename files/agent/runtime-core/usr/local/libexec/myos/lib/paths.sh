@@ -22,15 +22,7 @@ account_home() { getent passwd "$1" 2>/dev/null | awk -F: 'NR == 1 { print $6 }'
 account_quadlet_dir() { printf '%s/.config/containers/systemd\n' "$(account_home "$1")"; }
 account_systemd_user_dir() { printf '%s/.config/systemd/user\n' "$(account_home "$1")"; }
 
-current_user_quadlet_dir() { printf '%s/containers/systemd\n' "${XDG_CONFIG_HOME:-${HOME}/.config}"; }
-openclaw_user_quadlet_path() { printf '%s/%s\n' "$(current_user_quadlet_dir)" "$OPENCLAW_USER_QUADLET_NAME"; }
 persistent_user_template_dir() { printf '%s/%s/quadlets\n' "$PERSISTENT_USER_TEMPLATE_BASE" "$1"; }
-openclaw_user_quadlet_template_path() { printf '%s/user/%s\n' "$TEMPLATE_BASE" "$OPENCLAW_USER_QUADLET_NAME"; }
-openclaw_user_config_dir() { printf '%s/.config/myos\n' "$HOME"; }
-openclaw_user_state_dir() { printf '%s/.local/share/openclaw\n' "$HOME"; }
-openclaw_user_config_file() { printf '%s/openclaw.json\n' "$(openclaw_user_state_dir)"; }
-openclaw_user_workspace_dir() { printf '%s/workspace\n' "$(openclaw_user_state_dir)"; }
-openclaw_user_logs_dir() { printf '%s/.local/state/openclaw/logs\n' "$HOME"; }
 
 persistent_user_state_dir() { printf '%s/users/%s\n' "$PERSISTENT_USER_STATE_BASE" "$1"; }
 persistent_user_role_files_file() { printf '%s/%s.files\n' "$(persistent_user_state_dir "$1")" "$2"; }

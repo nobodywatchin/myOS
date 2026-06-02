@@ -36,7 +36,7 @@ flatpak-portal-status:
       xdg-desktop-portal-cosmic.service \
       xdg-desktop-portal-gtk.service 2>/dev/null || true
 
-# Update User Flatpaks, the per-user OpenClaw quadlet/runtime, and Distrobox Containers
+# Update User Flatpaks, Homebrew, and Distrobox Containers
 update-user:
     #!/usr/bin/env bash
     set -euo pipefail
@@ -112,7 +112,6 @@ update-user:
 
     flatpak update --user -y
     update_homebrew
-    openquad update
     repair_distrobox_helper_paths
     distrobox-upgrade --all
 
@@ -160,7 +159,7 @@ update:
     set -euo pipefail
     sel="$(fzf --prompt='Update: ' --height=15 --border --exit-0 \
           --with-nth=2.. \
-          <<< $'update-system    Update System Flatpaks and OS Image\nupdate-user      Update user Flatpaks, openquad, and Distrobox containers\nupdate-podman    Update Podman Containers\nupdate-firmware  Update Firmware\nupdate-all       Update Everything\n')"
+          <<< $'update-system    Update System Flatpaks and OS Image\nupdate-user      Update user Flatpaks, Homebrew, and Distrobox containers\nupdate-podman    Update Podman Containers\nupdate-firmware  Update Firmware\nupdate-all       Update Everything\n')"
     [[ -n "$sel" ]] || { echo "No selection."; exit 0; }
     target="${sel%% *}"
     echo "→ Running: just ${target}"

@@ -46,6 +46,6 @@ sudo bootc rollback
 
 Then reboot into the previous deployment.
 
-## User runtime updates
+## User-space updates
 
-Optional per-user OpenClaw is still user-owned. If you use it, `myos update-user` can refresh the user-side runtime helpers alongside the rest of your user-space flow.
+`myos update-user` refreshes user Flatpaks, Homebrew when present on workstation images, and Distrobox containers. Current images do not ship a built-in per-user OpenClaw runtime.

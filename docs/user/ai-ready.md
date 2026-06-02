@@ -6,29 +6,10 @@ In myOS, AI-ready means local capability without forced platform identity.
 
 - ROCm userspace
 - host Vulkan tooling (`mesa-vulkan-drivers`, `vulkan-loader`, and `vulkaninfo`)
-- the `openquad` command
-- the shipped per-user OpenClaw Quadlet template, rendered with `ghcr.io/myos-dev/openquad:latest` by default
-- user-owned runtime paths under the user's home directory
+- AMD/ROCm host-side access prerequisites such as the shared DRM/KFD `uaccess` rule
+- generic Podman and Quadlet capability
 
-The per-user runtime stays inert until the user chooses to install and start it. It publishes the OpenClaw gateway on `127.0.0.1:18789` and defaults local Ollama/SearXNG endpoints to `host.containers.internal`, matching the current rootless Podman flow where those sibling services are host-published rather than joined to a managed MyOS bridge network.
-
-The default local endpoint shape is:
-
-```text
-OLLAMA_BASE_URL=http://host.containers.internal:11434
-SEARXNG_BASE_URL=http://host.containers.internal:8888
-```
-
-This is the easiest path when Ollama and SearXNG already publish ports on the host. Do not use `localhost` for sibling containers; inside OpenQuad, `localhost` means the OpenQuad container itself.
-
-A shared user-defined Podman network is also supported for users who want container-name service discovery. In that mode, OpenQuad/OpenClaw, Ollama, and SearXNG all join the same user network and the endpoints become:
-
-```text
-OLLAMA_BASE_URL=http://ollama:11434
-SEARXNG_BASE_URL=http://searxng:8080
-```
-
-The stock MyOS per-user template does not create that shared network automatically. Use it when you intentionally manage the sibling service Quadlets on the same network.
+Current images do not ship a built-in per-user OpenClaw runtime, command wrapper, or user Quadlet template.
 
 ## What full images add
 
@@ -51,6 +32,6 @@ Vulkan or rootless GPU containers, see [docs/user/hardware.md](hardware.md).
 - it does not force hosted OpenClaw flows on ordinary workstation users
 - it does not preload models as branding theater
 - it does not pretend every image is an operator appliance
-- it does not automatically pass `/dev/dri` or `/dev/kfd` through every shipped
-  rootless OpenClaw Quadlet; explicit device-aware container config is still
-  required for local GPU backends
+- it does not automatically pass `/dev/dri` or `/dev/kfd` through every rootless
+  workload; explicit device-aware container config is still required for local
+  GPU backends

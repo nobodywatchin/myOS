@@ -16,7 +16,7 @@ Workstation remains the flagship user-facing role. Server is the headless admin/
 - Curated image boundaries: workstation images keep the modern desktop/runtime model, while admin/operator tooling lives only in the server lane.
 - Explicit GPU policy: standard images have no driver suffix, `nvidia-open` is opt-in where supported, and Alma 9 uses a dedicated `nvidia-580` lane.
 - One source of truth: the repository image matrix feeds CI, validation, and `myos rebase`.
-- AI-ready, not AI-bloated: ROCm userspace and host Vulkan tooling stay in the shared core contract, and optional per-user OpenClaw remains available without turning every image into a hosted platform stack.
+- AI-ready, not AI-bloated: ROCm userspace and host Vulkan tooling stay in the shared core contract, while hosted OpenClaw remains a server/admin flow instead of a baked-in feature on every image.
 
 ## Supported Lanes
 
@@ -59,11 +59,9 @@ AI-ready in myOS means:
 
 - ROCm userspace is available in the shared core contract.
 - Host Vulkan tooling is available in the shared core contract.
-- Optional per-user OpenClaw support via `openquad` ships in every image.
-- That runtime is inert by default, user-owned, and stores mutable state in the user's home.
 - Server images add the hosted/operator surfaces for tenants, persistent-user administration, and `openclaw-host`.
 
-This is local capability, not forced hosted infrastructure and not preloaded models.
+This is local capability, not forced hosted infrastructure and not preloaded models. Current images do not ship a built-in per-user OpenClaw runtime.
 
 Details live in [docs/user/ai-ready.md](docs/user/ai-ready.md).
 

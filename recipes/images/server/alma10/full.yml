@@ -1,6 +1,6 @@
 # yaml-language-server: $schema=https://schema.blue-build.org/recipe-v1.json
 name: alma10-server
-description: myOS AlmaLinux 10 stable server image with admin/operator tooling and optional per-user OpenClaw support.
+description: myOS AlmaLinux 10 stable server image with admin/operator tooling.
 base-image: quay.io/almalinuxorg/almalinux-bootc
 image-version: 10
 modules:

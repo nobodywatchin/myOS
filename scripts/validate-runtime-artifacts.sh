@@ -10,7 +10,6 @@ command -v python3 >/dev/null 2>&1 || { printf 'Missing required tool: python3
 
 find files/agent/runtime-core/usr/local/libexec/myos -type f -print0 | xargs -0 -n1 bash -n
 find files/agent/platform-host/usr/local/libexec/myos -type f -print0 | xargs -0 -n1 bash -n
-bash -n files/agent/runtime-core/usr/local/bin/openquad
 bash -n files/agent/platform-host/etc/myos/templates/apps/openclaw/scripts/openclaw-start.sh
 bash -n files/scripts/just-el9.sh
 bash -n files/workstation/shared/usr/libexec/myos-workstation-dm-apply
@@ -81,23 +80,18 @@ grep -q '^Volume=__TENANT_ROOT__/zone-c/state:/home/node/.openclaw:Z$' files/age
 grep -q '^Volume=__TENANT_ROOT__/zone-c/storage:/home/node/.openclaw/workspace:Z$' files/agent/platform-host/etc/myos/templates/apps/openclaw/quadlets/openclaw.container
 grep -q '^WantedBy=default.target$' files/agent/platform-host/etc/myos/templates/apps/openclaw/quadlets/openclaw.container
 
-grep -q '^\[Container\]$' files/agent/runtime-core/etc/myos/templates/apps/openclaw/user/openclaw.container
-grep -q 'DEFAULT_OPENQUAD_IMAGE="${DEFAULT_OPENQUAD_IMAGE:-ghcr.io/myos-dev/openquad:latest}"' files/agent/runtime-core/usr/local/libexec/myos/common.sh
 grep -q 'DEFAULT_OPENCLAW_IMAGE="${DEFAULT_OPENCLAW_IMAGE:-ghcr.io/openclaw/openclaw:latest}"' files/agent/runtime-core/usr/local/libexec/myos/common.sh
-grep -q 'image="${OPENQUAD_IMAGE:-${OPENCLAW_IMAGE:-$DEFAULT_OPENQUAD_IMAGE}}"' files/agent/runtime-core/usr/local/libexec/myos/lib/user-runtime.sh
-grep -q '^Image=' files/agent/runtime-core/etc/myos/templates/apps/openclaw/user/openclaw.container
-grep -q '^Pull=missing$' files/agent/runtime-core/etc/myos/templates/apps/openclaw/user/openclaw.container
-grep -q '^Network=slirp4netns:allow_host_loopback=true$' files/agent/runtime-core/etc/myos/templates/apps/openclaw/user/openclaw.container
-grep -q '^PublishPort=127.0.0.1:18789:18789$' files/agent/runtime-core/etc/myos/templates/apps/openclaw/user/openclaw.container
-grep -q '^Environment=OLLAMA_BASE_URL=http://host.containers.internal:11434$' files/agent/runtime-core/etc/myos/templates/apps/openclaw/user/openclaw.container
-grep -q '^Environment=SEARXNG_BASE_URL=http://host.containers.internal:8888$' files/agent/runtime-core/etc/myos/templates/apps/openclaw/user/openclaw.container
-grep -q '^Environment=CODEX_HOME=/home/node/.openclaw/.codex$' files/agent/runtime-core/etc/myos/templates/apps/openclaw/user/openclaw.container
-grep -q '^Exec=openclaw gateway --allow-unconfigured$' files/agent/runtime-core/etc/myos/templates/apps/openclaw/user/openclaw.container
-grep -q '^Volume=%h/.local/share/openclaw/.npm:/home/node/.npm:rw,Z$' files/agent/runtime-core/etc/myos/templates/apps/openclaw/user/openclaw.container
-grep -q '^Volume=%h/.local/share/openclaw/.cache:/home/node/.cache:rw,Z$' files/agent/runtime-core/etc/myos/templates/apps/openclaw/user/openclaw.container
-grep -q '^Volume=%h/.local/share/openclaw:/home/node/.openclaw:rw,Z$' files/agent/runtime-core/etc/myos/templates/apps/openclaw/user/openclaw.container
-grep -q '^TimeoutStartSec=15min$' files/agent/runtime-core/etc/myos/templates/apps/openclaw/user/openclaw.container
-grep -q '^WantedBy=default.target$' files/agent/runtime-core/etc/myos/templates/apps/openclaw/user/openclaw.container
+! test -e files/agent/runtime-core/usr/local/bin/open''quad
+! test -e files/agent/runtime-core/usr/local/libexec/myos/lib/user-runtime.sh
+! test -e files/agent/runtime-core/etc/myos/templates/apps/openclaw/user/openclaw.container
+! test -e files/agent/runtime-core/etc/myos/templates/apps/openclaw/user/README.md
+! rg -n 'DEFAULT_OPEN[Q]UAD_IMAGE|OPENCLAW_USER_SERVICE_NAME|OPENCLAW_USER_CONTAINER_NAME|OPENCLAW_USER_QUADLET_NAME|OPEN[Q]UAD_WRAPPER_VERSION' \
+  files/agent/runtime-core/usr/local/libexec/myos/common.sh \
+  files/agent/runtime-core/usr/local/libexec/myos/lib/paths.sh >/dev/null
+! rg -n '\bopen[q]uad\b|open[-_]quad|OPEN[Q]UAD' \
+  files/agent/runtime-core \
+  files/justfiles/usr/share/myos/just/update.just \
+  files/agent/justfiles/usr/share/myos/just >/dev/null
 
 test -f files/flatpak/base/etc/profile.d/flatpak-user-default.sh
 test -f files/flatpak/base/etc/systemd/system/system-flatpak-setup.service.d/10-managed-org-system.conf
@@ -157,7 +151,8 @@ grep -q '^        - lvm2$' recipes/layers/alma10/ceph-host.yml
 grep -q '^        - lvm2$' recipes/layers/fedora43/ceph-host.yml
 grep -q 'TAG+="uaccess"' files/agent/runtime-core/etc/udev/rules.d/70-amdgpu.rules
 grep -q "for group in render video; do" files/agent/platform-host/usr/local/libexec/myos/persistent-user-enroll
-grep -q "podman info --format" files/agent/runtime-core/usr/local/bin/openquad
+test -d files/agent/platform-host/etc/myos/templates/persistent-users/baseline/quadlets
+test -d files/agent/platform-host/etc/myos/templates/persistent-users/owner/quadlets
 grep -q 'groups = \["wheel", "render", "video"\]' image.toml
 test -f files/agent/nvidia/usr/local/libexec/myos/myos-pcp-nvidia-pmda-apply
 test -f files/agent/nvidia/usr/lib/systemd/system/myos-pcp-nvidia-pmda-apply.service

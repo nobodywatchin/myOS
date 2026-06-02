@@ -26,7 +26,7 @@ bash ./scripts/validate-image-matrix.sh
 - persistent-user GPU group enrollment wiring
 - workstation DM helper wiring
 - workstation Flatpak policy payloads
-- host and per-user OpenClaw templates
+- host OpenClaw templates and absence of built-in per-user OpenClaw artifacts
 
 `validate-image-matrix.sh` checks:
 
@@ -36,6 +36,7 @@ bash ./scripts/validate-image-matrix.sh
 - the workflow uses manifest-driven JSON matrices for only `server-images` and `workstation-images`
 - the renderer can emit per-lane recipe lists, workflow matrices, and `myos rebase` output directly from the manifest
 - legacy NVIDIA naming no longer leaks into the active manifest or recipe tree
+- removed per-user runtime references do not appear in the active image matrix or recipe descriptions
 - every supported recipe inherits shared PCP exactly once through `shared/core-base.yml`
 - every supported recipe inherits shared k3s capability exactly once through `features/k3s.yml`
 - server recipes inherit `shared/full.yml`, `features/ceph-host.yml`, and the matching distro `ceph-host.yml` exactly once while workstation recipes inherit none of them
@@ -105,5 +106,4 @@ Each build job consumes a JSON matrix rendered from the shared TSV manifest in a
 
 ## Runtime diagnostics
 
-- `openquad doctor` surfaces current-session GPU group membership, device-node access, Podman runtime, and whether the shipped per-user Quadlet actually requests GPU devices.
 - `myos persistent-user-validate --user NAME` checks `render`/`video` membership plus real access to `/dev/dri/renderD*` and `/dev/kfd` for enrolled login users.

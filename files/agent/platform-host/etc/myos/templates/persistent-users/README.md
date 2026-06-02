@@ -16,4 +16,4 @@ Important rules:
 - If a workload should be shared once per machine, it belongs in a system unit rather than here.
 - myOS can ship shared baseline policy here.
 - Adding files here defines the baseline or owner policy for that image or deployment.
-- The per-user OpenClaw runtime is intentionally not baseline-managed here; users install it explicitly through `openquad` from the system template under `apps/openclaw/user/`.
+- OpenClaw tenant templates live under `apps/openclaw/`; these baseline and owner buckets are reserved for admin-managed persistent-user services.

@@ -24,7 +24,7 @@ files/
 - `workstation/`: shared DE-agnostic workstation payloads.
 - `gnome/`: GNOME family payloads.
 - `cosmic/`: COSMIC family payloads.
-- `agent/runtime-core/`: per-user OpenClaw runtime helpers and shared ROCm runtime files that belong to the shared core contract.
+- `agent/runtime-core/`: shared cross-image runtime helpers plus ROCm/AMD payloads that belong to the shared core contract.
 - `agent/nvidia/`: NVIDIA-only profile and systemd payloads copied by `shared/nvidia-base.yml`.
 - `agent/platform-host/`: server/admin host payloads such as tenant tooling, persistent-user tooling, and `openclaw-host`.
 - `dnf/`: repository files used by `dnf` modules.
@@ -39,4 +39,4 @@ The refactor deliberately split the old platform-host payload into two contracts
 - `agent/nvidia/` is NVIDIA-image only.
 - `agent/platform-host/` is server/admin only.
 
-That is how myOS keeps optional per-user OpenClaw support everywhere without implying that every image is a hosted OpenClaw appliance.
+That split keeps shared runtime capabilities available on every image without implying that every image is a hosted OpenClaw appliance.

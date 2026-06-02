@@ -7,7 +7,6 @@ Quadlets, state, ports, secrets, and `/srv/tenants/<tenant>/` storage tree.
 Contents:
 
 - `quadlets/` contains rootless Podman unit templates that are rendered into the managed tenant account and enabled against `default.target`
-- `user/` contains the shipped per-user OpenClaw Quadlet template that `openquad` installs on demand for a login user
 - `scripts/` contains rendered helper entrypoints mounted into tenant services
 - `env/` contains operator-managed runtime and secret defaults
 - `storage/` documents the expected per-tenant layout

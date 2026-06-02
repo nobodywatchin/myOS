@@ -77,7 +77,7 @@ It owns:
 - shared Tailscale baseline
 - shared PCP collection and local history through `pmcd.service` and `pmlogger.service`
 - shared kernel args and masked system services
-- per-user OpenClaw runtime payloads under `files/agent/runtime-core/`
+- shared runtime-core payloads under `files/agent/runtime-core/` such as core helper libraries, `myos cluster`, and AMD/ROCm access prerequisites
 
 ### Distro core delta
 
