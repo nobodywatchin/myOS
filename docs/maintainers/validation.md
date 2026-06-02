@@ -37,6 +37,9 @@ bash ./scripts/validate-image-matrix.sh
 - the renderer can emit per-lane recipe lists, workflow matrices, and `myos rebase` output directly from the manifest
 - legacy NVIDIA naming no longer leaks into the active manifest or recipe tree
 - removed per-user runtime references do not appear in the active image matrix or recipe descriptions
+- every supported recipe inherits `shared/core-base.yml` and `shared/core.yml` exactly once
+- Alma recipes inherit `alma/core.yml` exactly once while non-Alma recipes do not
+- shared layers do not contain Alma-only EPEL/CRB/subscription-manager setup
 - every supported recipe inherits shared PCP exactly once through `shared/core-base.yml`
 - every supported recipe inherits shared k3s capability exactly once through `features/k3s.yml`
 - server recipes inherit `shared/full.yml`, `features/ceph-host.yml`, and the matching distro `ceph-host.yml` exactly once while workstation recipes inherit none of them
@@ -97,7 +100,8 @@ Each build job consumes a JSON matrix rendered from the shared TSV manifest in a
 
 - If you change `files/base/runtime/usr/share/myos/image-matrix.tsv`, re-check validation, CI, and the online `myos rebase` picker together.
 - If you change `shared/core-base.yml`, re-check every role contract, the shared PCP service contract, and the all-lanes k3s feature wiring.
-- If you change `shared/core.yml` or `fedora43/core.yml`, re-check the matching distro core delta.
+- If you change `shared/core.yml`, re-check every distro lane's repository setup order and image-matrix validation.
+- If you change `alma/core.yml`, `alma9/core.yml`, `alma10/core.yml`, or `fedora43/core.yml`, re-check the matching distro core delta.
 - If you change `shared/full.yml` or any `ceph-host.yml`, re-check the server-only Ceph host boundary and matrix validation.
 - If you change `shared/flatpak-base.yml` or `shared/flatpak-cleanup.yml`, re-check workstation images, Flatpak startup hooks, and system-scope cleanup/repair behavior together.
 - If you change `shared/workstation-common.yml`, re-check both GNOME and COSMIC expectations.

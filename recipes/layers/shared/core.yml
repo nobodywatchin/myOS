@@ -1,24 +1,10 @@
 modules:
-  # Alma-specific delta layered on top of the shared cross-distro core baseline.
-  - from-file: layers/shared/core-base.yml
-
+  # Cross-distro core tools layered after shared/core-base.yml and any
+  # distro-family repository setup required to make these packages available.
   - type: dnf
-    install:
-      packages:
-        - epel-release
-
-  - type: containerfile
-    snippets:
-      - RUN dnf -y config-manager --set-enabled crb
-
-  - type: dnf
-    remove:
-      packages:
-        - subscription-manager
     install:
       install-weak-deps: false
       packages:
-        - dnf
         - gcc
         - zstd
         - fastfetch

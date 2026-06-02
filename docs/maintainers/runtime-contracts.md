@@ -4,7 +4,7 @@ The purpose of the refactor is to keep layer ownership explicit while simplifyin
 
 ## Cross-distro core contract
 
-`recipes/layers/shared/core-base.yml` owns behavior that should exist on every supported image, regardless of distro lane.
+`recipes/layers/shared/core-base.yml` owns low-level behavior that should exist on every supported image, regardless of distro lane.
 
 That includes:
 
@@ -15,11 +15,13 @@ That includes:
 - host Vulkan userland/tooling
 - shared runtime-core helper libraries, `myos cluster`, and AMD/ROCm access prerequisites
 
+`recipes/layers/shared/core.yml` owns distro-neutral core tooling shared by every supported image. It runs after `shared/core-base.yml` and any distro-family repository setup needed to make the shared package set available.
+
 ## Distro core deltas
 
-- `recipes/layers/shared/core.yml` owns Alma-family core delta such as EPEL/CRB enablement and EL-only package drift.
+- `recipes/layers/alma/core.yml` owns Alma-family repository setup such as EPEL/CRB enablement and subscription-manager cleanup.
 - `recipes/layers/fedora43/core.yml` owns Fedora 43 edge-lane core delta such as `dnf5-plugins`, Fedora-native ROCm packages, and Fedora-specific package drift.
-- `recipes/layers/alma9/core.yml` and `recipes/layers/alma10/core.yml` own only the remaining Alma-lane drift that does not belong in the shared Alma core layer.
+- `recipes/layers/alma9/core.yml` and `recipes/layers/alma10/core.yml` own only the remaining Alma-version drift that does not belong in the shared Alma-family layer.
 
 ## Server/admin contract
 

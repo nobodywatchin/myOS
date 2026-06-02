@@ -66,7 +66,7 @@ The TSV schema is intentionally small:
 
 ### Cross-distro core baseline
 
-`recipes/layers/shared/core-base.yml` owns the cross-distro core baseline shared by Alma and Fedora builds.
+`recipes/layers/shared/core-base.yml` owns the cross-distro low-level core baseline shared by Alma and Fedora builds.
 
 It owns:
 
@@ -79,11 +79,13 @@ It owns:
 - shared kernel args and masked system services
 - shared runtime-core payloads under `files/agent/runtime-core/` such as core helper libraries, `myos cluster`, and AMD/ROCm access prerequisites
 
+`recipes/layers/shared/core.yml` owns distro-neutral core tooling shared by every supported image. Image recipes layer it after `shared/core-base.yml` and any distro-family repository setup required for that package set.
+
 ### Distro core delta
 
-- `recipes/layers/shared/core.yml` adds the Alma-specific core delta.
+- `recipes/layers/alma/core.yml` adds Alma-family repository and package-manager setup.
 - `recipes/layers/fedora43/core.yml` adds the Fedora 43 edge-lane delta.
-- `recipes/layers/alma10/core.yml` and `recipes/layers/alma9/core.yml` keep the remaining Alma-only drift after the shared Alma core layer.
+- `recipes/layers/alma10/core.yml` and `recipes/layers/alma9/core.yml` keep the remaining Alma-version drift after the Alma-family layer.
 
 ### Server/admin layer
 

@@ -4,6 +4,8 @@ description: myOS AlmaLinux 9 NVIDIA 580 server image with admin/operator toolin
 base-image: quay.io/almalinuxorg/almalinux-bootc
 image-version: latest
 modules:
+  - from-file: layers/shared/core-base.yml
+  - from-file: layers/alma/core.yml
   - from-file: layers/shared/core.yml
   - from-file: layers/alma9/core.yml
   - from-file: layers/alma9/ceph-host.yml

@@ -4,6 +4,8 @@ description: myOS Fedora 43 edge GNOME workstation image.
 base-image: quay.io/fedora/fedora-bootc
 image-version: 43
 modules:
+  - from-file: layers/shared/core-base.yml
+  - from-file: layers/shared/core.yml
   - from-file: layers/fedora43/core.yml
   - from-file: layers/shared/flatpak-base.yml
   - from-file: layers/shared/workstation-common.yml

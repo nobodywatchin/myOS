@@ -1,6 +1,5 @@
 modules:
-  # Fedora 43 delta layered on top of the shared cross-distro core baseline.
-  - from-file: layers/shared/core-base.yml
+  # Fedora 43 distro delta layered after shared/core.yml.
 
   - type: dnf
     install:
@@ -22,4 +21,3 @@ modules:
         - rocm-hip-devel
         - rocm-opencl-devel
         - rocm-smi
-        - gcc

@@ -97,6 +97,7 @@ matrix_file = root / 'files/base/runtime/usr/share/myos/image-matrix.tsv'
 include_re = re.compile(r'^\s*-\s+from-file:\s+([^\s#]+)\s*(?:#.*)?$')
 core_base = root / 'recipes/layers/shared/core-base.yml'
 shared_core = root / 'recipes/layers/shared/core.yml'
+alma_core = root / 'recipes/layers/alma/core.yml'
 shared_full = root / 'recipes/layers/shared/full.yml'
 k3s_feature = root / 'recipes/layers/features/k3s.yml'
 ceph_host_feature = root / 'recipes/layers/features/ceph-host.yml'
@@ -107,6 +108,17 @@ platform_ceph_layers = {
 }
 nvidia_base = root / 'recipes/layers/shared/nvidia-base.yml'
 recipe_ymls = sorted((root / 'recipes').rglob('*.yml'))
+alma_only_shared_patterns = {
+    'epel-release': 'EPEL is Alma/RHEL-family repository setup; use layers/alma/core.yml',
+    'config-manager --set-enabled crb': 'CRB is Alma/RHEL-family repository setup; use layers/alma/core.yml',
+    'subscription-manager': 'subscription-manager removal is Alma/RHEL-family cleanup; use layers/alma/core.yml',
+}
+
+for shared_layer in sorted((root / 'recipes/layers/shared').glob('*.yml')):
+    shared_text = shared_layer.read_text(encoding='utf-8')
+    for pattern, reason in alma_only_shared_patterns.items():
+        if pattern in shared_text:
+            raise SystemExit(f'{shared_layer} contains Alma-only setup ({pattern}): {reason}')
 
 
 def die(message: str) -> None:
@@ -170,13 +182,20 @@ for row in rows:
     if k3s_count != 1:
         die(f"{row['image']} must include features/k3s.yml exactly once; found {k3s_count}")
 
-    is_alma_lane = row['platform'].startswith('alma')
     shared_core_count = graph.count(shared_core)
-    if is_alma_lane:
-        if shared_core_count != 1:
-            die(f"Alma image {row['image']} must include shared/core.yml exactly once; found {shared_core_count}")
-    elif shared_core_count != 0:
-        die(f"Non-Alma image {row['image']} must not include shared/core.yml; found {shared_core_count}")
+    if shared_core_count != 1:
+        die(f"{row['image']} must include shared/core.yml exactly once; found {shared_core_count}")
+
+    alma_core_count = graph.count(alma_core)
+    if row['platform'].startswith('alma'):
+        if alma_core_count != 1:
+            die(f"Alma image {row['image']} must include alma/core.yml exactly once; found {alma_core_count}")
+        if not (graph.index(core_base) < graph.index(alma_core) < graph.index(shared_core)):
+            die(f"Alma image {row['image']} must order core layers as shared/core-base.yml, alma/core.yml, shared/core.yml")
+    elif alma_core_count != 0:
+        die(f"Non-Alma image {row['image']} must not include alma/core.yml; found {alma_core_count}")
+    elif not (graph.index(core_base) < graph.index(shared_core)):
+        die(f"{row['image']} must order shared/core-base.yml before shared/core.yml")
 
     shared_full_count = graph.count(shared_full)
     if row['role'] == 'server':

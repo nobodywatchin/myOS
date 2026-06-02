@@ -4,6 +4,8 @@ description: myOS AlmaLinux 10 stable server image with admin/operator tooling.
 base-image: quay.io/almalinuxorg/almalinux-bootc
 image-version: 10
 modules:
+  - from-file: layers/shared/core-base.yml
+  - from-file: layers/alma/core.yml
   - from-file: layers/shared/core.yml
   - from-file: layers/alma10/core.yml
   - from-file: layers/alma10/ceph-host.yml

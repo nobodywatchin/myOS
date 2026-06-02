@@ -5,6 +5,8 @@ description: myOS Fedora 43 edge COSMIC workstation image with the NVIDIA open k
 base-image: quay.io/fedora/fedora-bootc
 image-version: 43
 modules:
+  - from-file: layers/shared/core-base.yml
+  - from-file: layers/shared/core.yml
   - from-file: layers/fedora43/core.yml
   - from-file: layers/fedora43/nvidia-open.yml
   - from-file: layers/shared/flatpak-base.yml

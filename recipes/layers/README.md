@@ -4,8 +4,8 @@ These files are the reusable composition units included from image recipes with 
 
 ## Shared layers
 
-- `shared/core-base.yml`: cross-distro core baseline shared by every supported image, including PCP live metrics and local history.
-- `shared/core.yml`: Alma-specific core delta layered on top of `shared/core-base.yml`.
+- `shared/core-base.yml`: cross-distro low-level core baseline shared by every supported image, including PCP live metrics and local history.
+- `shared/core.yml`: distro-neutral core tooling shared by every supported image, layered after `shared/core-base.yml` and any distro-family repository setup.
 - `shared/full.yml`: the distro-neutral admin/operator layer stacked on top of a distro core.
 - `shared/flatpak-base.yml`: workstation Flatpak package baseline, user/system remotes, shared managed app set, policy payloads, and session environment import hook.
 - `shared/flatpak-cleanup.yml`: system-scope Flatpak maintenance helper used by startup hooks and `myos` targets.
@@ -21,7 +21,8 @@ These files are the reusable composition units included from image recipes with 
 
 ## Distro-specific layers
 
-- `alma9/core.yml`, `alma10/core.yml`, `fedora43/core.yml`: distro-specific core drift layered on top of the shared core baseline.
+- `alma/core.yml`: Alma-family repository and package-manager setup, including EPEL/CRB enablement and subscription-manager cleanup, required before shared core tooling on Alma-derived images.
+- `alma9/core.yml`, `alma10/core.yml`, `fedora43/core.yml`: distro-specific core drift layered after the shared core baseline and shared core tooling.
 - `alma9/workstation.yml`, `alma10/workstation.yml`, `fedora43/workstation.yml`: distro workstation drift layered after the shared workstation substrate.
 - `alma9/gnome.yml`, `alma10/gnome.yml`: GNOME-only distro drift where the shared GNOME layers are not enough.
 - `alma/cosmic.yml`: Alma-family COSMIC COPR source setup and COPR-backed applets shared by Alma 9 and Alma 10.

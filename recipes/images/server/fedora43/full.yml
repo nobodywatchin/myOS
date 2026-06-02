@@ -5,6 +5,8 @@ description: myOS Fedora 43 edge server image with admin/operator tooling.
 base-image: quay.io/fedora/fedora-bootc
 image-version: 43
 modules:
+  - from-file: layers/shared/core-base.yml
+  - from-file: layers/shared/core.yml
   - from-file: layers/fedora43/core.yml
   - from-file: layers/fedora43/ceph-host.yml
   - from-file: layers/shared/full.yml

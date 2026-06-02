@@ -1,0 +1,21 @@
+---
+modules:
+  # Alma/RHEL-family repository setup required before shared/core.yml installs
+  # common core tools that come from EPEL/CRB on EL-derived images.
+  - type: dnf
+    install:
+      packages:
+        - epel-release
+
+  - type: containerfile
+    snippets:
+      - RUN dnf -y config-manager --set-enabled crb
+
+  - type: dnf
+    remove:
+      packages:
+        - subscription-manager
+    install:
+      install-weak-deps: false
+      packages:
+        - dnf
