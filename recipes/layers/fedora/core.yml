@@ -21,3 +21,9 @@ modules:
         - rocm-hip-devel
         - rocm-opencl-devel
         - rocm-smi
+
+  - type: dnf
+    install:
+      install-weak-deps: false
+      packages:
+        - opentofu

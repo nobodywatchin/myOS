@@ -53,23 +53,4 @@ modules:
           /etc/nginx/conf.d/myos-platform.conf \
           /var/tmp/myos-podman || true
 
-  - type: dnf
-    repos:
-      files:
-        - opentofu.repo
-      keys:
-        - https://packages.opentofu.org/opentofu/tofu/gpgkey
-        - https://get.opentofu.org/opentofu.asc
-    install:
-      install-weak-deps: false
-      packages:
-        - repo: opentofu
-          packages:
-            - tofu
-
-  # Shared server-lane Ceph host prerequisites belong on server images only;
-  # the Ceph control plane still lives in the cluster operator layer.
   - from-file: layers/features/ceph-host.yml
-
-  # Full images should be ready to administer and automate against Kubernetes.
-  - from-file: layers/features/kubernetes-cli.yml

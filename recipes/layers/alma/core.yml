@@ -19,3 +19,17 @@ modules:
       install-weak-deps: false
       packages:
         - dnf
+
+  - type: dnf
+    repos:
+      files:
+        - opentofu.repo
+      keys:
+        - https://packages.opentofu.org/opentofu/tofu/gpgkey
+        - https://get.opentofu.org/opentofu.asc
+    install:
+      install-weak-deps: false
+      packages:
+        - repo: opentofu
+          packages:
+            - tofu
