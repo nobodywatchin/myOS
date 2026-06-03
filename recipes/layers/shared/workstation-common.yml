@@ -167,18 +167,6 @@ modules:
 
   - type: containerfile
     snippets:
-      - >-
-        RUN set -eux;
-        case "$(uname -m)" in
-          x86_64|aarch64)
-            curl -fsSL
-            https://brave-browser-rpm-beta.s3.brave.com/brave-browser-beta.repo
-            -o /etc/yum.repos.d/brave-browser-beta.repo;
-            dnf -y install brave-origin-beta;
-            dnf clean all;
-            rm -rf /var/cache/dnf /var/tmp/* /tmp/*;
-            ;;
-          *)
-            echo "Skipping brave-origin-beta: unsupported architecture $(uname -m)";
-            ;;
-        esac
+      - RUN curl -fsSL https://brave-browser-rpm-beta.s3.brave.com/brave-browser-beta.repo -o /etc/yum.repos.d/brave-browser-beta.repo
+      - RUN dnf -y install brave-origin-beta
+      - RUN dnf clean all && rm -rf /var/cache/dnf /var/tmp/* /tmp/*
