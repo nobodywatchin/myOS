@@ -12,4 +12,4 @@ modules:
   - type: gnome-extensions
     install:
       - 7535 # Accent Icons
-      - 6051 # Quick Web Search
+    #  - 6051 # Quick Web Search
