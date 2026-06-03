@@ -46,6 +46,7 @@ modules:
         rm -rf "linux-${HELM_ARCH}" "helm-${HELM_VERSION}-linux-${HELM_ARCH}.tar.gz" "helm-${HELM_VERSION}-linux-${HELM_ARCH}.tar.gz.sha256sum";
         helm version
 
+  - type: dnf
     install:
       install-weak-deps: false
       packages:
