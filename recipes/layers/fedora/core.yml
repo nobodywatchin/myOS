@@ -27,3 +27,4 @@ modules:
       install-weak-deps: false
       packages:
         - opentofu
+        - helm

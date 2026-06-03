@@ -27,6 +27,25 @@ modules:
       keys:
         - https://packages.opentofu.org/opentofu/tofu/gpgkey
         - https://get.opentofu.org/opentofu.asc
+
+  - type: containerfile
+    snippets:
+      - >-
+        RUN set -eux;
+        HELM_VERSION="v4.2.0";
+        case "$(uname -m)" in
+          x86_64) HELM_ARCH="amd64" ;;
+          aarch64) HELM_ARCH="arm64" ;;
+          *) echo "unsupported arch: $(uname -m)" >&2; exit 1 ;;
+        esac;
+        curl -fsSLO "https://get.helm.sh/helm-${HELM_VERSION}-linux-${HELM_ARCH}.tar.gz";
+        curl -fsSLO "https://get.helm.sh/helm-${HELM_VERSION}-linux-${HELM_ARCH}.tar.gz.sha256sum";
+        sha256sum -c "helm-${HELM_VERSION}-linux-${HELM_ARCH}.tar.gz.sha256sum";
+        tar -xzf "helm-${HELM_VERSION}-linux-${HELM_ARCH}.tar.gz";
+        install -m 0755 "linux-${HELM_ARCH}/helm" /usr/bin/helm;
+        rm -rf "linux-${HELM_ARCH}" "helm-${HELM_VERSION}-linux-${HELM_ARCH}.tar.gz" "helm-${HELM_VERSION}-linux-${HELM_ARCH}.tar.gz.sha256sum";
+        helm version
+
     install:
       install-weak-deps: false
       packages:
