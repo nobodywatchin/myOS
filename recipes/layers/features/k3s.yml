@@ -14,7 +14,8 @@ modules:
 
   - type: dnf
     install:
-      - helm
+      packages:
+        - helm
 
   - type: systemd
     system:
