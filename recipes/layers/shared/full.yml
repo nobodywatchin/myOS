@@ -1,6 +1,6 @@
 ---
 modules:
-  # Internal server/admin layer stacked on top of an explicit distro core.
+  # Shared image overlay for admin/operator tooling and host layout.
   - type: dnf
     install:
       install-weak-deps: false

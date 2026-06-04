@@ -13,7 +13,7 @@ Workstation remains the flagship user-facing role. Server is the headless admin/
 ## Why myOS
 
 - Stable where it should be: Alma 10 is the stable baseline, Fedora is the edge lane, and Alma 9 is reserved for NVIDIA 580 compatibility.
-- Curated image boundaries: workstation images keep the modern desktop/runtime model, while admin/operator tooling lives only in the server lane.
+- Curated image boundaries: workstation images keep the modern desktop/runtime model, while the shared admin/operator surface is intentionally baked into every image.
 - Explicit GPU policy: standard images have no driver suffix, `nvidia-open` is opt-in where supported, and Alma 9 uses a dedicated `nvidia-580` lane.
 - One source of truth: the repository image matrix feeds CI, validation, and `myos rebase`.
 - AI-ready, not AI-bloated: ROCm userspace and host Vulkan tooling stay in the shared core contract, while hosted OpenClaw remains a server/admin flow instead of a baked-in feature on every image.
@@ -59,7 +59,7 @@ AI-ready in myOS means:
 
 - ROCm userspace is available in the shared core contract.
 - Host Vulkan tooling is available in the shared core contract.
-- Server images add the hosted/operator surfaces for tenants, persistent-user administration, and `openclaw-host`.
+- Every image includes the shared host/admin surfaces for tenants, persistent-user administration, and `openclaw-host`.
 
 This is local capability, not forced hosted infrastructure and not preloaded models. Current images do not ship a built-in per-user OpenClaw runtime.
 
@@ -131,4 +131,4 @@ Maintainer and operator-facing docs live under `docs/maintainers/`:
 - [docs/maintainers/operator-flows.md](docs/maintainers/operator-flows.md)
 - [docs/maintainers/validation.md](docs/maintainers/validation.md)
 
-Hosted OpenClaw, tenant workflows, and persistent-user administration are still supported, but they are advanced server/admin flows rather than the public identity of every image.
+Hosted OpenClaw, tenant workflows, and persistent-user administration are still supported everywhere, but they are advanced flows rather than the public identity of every image.

@@ -11,7 +11,7 @@ In myOS, AI-ready means local capability without forced platform identity.
 
 Current images do not ship a built-in per-user OpenClaw runtime, command wrapper, or user Quadlet template.
 
-## What full images add
+## What the shared overlay adds
 
 - tenant tooling
 - persistent-user admin tooling

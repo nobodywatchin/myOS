@@ -11,3 +11,5 @@ modules:
         - fzf
         - distrobox
         - podman-compose
+
+  - from-file: layers/shared/full.yml

@@ -26,7 +26,7 @@ files/
 - `cosmic/`: COSMIC family payloads.
 - `agent/runtime-core/`: shared cross-image runtime helpers plus ROCm/AMD payloads that belong to the shared core contract.
 - `agent/nvidia/`: NVIDIA-only profile and systemd payloads copied by `shared/nvidia-base.yml`.
-- `agent/platform-host/`: server/admin host payloads such as tenant tooling, persistent-user tooling, and `openclaw-host`.
+- `agent/platform-host/`: shared host payloads such as tenant tooling, persistent-user tooling, and `openclaw-host`.
 - `dnf/`: repository files used by `dnf` modules.
 - `justfiles/`: shared just recipes copied into the image.
 - `scripts/`: build helper scripts used by non-files BlueBuild modules.

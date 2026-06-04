@@ -25,7 +25,7 @@ That includes:
 
 ## Server/admin contract
 
-`recipes/layers/shared/full.yml` is the explicit server/admin layer.
+`recipes/layers/shared/full.yml` is the explicit admin/operator overlay shared by every image.
 
 It owns:
 

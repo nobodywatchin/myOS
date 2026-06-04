@@ -102,7 +102,7 @@ Each build job consumes a JSON matrix rendered from the shared TSV manifest in a
 - If you change `shared/core-base.yml`, re-check every role contract, the shared PCP service contract, and the all-lanes k3s feature wiring.
 - If you change `shared/core.yml`, re-check every distro lane's repository setup order and image-matrix validation.
 - If you change `alma/core.yml`, `alma9/core.yml`, `alma10/core.yml`, or `fedora/core.yml`, re-check the matching distro core delta.
-- If you change `shared/full.yml` or any `ceph-host.yml`, re-check the server-only Ceph host boundary and matrix validation.
+- shared/full.yml or any `ceph-host.yml` should be re-checked for the admin/operator overlay and Ceph host boundary, plus matrix validation.
 - If you change `shared/flatpak-base.yml` or `shared/flatpak-cleanup.yml`, re-check workstation images, Flatpak startup hooks, and system-scope cleanup/repair behavior together.
 - If you change `shared/workstation-common.yml`, re-check both GNOME and COSMIC expectations.
 - If you change the shared NVIDIA layers, re-check both the Alma and Fedora NVIDIA lanes, including NVIDIA PCP PMDA registration.

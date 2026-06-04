@@ -89,7 +89,7 @@ It owns:
 
 ### Server/admin layer
 
-`recipes/layers/shared/full.yml` is the distro-neutral server/admin layer.
+`recipes/layers/shared/full.yml` is the distro-neutral admin/operator overlay.
 
 It owns:
 

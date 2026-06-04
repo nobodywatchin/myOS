@@ -1,6 +1,6 @@
 # Operator Flows
 
-These are advanced server/admin flows.
+These are advanced shared flows.
 
 ## Tenant tooling
 
