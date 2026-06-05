@@ -37,8 +37,6 @@ Current lanes:
 
 Unsupported combinations are intentional.
 
-- no console images
-- no workstation full split
 - no Alma 9 standard or `nvidia-open` images
 - no `fedora-server-nvidia-open`
 

@@ -20,7 +20,7 @@ Current images do not ship a built-in per-user OpenClaw runtime, command wrapper
 
 `myos persistent-user-enroll --user <name>` now also adds the enrolled login user
 to `render` and `video`, which is the repo-managed path for headless or
-long-lived rootless GPU workloads on full images.
+long-lived rootless GPU workloads.
 
 Those are real advanced capabilities, but they are not the default identity of every workstation image anymore.
 

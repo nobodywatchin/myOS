@@ -41,8 +41,7 @@ bash ./scripts/validate-image-matrix.sh
 - Alma recipes inherit `alma/core.yml` exactly once while non-Alma recipes do not
 - shared layers do not contain Alma-only EPEL/CRB/subscription-manager setup
 - every supported recipe inherits shared PCP exactly once through `shared/core-base.yml`
-- every supported recipe inherits shared k3s capability exactly once through `features/k3s.yml`
-- server recipes inherit `shared/full.yml`, `features/ceph-host.yml`, and the matching distro `ceph-host.yml` exactly once while workstation recipes inherit none of them
+- every supported recipe inherits shared cluster capability exactly once through `features/k3s.yml`, `features/ceph-host.yml`, and the matching distro `ceph-host.yml` exactly once while workstation recipes inherit none of them
 - every NVIDIA recipe inherits NVIDIA PCP exactly once through `shared/nvidia-base.yml` while standard recipes do not
 
 ## Flatpak And Portal Runtime Checks
@@ -102,7 +101,6 @@ Each build job consumes a JSON matrix rendered from the shared TSV manifest in a
 - If you change `shared/core-base.yml`, re-check every role contract, the shared PCP service contract, and the all-lanes k3s feature wiring.
 - If you change `shared/core.yml`, re-check every distro lane's repository setup order and image-matrix validation.
 - If you change `alma/core.yml`, `alma9/core.yml`, `alma10/core.yml`, or `fedora/core.yml`, re-check the matching distro core delta.
-- shared/full.yml or any `ceph-host.yml` should be re-checked for the admin/operator overlay and Ceph host boundary, plus matrix validation.
 - If you change `shared/flatpak-base.yml` or `shared/flatpak-cleanup.yml`, re-check workstation images, Flatpak startup hooks, and system-scope cleanup/repair behavior together.
 - If you change `shared/workstation-common.yml`, re-check both GNOME and COSMIC expectations.
 - If you change the shared NVIDIA layers, re-check both the Alma and Fedora NVIDIA lanes, including NVIDIA PCP PMDA registration.

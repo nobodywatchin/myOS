@@ -23,10 +23,6 @@ That includes:
 - `recipes/layers/fedora/core.yml` owns Fedora edge-lane core delta such as `dnf5-plugins`, Fedora-native ROCm packages, and Fedora-specific package drift.
 - `recipes/layers/alma9/core.yml` and `recipes/layers/alma10/core.yml` own only the remaining Alma-version drift that does not belong in the shared Alma-family layer.
 
-## Server/admin contract
-
-`recipes/layers/shared/full.yml` is the explicit admin/operator overlay shared by every image.
-
 It owns:
 
 - Cockpit admin surface

@@ -23,7 +23,7 @@ recipes/images/
 
 This is the authoritative repo shape.
 
-Internal filenames like `core.yml`, `full.yml`, and `nvidia-580.yml` are maintenance details. The public product model comes from the manifest and the recipe `name:` fields.
+Internal filenames like `core.yml` and `nvidia-580.yml` are maintenance details. The public product model comes from the manifest and the recipe `name:` fields.
 
 ## Product model
 
@@ -87,10 +87,6 @@ It owns:
 - `recipes/layers/fedora/core.yml` adds the Fedora edge-lane delta.
 - `recipes/layers/alma10/core.yml` and `recipes/layers/alma9/core.yml` keep the remaining Alma-version drift after the Alma-family layer.
 
-### Server/admin layer
-
-`recipes/layers/shared/full.yml` is the distro-neutral admin/operator overlay.
-
 It owns:
 
 - Cockpit
@@ -99,8 +95,6 @@ It owns:
 - server-only Ceph host config baseline through `recipes/layers/features/ceph-host.yml`
 - platform-host payloads under `files/agent/platform-host/`
 - tenant, persistent-user, and `openclaw-host` filesystem scaffolding
-
-Server recipes now stack an explicit distro core directly into `shared/full.yml`, plus a distro-specific `ceph-host.yml` package delta when that server lane needs Ceph/RBD host modules and LVM userspace. There are no empty distro-specific `full.yml` layers left in the tree.
 
 ### Workstation layers
 
@@ -136,6 +130,5 @@ That keeps the repo bootstrap, copied files, NVIDIA PCP PMDA wiring, and open-dr
 The public tags are uniform and short.
 
 - no `workstation-*` prefix
-- no `core-*` or `full-*` published tags
 - no `default` suffix in published names
 - no `nvidia-legacy` naming in the supported recipe tree or manifest
