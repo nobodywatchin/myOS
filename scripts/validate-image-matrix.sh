@@ -108,9 +108,9 @@ include_re = re.compile(r'^\s*-\s+from-file:\s+([^\s#]+)\s*(?:#.*)?$')
 core_base = root / 'recipes/layers/shared/core-base.yml'
 shared_core = root / 'recipes/layers/shared/core.yml'
 alma_core = root / 'recipes/layers/alma/core.yml'
-shared_overlay = root / 'recipes/layers/shared/admin-overlay.yml'
 k3s_feature = root / 'recipes/layers/features/k3s.yml'
-ceph_host_feature = root / 'recipes/layers/features/ceph-host.yml'
+ceph_feature = root / 'recipes/layers/features/ceph.yml'
+cockpit_feature = root / 'recipes/layers/features/cockpit.yml'
 platform_ceph_layers = {
     'alma9': root / 'recipes/layers/alma9/ceph-host.yml',
     'alma10': root / 'recipes/layers/alma10/ceph-host.yml',
@@ -207,9 +207,13 @@ for row in rows:
     elif not (graph.index(core_base) < graph.index(shared_core)):
         die(f"{row['image']} must order shared/core-base.yml before shared/core.yml")
 
-    shared_overlay_count = graph.count(shared_overlay)
-    if shared_overlay_count != 1:
-        die(f"Image {row['image']} must include shared/admin-overlay.yml exactly once; found {shared_overlay_count}")
+    cockpit_count = graph.count(cockpit_feature)
+    if cockpit_count != 1:
+        die(f"Image {row['image']} must include features/cockpit.yml exactly once; found {cockpit_count}")
+
+    ceph_feature_count = graph.count(ceph_feature)
+    if ceph_feature_count != 1:
+        die(f"Image {row['image']} must include features/ceph.yml exactly once; found {ceph_feature_count}")
 
     expected_platform_ceph = platform_ceph_layers.get(row['platform'])
     if expected_platform_ceph is None:
@@ -220,9 +224,6 @@ for row in rows:
         for path in platform_ceph_layers.values()
         if path != expected_platform_ceph and graph.count(path) != 0
     }
-    ceph_feature_count = graph.count(ceph_host_feature)
-    if ceph_feature_count != 1:
-        die(f"Image {row['image']} must include features/ceph-host.yml exactly once; found {ceph_feature_count}")
     if row['role'] == 'server':
         if expected_platform_ceph_count != 1:
             die(f"Server image {row['image']} must include {expected_platform_ceph.relative_to(root)} exactly once; found {expected_platform_ceph_count}")

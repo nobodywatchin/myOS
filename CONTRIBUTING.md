@@ -6,7 +6,7 @@ Before changing a layer, decide which role and tier should own that behavior.
 
 - shared low-level base behavior belongs in `recipes/layers/shared/core-base.yml`
 - shared cross-distro core tooling belongs in `recipes/layers/shared/core.yml`
-- shared admin/operator overlay behavior belongs in `recipes/layers/shared/admin-overlay.yml`, which is included by the shared core contract for every image
+- shared cockpit / ceph / k3s / host-overlay behavior belongs in `recipes/layers/features/*.yml` and the remaining shared host/operator remainder belongs in `recipes/layers/shared/core.yml`
 - end-user app/runtime behavior belongs in `recipes/layers/shared/end-user-common.yml`
 - workstation behavior belongs in `workstation-common` plus a workstation family layer
 - distro-family or distro-version drift belongs under `recipes/layers/alma/`, `recipes/layers/alma9/`, `recipes/layers/alma10/`, or `recipes/layers/fedora/`

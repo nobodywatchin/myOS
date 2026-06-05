@@ -6,7 +6,9 @@ These files are the reusable composition units included from image recipes with 
 
 - `shared/core-base.yml`: cross-distro low-level core baseline shared by every supported image, including PCP live metrics and local history.
 - `shared/core.yml`: distro-neutral core tooling shared by every supported image, layered after `shared/core-base.yml` and any distro-family repository setup.
-- `shared/admin-overlay.yml`: the distro-neutral admin/operator overlay pulled in via `shared/core.yml` for every image.
+- `features/cockpit.yml`: Cockpit admin surface shared across the matrix.
+- `features/ceph.yml`: shared Ceph host prerequisites.
+- `features/k3s.yml`: shared k3s runtime capability.
 - `shared/flatpak-base.yml`: workstation Flatpak package baseline, user/system remotes, shared managed app set, policy payloads, and session environment import hook.
 - `shared/flatpak-cleanup.yml`: system-scope Flatpak maintenance helper used by startup hooks and `myos` targets.
 - `shared/flatpak-gnome.yml`: GNOME portal backend configuration and GNOME-specific managed Flatpaks.
@@ -31,4 +33,4 @@ These files are the reusable composition units included from image recipes with 
 
 ## Feature layers
 
-`features/` holds optional add-ons that belong to active supported images but still deserve an explicit composition boundary.
+`features/` holds technology-focused add-ons that belong to active supported images but still deserve an explicit composition boundary.

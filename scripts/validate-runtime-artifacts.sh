@@ -142,7 +142,7 @@ grep -q 'k3s-agent.service' recipes/layers/features/k3s.yml
 test -f files/ceph-host/shared/usr/lib/modules-load.d/90-myos-ceph-host.conf
 grep -q '^ceph$' files/ceph-host/shared/usr/lib/modules-load.d/90-myos-ceph-host.conf
 grep -q '^rbd$' files/ceph-host/shared/usr/lib/modules-load.d/90-myos-ceph-host.conf
-grep -q 'from-file: layers/features/ceph-host.yml' recipes/layers/shared/admin-overlay.yml
+grep -q 'from-file: layers/features/ceph.yml' recipes/layers/shared/core.yml
 grep -q '^        - kernel-modules-core$' recipes/layers/alma9/ceph-host.yml
 grep -q '^        - kernel-modules-core$' recipes/layers/alma10/ceph-host.yml
 grep -q '^        - kernel-modules-core$' recipes/layers/fedora/ceph-host.yml

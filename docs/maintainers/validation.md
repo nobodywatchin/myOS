@@ -42,8 +42,8 @@ bash ./scripts/validate-image-matrix.sh
 - shared layers do not contain Alma-only EPEL/CRB/subscription-manager setup
 - every supported recipe inherits shared PCP exactly once through `shared/core-base.yml`
 - every supported recipe inherits shared k3s capability exactly once through `features/k3s.yml`
-- every supported recipe inherits `shared/admin-overlay.yml` exactly once
-- every supported recipe inherits `features/ceph-host.yml` exactly once
+- every supported recipe inherits `features/cockpit.yml` exactly once
+- every supported recipe inherits `features/ceph.yml` exactly once
 - server recipes inherit the matching distro `ceph-host.yml` exactly once while workstation recipes inherit none of them
 - every NVIDIA recipe inherits NVIDIA PCP exactly once through `shared/nvidia-base.yml` while standard recipes do not
 

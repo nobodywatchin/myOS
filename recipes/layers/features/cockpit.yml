@@ -1,0 +1,12 @@
+---
+modules:
+  # Cockpit admin surface is shared across the matrix.
+  - type: dnf
+    install:
+      install-weak-deps: false
+      packages:
+        - cockpit
+        - cockpit-ostree
+        - cockpit-files
+        - cockpit-storaged
+        - cockpit-podman

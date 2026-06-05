@@ -33,7 +33,7 @@ Server images do not consume these layers and should not receive desktop portal 
 
 `workstation-common` is still the right abstraction because it keeps shared desktop behavior in one place:
 
-- package baseline
+- package baseline, including common desktop filesystem/FUSE support for AppImage compatibility
 - display-manager reconciliation helper
 - workstation-only diagnostics and admin tools
 

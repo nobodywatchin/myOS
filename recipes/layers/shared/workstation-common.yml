@@ -39,6 +39,8 @@ modules:
         - dnsmasq
         - dos2unix
         - fwupd
+        - fuse3
+        - libfuse2
         - ghostscript
         - git
         - glibc-all-langpacks
