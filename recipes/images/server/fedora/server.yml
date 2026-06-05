@@ -9,6 +9,5 @@ modules:
   - from-file: layers/shared/core.yml
   - from-file: layers/fedora/core.yml
   - from-file: layers/fedora/ceph-host.yml
-  - from-file: layers/shared/full.yml
   - type: initramfs
   - type: signing

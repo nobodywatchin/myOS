@@ -7,6 +7,16 @@ matrix_file="files/base/runtime/usr/share/myos/image-matrix.tsv"
 matrix_script="scripts/render-image-matrix.py"
 workflow_file=".github/workflows/build.yml"
 
+rg_or_grep() {
+  if command -v rg >/dev/null 2>&1; then
+    rg -n "$@"
+  else
+    local pattern="$1"
+    shift
+    grep -RInE -- "$pattern" "$@"
+  fi
+}
+
 supported_recipes="$(python3 "$matrix_script" recipes | sort)"
 actual_recipes="$(find recipes/images -type f -name '*.yml' | sort)"
 
@@ -45,17 +55,17 @@ if find recipes/images/workstation -type f -name 'full*.yml' 2>/dev/null | grep 
   exit 1
 fi
 
-if rg -n 'nvidia-legacy' files/base/runtime/usr/share/myos/image-matrix.tsv recipes/images scripts/render-image-matrix.py >/dev/null; then
+if rg_or_grep 'nvidia-legacy' files/base/runtime/usr/share/myos/image-matrix.tsv recipes/images scripts/render-image-matrix.py >/dev/null; then
   printf 'Legacy NVIDIA naming still leaks into the active matrix or recipe tree.\n' >&2
   exit 1
 fi
 
-if rg -n '(open[q]uad|Open[Q]uad|OPEN[Q]UAD|open[-_]quad)' "$matrix_file" recipes/images >/dev/null; then
+if rg_or_grep '(open[q]uad|Open[Q]uad|OPEN[Q]UAD|open[-_]quad)' "$matrix_file" recipes/images >/dev/null; then
   printf 'Removed per-user runtime references must not appear in the active image matrix or recipe descriptions.\n' >&2
   exit 1
 fi
 
-if rg -n 'per-user OpenClaw' recipes/images >/dev/null; then
+if rg_or_grep 'per-user OpenClaw' recipes/images >/dev/null; then
   printf 'Built-in per-user OpenClaw claims must not appear in active image recipes.\n' >&2
   exit 1
 fi
@@ -98,7 +108,7 @@ include_re = re.compile(r'^\s*-\s+from-file:\s+([^\s#]+)\s*(?:#.*)?$')
 core_base = root / 'recipes/layers/shared/core-base.yml'
 shared_core = root / 'recipes/layers/shared/core.yml'
 alma_core = root / 'recipes/layers/alma/core.yml'
-shared_full = root / 'recipes/layers/shared/full.yml'
+shared_overlay = root / 'recipes/layers/shared/admin-overlay.yml'
 k3s_feature = root / 'recipes/layers/features/k3s.yml'
 ceph_host_feature = root / 'recipes/layers/features/ceph-host.yml'
 platform_ceph_layers = {
@@ -197,12 +207,9 @@ for row in rows:
     elif not (graph.index(core_base) < graph.index(shared_core)):
         die(f"{row['image']} must order shared/core-base.yml before shared/core.yml")
 
-    shared_full_count = graph.count(shared_full)
-    if row['role'] == 'server':
-        if shared_full_count != 1:
-            die(f"Server image {row['image']} must include shared/full.yml exactly once; found {shared_full_count}")
-    elif shared_full_count != 0:
-        die(f"Workstation image {row['image']} must not include shared/full.yml; found {shared_full_count}")
+    shared_overlay_count = graph.count(shared_overlay)
+    if shared_overlay_count != 1:
+        die(f"Image {row['image']} must include shared/admin-overlay.yml exactly once; found {shared_overlay_count}")
 
     expected_platform_ceph = platform_ceph_layers.get(row['platform'])
     if expected_platform_ceph is None:
@@ -214,16 +221,14 @@ for row in rows:
         if path != expected_platform_ceph and graph.count(path) != 0
     }
     ceph_feature_count = graph.count(ceph_host_feature)
+    if ceph_feature_count != 1:
+        die(f"Image {row['image']} must include features/ceph-host.yml exactly once; found {ceph_feature_count}")
     if row['role'] == 'server':
-        if ceph_feature_count != 1:
-            die(f"Server image {row['image']} must include features/ceph-host.yml exactly once; found {ceph_feature_count}")
         if expected_platform_ceph_count != 1:
             die(f"Server image {row['image']} must include {expected_platform_ceph.relative_to(root)} exactly once; found {expected_platform_ceph_count}")
         if unexpected_platform_ceph:
             die(f"Server image {row['image']} must not include non-matching ceph-host layers: {unexpected_platform_ceph}")
     else:
-        if ceph_feature_count != 0:
-            die(f"Workstation image {row['image']} must not include features/ceph-host.yml; found {ceph_feature_count}")
         if expected_platform_ceph_count != 0 or unexpected_platform_ceph:
             die(f"Workstation image {row['image']} must not include any ceph-host package layers")
 

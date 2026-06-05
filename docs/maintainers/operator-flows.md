@@ -30,7 +30,7 @@ myos persistent-user-install-quadlet --file ./my-api.container --enable
 
 ## Hosted OpenClaw wrapper
 
-`myos openclaw-host` remains available on server/admin images for the owner-friendly hosted service path.
+`myos openclaw-host` remains available across the image matrix for the owner-friendly hosted service path.
 
 Examples:
 
@@ -42,6 +42,6 @@ myos openclaw-host start
 
 ## Boundary to keep clear
 
-These flows are supported, but they should stay documented as advanced server/admin behavior.
+These flows are supported, but they should stay documented as advanced operator behavior rather than the default end-user path.
 
 They are not the defining public identity of the workstation images.

@@ -87,12 +87,16 @@ It owns:
 - `recipes/layers/fedora/core.yml` adds the Fedora edge-lane delta.
 - `recipes/layers/alma10/core.yml` and `recipes/layers/alma9/core.yml` keep the remaining Alma-version drift after the Alma-family layer.
 
+### Shared admin/operator overlay
+
+`recipes/layers/shared/admin-overlay.yml` is the distro-neutral admin/operator overlay carried through `shared/core.yml`.
+
 It owns:
 
 - Cockpit
 - OpenTofu
 - Kubernetes CLI
-- server-only Ceph host config baseline through `recipes/layers/features/ceph-host.yml`
+- shared Ceph host config baseline for every image through `recipes/layers/features/ceph-host.yml`
 - platform-host payloads under `files/agent/platform-host/`
 - tenant, persistent-user, and `openclaw-host` filesystem scaffolding
 

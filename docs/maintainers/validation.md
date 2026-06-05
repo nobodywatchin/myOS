@@ -20,7 +20,7 @@ bash ./scripts/validate-image-matrix.sh
 - `files/agent/platform-host/**`
 - shared Vulkan packaging in `shared/core-base.yml`
 - shared k3s install wiring, sysctls/modules, and `myos cluster` CLI wiring
-- server-only Ceph host module autoloading and server-lane package placement
+- shared Ceph host baseline plus server-lane Ceph package placement
 - NVIDIA PCP PMDA registration payloads
 - explicit AMD `uaccess` tagging in the shared DRM/KFD rule
 - persistent-user GPU group enrollment wiring
@@ -41,7 +41,10 @@ bash ./scripts/validate-image-matrix.sh
 - Alma recipes inherit `alma/core.yml` exactly once while non-Alma recipes do not
 - shared layers do not contain Alma-only EPEL/CRB/subscription-manager setup
 - every supported recipe inherits shared PCP exactly once through `shared/core-base.yml`
-- every supported recipe inherits shared cluster capability exactly once through `features/k3s.yml`, `features/ceph-host.yml`, and the matching distro `ceph-host.yml` exactly once while workstation recipes inherit none of them
+- every supported recipe inherits shared k3s capability exactly once through `features/k3s.yml`
+- every supported recipe inherits `shared/admin-overlay.yml` exactly once
+- every supported recipe inherits `features/ceph-host.yml` exactly once
+- server recipes inherit the matching distro `ceph-host.yml` exactly once while workstation recipes inherit none of them
 - every NVIDIA recipe inherits NVIDIA PCP exactly once through `shared/nvidia-base.yml` while standard recipes do not
 
 ## Flatpak And Portal Runtime Checks

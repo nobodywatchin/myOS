@@ -23,11 +23,15 @@ That includes:
 - `recipes/layers/fedora/core.yml` owns Fedora edge-lane core delta such as `dnf5-plugins`, Fedora-native ROCm packages, and Fedora-specific package drift.
 - `recipes/layers/alma9/core.yml` and `recipes/layers/alma10/core.yml` own only the remaining Alma-version drift that does not belong in the shared Alma-family layer.
 
+## Shared admin/operator overlay
+
+`recipes/layers/shared/admin-overlay.yml` is the explicit admin/operator overlay shared by every image.
+
 It owns:
 
 - Cockpit admin surface
 - OpenTofu and Kubernetes CLI
-- shared Ceph host config baseline; distro-specific Ceph/RBD module and LVM package drift stays in each server lane's `ceph-host.yml`
+- shared Ceph host config baseline for every image; distro-specific Ceph/RBD module and LVM package drift stays in each server lane's `ceph-host.yml`
 - tenant runtime helpers and templates
 - persistent-user admin helpers and templates
 - `openclaw-host`

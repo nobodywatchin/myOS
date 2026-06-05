@@ -12,9 +12,9 @@ Every image keeps only the generic pieces that belong to the cross-image core co
 
 Current images do not ship a built-in per-user OpenClaw runtime.
 
-## Persistent-user and tenant flows on server/admin images
+## Persistent-user and tenant flows on images with the shared admin/operator overlay
 
-Server/admin images add the admin-managed persistent service plane.
+The shared admin/operator overlay adds the admin-managed persistent service plane.
 
 That includes:
 

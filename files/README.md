@@ -37,6 +37,6 @@ The refactor deliberately split the old platform-host payload into two contracts
 
 - `agent/runtime-core/` is safe to ship on every image.
 - `agent/nvidia/` is NVIDIA-image only.
-- `agent/platform-host/` is server/admin only.
+- `agent/platform-host/` is part of the shared admin/operator overlay carried by every image.
 
 That split keeps shared runtime capabilities available on every image without implying that every image is a hosted OpenClaw appliance.

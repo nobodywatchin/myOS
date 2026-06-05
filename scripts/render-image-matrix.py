@@ -42,7 +42,7 @@ def expected_image(row: dict[str, str]) -> str:
 def expected_recipe(row: dict[str, str]) -> str:
     suffix = RECIPE_SUFFIXES[row['driver']]
     if row['role'] == 'server':
-        return f"recipes/images/server/{row['platform']}/full{suffix}.yml"
+        return f"recipes/images/server/{row['platform']}/server{suffix}.yml"
     return (
         f"recipes/images/workstation/{row['environment']}/{row['platform']}/"
         f"core{suffix}.yml"

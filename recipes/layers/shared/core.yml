@@ -12,4 +12,4 @@ modules:
         - distrobox
         - podman-compose
 
-  - from-file: layers/shared/full.yml
+  - from-file: layers/shared/admin-overlay.yml
