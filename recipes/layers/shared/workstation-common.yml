@@ -40,7 +40,7 @@ modules:
         - dos2unix
         - fwupd
         - fuse3
-        - libfuse2
+        - fuse-libs
         - ghostscript
         - git
         - glibc-all-langpacks
