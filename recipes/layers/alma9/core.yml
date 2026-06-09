@@ -3,6 +3,7 @@ modules:
   - type: containerfile
     snippets:
       - RUN ln -s /usr/bin/dnf /usr/bin/dnf4 || true
+      - RUN ln -sf /usr/sbin/semodule /usr/bin/semodule || true
 
   - type: dnf
     install:
