@@ -77,6 +77,15 @@ modules:
         - wget
         - which
         - zip
+        - iptables
+        - iptables-nft
+        - nftables
+        - conntrack-tools
+        - iproute
+        - iproute-tc
+        - socat
+        - ebtables
+        - ethtool
 
   - type: containerfile
     snippets:
