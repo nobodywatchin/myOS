@@ -12,16 +12,19 @@ That includes:
 - branding and `os-release` metadata
 - k3s binary, k3s server/agent service units, and shared kernel/network prerequisites through `recipes/layers/features/k3s.yml`
 - Tailscale system daemon baseline
-- host Vulkan userland/tooling
-- shared runtime-core helper libraries, `myos cluster`, and AMD/ROCm access prerequisites
+- host Vulkan userland/tooling where supported by the platform lane
+- shared runtime-core helper libraries, `myos cluster`, and AMD/KFD access prerequisites
 
 `recipes/layers/shared/core.yml` owns distro-neutral core tooling shared by every supported image. It runs after `shared/core-base.yml` and any distro-family repository setup needed to make the shared package set available.
+
+ROCm userspace is not a universal cross-image promise. It belongs to the platform lanes that can support the package set cleanly, currently Alma 10 and Fedora. Alma 9 should remain focused on the NVIDIA 580 compatibility lane.
 
 ## Distro core deltas
 
 - `recipes/layers/alma/core.yml` owns Alma-family repository setup such as EPEL/CRB enablement and subscription-manager cleanup.
 - `recipes/layers/fedora/core.yml` owns Fedora edge-lane core delta such as `dnf5-plugins`, Fedora-native ROCm packages, and Fedora-specific package drift.
 - `recipes/layers/alma9/core.yml` and `recipes/layers/alma10/core.yml` own only the remaining Alma-version drift that does not belong in the shared Alma-family layer.
+- `recipes/layers/alma10/core.yml` may carry ROCm-related Alma 10 enablement when that support belongs to the Alma 10 lane rather than the cross-distro contract.
 
 ## Feature overlays and shared remainder
 
@@ -69,6 +72,8 @@ That includes:
 - shared display-manager reconciliation
 
 `recipes/layers/shared/workstation-modern.yml` owns the extra workstation delta shared by the Alma 10 and Fedora lanes.
+
+Workstation images are the operator desktop and laptop lane. They should remain useful as normal desktop systems while still sharing the same image-based operating model as the server and lab lanes.
 
 ## Workstation environment contract
 
