@@ -21,7 +21,7 @@ The internal layer file now matches the public lane naming: `recipes/layers/alma
 
 - workstation remains available with GNOME and COSMIC
 - Alma-family repository setup, including EPEL/CRB enablement and subscription-manager cleanup, belongs in `recipes/layers/alma/core.yml`
-- AMD/ROCm access prerequisites stay in the shared core-base contract; Alma-version ROCm userspace drift stays in the matching Alma version layer
-- shared admin/operator tooling remains available across the matrix for tenant tooling, persistent-user administration, and `openclaw-host`
+- shared k3s, Ceph host, Cockpit, Podman, Vulkan, and base runtime support stay in the shared contracts where possible
+- Alma-version ROCm userspace drift stays in the matching Alma version layer
 
 When adding new divergence, prefer `recipes/layers/alma/` for Alma-family drift and `recipes/layers/alma9/` or `recipes/layers/alma10/` for version-specific drift instead of weakening the shared contracts.
