@@ -15,12 +15,7 @@ If a dedicated private contact address is added later, this file should be updat
 
 ## Scope
 
-Security issues include:
-
-- privilege boundary breaks
-- image trust or signing issues
-- runtime contract violations that expose user-owned or tenant-owned data
-- packaging or configuration choices that meaningfully weaken supported images
+Security issues include image trust problems, signing problems, packaging regressions, or configuration choices that weaken supported images.
 
 ## Expectations
 
