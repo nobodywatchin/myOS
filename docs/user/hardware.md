@@ -22,30 +22,30 @@ That lane is intentionally pinned to the proprietary `nvidia-driver:580` stream 
 
 All images include Performance Co-Pilot with `pmcd` for live metrics and `pmlogger` for local history.
 
-NVIDIA images also include the NVIDIA GPU PMDA and register it automatically on boot so NVIDIA metrics are available through PCP without a manual PMDA install step.
+NVIDIA images include the NVIDIA GPU PMDA package.
 
 ## AMD, Vulkan, and ROCm
 
-myOS treats AMD and local GPU support as host/runtime capability.
+myOS treats local GPU support as host/runtime capability.
 
-The shared baseline provides host-side pieces that are useful across image roles, including Vulkan tooling where supported and the DRM/KFD access prerequisites needed for local GPU workflows.
+The shared baseline includes Vulkan tooling where supported by the platform lane.
 
 ROCm userspace is platform-lane-specific. It is included where the platform lane supports it, currently Alma 10 and Fedora. Alma 9 is primarily kept for the NVIDIA 580 compatibility lane and should not be described as having the same ROCm userspace contract.
 
-For actual device-node access:
+Container access to GPU hardware is still configured by the container or orchestration layer.
 
-- local graphical sessions can use the DRM/KFD `uaccess` ACL path
-- headless or long-lived rootless service users on server images should use `myos persistent-user-enroll --user <name>`, which adds `render` and `video`
+## Quick verification
 
-myOS does not auto-inject `/dev/dri` or `/dev/kfd` into every rootless container. Local GPU containers and hosted OpenClaw workloads must still opt into explicit device pass-through.
-
-## Admin steps for GPU access
-
-If an admin wants a login user to run host Vulkan tools or rootless GPU-aware containers, use one of these paths.
-
-### Server images: supported myOS enrollment path
-
-Use this when the user is meant to host long-lived rootless workloads:
+As the target user, verify the basics:
 
 ```bash
-sudo myos persistent-user-enroll --user alice
+id
+vulkaninfo --summary
+podman info --format '{{.Host.OCIRuntime.Name}}'
+```
+
+Useful expectations:
+
+- `vulkaninfo --summary` should show the real GPU instead of only software rendering when the driver stack is available.
+- rootless GPU container flows are safest when Podman is using `crun`.
+- container access to GPU hardware should be configured explicitly by the runtime above myOS.
