@@ -90,7 +90,11 @@ modules:
   - type: containerfile
     snippets:
       - >-
-        RUN for helper in distrobox-export distrobox-host-exec distrobox-init; do           if [ -x "/usr/bin/${helper}" ] && [ ! -e "/usr/sbin/${helper}" ]; then             ln -s "../bin/${helper}" "/usr/sbin/${helper}";           fi;         done
+        RUN for helper in distrobox-export distrobox-host-exec distrobox-init; do
+        if [ -x "/usr/bin/${helper}" ] && [ ! -e "/usr/sbin/${helper}" ]; then
+        ln -s "../bin/${helper}" "/usr/sbin/${helper}";
+        fi;
+        done
 
   - type: files
     files:
@@ -98,10 +102,6 @@ modules:
         destination: /
       - source: justfiles
         destination: /
-      - source: agent/runtime-core/etc
-        destination: /etc
-      - source: agent/runtime-core/usr
-        destination: /usr
       - source: base/branding
         destination: /
 
@@ -110,12 +110,25 @@ modules:
   - type: containerfile
     snippets:
       - >-
-        RUN set -eux;           getent group video >/dev/null 2>&1 || groupadd --system video;           getent group render >/dev/null 2>&1 || groupadd --system render;           ldconfig
+        RUN set -eux;
+        getent group video >/dev/null 2>&1 || groupadd --system video;
+        getent group render >/dev/null 2>&1 || groupadd --system render;
+        if [ -f /usr/local/libexec/myos/cluster ]; then chmod 0755 /usr/local/libexec/myos/cluster; fi;
+        ldconfig
 
   - type: containerfile
     snippets:
       - >-
-        RUN set -eux;           . /usr/share/myos/os-release-meta.env;           if [ "${EL_FAMILY}" = "true" ]; then             repo_url="https://pkgs.tailscale.com/stable/rhel/${EL_MAJOR}/tailscale.repo";           else             repo_url="https://pkgs.tailscale.com/stable/fedora/tailscale.repo";           fi;           curl -fsSL "${repo_url}" -o /etc/yum.repos.d/tailscale.repo;           sed -i 's/^enabled=1$/enabled=0/' /etc/yum.repos.d/tailscale.repo;           dnf -y --enablerepo tailscale-stable install tailscale
+        RUN set -eux;
+        . /usr/share/myos/os-release-meta.env;
+        if [ "${EL_FAMILY}" = "true" ]; then
+        repo_url="https://pkgs.tailscale.com/stable/rhel/${EL_MAJOR}/tailscale.repo";
+        else
+        repo_url="https://pkgs.tailscale.com/stable/fedora/tailscale.repo";
+        fi;
+        curl -fsSL "${repo_url}" -o /etc/yum.repos.d/tailscale.repo;
+        sed -i 's/^enabled=1$/enabled=0/' /etc/yum.repos.d/tailscale.repo;
+        dnf -y --enablerepo tailscale-stable install tailscale
 
   - type: systemd
     system:
