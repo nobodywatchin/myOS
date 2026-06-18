@@ -103,15 +103,18 @@ It does not mean every image ships with preloaded models, forced hosted infrastr
 
 Current shared AI-related host support includes:
 
-* ROCm userspace in the shared core contract
-* host Vulkan tooling in the shared core contract
-* shared host/admin surfaces for tenants, persistent-user administration, and `openclaw-host`
+- host Vulkan tooling where supported by the platform lane
+- AMD/KFD host-side access prerequisites
+- generic Podman and Quadlet capability
+- shared host/admin surfaces for tenants, persistent-user administration, and `openclaw-host`
+
+ROCm userspace is platform-lane-specific. It is included where the current platform lane supports it, currently Alma 10 and Fedora.
 
 Hosted OpenClaw, tenant workflows, and persistent-user administration are supported, but they are advanced operator flows rather than the public identity of every image.
 
 Details:
 
-* [docs/user/ai-ready.md](docs/user/ai-ready.md)
+- [docs/user/ai-ready.md](docs/user/ai-ready.md)
 
 ## Install And Update
 
@@ -188,11 +191,13 @@ User-facing docs start here:
 
 Maintainer and operator-facing docs live under `docs/maintainers/`:
 
-* [docs/maintainers/image-architecture.md](docs/maintainers/image-architecture.md)
-* [docs/maintainers/runtime-contracts.md](docs/maintainers/runtime-contracts.md)
-* [docs/maintainers/workstation-layering.md](docs/maintainers/workstation-layering.md)
-* [docs/maintainers/operator-flows.md](docs/maintainers/operator-flows.md)
-* [docs/maintainers/validation.md](docs/maintainers/validation.md)
+- [docs/maintainers/image-architecture.md](docs/maintainers/image-architecture.md)
+- [docs/maintainers/runtime-contracts.md](docs/maintainers/runtime-contracts.md)
+- [docs/maintainers/workstation-layering.md](docs/maintainers/workstation-layering.md)
+- [docs/maintainers/rootless-persistence.md](docs/maintainers/rootless-persistence.md)
+- [docs/maintainers/operator-flows.md](docs/maintainers/operator-flows.md)
+- [docs/maintainers/validation.md](docs/maintainers/validation.md)
+- [docs/maintainers/alma-drift.md](docs/maintainers/alma-drift.md)
 
 ## Project Boundary
 
