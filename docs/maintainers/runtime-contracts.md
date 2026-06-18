@@ -15,14 +15,14 @@ That includes:
 - host Vulkan userland/tooling where supported by the platform lane
 - base runtime files and shared Justfile command surface
 
-`recipes/layers/shared/core.yml` owns distro-neutral core tooling shared by every supported image. It runs after `shared/core-base.yml` and any distro-family repository setup needed to make the shared package set available.
+`recipes/layers/shared/core.yml` owns the small distro-neutral host/operator package baseline shared by every supported image. It runs after `shared/core-base.yml` and any distro-family repository setup needed to make the shared package set available.
 
 ROCm userspace is not a universal cross-image promise. It belongs to the platform lanes that can support the package set cleanly, currently Alma 10 and Fedora. Alma 9 should remain focused on the NVIDIA 580 compatibility lane.
 
 ## Distro core deltas
 
 - `recipes/layers/alma/core.yml` owns Alma-family repository setup such as EPEL/CRB enablement and subscription-manager cleanup.
-- `recipes/layers/fedora/core.yml` owns Fedora edge-lane core delta such as `dnf5-plugins`, Fedora-native ROCm packages, and Fedora-specific package drift.
+- `recipes/layers/fedora/core.yml` owns the Fedora edge-lane core delta such as `dnf5-plugins`, Fedora-native ROCm packages, and Fedora-specific package drift.
 - `recipes/layers/alma9/core.yml` and `recipes/layers/alma10/core.yml` own only the remaining Alma-version drift that does not belong in the shared Alma-family layer.
 - `recipes/layers/alma10/core.yml` may carry ROCm-related Alma 10 enablement when that support belongs to the Alma 10 lane rather than the cross-distro contract.
 
@@ -34,11 +34,11 @@ ROCm userspace is not a universal cross-image promise. It belongs to the platfor
 
 `recipes/layers/features/k3s.yml` owns the shared k3s runtime capability.
 
-`recipes/layers/shared/core.yml` owns the remaining shared host/operator package baseline:
+`recipes/layers/shared/core.yml` owns the remaining host/operator package baseline:
 
-- OpenTofu and Kubernetes CLI
-- shared admin tools that are not tied to a hosted application platform
-- shared filesystem scaffolding under `/etc/myos`
+- fastfetch, fzf, zstd, gcc, distrobox, and podman-compose
+- generic `/etc/myos` filesystem scaffolding
+- inclusion of Cockpit and Ceph feature overlays
 
 ## Flatpak contract
 
