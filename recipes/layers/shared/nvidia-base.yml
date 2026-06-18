@@ -1,12 +1,5 @@
 modules:
   # Shared NVIDIA repo/bootstrap wiring reused by every NVIDIA image lane.
-  - type: files
-    files:
-      - source: nvidia/etc
-        destination: /etc
-      - source: nvidia/usr
-        destination: /usr
-
   - type: dnf
     install:
       install-weak-deps: false
@@ -23,13 +16,7 @@ modules:
         dnf config-manager setopt nvidia-container-toolkit.enabled=0;
         fi
       - RUN dnf -y --enablerepo "nvidia-container-toolkit" install nvidia-container-toolkit nvidia-container-toolkit-base libnvidia-container-tools libnvidia-container1
-      - RUN chmod 0755 /usr/local/libexec/myos/myos-pcp-nvidia-pmda-apply
       - RUN ldconfig
-
-  - type: systemd
-    system:
-      enabled:
-        - myos-pcp-nvidia-pmda-apply.service
 
   - type: kargs
     kargs:
