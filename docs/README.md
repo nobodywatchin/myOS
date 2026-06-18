@@ -18,13 +18,11 @@ These explain what myOS is, how to choose an image, and how the day-to-day exper
 
 ## Maintainer docs
 
-These keep the technical architecture, runtime contracts, validation, and advanced host/operator flows explicit.
+These keep the technical architecture, runtime contracts, validation, and lane drift explicit.
 
 - [docs/maintainers/README.md](maintainers/README.md)
 - [docs/maintainers/image-architecture.md](maintainers/image-architecture.md)
 - [docs/maintainers/runtime-contracts.md](maintainers/runtime-contracts.md)
 - [docs/maintainers/workstation-layering.md](maintainers/workstation-layering.md)
-- [docs/maintainers/rootless-persistence.md](maintainers/rootless-persistence.md)
 - [docs/maintainers/alma-drift.md](maintainers/alma-drift.md)
-- [docs/maintainers/operator-flows.md](maintainers/operator-flows.md)
 - [docs/maintainers/validation.md](maintainers/validation.md)
