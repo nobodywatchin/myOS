@@ -4,66 +4,114 @@
   </a>
 </p>
 
-# myOS &nbsp; [![bluebuild build badge](https://github.com/myos-dev/myOS/actions/workflows/build.yml/badge.svg)](https://github.com/myos-dev/myOS/actions/workflows/build.yml)
+# myOS   [![bluebuild build badge](https://github.com/myos-dev/myOS/actions/workflows/build.yml/badge.svg)](https://github.com/myos-dev/myOS/actions/workflows/build.yml)
 
-myOS is a distro-first BootC project with a small, explicit image matrix.
+myOS is a role-first, image-based Linux project built with bootc.
 
-Workstation remains the flagship user-facing role. Server is the headless admin/operator lane. GNOME and COSMIC are workstation environments, not separate products.
+It is meant to be a boring base for homelabs, self-hosted infrastructure, small internal labs, and operator workstations. The goal is not to make another flashy desktop distro. The goal is to provide reproducible system images with clear roles, predictable updates, and shared operating patterns across servers, desktops, laptops, and lab machines.
+
+Workstation images exist so you can run the same system model on your desktop or laptop that you run on your servers. Server images are the headless infrastructure lane. GNOME and COSMIC are workstation environments, not separate products.
 
 ## Why myOS
 
-- Stable where it should be: Alma 10 is the stable baseline, Fedora is the edge lane, and Alma 9 is reserved for NVIDIA 580 compatibility.
-- Curated image boundaries: workstation images keep the modern desktop/runtime model, while the shared admin/operator surface is intentionally baked into every image.
-- Explicit GPU policy: standard images have no driver suffix, `nvidia-open` is opt-in where supported, and Alma 9 uses a dedicated `nvidia-580` lane.
-- One source of truth: the repository image matrix feeds CI, validation, and `myos rebase`.
-- AI-ready, not AI-bloated: ROCm userspace and host Vulkan tooling stay in the shared core contract, while hosted OpenClaw remains a server/admin flow instead of a baked-in feature on every image.
+myOS is built around a small, explicit image matrix instead of endless variants.
+
+* **Infrastructure first:** myOS is designed for labs, servers, self-hosted systems, and operator machines.
+* **Boring by design:** images should be predictable, rebuildable, and easy to reason about.
+* **Role-based images:** workstation and server are the main roles. Desktop environments sit underneath the workstation role.
+* **Clear platform lanes:** Alma 10 is the stable baseline, Fedora is the edge lane, and Alma 9 is reserved for NVIDIA 580 compatibility.
+* **Explicit GPU policy:** standard images have no driver suffix, `nvidia-open` is opt-in where supported, and Alma 9 uses a dedicated `nvidia-580` lane.
+* **One source of truth:** the repository image matrix feeds CI, validation, published tags, and `myos rebase`.
+* **AI-ready, not AI-bloated:** myOS includes host/runtime support for local AI workflows without forcing hosted infrastructure, preloaded models, or per-user agent runtimes into every image.
 
 ## Supported Lanes
 
 Public image names follow this grammar:
 
-- `<platform>-<environment>`
-- `<platform>-<environment>-<driver>`
+```text
+<platform>-<environment>
+<platform>-<environment>-<driver>
+```
 
 Lane summary:
 
-- `alma9`: NVIDIA 580 compatibility only for `gnome`, `cosmic`, and `server`
-- `alma10`: stable `gnome`, `cosmic`, and `server`, with optional `nvidia-open`
-- `fedora`: edge `gnome`, `cosmic`, and `server`, with optional `nvidia-open` on workstation images
+* `alma9`: NVIDIA 580 compatibility only for `gnome`, `cosmic`, and `server`
+* `alma10`: stable `gnome`, `cosmic`, and `server`, with optional `nvidia-open`
+* `fedora`: edge `gnome`, `cosmic`, and `server`, with optional `nvidia-open` on workstation images
 
-The exact supported tags live in the shipped manifest at `files/base/runtime/usr/share/myos/image-matrix.tsv` and are summarized for users in [docs/user/choose-an-image.md](docs/user/choose-an-image.md).
+The exact supported tags live in the shipped manifest:
+
+```text
+files/base/runtime/usr/share/myos/image-matrix.tsv
+```
+
+User-facing image selection docs live here:
+
+* [docs/user/choose-an-image.md](docs/user/choose-an-image.md)
 
 Unsupported by design:
 
-- no console images
-- no workstation full split
-- no Alma 9 standard or `nvidia-open` images
-- no `fedora-server-nvidia-open`
+* no console images
+* no workstation full split
+* no Alma 9 standard images
+* no Alma 9 `nvidia-open` images
+* no `fedora-server-nvidia-open`
+
+## Workstation Model
+
+Workstation images are not a separate consumer desktop product.
+
+They exist so your desktop or laptop can participate in the same infrastructure model as your servers:
+
+* image-based updates
+* bootc system images
+* container-native workflows
+* shared host/admin surfaces
+* operator tooling
+* predictable workstation rebuilds
+
+GNOME and COSMIC are the supported workstation environments.
+
+## Server Model
+
+Server images are the headless infrastructure lane.
+
+They are intended for lab nodes, self-hosted services, operator-managed machines, and small internal infrastructure environments.
+
+Server images share the same core contract as workstation images where it makes sense, but avoid desktop-specific layering.
 
 ## App Model
 
 myOS keeps two Flatpak lanes on workstation images:
 
-- user-managed `flathub` for personal installs
-- admin-managed `org-system` for curated shared apps
+* user-managed `flathub` for personal installs
+* admin-managed `org-system` for curated shared apps
 
 `org-system` is hidden from normal app and source enumeration, but remains available for system runtime dependency resolution.
 
-That keeps normal app installs user-owned while still giving the image a clean place for system-wide apps the project or an admin wants to curate.
+This keeps normal app installs user-owned while still giving the image a clean place for system-wide apps the project or an admin wants to curate.
 
-Details live in [docs/user/apps-and-flatpak.md](docs/user/apps-and-flatpak.md).
+Details:
+
+* [docs/user/apps-and-flatpak.md](docs/user/apps-and-flatpak.md)
 
 ## AI-Ready
 
-AI-ready in myOS means:
+AI-ready in myOS means local capability at the host/runtime layer.
 
-- ROCm userspace is available in the shared core contract.
-- Host Vulkan tooling is available in the shared core contract.
-- Every image includes the shared host/admin surfaces for tenants, persistent-user administration, and `openclaw-host`.
+It does not mean every image ships with preloaded models, forced hosted infrastructure, or a built-in per-user agent runtime.
 
-This is local capability, not forced hosted infrastructure and not preloaded models. Current images do not ship a built-in per-user OpenClaw runtime.
+Current shared AI-related host support includes:
 
-Details live in [docs/user/ai-ready.md](docs/user/ai-ready.md).
+* ROCm userspace in the shared core contract
+* host Vulkan tooling in the shared core contract
+* shared host/admin surfaces for tenants, persistent-user administration, and `openclaw-host`
+
+Hosted OpenClaw, tenant workflows, and persistent-user administration are supported, but they are advanced operator flows rather than the public identity of every image.
+
+Details:
+
+* [docs/user/ai-ready.md](docs/user/ai-ready.md)
 
 ## Install And Update
 
@@ -73,8 +121,9 @@ The simplest way to switch images on an installed system is:
 myos rebase
 ```
 
-That picker is grouped by role, environment, platform, and driver.
-It downloads the same image matrix from the GitHub repo that CI validates, so the supported lanes and published tags stay in sync.
+The picker is grouped by role, environment, platform, and driver.
+
+It downloads the same image matrix from the GitHub repo that CI validates, so supported lanes and published tags stay in sync.
 
 For manual switching:
 
@@ -82,15 +131,25 @@ For manual switching:
 sudo bootc switch ghcr.io/myos-dev/alma10-gnome:latest
 ```
 
-myOS disables unattended `bootc` auto-apply. Use `myos update-system` to update managed system Flatpaks, prune unused system Flatpak refs, and stage a bootc image update. Rebase when you choose, then reboot when you are ready.
+myOS disables unattended `bootc` auto-apply.
+
+Use:
+
+```bash
+myos update-system
+```
+
+to update managed system Flatpaks, prune unused system Flatpak refs, and stage a bootc image update.
+
+Rebase when you choose. Reboot when you are ready.
 
 More user docs:
 
-- [docs/user/choose-an-image.md](docs/user/choose-an-image.md)
-- [docs/user/install.md](docs/user/install.md)
-- [docs/user/updates-and-rollbacks.md](docs/user/updates-and-rollbacks.md)
-- [docs/user/hardware.md](docs/user/hardware.md)
-- [docs/user/release-policy.md](docs/user/release-policy.md)
+* [docs/user/choose-an-image.md](docs/user/choose-an-image.md)
+* [docs/user/install.md](docs/user/install.md)
+* [docs/user/updates-and-rollbacks.md](docs/user/updates-and-rollbacks.md)
+* [docs/user/hardware.md](docs/user/hardware.md)
+* [docs/user/release-policy.md](docs/user/release-policy.md)
 
 ## Repo Layout
 
@@ -117,18 +176,26 @@ files/
   justfiles/
 ```
 
-The authoritative repo shape stays role-first. Workstation keeps clean GNOME and COSMIC layering underneath that role, while the shipped manifest decides which combinations are actually supported.
+The authoritative repo shape stays role-first.
 
-## Advanced Docs
+Workstation keeps clean GNOME and COSMIC layering underneath that role, while the shipped manifest decides which combinations are actually supported.
 
-User-facing docs start at [docs/README.md](docs/README.md).
+## Docs
+
+User-facing docs start here:
+
+* [docs/README.md](docs/README.md)
 
 Maintainer and operator-facing docs live under `docs/maintainers/`:
 
-- [docs/maintainers/image-architecture.md](docs/maintainers/image-architecture.md)
-- [docs/maintainers/runtime-contracts.md](docs/maintainers/runtime-contracts.md)
-- [docs/maintainers/workstation-layering.md](docs/maintainers/workstation-layering.md)
-- [docs/maintainers/operator-flows.md](docs/maintainers/operator-flows.md)
-- [docs/maintainers/validation.md](docs/maintainers/validation.md)
+* [docs/maintainers/image-architecture.md](docs/maintainers/image-architecture.md)
+* [docs/maintainers/runtime-contracts.md](docs/maintainers/runtime-contracts.md)
+* [docs/maintainers/workstation-layering.md](docs/maintainers/workstation-layering.md)
+* [docs/maintainers/operator-flows.md](docs/maintainers/operator-flows.md)
+* [docs/maintainers/validation.md](docs/maintainers/validation.md)
 
-Hosted OpenClaw, tenant workflows, and persistent-user administration are still supported everywhere, but they are advanced flows rather than the public identity of every image.
+## Project Boundary
+
+myOS is not trying to replace Fedora, AlmaLinux, Bluefin, Bazzite, or other general-purpose Linux distributions.
+
+It is a focused image-based OS project for people who want a boring, reproducible base for servers, lab machines, and operator workstations.
