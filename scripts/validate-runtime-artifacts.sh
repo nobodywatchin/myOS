@@ -68,10 +68,13 @@ test -f files/base/runtime/etc/udev/rules.d/70-render.rules
 test -f files/base/runtime/etc/udev/rules.d/70-amdgpu-kfd.rules
 ! grep -q 'agent/runtime-core' recipes/layers/shared/core-base.yml
 ! grep -q 'agent/platform-host' recipes/layers/shared/core.yml
+! grep -q '/etc/myos/dns' recipes/layers/shared/core.yml
+! grep -q '/etc/myos/firewall' recipes/layers/shared/core.yml
 
 test -f files/k3s/shared/usr/lib/systemd/system/k3s.service
 test -f files/k3s/shared/usr/lib/systemd/system/k3s-agent.service
 grep -q "version='v1.36.1+k3s1'" recipes/layers/features/k3s.yml
+! grep -q 'myos cluster' recipes/layers/features/k3s.yml
 
 test -f files/ceph-host/shared/usr/lib/modules-load.d/90-myos-ceph-host.conf
 grep -q 'from-file: layers/features/ceph.yml' recipes/layers/shared/core.yml
@@ -84,4 +87,5 @@ grep -q "import '/usr/share/myos/just/default.just'" files/justfiles/usr/share/m
 grep -q "import '/usr/share/myos/just/rebase.just'" files/justfiles/usr/share/myos/just/index.just
 grep -q "import '/usr/share/myos/just/update.just'" files/justfiles/usr/share/myos/just/index.just
 ! grep -q "cluster.just" files/justfiles/usr/share/myos/just/index.just
+test ! -e files/justfiles/usr/share/myos/just/cluster.just
 grep -q '^rebase:$' files/justfiles/usr/share/myos/just/rebase.just
