@@ -41,7 +41,9 @@ modules:
         - iproute
         - iputils
         - NetworkManager
+        - NetworkManager-tui
         - openssh-server
+        - openssh-clients
         - p11-kit
         - pcp
         - chrony
@@ -52,7 +54,6 @@ modules:
         - python3-libselinux
         - linux-firmware
         - system-reinstall-bootc
-        - NetworkManager-tui
         - podman
         - podman-docker
         - container-selinux
@@ -62,7 +63,6 @@ modules:
         - fuse-overlayfs
         - mesa-vulkan-drivers
         - slirp4netns
-        - openssh-clients
         - policycoreutils-python-utils
         - vim-minimal
         - vulkan-loader
@@ -80,8 +80,6 @@ modules:
         - iptables
         - iptables-nft
         - nftables
-        - conntrack-tools
-        - iproute
         - iproute-tc
         - socat
         - ebtables
@@ -113,7 +111,6 @@ modules:
         RUN set -eux;
         getent group video >/dev/null 2>&1 || groupadd --system video;
         getent group render >/dev/null 2>&1 || groupadd --system render;
-        if [ -f /usr/local/libexec/myos/cluster ]; then chmod 0755 /usr/local/libexec/myos/cluster; fi;
         ldconfig
 
   - type: containerfile
