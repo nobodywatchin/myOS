@@ -18,7 +18,7 @@ jobs:
     name: Validate runtime artifacts
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
       - name: Check runtime scripts, templates, and units
         run: |
           set -euo pipefail
@@ -28,7 +28,7 @@ jobs:
     name: Validate image matrix
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
       - name: Check supported and unsupported recipe combinations
         run: |
           set -euo pipefail
@@ -38,7 +38,7 @@ jobs:
     name: Validate Alma 9 NVIDIA 580
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
       - name: Verify Alma 9 NVIDIA 580 lane
         shell: pwsh
         run: ./scripts/verify-alma9-nvidia-580.ps1
@@ -50,7 +50,7 @@ jobs:
       server_images: ${{ steps.render.outputs.server_images }}
       workstation_images: ${{ steps.render.outputs.workstation_images }}
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
       - id: render
         name: Render supported image matrices
         run: |
