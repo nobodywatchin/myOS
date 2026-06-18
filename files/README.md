@@ -1,19 +1,21 @@
 # files/
 
-This tree contains payloads copied into images by the BlueBuild `files` module.
+This tree contains payloads copied into images by BlueBuild `files` modules.
+
+Keep this tree boring. It should contain image payloads only: branding, runtime defaults, service units, helper scripts, desktop environment files, hardware-lane support files, and packaging policy.
 
 Top-level payload groups:
 
-- `base/`
-- `ceph-host/`
-- `cosmic/`
-- `dnf/`
-- `flatpak/`
-- `gnome/`
-- `justfiles/`
-- `k3s/`
-- `nvidia/`
-- `scripts/`
-- `workstation/`
+- `base/`: shared runtime files, image matrix, branding, ROCm/Vulkan host config, and common OS metadata
+- `ceph-host/`: Ceph host prerequisites copied by the Ceph feature layer
+- `cosmic/`: COSMIC workstation environment payloads
+- `dnf/`: repository and DNF configuration payloads
+- `flatpak/`: workstation Flatpak policy, remotes, portal integration, and cleanup helpers
+- `gnome/`: GNOME workstation environment payloads
+- `justfiles/`: user-facing `myos` Just command surface
+- `k3s/`: k3s systemd units and host integration files
+- `nvidia/`: NVIDIA lane support payloads and PMDA registration helper
+- `scripts/`: image-build helper scripts consumed by recipe layers
+- `workstation/`: shared workstation helper scripts and display-manager reconciliation
 
-Keep this tree focused on base OS payloads, workstation environments, hardware lanes, and infrastructure primitives.
+Do not put hosted application platforms, tenant runtimes, or product-specific services in this tree. Those belong above myOS, usually in containers or k3s.
