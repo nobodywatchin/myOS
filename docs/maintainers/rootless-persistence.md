@@ -7,8 +7,11 @@ myOS keeps a sharp split between generic rootless prerequisites and admin-manage
 Every image keeps only the generic pieces that belong to the cross-image core contract:
 
 - Podman and Quadlet capability
-- AMD/ROCm host-side access prerequisites
+- AMD/KFD host-side access prerequisites
+- host Vulkan tooling where supported by the platform lane
 - shared helper libraries and cluster/runtime support that are not OpenClaw-specific
+
+ROCm userspace is platform-lane-specific. It should not be treated as identical across every supported image.
 
 Current images do not ship a built-in per-user OpenClaw runtime.
 
@@ -19,7 +22,7 @@ The shared admin/operator overlay adds the admin-managed persistent service plan
 That includes:
 
 - persistent-user enrollment and owner assignment
-- baseline and owner quadlet templates
+- baseline and owner Quadlet templates
 - tenant runtime, secrets, storage, and proxy helpers
 - `openclaw-host`
 
@@ -27,6 +30,7 @@ This plane is for long-lived admin/operator flows and should stay documented as 
 
 ## Why the split matters
 
-- workstation stays a real desktop-first image family
+- workstation remains a real desktop and laptop lane for operators
 - server is the default advanced host/operator role
 - advanced platform-host tooling stays available without defining the public identity of every image
+- ordinary workstation use should not be framed as an OpenClaw or tenant-hosting appliance by default
