@@ -1,7 +1,7 @@
 ---
 modules:
-  # Shared k3s runtime capability baked into every lane; server vs agent stays a
-  # runtime decision made by `myos cluster`, not by the image itself.
+  # Shared k3s runtime capability baked into every lane. Server vs agent mode
+  # is a runtime/admin choice made above the image, not a separate image role.
   - type: files
     files:
       - source: k3s/shared
