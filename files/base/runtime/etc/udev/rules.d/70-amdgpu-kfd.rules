@@ -1,0 +1,1 @@
+KERNEL=="kfd", GROUP="render", MODE="0660", TAG+="uaccess"
