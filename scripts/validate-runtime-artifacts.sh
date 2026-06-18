@@ -43,11 +43,45 @@ run_os_release_meta_smoke() {
     [ "${DISTRO_MINOR}" = "${expected_minor}" ]
     [ "${EL_FAMILY}" = "${expected_el_family}" ]
     [ "${EL_MAJOR}" = "${expected_el_major}" ]
-    [ "${EL_MINOR}" = "${expected_minor}" ]
+    [ "${EL_MINOR}" = "${expected_el_minor}" ]
   )
+
+  if [[ "${expected_el_family}" == true ]]; then
+    [ "$(cat "${root}/etc/dnf/vars/releasever_major")" = "${expected_major}" ]
+    [ "$(cat "${root}/etc/dnf/vars/releasever_minor")" = "${expected_minor}" ]
+  else
+    [ ! -e "${root}/etc/dnf/vars/releasever_major" ]
+    [ ! -e "${root}/etc/dnf/vars/releasever_minor" ]
+  fi
 }
 
 run_os_release_meta_smoke alma10 $'ID="almalinux"\nID_LIKE="rhel centos fedora"\nVERSION_ID="10.1"\nPLATFORM_ID="platform:el10"' almalinux 10 1 true 10 1
 run_os_release_meta_smoke fedora $'ID="fedora"\nVERSION_ID="44"\nNAME="Fedora Linux"' fedora 44 0 false '' ''
 
 test -f files/flatpak/base/etc/profile.d/flatpak-user-default.sh
+test -f files/flatpak/base/etc/systemd/system/system-flatpak-setup.service.d/10-managed-org-system.conf
+grep -q "myos-flatpak-system-maintenance ensure" files/flatpak/base/etc/systemd/system/system-flatpak-setup.service.d/10-managed-org-system.conf
+test -f files/workstation/shared/usr/libexec/myos-workstation-dm-apply
+test -f files/base/runtime/etc/ld.so.conf.d/rocm.conf
+test -f files/base/runtime/etc/profile.d/rocm.sh
+test -f files/base/runtime/etc/udev/rules.d/70-render.rules
+test -f files/base/runtime/etc/udev/rules.d/70-amdgpu-kfd.rules
+! grep -q 'agent/runtime-core' recipes/layers/shared/core-base.yml
+! grep -q 'agent/platform-host' recipes/layers/shared/core.yml
+
+test -f files/k3s/shared/usr/lib/systemd/system/k3s.service
+test -f files/k3s/shared/usr/lib/systemd/system/k3s-agent.service
+grep -q "version='v1.36.1+k3s1'" recipes/layers/features/k3s.yml
+
+test -f files/ceph-host/shared/usr/lib/modules-load.d/90-myos-ceph-host.conf
+grep -q 'from-file: layers/features/ceph.yml' recipes/layers/shared/core.yml
+
+grep -q '^        - pcp-pmda-nvidia-gpu$' recipes/layers/shared/nvidia-base.yml
+test -f files/nvidia/usr/local/libexec/myos/myos-pcp-nvidia-pmda-apply
+test -f files/nvidia/usr/lib/systemd/system/myos-pcp-nvidia-pmda-apply.service
+
+grep -q "import '/usr/share/myos/just/default.just'" files/justfiles/usr/share/myos/just/index.just
+grep -q "import '/usr/share/myos/just/rebase.just'" files/justfiles/usr/share/myos/just/index.just
+grep -q "import '/usr/share/myos/just/update.just'" files/justfiles/usr/share/myos/just/index.just
+! grep -q "cluster.just" files/justfiles/usr/share/myos/just/index.just
+grep -q '^rebase:$' files/justfiles/usr/share/myos/just/rebase.just
