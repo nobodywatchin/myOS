@@ -1,5 +1,2 @@
-[positional-arguments]
-cluster *args:
-	#!/usr/bin/env bash
-	set -euo pipefail
-	exec sudo /usr/local/libexec/myos/cluster "$@"
+# Retired.
+# k3s remains available as a system capability, but this wrapper is no longer imported.
