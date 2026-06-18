@@ -14,44 +14,18 @@ modules:
 
   - from-file: layers/features/cockpit.yml
 
-  - type: files
-    files:
-      - source: agent/platform-host/etc
-        destination: /etc
-      - source: agent/platform-host/usr
-        destination: /usr
-      - source: agent/platform-host/var
-        destination: /var
-      - source: agent/justfiles
-        destination: /
-
   - type: containerfile
     snippets:
       - >-
-        RUN install -d -m 0755 \
-          /etc/myos /etc/myos/dns /etc/myos/firewall \
-          /etc/myos/firewall/rendered /etc/myos/firewall/tenants \
-          /etc/myos/persistent-users /etc/myos/persistent-users/users \
-          /etc/myos/proxy /etc/myos/proxy/tenants \
-          /etc/myos/templates /etc/myos/templates/apps \
-          /etc/myos/templates/apps/openclaw \
-          /etc/myos/templates/persistent-users \
-          /etc/myos/templates/persistent-users/baseline \
-          /etc/myos/templates/persistent-users/baseline/quadlets \
-          /etc/myos/templates/persistent-users/owner \
-          /etc/myos/templates/persistent-users/owner/quadlets \
-          /etc/myos/tenants \
-          /srv/tenants /srv/tenants/.skel \
-          /var/tmp/myos-podman
-      - RUN install -D -m 0644 /var/srv/tenants/README.md /srv/tenants/.skel/README.md
-      - RUN install -d -m 0755 /usr/local/libexec/myos
-      - RUN semanage fcontext -a -t container_file_t '/srv/tenants(/.*)?' 2>/dev/null || true
-      - RUN semanage fcontext -a -e /var/lib/containers /var/tmp/myos-podman 2>/dev/null || true
+        RUN install -d -m 0755
+        /etc/myos
+        /etc/myos/dns
+        /etc/myos/firewall
+        /etc/myos/firewall/rendered
+        /usr/local/libexec/myos
       - >-
-        RUN restorecon -RF \
-          /etc/myos /srv/tenants \
-          /usr/local/libexec/myos \
-          /etc/nginx/conf.d/myos-platform.conf \
-          /var/tmp/myos-podman || true
+        RUN restorecon -RF
+        /etc/myos
+        /usr/local/libexec/myos || true
 
   - from-file: layers/features/ceph.yml
