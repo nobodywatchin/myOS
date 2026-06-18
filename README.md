@@ -4,7 +4,7 @@
   </a>
 </p>
 
-# myOS   [![bluebuild build badge](https://github.com/myos-dev/myOS/actions/workflows/build.yml/badge.svg)](https://github.com/myos-dev/myOS/actions/workflows/build.yml)
+# myOS &nbsp; [![bluebuild build badge](https://github.com/myos-dev/myOS/actions/workflows/build.yml/badge.svg)](https://github.com/myos-dev/myOS/actions/workflows/build.yml)
 
 myOS is a role-first, image-based Linux project built with bootc.
 
@@ -22,7 +22,7 @@ myOS is built around a small, explicit image matrix instead of endless variants.
 * **Clear platform lanes:** Alma 10 is the stable baseline, Fedora is the edge lane, and Alma 9 is reserved for NVIDIA 580 compatibility.
 * **Explicit GPU policy:** standard images have no driver suffix, `nvidia-open` is opt-in where supported, and Alma 9 uses a dedicated `nvidia-580` lane.
 * **One source of truth:** the repository image matrix feeds CI, validation, published tags, and `myos rebase`.
-* **AI-ready, not AI-bloated:** myOS includes host/runtime support for local AI workflows without forcing hosted infrastructure, preloaded models, or per-user agent runtimes into every image.
+* **Local-runtime ready:** myOS includes practical host support for containers, local GPU tooling, k3s, and infrastructure workflows without baking higher-level services into the OS image.
 
 ## Supported Lanes
 
@@ -66,7 +66,6 @@ They exist so your desktop or laptop can participate in the same infrastructure 
 * image-based updates
 * bootc system images
 * container-native workflows
-* shared host/admin surfaces
 * operator tooling
 * predictable workstation rebuilds
 
@@ -95,22 +94,20 @@ Details:
 
 * [docs/user/apps-and-flatpak.md](docs/user/apps-and-flatpak.md)
 
-## AI-Ready
+## Local Runtime
 
-AI-ready in myOS means local capability at the host/runtime layer.
+myOS provides local host/runtime capability.
 
-It does not mean every image ships with preloaded models, forced hosted infrastructure, or a built-in per-user agent runtime.
+It does not ship hosted agents, app-hosting platforms, preloaded models, or built-in AI services.
 
-Current shared AI-related host support includes:
+Current shared runtime support includes:
 
 - host Vulkan tooling where supported by the platform lane
-- AMD/KFD host-side access prerequisites
-- generic Podman and Quadlet capability
-- shared host/admin surfaces for tenants, persistent-user administration, and `openclaw-host`
+- generic Podman capability
+- k3s host capability for users who want Kubernetes on their own machines
+- ROCm userspace where supported by the current platform lane, currently Alma 10 and Fedora
 
-ROCm userspace is platform-lane-specific. It is included where the current platform lane supports it, currently Alma 10 and Fedora.
-
-Hosted OpenClaw, tenant workflows, and persistent-user administration are supported, but they are advanced operator flows rather than the public identity of every image.
+myOS is the base system. Higher-level services belong above it, usually in containers or k3s.
 
 Details:
 
@@ -170,13 +167,16 @@ recipes/
 
 files/
   base/
-  end-user/
-  workstation/
-  gnome/
+  ceph-host/
   cosmic/
-  agent/
   dnf/
+  flatpak/
+  gnome/
   justfiles/
+  k3s/
+  nvidia/
+  scripts/
+  workstation/
 ```
 
 The authoritative repo shape stays role-first.
@@ -194,8 +194,6 @@ Maintainer and operator-facing docs live under `docs/maintainers/`:
 - [docs/maintainers/image-architecture.md](docs/maintainers/image-architecture.md)
 - [docs/maintainers/runtime-contracts.md](docs/maintainers/runtime-contracts.md)
 - [docs/maintainers/workstation-layering.md](docs/maintainers/workstation-layering.md)
-- [docs/maintainers/rootless-persistence.md](docs/maintainers/rootless-persistence.md)
-- [docs/maintainers/operator-flows.md](docs/maintainers/operator-flows.md)
 - [docs/maintainers/validation.md](docs/maintainers/validation.md)
 - [docs/maintainers/alma-drift.md](docs/maintainers/alma-drift.md)
 
