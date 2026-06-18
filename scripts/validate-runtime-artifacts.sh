@@ -9,6 +9,7 @@ bash -n files/scripts/just-el9.sh
 bash -n files/workstation/shared/usr/libexec/myos-workstation-dm-apply
 bash -n files/flatpak/base/usr/libexec/myos-flatpak-session-env
 bash -n files/flatpak/cleanup/usr/libexec/myos-flatpak-system-maintenance
+bash -n files/nvidia/usr/local/libexec/myos/myos-pcp-nvidia-pmda-apply
 bash -n modules/os-release-meta/os-release-meta.sh
 
 tmpdir="$(mktemp -d)"
@@ -105,6 +106,9 @@ grep -q "vulkan-tools" recipes/layers/shared/core-base.yml
 grep -q "from-file: layers/features/k3s.yml" recipes/layers/shared/core-base.yml
 ! grep -q '^        - lvm2$' recipes/layers/shared/core-base.yml
 test -f files/base/runtime/etc/ld.so.conf.d/rocm.conf
+test -f files/base/runtime/etc/profile.d/rocm.sh
+test -f files/base/runtime/etc/udev/rules.d/70-render.rules
+grep -q 'KERNEL=="renderD\*"' files/base/runtime/etc/udev/rules.d/70-render.rules
 ! grep -q 'agent/runtime-core' recipes/layers/shared/core-base.yml
 ! grep -q 'agent/platform-host' recipes/layers/shared/core.yml
 
@@ -139,6 +143,9 @@ grep -q '^        - lvm2$' recipes/layers/fedora/ceph-host.yml
 grep -q 'groups = \["wheel", "render", "video"\]' image.toml
 ! grep -q 'source: agent/nvidia' recipes/layers/shared/nvidia-base.yml
 grep -q '^        - pcp-pmda-nvidia-gpu$' recipes/layers/shared/nvidia-base.yml
+test -f files/nvidia/usr/local/libexec/myos/myos-pcp-nvidia-pmda-apply
+test -f files/nvidia/usr/lib/systemd/system/myos-pcp-nvidia-pmda-apply.service
+grep -q '^ExecStart=/usr/local/libexec/myos/myos-pcp-nvidia-pmda-apply$' files/nvidia/usr/lib/systemd/system/myos-pcp-nvidia-pmda-apply.service
 
 grep -q "import '/usr/share/myos/just/default.just'" files/justfiles/usr/share/myos/just/index.just
 grep -q "import '/usr/share/myos/just/rebase.just'" files/justfiles/usr/share/myos/just/index.just
