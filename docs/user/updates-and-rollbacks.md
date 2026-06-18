@@ -48,4 +48,4 @@ Then reboot into the previous deployment.
 
 ## User-space updates
 
-`myos update-user` refreshes user Flatpaks, Homebrew when present on workstation images, and Distrobox containers. Current images do not ship a built-in per-user OpenClaw runtime.
+`myos update-user` refreshes user Flatpaks, Homebrew when present on workstation images, and Distrobox containers.
