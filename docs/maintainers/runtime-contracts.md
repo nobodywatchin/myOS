@@ -13,7 +13,7 @@ That includes:
 - k3s binary, k3s server/agent service units, and shared kernel/network prerequisites through `recipes/layers/features/k3s.yml`
 - Tailscale system daemon baseline
 - host Vulkan userland/tooling where supported by the platform lane
-- shared runtime-core helper libraries, `myos cluster`, and AMD/KFD access prerequisites
+- base runtime files and shared Justfile command surface
 
 `recipes/layers/shared/core.yml` owns distro-neutral core tooling shared by every supported image. It runs after `shared/core-base.yml` and any distro-family repository setup needed to make the shared package set available.
 
@@ -34,13 +34,11 @@ ROCm userspace is not a universal cross-image promise. It belongs to the platfor
 
 `recipes/layers/features/k3s.yml` owns the shared k3s runtime capability.
 
-`recipes/layers/shared/core.yml` owns the remaining shared host/operator remainder:
+`recipes/layers/shared/core.yml` owns the remaining shared host/operator package baseline:
 
 - OpenTofu and Kubernetes CLI
-- tenant runtime helpers and templates
-- persistent-user admin helpers and templates
-- `openclaw-host`
-- shared server/admin filesystem scaffolding under `/etc/myos`, `/srv/tenants`, and `/var/tmp/myos-podman`
+- shared admin tools that are not tied to a hosted application platform
+- shared filesystem scaffolding under `/etc/myos`
 
 ## Flatpak contract
 
@@ -86,7 +84,7 @@ GNOME and COSMIC are workstation-environment implementations.
 
 ## NVIDIA contract
 
-- `shared/nvidia-base.yml` owns the common NVIDIA repo bootstrap, copied config, NVIDIA PCP PMDA registration, and kernel args.
+- `shared/nvidia-base.yml` owns the common NVIDIA repo bootstrap, NVIDIA container toolkit setup, NVIDIA PCP PMDA package, copied NVIDIA support payloads, and kernel args.
 - `shared/nvidia-open-common.yml` owns the open-driver helper shim.
 - `shared/nvidia-common.yml` and `shared/nvidia-open.yml` own the Alma-family NVIDIA lanes.
 - `fedora/nvidia-open.yml` owns only the Fedora-specific open-driver delta on top of the shared NVIDIA layers.
