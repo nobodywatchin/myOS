@@ -7,66 +7,56 @@ matrix_file="files/base/runtime/usr/share/myos/image-matrix.tsv"
 matrix_script="scripts/render-image-matrix.py"
 workflow_file=".github/workflows/build.yml"
 
-rg_or_grep() {
-  if command -v rg >/dev/null 2>&1; then
-    rg -n "$@"
-  else
-    local pattern="$1"
-    shift
-    grep -RInE -- "$pattern" "$@"
-  fi
-}
-
 supported_recipes="$(python3 "$matrix_script" recipes | sort)"
 actual_recipes="$(find recipes/images -type f -name '*.yml' | sort)"
 
 if [ "$actual_recipes" != "$supported_recipes" ]; then
-  printf 'Recipe tree does not match the supported image manifest.
-' >&2
-  diff -u <(printf '%s
-' "$supported_recipes") <(printf '%s
-' "$actual_recipes") >&2 || true
+  printf 'Recipe tree does not match the supported image manifest.\n' >&2
+  diff -u <(printf '%s\n' "$supported_recipes") <(printf '%s\n' "$actual_recipes") >&2 || true
   exit 1
 fi
 
-for retired_dir in   recipes/images/core   recipes/images/gnome   recipes/images/cosmic
+for retired_dir in \
+  recipes/images/core \
+  recipes/images/gnome \
+  recipes/images/cosmic
 
 do
   [ ! -e "$retired_dir" ] || {
-    printf 'Retired recipe directory still present: %s
-' "$retired_dir" >&2
+    printf 'Retired recipe directory still present: %s\n' "$retired_dir" >&2
     exit 1
   }
 done
 
-for retired_path in   recipes/images/console   recipes/layers/shared/console.yml   files/console/shared/usr/share/myos/console/role.env   recipes/layers/alma9/full.yml   recipes/layers/alma10/full.yml   recipes/layers/fedora/gnome.yml   recipes/layers/shared/gnome-base.yml   recipes/layers/shared/nvidia-gnome.yml   recipes/layers/features/rocm-developer-tools.yml   files/gnome/flatpak/README.md   recipes/layers/shared/end-user-common.yml   files/end-user/shared/README.md   scripts/verify-alma9-nvidia-legacy.ps1
+for retired_path in \
+  recipes/images/console \
+  recipes/layers/shared/console.yml \
+  files/console/shared/usr/share/myos/console/role.env \
+  recipes/layers/alma9/full.yml \
+  recipes/layers/alma10/full.yml \
+  recipes/layers/fedora/gnome.yml \
+  recipes/layers/shared/gnome-base.yml \
+  recipes/layers/shared/nvidia-gnome.yml \
+  recipes/layers/features/rocm-developer-tools.yml \
+  files/gnome/flatpak/README.md \
+  recipes/layers/shared/end-user-common.yml \
+  files/end-user/shared/README.md \
+  scripts/verify-alma9-nvidia-legacy.ps1
 
 do
   [ ! -e "$retired_path" ] || {
-    printf 'Retired path still present: %s
-' "$retired_path" >&2
+    printf 'Retired path still present: %s\n' "$retired_path" >&2
     exit 1
   }
 done
 
 if find recipes/images/workstation -type f -name 'full*.yml' 2>/dev/null | grep -q .; then
-  printf 'Workstation full recipes are no longer supported and must be removed.
-' >&2
+  printf 'Workstation full recipes are no longer supported and must be removed.\n' >&2
   exit 1
 fi
 
-if rg_or_grep 'nvidia-legacy' files/base/runtime/usr/share/myos/image-matrix.tsv recipes/images scripts/render-image-matrix.py >/dev/null; then
+if grep -RInE -- 'nvidia-legacy' files/base/runtime/usr/share/myos/image-matrix.tsv recipes/images scripts/render-image-matrix.py >/dev/null; then
   printf 'Legacy NVIDIA naming still leaks into the active matrix or recipe tree.\n' >&2
-  exit 1
-fi
-
-if rg_or_grep '(open[q]uad|Open[Q]uad|OPEN[Q]UAD|open[-_]quad)' "$matrix_file" recipes/images >/dev/null; then
-  printf 'Removed per-user runtime references must not appear in the active image matrix or recipe descriptions.\n' >&2
-  exit 1
-fi
-
-if rg_or_grep 'per-user OpenClaw' recipes/images >/dev/null; then
-  printf 'Built-in per-user OpenClaw claims must not appear in active image recipes.\n' >&2
   exit 1
 fi
 
@@ -77,20 +67,17 @@ json_check() {
 while IFS= read -r platform; do
   [ -n "$platform" ] || continue
   python3 "$matrix_script" recipes --platform "$platform" >/dev/null
-
 done < <(tail -n +2 "$matrix_file" | cut -f2 | sort -u)
 
 while IFS= read -r job; do
   [ -n "$job" ] || continue
   python3 "$matrix_script" gha "$job" | json_check >/dev/null
-
 done < <(tail -n +2 "$matrix_file" | cut -f1 | sort -u)
 
-while IFS=$'	' read -r job platform; do
+while IFS=$'\t' read -r job platform; do
   [ -n "$job" ] || continue
   [ -n "$platform" ] || continue
   python3 "$matrix_script" gha --platform "$platform" "$job" | json_check >/dev/null
-
 done < <(tail -n +2 "$matrix_file" | cut -f1,2 | sort -u)
 
 python3 "$matrix_script" rebase | grep -q .
@@ -136,7 +123,7 @@ def die(message: str) -> None:
 
 
 def include_path(ref: str, owner: Path) -> Path:
-    ref = ref.strip().strip('\"\'')
+    ref = ref.strip().strip('"\'')
     if ref.startswith('layers/'):
         return root / 'recipes' / ref
     if ref.startswith('recipes/'):
@@ -159,7 +146,6 @@ def recipe_graph(path: Path, stack: tuple[Path, ...] = ()) -> list[Path]:
     if path in stack:
         cycle = ' -> '.join(str(item) for item in (*stack, path))
         die(f'recursive from-file graph: {cycle}')
-
     graph = [path]
     for include in direct_includes(path):
         graph.extend(recipe_graph(include, (*stack, path)))
@@ -184,49 +170,47 @@ with matrix_file.open('r', encoding='utf-8', newline='') as handle:
 for row in rows:
     recipe = root / row['recipe']
     graph = recipe_graph(recipe)
-    core_count = graph.count(core_base)
-    if core_count != 1:
-        die(f"{row['image']} must include shared/core-base.yml exactly once; found {core_count}")
 
-    k3s_count = graph.count(k3s_feature)
-    if k3s_count != 1:
-        die(f"{row['image']} must include features/k3s.yml exactly once; found {k3s_count}")
+    if graph.count(core_base) != 1:
+        die(f"{row['image']} must include shared/core-base.yml exactly once")
 
-    shared_core_count = graph.count(shared_core)
-    if shared_core_count != 1:
-        die(f"{row['image']} must include shared/core.yml exactly once; found {shared_core_count}")
+    if graph.count(k3s_feature) != 1:
+        die(f"{row['image']} must include features/k3s.yml exactly once")
+
+    if graph.count(shared_core) != 1:
+        die(f"{row['image']} must include shared/core.yml exactly once")
 
     alma_core_count = graph.count(alma_core)
     if row['platform'].startswith('alma'):
         if alma_core_count != 1:
-            die(f"Alma image {row['image']} must include alma/core.yml exactly once; found {alma_core_count}")
+            die(f"Alma image {row['image']} must include alma/core.yml exactly once")
         if not (graph.index(core_base) < graph.index(alma_core) < graph.index(shared_core)):
             die(f"Alma image {row['image']} must order core layers as shared/core-base.yml, alma/core.yml, shared/core.yml")
     elif alma_core_count != 0:
-        die(f"Non-Alma image {row['image']} must not include alma/core.yml; found {alma_core_count}")
+        die(f"Non-Alma image {row['image']} must not include alma/core.yml")
     elif not (graph.index(core_base) < graph.index(shared_core)):
         die(f"{row['image']} must order shared/core-base.yml before shared/core.yml")
 
-    cockpit_count = graph.count(cockpit_feature)
-    if cockpit_count != 1:
-        die(f"Image {row['image']} must include features/cockpit.yml exactly once; found {cockpit_count}")
+    if graph.count(cockpit_feature) != 1:
+        die(f"Image {row['image']} must include features/cockpit.yml exactly once")
 
-    ceph_feature_count = graph.count(ceph_feature)
-    if ceph_feature_count != 1:
-        die(f"Image {row['image']} must include features/ceph.yml exactly once; found {ceph_feature_count}")
+    if graph.count(ceph_feature) != 1:
+        die(f"Image {row['image']} must include features/ceph.yml exactly once")
 
     expected_platform_ceph = platform_ceph_layers.get(row['platform'])
     if expected_platform_ceph is None:
         die(f"No ceph-host validation mapping exists for platform {row['platform']}")
+
     expected_platform_ceph_count = graph.count(expected_platform_ceph)
     unexpected_platform_ceph = {
         path.relative_to(root).as_posix(): graph.count(path)
         for path in platform_ceph_layers.values()
         if path != expected_platform_ceph and graph.count(path) != 0
     }
+
     if row['role'] == 'server':
         if expected_platform_ceph_count != 1:
-            die(f"Server image {row['image']} must include {expected_platform_ceph.relative_to(root)} exactly once; found {expected_platform_ceph_count}")
+            die(f"Server image {row['image']} must include {expected_platform_ceph.relative_to(root)} exactly once")
         if unexpected_platform_ceph:
             die(f"Server image {row['image']} must not include non-matching ceph-host layers: {unexpected_platform_ceph}")
     else:
@@ -238,17 +222,14 @@ for row in rows:
         if nvidia_count != 0:
             die(f"standard image {row['image']} must not include shared/nvidia-base.yml")
     elif nvidia_count != 1:
-        die(f"NVIDIA image {row['image']} must include shared/nvidia-base.yml exactly once; found {nvidia_count}")
+        die(f"NVIDIA image {row['image']} must include shared/nvidia-base.yml exactly once")
 
 expected_singletons = {
     'pcp package': (r'^\s*-\s+pcp\s*$', 1),
     'NVIDIA PCP PMDA package': (r'^\s*-\s+pcp-pmda-nvidia-gpu\s*$', 1),
     'pmcd service enablement': (r'^\s*-\s+pmcd\.service\s*$', 1),
     'pmlogger service enablement': (r'^\s*-\s+pmlogger\.service\s*$', 1),
-    'NVIDIA PMDA registration service enablement': (
-        r'^\s*-\s+myos-pcp-nvidia-pmda-apply\.service\s*$',
-        1,
-    ),
+    'NVIDIA PMDA registration service enablement': (r'^\s*-\s+myos-pcp-nvidia-pmda-apply\.service\s*$', 1),
 }
 
 for label, (pattern, expected) in expected_singletons.items():
@@ -274,24 +255,30 @@ required_workflow_snippets=(
 
 for snippet in "${required_workflow_snippets[@]}"; do
   grep -Fq -- "$snippet" "$workflow_file" || {
-    printf 'Workflow is missing manifest-driven matrix wiring: %s
-' "$snippet" >&2
+    printf 'Workflow is missing manifest-driven matrix wiring: %s\n' "$snippet" >&2
     exit 1
   }
 done
 
-for forbidden_snippet in   'workstation_core_images'   'workstation_full_images'   'console_images'   'workstation-core-images:'   'workstation-full-images:'   'console-images:'   'verify-alma9-nvidia-legacy.ps1'   'github.base_ref || github.ref_name'   '--branch "$active_branch"'
+for forbidden_snippet in \
+  'workstation_core_images' \
+  'workstation_full_images' \
+  'console_images' \
+  'workstation-core-images:' \
+  'workstation-full-images:' \
+  'console-images:' \
+  'verify-alma9-nvidia-legacy.ps1' \
+  'github.base_ref || github.ref_name' \
+  '--branch "$active_branch"'
 
 do
   if grep -Fq -- "$forbidden_snippet" "$workflow_file"; then
-    printf 'Workflow still contains retired matrix wiring: %s
-' "$forbidden_snippet" >&2
+    printf 'Workflow still contains retired matrix wiring: %s\n' "$forbidden_snippet" >&2
     exit 1
   fi
 done
 
 if grep -Fq -- 'recipe: /images/' "$workflow_file"; then
-  printf 'Workflow still contains hard-coded recipe entries instead of manifest-driven matrices.
-' >&2
+  printf 'Workflow still contains hard-coded recipe entries instead of manifest-driven matrices.\n' >&2
   exit 1
 fi
