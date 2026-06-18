@@ -1,0 +1,14 @@
+---
+modules:
+  # Shared local metrics collection and history across the image matrix.
+  - type: dnf
+    install:
+      install-weak-deps: false
+      packages:
+        - pcp
+
+  - type: systemd
+    system:
+      enabled:
+        - pmcd.service
+        - pmlogger.service
