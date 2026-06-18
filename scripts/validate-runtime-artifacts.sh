@@ -3,19 +3,12 @@ set -euo pipefail
 
 cd "$(dirname "$0")/.."
 
-command -v node >/dev/null 2>&1 || { printf 'Missing required tool: node
-' >&2; exit 127; }
-command -v python3 >/dev/null 2>&1 || { printf 'Missing required tool: python3
-' >&2; exit 127; }
+command -v python3 >/dev/null 2>&1 || { printf 'Missing required tool: python3\n' >&2; exit 127; }
 
-find files/agent/runtime-core/usr/local/libexec/myos -type f -print0 | xargs -0 -n1 bash -n
-find files/agent/platform-host/usr/local/libexec/myos -type f -print0 | xargs -0 -n1 bash -n
-bash -n files/agent/platform-host/etc/myos/templates/apps/openclaw/scripts/openclaw-start.sh
 bash -n files/scripts/just-el9.sh
 bash -n files/workstation/shared/usr/libexec/myos-workstation-dm-apply
 bash -n files/flatpak/base/usr/libexec/myos-flatpak-session-env
 bash -n files/flatpak/cleanup/usr/libexec/myos-flatpak-system-maintenance
-bash -n files/agent/nvidia/usr/local/libexec/myos/myos-pcp-nvidia-pmda-apply
 bash -n modules/os-release-meta/os-release-meta.sh
 
 tmpdir="$(mktemp -d)"
@@ -33,10 +26,12 @@ run_os_release_meta_smoke() {
   local root="${tmpdir}/${name}"
 
   mkdir -p "${root}/etc/dnf/vars" "${root}/usr/share/myos"
-  printf '%s
-' "${os_release_body}" > "${root}/os-release"
+  printf '%s\n' "${os_release_body}" > "${root}/os-release"
 
-  OS_RELEASE_META_OS_RELEASE_PATH="${root}/os-release"   OS_RELEASE_META_ENV_PATH="${root}/usr/share/myos/os-release-meta.env"   OS_RELEASE_META_DNF_VARS_DIR="${root}/etc/dnf/vars"     bash modules/os-release-meta/os-release-meta.sh
+  OS_RELEASE_META_OS_RELEASE_PATH="${root}/os-release" \
+  OS_RELEASE_META_ENV_PATH="${root}/usr/share/myos/os-release-meta.env" \
+  OS_RELEASE_META_DNF_VARS_DIR="${root}/etc/dnf/vars" \
+    bash modules/os-release-meta/os-release-meta.sh
 
   (
     set -euo pipefail
@@ -59,39 +54,25 @@ run_os_release_meta_smoke() {
   fi
 }
 
-run_os_release_meta_smoke   alma10   $'ID="almalinux"
-ID_LIKE="rhel centos fedora"
-VERSION_ID="10.1"
-PLATFORM_ID="platform:el10"'   almalinux   10   1   true   10   1
+run_os_release_meta_smoke \
+  alma10 \
+  $'ID="almalinux"\nID_LIKE="rhel centos fedora"\nVERSION_ID="10.1"\nPLATFORM_ID="platform:el10"' \
+  almalinux \
+  10 \
+  1 \
+  true \
+  10 \
+  1
 
-run_os_release_meta_smoke   fedora   $'ID="fedora"
-VERSION_ID="44"
-NAME="Fedora Linux"'   fedora   44   0   false   ''   ''
-
-node --check files/agent/platform-host/etc/myos/templates/apps/openclaw/scripts/openclaw-ui-server.mjs
-python3 -m json.tool files/agent/platform-host/etc/myos/templates/apps/openclaw/config/openclaw.json.example >/dev/null
-
-grep -q '^\[Container\]$' files/agent/platform-host/etc/myos/templates/apps/openclaw/quadlets/openclaw.container
-grep -q '^Image=' files/agent/platform-host/etc/myos/templates/apps/openclaw/quadlets/openclaw.container
-grep -q '^Exec=' files/agent/platform-host/etc/myos/templates/apps/openclaw/quadlets/openclaw.container
-grep -q '^EnvironmentFile=__TENANT_ROOT__/config/env/ports.env$' files/agent/platform-host/etc/myos/templates/apps/openclaw/quadlets/openclaw.container
-grep -q '^EnvironmentFile=__TENANT_ROOT__/zone-c/secrets/openclaw.secrets.env$' files/agent/platform-host/etc/myos/templates/apps/openclaw/quadlets/openclaw.container
-grep -q '^Volume=__TENANT_ROOT__/zone-c/state:/home/node/.openclaw:Z$' files/agent/platform-host/etc/myos/templates/apps/openclaw/quadlets/openclaw.container
-grep -q '^Volume=__TENANT_ROOT__/zone-c/storage:/home/node/.openclaw/workspace:Z$' files/agent/platform-host/etc/myos/templates/apps/openclaw/quadlets/openclaw.container
-grep -q '^WantedBy=default.target$' files/agent/platform-host/etc/myos/templates/apps/openclaw/quadlets/openclaw.container
-
-grep -q 'DEFAULT_OPENCLAW_IMAGE="${DEFAULT_OPENCLAW_IMAGE:-ghcr.io/openclaw/openclaw:latest}"' files/agent/runtime-core/usr/local/libexec/myos/common.sh
-! test -e files/agent/runtime-core/usr/local/bin/open''quad
-! test -e files/agent/runtime-core/usr/local/libexec/myos/lib/user-runtime.sh
-! test -e files/agent/runtime-core/etc/myos/templates/apps/openclaw/user/openclaw.container
-! test -e files/agent/runtime-core/etc/myos/templates/apps/openclaw/user/README.md
-! rg -n 'DEFAULT_OPEN[Q]UAD_IMAGE|OPENCLAW_USER_SERVICE_NAME|OPENCLAW_USER_CONTAINER_NAME|OPENCLAW_USER_QUADLET_NAME|OPEN[Q]UAD_WRAPPER_VERSION' \
-  files/agent/runtime-core/usr/local/libexec/myos/common.sh \
-  files/agent/runtime-core/usr/local/libexec/myos/lib/paths.sh >/dev/null
-! rg -n '\bopen[q]uad\b|open[-_]quad|OPEN[Q]UAD' \
-  files/agent/runtime-core \
-  files/justfiles/usr/share/myos/just/update.just \
-  files/agent/justfiles/usr/share/myos/just >/dev/null
+run_os_release_meta_smoke \
+  fedora \
+  $'ID="fedora"\nVERSION_ID="44"\nNAME="Fedora Linux"' \
+  fedora \
+  44 \
+  0 \
+  false \
+  '' \
+  ''
 
 test -f files/flatpak/base/etc/profile.d/flatpak-user-default.sh
 test -f files/flatpak/base/etc/systemd/system/system-flatpak-setup.service.d/10-managed-org-system.conf
@@ -123,6 +104,10 @@ grep -q "vulkan-loader" recipes/layers/shared/core-base.yml
 grep -q "vulkan-tools" recipes/layers/shared/core-base.yml
 grep -q "from-file: layers/features/k3s.yml" recipes/layers/shared/core-base.yml
 ! grep -q '^        - lvm2$' recipes/layers/shared/core-base.yml
+test -f files/base/runtime/etc/ld.so.conf.d/rocm.conf
+! grep -q 'agent/runtime-core' recipes/layers/shared/core-base.yml
+! grep -q 'agent/platform-host' recipes/layers/shared/core.yml
+
 test -f files/k3s/shared/usr/lib/modules-load.d/90-myos-k3s.conf
 test -f files/k3s/shared/usr/lib/sysctl.d/90-myos-k3s.conf
 grep -q '^overlay$' files/k3s/shared/usr/lib/modules-load.d/90-myos-k3s.conf
@@ -139,6 +124,7 @@ grep -q 'sha256sum-amd64.txt' recipes/layers/features/k3s.yml
 grep -q 'sha256sum-arm64.txt' recipes/layers/features/k3s.yml
 grep -q 'sha256sum -c' recipes/layers/features/k3s.yml
 grep -q 'k3s-agent.service' recipes/layers/features/k3s.yml
+
 test -f files/ceph-host/shared/usr/lib/modules-load.d/90-myos-ceph-host.conf
 grep -q '^ceph$' files/ceph-host/shared/usr/lib/modules-load.d/90-myos-ceph-host.conf
 grep -q '^rbd$' files/ceph-host/shared/usr/lib/modules-load.d/90-myos-ceph-host.conf
@@ -149,23 +135,15 @@ grep -q '^        - kernel-modules-core$' recipes/layers/fedora/ceph-host.yml
 grep -q '^        - lvm2$' recipes/layers/alma9/ceph-host.yml
 grep -q '^        - lvm2$' recipes/layers/alma10/ceph-host.yml
 grep -q '^        - lvm2$' recipes/layers/fedora/ceph-host.yml
-grep -q 'TAG+="uaccess"' files/agent/runtime-core/etc/udev/rules.d/70-amdgpu.rules
-grep -q "for group in render video; do" files/agent/platform-host/usr/local/libexec/myos/persistent-user-enroll
-test -d files/agent/platform-host/etc/myos/templates/persistent-users/baseline/quadlets
-test -d files/agent/platform-host/etc/myos/templates/persistent-users/owner/quadlets
-grep -q 'groups = \["wheel", "render", "video"\]' image.toml
-test -f files/agent/nvidia/usr/local/libexec/myos/myos-pcp-nvidia-pmda-apply
-test -f files/agent/nvidia/usr/lib/systemd/system/myos-pcp-nvidia-pmda-apply.service
-grep -q '^ExecStart=/usr/local/libexec/myos/myos-pcp-nvidia-pmda-apply$' files/agent/nvidia/usr/lib/systemd/system/myos-pcp-nvidia-pmda-apply.service
-grep -q '^Before=pmlogger.service$' files/agent/nvidia/usr/lib/systemd/system/myos-pcp-nvidia-pmda-apply.service
 
+grep -q 'groups = \["wheel", "render", "video"\]' image.toml
+! grep -q 'source: agent/nvidia' recipes/layers/shared/nvidia-base.yml
+grep -q '^        - pcp-pmda-nvidia-gpu$' recipes/layers/shared/nvidia-base.yml
+
+grep -q "import '/usr/share/myos/just/default.just'" files/justfiles/usr/share/myos/just/index.just
 grep -q "import '/usr/share/myos/just/rebase.just'" files/justfiles/usr/share/myos/just/index.just
-grep -q "import '/usr/share/myos/just/cluster.just'" files/justfiles/usr/share/myos/just/index.just
 grep -q "import '/usr/share/myos/just/update.just'" files/justfiles/usr/share/myos/just/index.just
-grep -q '^cluster \*args:$' files/justfiles/usr/share/myos/just/cluster.just
-grep -q '/usr/local/libexec/myos/cluster' files/justfiles/usr/share/myos/just/cluster.just
-grep -q '^NODE_TOKEN_FILE="/var/lib/rancher/k3s/server/node-token"$' files/agent/runtime-core/usr/local/libexec/myos/cluster
-grep -q 'k3s join endpoints must use https://' files/agent/runtime-core/usr/local/libexec/myos/cluster
+! grep -q "cluster.just" files/justfiles/usr/share/myos/just/index.just
 grep -q "^flatpak-clean-system:$" files/justfiles/usr/share/myos/just/update.just
 grep -q "^clean-system:$" files/justfiles/usr/share/myos/just/update.just
 grep -q "myos flatpak-clean-system" files/justfiles/usr/share/myos/just/update.just
@@ -180,13 +158,3 @@ grep -q '^rebase:$' files/justfiles/usr/share/myos/just/rebase.just
 grep -q 'raw.githubusercontent.com/myos-dev/myOS/stable/files/base/runtime/usr/share/myos/image-matrix.tsv' files/justfiles/usr/share/myos/just/rebase.just
 grep -q 'Could not reach GitHub to download the image matrix' files/justfiles/usr/share/myos/just/rebase.just
 grep -q 'No image matrix found at' files/justfiles/usr/share/myos/just/rebase.just
-grep -q "import '/usr/share/myos/just/tenant.just'" files/agent/justfiles/usr/share/myos/just/index.just
-grep -q "import '/usr/share/myos/just/cluster.just'" files/agent/justfiles/usr/share/myos/just/index.just
-grep -q "import '/usr/share/myos/just/openclaw-host.just'" files/agent/justfiles/usr/share/myos/just/index.just
-grep -q '^tenant-list ' files/agent/justfiles/usr/share/myos/just/tenant.just
-grep -q '^tenant-dashboard ' files/agent/justfiles/usr/share/myos/just/tenant.just
-grep -q '^tenant-config ' files/agent/justfiles/usr/share/myos/just/tenant.just
-grep -q '^tenant-models ' files/agent/justfiles/usr/share/myos/just/tenant.just
-grep -q '^tenant-openclaw ' files/agent/justfiles/usr/share/myos/just/tenant.just
-grep -q '^tenant-tailscale ' files/agent/justfiles/usr/share/myos/just/tenant.just
-grep -q '^openclaw-host ' files/agent/justfiles/usr/share/myos/just/openclaw-host.just
