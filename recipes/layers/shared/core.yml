@@ -16,16 +16,7 @@ modules:
 
   - type: containerfile
     snippets:
-      - >-
-        RUN install -d -m 0755
-        /etc/myos
-        /etc/myos/dns
-        /etc/myos/firewall
-        /etc/myos/firewall/rendered
-        /usr/local/libexec/myos
-      - >-
-        RUN restorecon -RF
-        /etc/myos
-        /usr/local/libexec/myos || true
+      - RUN install -d -m 0755 /etc/myos
+      - RUN restorecon -RF /etc/myos || true
 
   - from-file: layers/features/ceph.yml
