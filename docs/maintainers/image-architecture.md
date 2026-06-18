@@ -21,7 +21,7 @@ recipes/images/
     fedora/
 ```
 
-This is the authoritative repo shape.
+This is the authoritative image tree.
 
 Internal filenames like `core.yml` and `nvidia-580.yml` are maintenance details. The public product model comes from the manifest and the recipe `name:` fields.
 
@@ -66,7 +66,7 @@ The TSV schema is intentionally small:
 
 ### Cross-distro core baseline
 
-`recipes/layers/shared/core-base.yml` owns the cross-distro low-level core baseline shared by Alma and Fedora builds.
+`recipes/layers/shared/core-base.yml` owns the low-level baseline shared by Alma and Fedora builds.
 
 It owns:
 
@@ -79,7 +79,7 @@ It owns:
 - shared PCP collection and local history through `pmcd.service` and `pmlogger.service`
 - shared kernel args and masked system services
 
-`recipes/layers/shared/core.yml` owns distro-neutral core tooling shared by every supported image. Image recipes layer it after `shared/core-base.yml` and any distro-family repository setup required for that package set.
+`recipes/layers/shared/core.yml` owns the small distro-neutral host/operator package baseline layered after `shared/core-base.yml` and any required distro-family repository setup.
 
 ### Distro core delta
 
@@ -97,9 +97,9 @@ It owns:
 
 `recipes/layers/shared/core.yml` owns the remaining host/operator package baseline:
 
-- OpenTofu and Kubernetes CLI
-- shared admin tools that are not specific to a hosted application platform
-- shared filesystem scaffolding under `/etc/myos`
+- fastfetch, fzf, zstd, gcc, distrobox, and podman-compose
+- generic `/etc/myos` filesystem scaffolding
+- inclusion of Cockpit and Ceph feature overlays
 
 ### Workstation layers
 
