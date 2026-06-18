@@ -28,7 +28,7 @@ NVIDIA images include the NVIDIA GPU PMDA package.
 
 myOS treats local GPU support as host/runtime capability.
 
-The shared baseline includes Vulkan tooling where supported by the platform lane.
+The shared baseline includes Vulkan tooling where supported by the platform lane, plus render/video group support for common GPU workflows.
 
 ROCm userspace is platform-lane-specific. It is included where the platform lane supports it, currently Alma 10 and Fedora. Alma 9 is primarily kept for the NVIDIA 580 compatibility lane and should not be described as having the same ROCm userspace contract.
 
