@@ -2,9 +2,9 @@
 
 ## Product roles
 
-- Workstation is the flagship role.
-- Server is the headless admin/operator role, while the shared admin/operator overlay is available across the matrix.
-- Console is an Alma 10 core-only preview role.
+- Server is the headless infrastructure role.
+- Workstation is the operator desktop and laptop role.
+- GNOME and COSMIC are workstation environments, not separate products.
 
 ## Supported image matrix
 
@@ -14,8 +14,8 @@ Unsupported combinations should not be treated as soft promises. If they are mis
 
 ## Boundaries
 
-- Tenant tooling, persistent-user administration, and `openclaw-host` are advanced flows exposed through the shared admin/operator overlay.
-- Built-in per-user OpenClaw is out of contract for current images.
+- myOS is a base operating system image project.
+- Higher-level services should run above myOS, usually in containers or k3s.
 - Alma 9 NVIDIA legacy is first-class and intentionally validated.
 - Alma 10 does not support the NVIDIA legacy lane.
 
