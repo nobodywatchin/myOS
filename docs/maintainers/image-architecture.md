@@ -72,12 +72,12 @@ It owns:
 
 - common core packages
 - base runtime payloads and branding
+- shared Justfile command surface
 - distrobox helper symlinks
 - shared k3s runtime capability, service units, and kernel/network baseline through `recipes/layers/features/k3s.yml`
 - shared Tailscale baseline
 - shared PCP collection and local history through `pmcd.service` and `pmlogger.service`
 - shared kernel args and masked system services
-- shared runtime-core payloads under `files/agent/runtime-core/` such as core helper libraries, `myos cluster`, and AMD/ROCm access prerequisites
 
 `recipes/layers/shared/core.yml` owns distro-neutral core tooling shared by every supported image. Image recipes layer it after `shared/core-base.yml` and any distro-family repository setup required for that package set.
 
@@ -95,11 +95,11 @@ It owns:
 
 `recipes/layers/features/k3s.yml` owns shared k3s runtime capability.
 
-`recipes/layers/shared/core.yml` owns the remaining host/operator remainder:
+`recipes/layers/shared/core.yml` owns the remaining host/operator package baseline:
 
 - OpenTofu and Kubernetes CLI
-- platform-host payloads under `files/agent/platform-host/`
-- tenant, persistent-user, and `openclaw-host` filesystem scaffolding
+- shared admin tools that are not specific to a hosted application platform
+- shared filesystem scaffolding under `/etc/myos`
 
 ### Workstation layers
 
@@ -124,11 +124,11 @@ Remaining distro workstation layers only add real drift:
 
 NVIDIA ownership is split three ways:
 
-- `shared/nvidia-base.yml`: common repo bootstrap, copied config, NVIDIA PCP PMDA wiring, and kernel args
+- `shared/nvidia-base.yml`: common repo bootstrap, NVIDIA container toolkit setup, NVIDIA PCP PMDA package, copied NVIDIA support payloads, and kernel args
 - `shared/nvidia-common.yml` / `shared/nvidia-open.yml`: Alma-family NVIDIA lane wiring
 - `fedora/nvidia-open.yml`: Fedora open-driver delta on top of the shared NVIDIA base
 
-That keeps the repo bootstrap, copied files, NVIDIA PCP PMDA wiring, and open-driver shim owned once instead of repeated across distro layers.
+That keeps the repo bootstrap, package selection, copied support files, and open-driver shim owned once instead of repeated across distro layers.
 
 ## Naming
 
