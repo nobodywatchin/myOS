@@ -74,10 +74,14 @@ It owns:
 - base runtime payloads and branding
 - shared Justfile command surface
 - distrobox helper symlinks
-- shared k3s runtime capability, service units, and kernel/network baseline through `recipes/layers/features/k3s.yml`
-- shared Tailscale baseline
-- shared PCP collection and local history through `pmcd.service` and `pmlogger.service`
-- shared kernel args and masked system services
+- inclusion of shared feature and policy layers
+
+The core base intentionally delegates feature areas that were getting too large:
+
+- `recipes/layers/features/k3s.yml` owns k3s binary and disabled service units
+- `recipes/layers/features/pcp.yml` owns PCP local metrics collection and history
+- `recipes/layers/features/tailscale.yml` owns Tailscale package and daemon baseline
+- `recipes/layers/shared/system-policy.yml` owns shared groups, kernel args, and masked update/counting services
 
 `recipes/layers/shared/core.yml` owns the small distro-neutral host/operator package baseline layered after `shared/core-base.yml` and any required distro-family repository setup.
 
@@ -94,6 +98,12 @@ It owns:
 `recipes/layers/features/ceph.yml` owns shared Ceph host prerequisites.
 
 `recipes/layers/features/k3s.yml` owns shared k3s runtime capability.
+
+`recipes/layers/features/pcp.yml` owns shared PCP runtime capability.
+
+`recipes/layers/features/tailscale.yml` owns shared Tailscale runtime capability.
+
+`recipes/layers/shared/system-policy.yml` owns shared system policy.
 
 `recipes/layers/shared/core.yml` owns the remaining host/operator package baseline:
 
