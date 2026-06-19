@@ -1,0 +1,59 @@
+name: Build Alma 10 Installer ISO
+
+on:
+  workflow_dispatch:
+    inputs:
+      payload_ref:
+        description: BootC payload image to install
+        required: false
+        default: ghcr.io/myos-dev/alma10-server:latest
+  push:
+    paths:
+      - installer/alma10-server/**
+      - scripts/build-alma10-installer-iso.sh
+      - .github/workflows/build-alma10-installer-iso.yml
+      - iso.toml
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Free runner disk space
+        run: |
+          sudo rm -rf /usr/share/dotnet /usr/local/lib/android /opt/ghc || true
+          df -h
+
+      - name: Install host tools
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y podman
+          podman --version
+
+      - name: Build installer ISO
+        env:
+          MYOS_INSTALLER_PAYLOAD_REF: ${{ github.event.inputs.payload_ref || 'ghcr.io/myos-dev/alma10-server:latest' }}
+          MYOS_INSTALLER_IMAGE: localhost/myos-alma10-server-installer:ci
+          MYOS_INSTALLER_OUTPUT_DIR: ${{ github.workspace }}/output/installer/alma10-server
+        run: bash ./scripts/build-alma10-installer-iso.sh
+
+      - name: List generated files
+        run: find output -maxdepth 5 -type f -ls
+
+      - name: Upload installer ISO artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: myos-alma10-server-installer
+          path: |
+            output/installer/alma10-server/*.iso
+            output/installer/alma10-server/*.sha256
+          if-no-files-found: error
+          retention-days: 7
+          compression-level: 0
