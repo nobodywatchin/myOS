@@ -10,6 +10,7 @@ These explain what myOS is, how to choose an image, and how the day-to-day exper
 - [docs/user/design-principles.md](user/design-principles.md)
 - [docs/user/choose-an-image.md](user/choose-an-image.md)
 - [docs/user/install.md](user/install.md)
+- [docs/user/installer-iso.md](user/installer-iso.md)
 - [docs/user/updates-and-rollbacks.md](user/updates-and-rollbacks.md)
 - [docs/user/hardware.md](user/hardware.md)
 - [docs/user/apps-and-flatpak.md](user/apps-and-flatpak.md)
