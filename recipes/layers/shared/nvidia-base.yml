@@ -14,6 +14,10 @@ modules:
   - type: containerfile
     snippets:
       - RUN curl -fsSL https://nvidia.github.io/libnvidia-container/stable/rpm/nvidia-container-toolkit.repo -o /etc/yum.repos.d/nvidia-container-toolkit.repo
+      # NVIDIA occasionally ships bad or mismatched repomd.xml signatures for this repo.
+      # Keep RPM package GPG checks enabled, but do not make every later dnf transaction
+      # depend on repo metadata signature verification for the container toolkit repo.
+      - RUN sed -i 's/^repo_gpgcheck=.*/repo_gpgcheck=0/' /etc/yum.repos.d/nvidia-container-toolkit.repo && grep -q '^gpgcheck=1' /etc/yum.repos.d/nvidia-container-toolkit.repo
       - RUN dnf -y --enablerepo "nvidia-container-toolkit" install nvidia-container-toolkit nvidia-container-toolkit-base libnvidia-container-tools libnvidia-container1
       - RUN chmod 0755 /usr/local/libexec/myos/myos-pcp-nvidia-pmda-apply
       - RUN ldconfig
