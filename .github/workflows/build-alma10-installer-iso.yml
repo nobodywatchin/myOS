@@ -48,7 +48,7 @@ jobs:
         run: find output -maxdepth 5 -type f -ls
 
       - name: Upload installer ISO artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: myos-alma10-server-installer
           path: |
