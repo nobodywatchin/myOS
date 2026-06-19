@@ -1,0 +1,103 @@
+modules:
+  # Shared workstation substrate used by every workstation image.
+  # Keep distro-specific workstation drift in the distro workstation layers and
+  # DE-specific session logic in `workstation-gnome.yml` and
+  # `workstation-cosmic.yml`.
+  - type: dnf
+    remove:
+      packages:
+        - vim-minimal
+    install:
+      install-weak-deps: false
+      packages:
+        - ModemManager
+        - NetworkManager-adsl
+        - NetworkManager-bluetooth
+        - NetworkManager-openconnect
+        - NetworkManager-openvpn
+        - NetworkManager-wifi
+        - NetworkManager-wwan
+        - acl
+        - alsa-sof-firmware
+        - alsa-ucm
+        - alsa-utils
+        - attr
+        - bash-completion
+        - bluez
+        - bolt
+        - colord
+        - cpio
+        - crontabs
+        - cups
+        - cups-filters
+        - cups-pk-helper
+        - cyrus-sasl-plain
+        - dejavu-sans-fonts
+        - dejavu-sans-mono-fonts
+        - dejavu-serif-fonts
+        - dnsmasq
+        - dos2unix
+        - fwupd
+        - fuse3
+        - fuse-libs
+        - ghostscript
+        - git
+        - glibc-all-langpacks
+        - google-noto-sans-arabic-fonts
+        - google-noto-sans-devanagari-fonts
+        - google-noto-sans-hebrew-fonts
+        - gstreamer1-plugins-bad-free
+        - gstreamer1-plugins-bad-free-libs
+        - gstreamer1-plugins-base
+        - gstreamer1-plugins-good
+        - gutenprint
+        - gutenprint-cups
+        - gvfs
+        - gvfs-fuse
+        - gvfs-goa
+        - gvfs-gphoto2
+        - gvfs-mtp
+        - gvfs-smb
+        - hplip
+        - hunspell
+        - ibus-anthy
+        - ibus-gtk3
+        - ibus-hangul
+        - ibus-libpinyin
+        - ibus-libzhuyin
+        - ibus-m17n
+        - ibus-typing-booster
+        - iw
+        - libcamera
+        - libcamera-gstreamer
+        - libcamera-tools
+        - libsane-hpaio
+        - logrotate
+        - microcode_ctl
+        - nftables
+        - orca
+        - pavucontrol
+        - pciutils
+        - pipewire
+        - pipewire-alsa
+        - pipewire-jack-audio-connection-kit
+        - pipewire-pulseaudio
+        - pipewire-utils
+        - plymouth
+        - plymouth-system-theme
+        - polkit
+        - ppp
+        - rfkill
+        - sane-airscan
+        - sane-backends-drivers-scanners
+        - setroubleshoot
+        - switcheroo-control
+        - system-config-printer-udev
+        - systemd-container
+        - thermald
+        - usbutils
+        - vim-enhanced
+        - wireplumber
+        - wl-clipboard
+        - wpa_supplicant
+        - xdg-user-dirs
