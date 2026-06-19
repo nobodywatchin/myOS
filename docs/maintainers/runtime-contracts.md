@@ -4,16 +4,24 @@ The purpose of the refactor is to keep layer ownership explicit while simplifyin
 
 ## Cross-distro core contract
 
-`recipes/layers/shared/core-base.yml` owns low-level behavior that should exist on every supported image, regardless of distro lane.
+`recipes/layers/shared/core-base.yml` owns the low-level baseline shared by every supported image.
 
 That includes:
 
 - common core packages and runtime defaults
 - branding and `os-release` metadata
-- k3s binary, k3s server/agent service units, and shared kernel/network prerequisites through `recipes/layers/features/k3s.yml`
-- Tailscale system daemon baseline
 - host Vulkan userland/tooling where supported by the platform lane
 - base runtime files and shared Justfile command surface
+- inclusion of cross-image feature and policy layers
+
+`recipes/layers/shared/core-base.yml` should not grow into a catch-all layer. Shared features with their own policy surface should live in explicit feature or policy layers.
+
+Current delegated layers:
+
+- `recipes/layers/features/k3s.yml`: k3s binary and disabled server/agent unit baseline
+- `recipes/layers/features/pcp.yml`: PCP local metrics collection and history
+- `recipes/layers/features/tailscale.yml`: Tailscale package and daemon baseline
+- `recipes/layers/shared/system-policy.yml`: shared groups, kernel args, and masked update/counting services
 
 `recipes/layers/shared/core.yml` owns the small distro-neutral host/operator package baseline shared by every supported image. It runs after `shared/core-base.yml` and any distro-family repository setup needed to make the shared package set available.
 
@@ -22,7 +30,7 @@ ROCm userspace is not a universal cross-image promise. It belongs to the platfor
 ## Distro core deltas
 
 - `recipes/layers/alma/core.yml` owns Alma-family repository setup such as EPEL/CRB enablement and subscription-manager cleanup.
-- `recipes/layers/fedora/core.yml` owns the Fedora edge-lane core delta such as `dnf5-plugins`, Fedora-native ROCm packages, and Fedora-specific package drift.
+- `recipes/layers/fedora/core.yml` owns the Fedora edge-lane delta such as `dnf5-plugins`, Fedora-native ROCm packages, and Fedora-specific package drift.
 - `recipes/layers/alma9/core.yml` and `recipes/layers/alma10/core.yml` own only the remaining Alma-version drift that does not belong in the shared Alma-family layer.
 - `recipes/layers/alma10/core.yml` may carry ROCm-related Alma 10 enablement when that support belongs to the Alma 10 lane rather than the cross-distro contract.
 
@@ -32,7 +40,13 @@ ROCm userspace is not a universal cross-image promise. It belongs to the platfor
 
 `recipes/layers/features/ceph.yml` owns the shared Ceph host prerequisites.
 
-`recipes/layers/features/k3s.yml` owns the shared k3s runtime capability.
+`recipes/layers/features/k3s.yml` owns shared k3s runtime capability.
+
+`recipes/layers/features/pcp.yml` owns shared PCP runtime capability.
+
+`recipes/layers/features/tailscale.yml` owns shared Tailscale runtime capability.
+
+`recipes/layers/shared/system-policy.yml` owns shared system policy that is not tied to one distro or role.
 
 `recipes/layers/shared/core.yml` owns the remaining host/operator package baseline:
 
