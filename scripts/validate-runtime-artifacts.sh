@@ -71,6 +71,20 @@ test -f files/base/runtime/etc/udev/rules.d/70-amdgpu-kfd.rules
 ! grep -q '/etc/myos/dns' recipes/layers/shared/core.yml
 ! grep -q '/etc/myos/firewall' recipes/layers/shared/core.yml
 
+grep -q 'from-file: layers/features/k3s.yml' recipes/layers/shared/core-base.yml
+grep -q 'from-file: layers/features/pcp.yml' recipes/layers/shared/core-base.yml
+grep -q 'from-file: layers/features/tailscale.yml' recipes/layers/shared/core-base.yml
+grep -q 'from-file: layers/shared/system-policy.yml' recipes/layers/shared/core-base.yml
+! grep -q 'tailscale.repo' recipes/layers/shared/core-base.yml
+! grep -q 'pmcd.service' recipes/layers/shared/core-base.yml
+! grep -q 'bootc-fetch-apply-updates' recipes/layers/shared/core-base.yml
+grep -q '^        - pcp$' recipes/layers/features/pcp.yml
+grep -q 'pmcd.service' recipes/layers/features/pcp.yml
+grep -q 'tailscale.repo' recipes/layers/features/tailscale.yml
+grep -q 'tailscaled.service' recipes/layers/features/tailscale.yml
+grep -q 'bootc-fetch-apply-updates.service' recipes/layers/shared/system-policy.yml
+grep -q 'transparent_hugepage=madvise' recipes/layers/shared/system-policy.yml
+
 test -f files/k3s/shared/usr/lib/systemd/system/k3s.service
 test -f files/k3s/shared/usr/lib/systemd/system/k3s-agent.service
 grep -q "version='v1.36.1+k3s1'" recipes/layers/features/k3s.yml
