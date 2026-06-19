@@ -62,6 +62,18 @@ test -f files/flatpak/base/etc/profile.d/flatpak-user-default.sh
 test -f files/flatpak/base/etc/systemd/system/system-flatpak-setup.service.d/10-managed-org-system.conf
 grep -q "myos-flatpak-system-maintenance ensure" files/flatpak/base/etc/systemd/system/system-flatpak-setup.service.d/10-managed-org-system.conf
 test -f files/workstation/shared/usr/libexec/myos-workstation-dm-apply
+
+grep -q 'from-file: layers/shared/workstation-substrate.yml' recipes/layers/shared/workstation-common.yml
+grep -q 'from-file: layers/shared/workstation-admin-tools.yml' recipes/layers/shared/workstation-common.yml
+grep -q 'from-file: layers/shared/workstation-policy.yml' recipes/layers/shared/workstation-common.yml
+grep -q 'from-file: layers/shared/workstation-user-tools.yml' recipes/layers/shared/workstation-common.yml
+! grep -q 'brave-browser-rpm-beta' recipes/layers/shared/workstation-common.yml
+! grep -q 'myos-workstation-dm-apply.service' recipes/layers/shared/workstation-common.yml
+grep -q '^        - ModemManager$' recipes/layers/shared/workstation-substrate.yml
+grep -q '^        - tcpdump$' recipes/layers/shared/workstation-admin-tools.yml
+grep -q 'myos-workstation-dm-apply.service' recipes/layers/shared/workstation-policy.yml
+grep -q 'brave-origin-beta' recipes/layers/shared/workstation-user-tools.yml
+
 test -f files/base/runtime/etc/ld.so.conf.d/rocm.conf
 test -f files/base/runtime/etc/profile.d/rocm.sh
 test -f files/base/runtime/etc/udev/rules.d/70-render.rules
