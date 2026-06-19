@@ -73,15 +73,18 @@ It owns:
 
 Server recipes do not consume these layers and should not receive desktop portal backend logic.
 
+The system Flatpak model is intentionally opinionated. It reduces drift on multi-user workstations by keeping curated shared apps separate from each user's personal `flathub` installs.
+
 ## Workstation contract
 
-`recipes/layers/shared/workstation-common.yml` owns only the DE-agnostic workstation substrate.
+`recipes/layers/shared/workstation-common.yml` is the DE-agnostic workstation orchestrator.
 
-That includes:
+It should stay small and delegate real ownership to explicit sublayers:
 
-- workstation packages and desktop-oriented diagnostics
-- boot target selection
-- shared display-manager reconciliation
+- `workstation-substrate.yml`: shared desktop, hardware, audio, printing, scanning, camera, input, language, and base workstation packages
+- `workstation-admin-tools.yml`: workstation-only diagnostics, storage, network, and admin utilities
+- `workstation-policy.yml`: graphical target, display-manager reconciliation, and workstation sleep policy
+- `workstation-user-tools.yml`: opinionated user-facing workstation tooling such as Homebrew and Brave Origin Beta
 
 `recipes/layers/shared/workstation-modern.yml` owns the extra workstation delta shared by the Alma 10 and Fedora lanes.
 
