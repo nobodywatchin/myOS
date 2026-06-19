@@ -111,9 +111,42 @@ $transactions = @(
     }
 )
 
+function Test-TransientContainerRuntimeFailure {
+    param(
+        [string]$Output
+    )
+
+    $patterns = @(
+        "unexpected EOF",
+        "happened during read",
+        "while reconnecting",
+        "TLS handshake timeout",
+        "connection reset",
+        "connection refused",
+        "i/o timeout",
+        "net/http",
+        "timeout awaiting response headers",
+        "temporary failure",
+        "temporarily unavailable",
+        "service unavailable",
+        "blob to file",
+        "cdn.*EOF",
+        "quay\.io.*EOF"
+    )
+
+    foreach ($pattern in $patterns) {
+        if ($Output -match $pattern) {
+            return $true
+        }
+    }
+
+    return $false
+}
+
 function Invoke-LaneTransaction {
     param(
-        [string[]]$Packages
+        [string[]]$Packages,
+        [int]$MaxAttempts = 3
     )
 
     $packageList = [string]::Join(" ", $Packages)
@@ -126,8 +159,29 @@ dnf -y module enable nvidia-driver:$driverStream >/dev/null
 dnf -y --assumeno install $packageList 2>&1 || true
 "@
 
-    $output = & $runtime.Source run --rm $containerImage bash -lc $containerScript 2>&1
-    return ($output | Out-String)
+    for ($attempt = 1; $attempt -le $MaxAttempts; $attempt++) {
+        $output = & $runtime.Source run --rm $containerImage bash -lc $containerScript 2>&1
+        $exitCode = $LASTEXITCODE
+        $text = ($output | Out-String)
+
+        if ($exitCode -eq 0) {
+            return $text
+        }
+
+        if ((Test-TransientContainerRuntimeFailure -Output $text) -and $attempt -lt $MaxAttempts) {
+            Write-Warning "Transient container runtime failure while verifying Alma 9 NVIDIA 580 transaction (attempt $attempt/$MaxAttempts). Retrying."
+            Start-Sleep -Seconds ([Math]::Min(30, 5 * $attempt))
+            continue
+        }
+
+        if (Test-TransientContainerRuntimeFailure -Output $text) {
+            throw "Container runtime failed after $MaxAttempts attempts while pulling/running $($containerImage):`n$text"
+        }
+
+        return $text
+    }
+
+    throw "Container runtime failed without producing transaction output."
 }
 
 function Parse-LaneResult {
