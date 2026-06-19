@@ -1,0 +1,28 @@
+---
+modules:
+  # Cross-image system policy that is not tied to one distro or role.
+  - type: containerfile
+    snippets:
+      - >-
+        RUN set -eux;
+        getent group video >/dev/null 2>&1 || groupadd --system video;
+        getent group render >/dev/null 2>&1 || groupadd --system render;
+        ldconfig
+
+  - type: kargs
+    kargs:
+      - iommu=pt
+      - transparent_hugepage=madvise
+      - radeon.si_support=0
+      - amdgpu.si_support=1
+      - radeon.cik_support=0
+      - amdgpu.cik_support=1
+
+  - type: systemd
+    system:
+      masked:
+        - rpm-ostree-countme.service
+        - rpm-ostree-countme.timer
+        - akmods-keygen@akmods-keygen.service
+        - bootc-fetch-apply-updates.service
+        - bootc-fetch-apply-updates.timer
