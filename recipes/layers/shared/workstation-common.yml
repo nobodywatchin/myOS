@@ -1,174 +1,21 @@
 modules:
-  # Shared workstation substrate used by every workstation image.
-  # It expects the shared Flatpak base layer to be present first, then keeps
-  # distro-specific workstation drift in the distro workstation layers and
-  # DE-specific session logic in `workstation-gnome.yml` and
-  # `workstation-cosmic.yml`.
-  - type: dnf
-    remove:
-      packages:
-        - vim-minimal
-    install:
-      install-weak-deps: false
-      packages:
-        - ModemManager
-        - NetworkManager-adsl
-        - NetworkManager-bluetooth
-        - NetworkManager-openconnect
-        - NetworkManager-openvpn
-        - NetworkManager-wifi
-        - NetworkManager-wwan
-        - acl
-        - alsa-sof-firmware
-        - alsa-ucm
-        - alsa-utils
-        - attr
-        - bash-completion
-        - bluez
-        - bolt
-        - colord
-        - cpio
-        - crontabs
-        - cups
-        - cups-filters
-        - cups-pk-helper
-        - cyrus-sasl-plain
-        - dejavu-sans-fonts
-        - dejavu-sans-mono-fonts
-        - dejavu-serif-fonts
-        - dnsmasq
-        - dos2unix
-        - fwupd
-        - fuse3
-        - fuse-libs
-        - ghostscript
-        - git
-        - glibc-all-langpacks
-        - google-noto-sans-arabic-fonts
-        - google-noto-sans-devanagari-fonts
-        - google-noto-sans-hebrew-fonts
-        - gstreamer1-plugins-bad-free
-        - gstreamer1-plugins-bad-free-libs
-        - gstreamer1-plugins-base
-        - gstreamer1-plugins-good
-        - gutenprint
-        - gutenprint-cups
-        - gvfs
-        - gvfs-fuse
-        - gvfs-goa
-        - gvfs-gphoto2
-        - gvfs-mtp
-        - gvfs-smb
-        - hplip
-        - hunspell
-        - ibus-anthy
-        - ibus-gtk3
-        - ibus-hangul
-        - ibus-libpinyin
-        - ibus-libzhuyin
-        - ibus-m17n
-        - ibus-typing-booster
-        - iw
-        - libcamera
-        - libcamera-gstreamer
-        - libcamera-tools
-        - libsane-hpaio
-        - logrotate
-        - microcode_ctl
-        - nftables
-        - orca
-        - pavucontrol
-        - pciutils
-        - pipewire
-        - pipewire-alsa
-        - pipewire-jack-audio-connection-kit
-        - pipewire-pulseaudio
-        - pipewire-utils
-        - plymouth
-        - plymouth-system-theme
-        - polkit
-        - ppp
-        - rfkill
-        - sane-airscan
-        - sane-backends-drivers-scanners
-        - setroubleshoot
-        - switcheroo-control
-        - system-config-printer-udev
-        - systemd-container
-        - thermald
-        - usbutils
-        - vim-enhanced
-        - wireplumber
-        - wl-clipboard
-        - wpa_supplicant
-        - xdg-user-dirs
+  # Shared workstation orchestrator used by every workstation image.
+  #
+  # Keep this file small. Put package groups and policy in explicit sublayers so
+  # workstation opinions remain visible instead of accumulating in one file.
+  #
+  # Expected order:
+  # - shared Flatpak base is included by the image recipe before this layer
+  # - distro-specific workstation drift comes after this layer
+  # - DE-specific session logic comes from workstation-gnome.yml or
+  #   workstation-cosmic.yml later in the image recipe
+  - from-file: layers/shared/workstation-substrate.yml
 
   - type: files
     files:
       - source: workstation/shared
         destination: /
 
-  # Shared desktop diagnostics, admin tools, and developer utilities.
-  - type: dnf
-    install:
-      install-weak-deps: false
-      packages:
-        - blktrace
-        - bpftool
-        - cifs-utils
-        - cryptsetup
-        - dracut-network
-        - ethtool
-        - firewalld
-        - flatseal
-        - iproute-tc
-        - iptables
-        - kernel-tools
-        - lsof
-        - mdadm
-        - mtr
-        - nfs-utils
-        - nvme-cli
-        - nvmetcli
-        - parted
-        - quota
-        - rasdaemon
-        - rdma-core
-        - rsyslog
-        - smartmontools
-        - socat
-        - sos
-        - strace
-        - tcpdump
-        - time
-        - traceroute
-        - tuned
-        - vulkan-validation-layers
-
-  # Keep Homebrew on workstation images only.
-  - type: brew
-    nofile-limits: true
-    brew-analytics: false
-
-  # Workstation images boot to the graphical target.
-  - type: containerfile
-    snippets:
-      - RUN systemctl set-default graphical.target
-
-  # Workstation images reconcile the active desktop environment's display
-  # manager on every boot so bootc/rpm-ostree rebases do not leave stale
-  # `display-manager.service` state behind in `/etc`.
-  - type: systemd
-    system:
-      enabled:
-        - myos-workstation-dm-apply.service
-
-  - type: kargs
-    kargs:
-      - mem_sleep_default=s2idle
-
-  - type: containerfile
-    snippets:
-      - RUN curl -fsSL https://brave-browser-rpm-beta.s3.brave.com/brave-browser-beta.repo -o /etc/yum.repos.d/brave-browser-beta.repo
-      - RUN dnf -y install brave-origin-beta
-      - RUN dnf clean all && rm -rf /var/cache/dnf /var/tmp/* /tmp/*
+  - from-file: layers/shared/workstation-admin-tools.yml
+  - from-file: layers/shared/workstation-policy.yml
+  - from-file: layers/shared/workstation-user-tools.yml
