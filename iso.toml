@@ -1,21 +1,25 @@
+[customizations.iso]
+volume_id = "MYOS-ALMA10"
+application_id = "myOS Alma 10 Server Installer"
+publisher = "myOS"
+
 [customizations.installer.kickstart]
 contents = """
 # --- Locale & input (safe defaults) ---
 lang en_US.UTF-8
 keyboard us
 
-# Use the installer UI and let it prompt (timezone, storage, etc.)
+# Use the installer UI and let it prompt (timezone, storage, users, etc.)
 graphical
 
-# --- Security & services (persist on installed system) ---
-selinux --enforcing
-firewall --enabled --service=ssh
-services --enabled=sshd
+# Network is safe to pre-enable. Do not configure firewall here unless
+# firewalld exists in the installed payload image.
+network --bootproto=dhcp --device=link --activate --onboot=on
 
-# Lock root; create your admin user manually in the installer UI
+# Lock root; create your admin user manually in the installer UI.
 rootpw --lock
 
-# Reboot after install
+# Reboot after install.
 reboot
 
 # --- Post-install tweaks ---
