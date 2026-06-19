@@ -1,0 +1,37 @@
+modules:
+  # Shared workstation diagnostics, admin tools, and developer utilities.
+  - type: dnf
+    install:
+      install-weak-deps: false
+      packages:
+        - blktrace
+        - bpftool
+        - cifs-utils
+        - cryptsetup
+        - dracut-network
+        - ethtool
+        - firewalld
+        - flatseal
+        - iproute-tc
+        - iptables
+        - kernel-tools
+        - lsof
+        - mdadm
+        - mtr
+        - nfs-utils
+        - nvme-cli
+        - nvmetcli
+        - parted
+        - quota
+        - rasdaemon
+        - rdma-core
+        - rsyslog
+        - smartmontools
+        - socat
+        - sos
+        - strace
+        - tcpdump
+        - time
+        - traceroute
+        - tuned
+        - vulkan-validation-layers
