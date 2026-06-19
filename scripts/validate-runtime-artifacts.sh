@@ -106,6 +106,9 @@ test -f files/ceph-host/shared/usr/lib/modules-load.d/90-myos-ceph-host.conf
 grep -q 'from-file: layers/features/ceph.yml' recipes/layers/shared/core.yml
 
 grep -q '^        - pcp-pmda-nvidia-gpu$' recipes/layers/shared/nvidia-base.yml
+grep -q 'nvidia-container-toolkit.repo' recipes/layers/shared/nvidia-base.yml
+grep -q 'repo_gpgcheck=0' recipes/layers/shared/nvidia-base.yml
+grep -q 'gpgcheck=1' recipes/layers/shared/nvidia-base.yml
 test -f files/nvidia/usr/local/libexec/myos/myos-pcp-nvidia-pmda-apply
 test -f files/nvidia/usr/lib/systemd/system/myos-pcp-nvidia-pmda-apply.service
 
