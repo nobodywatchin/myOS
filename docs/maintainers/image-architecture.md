@@ -115,7 +115,14 @@ The core base intentionally delegates feature areas that were getting too large:
 
 `recipes/layers/shared/flatpak-base.yml` owns the workstation Flatpak baseline, remotes, managed shared apps, policy payloads, session environment import hook, and cleanup helper inclusion.
 
-`recipes/layers/shared/workstation-common.yml` owns the DE-agnostic workstation substrate.
+`recipes/layers/shared/workstation-common.yml` is the DE-agnostic workstation orchestrator.
+
+It delegates visible ownership to:
+
+- `workstation-substrate.yml`: shared desktop and hardware package substrate
+- `workstation-admin-tools.yml`: workstation diagnostics, storage, network, and admin utilities
+- `workstation-policy.yml`: graphical target, display-manager reconciliation, and workstation sleep policy
+- `workstation-user-tools.yml`: Homebrew and Brave Origin Beta
 
 `recipes/layers/shared/workstation-modern.yml` carries the shared workstation delta reused by the Alma 10 and Fedora lanes.
 
