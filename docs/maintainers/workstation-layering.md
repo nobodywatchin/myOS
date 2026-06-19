@@ -1,6 +1,6 @@
 # Workstation Layering
 
-Workstation is the product role. GNOME and COSMIC are implementations of that role.
+Workstation is the operator desktop and laptop role. GNOME and COSMIC are implementations of that role.
 
 ## Layer order
 
@@ -29,15 +29,26 @@ Flatpak ownership is split from session ownership:
 
 Server images do not consume these layers and should not receive desktop portal backends or session Flatpak hooks.
 
-## Why workstation-common stays
+The system Flatpak policy is intentionally opinionated. It keeps managed shared apps separate from user-owned `flathub` installs so multi-user machines do not drift into sharing the wrong application state.
 
-`workstation-common` is still the right abstraction because it keeps shared desktop behavior in one place:
+## Workstation common orchestration
 
-- package baseline, including common desktop filesystem/FUSE support for AppImage compatibility
-- display-manager reconciliation helper
-- workstation-only diagnostics and admin tools
+`workstation-common.yml` should stay small. It is an orchestrator, not a dumping ground.
 
-That prevents GNOME and COSMIC from duplicating the same substrate while keeping Flatpak policy in the Flatpak layers.
+It includes:
+
+- `workstation-substrate.yml`: shared desktop, hardware, input, audio, printing, scanning, camera, language, and base workstation package substrate
+- `workstation-admin-tools.yml`: workstation-only diagnostics, storage, network, and admin utilities
+- `workstation-policy.yml`: graphical target, display-manager reconciliation, and workstation sleep policy
+- `workstation-user-tools.yml`: opinionated user-facing workstation tooling such as Homebrew and Brave Origin Beta
+
+This prevents GNOME and COSMIC from duplicating the same substrate while keeping workstation product opinions visible and reviewable.
+
+## Brave Origin Beta
+
+Brave Origin Beta is intentionally shipped in workstation images from the RPM repository because it is not available through Flathub.
+
+That is a product opinion, not an accidental dependency. Keep it in `workstation-user-tools.yml` so the opinion stays explicit.
 
 ## GNOME layering
 
