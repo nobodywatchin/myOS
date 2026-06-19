@@ -12,6 +12,15 @@ CONFIG="${MYOS_INSTALLER_CONFIG:-$REPO_ROOT/installer/alma10-server/iso.toml}"
 CONTAINERFILE="${MYOS_INSTALLER_CONTAINERFILE:-$REPO_ROOT/installer/alma10-server/Containerfile}"
 PODMAN="${PODMAN:-podman}"
 SUDO="${SUDO:-sudo}"
+OUTPUT_OWNER="${MYOS_INSTALLER_OUTPUT_OWNER:-$(id -u):$(id -g)}"
+
+run_sudo() {
+  if [[ -n "$SUDO" ]]; then
+    $SUDO "$@"
+  else
+    "$@"
+  fi
+}
 
 if [[ ! -f "$CONFIG" ]]; then
   echo "Missing installer config: $CONFIG" >&2
@@ -34,19 +43,20 @@ Builder image:   $BUILDER_IMAGE
 Rootfs:          $ROOTFS
 Config:          $CONFIG
 Output:          $OUTPUT_DIR
+Output owner:    $OUTPUT_OWNER
 EOF
 
-$SUDO "$PODMAN" pull "$PAYLOAD_REF"
+run_sudo "$PODMAN" pull "$PAYLOAD_REF"
 
-$SUDO "$PODMAN" build \
+run_sudo "$PODMAN" build \
   --build-arg "MYOS_PAYLOAD_REF=$PAYLOAD_REF" \
   -f "$CONTAINERFILE" \
   -t "$INSTALLER_IMAGE" \
   "$REPO_ROOT"
 
-$SUDO "$PODMAN" pull "$BUILDER_IMAGE"
+run_sudo "$PODMAN" pull "$BUILDER_IMAGE"
 
-$SUDO "$PODMAN" run \
+run_sudo "$PODMAN" run \
   --rm \
   --privileged \
   --pull=newer \
@@ -59,8 +69,14 @@ $SUDO "$PODMAN" run \
   --type bootc-installer \
   --rootfs "$ROOTFS" \
   --installer-payload-ref "$PAYLOAD_REF" \
+  --chown "$OUTPUT_OWNER" \
   --output /output \
   "$INSTALLER_IMAGE"
+
+# GitHub-hosted runners and local sudo builds may still leave nested files
+# owned by root if the builder exits before applying --chown to every output.
+# Normalize ownership before writing sidecar files such as checksums.
+run_sudo chown -R "$OUTPUT_OWNER" "$OUTPUT_DIR" 2>/dev/null || true
 
 ISO_PATH="$(find "$OUTPUT_DIR" -type f -iname '*.iso' | head -n1 || true)"
 
@@ -70,7 +86,7 @@ if [[ -z "$ISO_PATH" ]]; then
   exit 1
 fi
 
-sha256sum "$ISO_PATH" | tee "$ISO_PATH.sha256"
+sha256sum "$ISO_PATH" > "$ISO_PATH.sha256"
 
 cat <<EOF
 == installer ISO complete ==
