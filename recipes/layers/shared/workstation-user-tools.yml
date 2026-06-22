@@ -1,14 +1,9 @@
 modules:
-  # Keep Homebrew on workstation images only.
   - type: brew
     nofile-limits: true
     brew-analytics: false
-
-  # Brave Origin Beta is intentionally shipped in the workstation image.
-  # It is not available from Flathub, and keeping it in the image makes the
-  # browser choice reproducible across workstation installs.
   - type: containerfile
     snippets:
-      - RUN curl -fsSL https://brave-browser-rpm-beta.s3.brave.com/brave-browser-beta.repo -o /etc/yum.repos.d/brave-browser-beta.repo
-      - RUN dnf -y install brave-origin-beta
+      - RUN curl -fsSL https://brave-browser-rpm-release.s3.brave.com/brave-browser.repo -o /etc/yum.repos.d/brave-browser.repo
+      - RUN dnf install -y brave-origin
       - RUN dnf clean all && rm -rf /var/cache/dnf /var/tmp/* /tmp/*
