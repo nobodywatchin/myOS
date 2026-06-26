@@ -10,6 +10,7 @@ modules:
   # - DE-specific session logic comes from workstation-gnome.yml or
   #   workstation-cosmic.yml later in the image recipe
   - from-file: layers/shared/workstation-substrate.yml
+  - from-file: layers/shared/workstation-media.yml
 
   - type: files
     files:

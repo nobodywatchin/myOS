@@ -38,17 +38,18 @@ The system Flatpak policy is intentionally opinionated. It keeps managed shared 
 It includes:
 
 - `workstation-substrate.yml`: shared desktop, hardware, input, audio, printing, scanning, camera, language, and base workstation package substrate
+- `workstation-media.yml`: shared distro-native VAAPI/media runtime packages; distro/vendor-specific diagnostics and backends stay in distro or driver layers
 - `workstation-admin-tools.yml`: workstation-only diagnostics, storage, network, and admin utilities
 - `workstation-policy.yml`: graphical target, display-manager reconciliation, and workstation sleep policy
-- `workstation-user-tools.yml`: opinionated user-facing workstation tooling such as Homebrew and Brave Origin Beta
+- `workstation-user-tools.yml`: opinionated user-facing workstation tooling such as Homebrew and Brave Origin
 
 This prevents GNOME and COSMIC from duplicating the same substrate while keeping workstation product opinions visible and reviewable.
 
-## Brave Origin Beta
+## Brave Origin
 
-Brave Origin Beta is intentionally shipped in workstation images from the RPM repository because it is not available through Flathub.
+Brave Origin is intentionally shipped in workstation images from the RPM repository because it is not available through Flathub.
 
-That is a product opinion, not an accidental dependency. Keep it in `workstation-user-tools.yml` so the opinion stays explicit.
+That is a product opinion, not an accidental dependency. Keep it in `workstation-user-tools.yml` so the opinion stays explicit. The same layer owns the bootc `/opt` compatibility tmpfiles rule that recreates `/var/opt/brave.com -> /usr/lib/opt/brave.com` on boot, because Brave still expects its vendor payload at `/opt/brave.com` while bootc deployments expose package-owned `/opt` content through `/usr/lib/opt`.
 
 ## GNOME layering
 
@@ -85,4 +86,8 @@ COSMIC-specific behavior such as greeter wiring, session bits, common packages, 
 
 `recipes/layers/shared/nvidia-workstation.yml` remains the shared workstation-display NVIDIA add-on for both environments.
 
-That keeps display/session NVIDIA extras separate from the core lane plumbing in the shared NVIDIA layers.
+Alma 9 also adds `libva-utils` in `recipes/layers/alma9/workstation.yml` because EPEL 9 provides `vainfo` there while current EPEL 10 metadata does not. Keep the shared `workstation-media.yml` layer limited to media runtime packages available across supported workstation lanes.
+
+Alma 9 NVIDIA workstations add `recipes/layers/alma9/nvidia-workstation.yml` for the EPEL `libva-nvidia-driver` VAAPI backend. That layer is deliberately not included by the Alma 9 NVIDIA server recipe.
+
+That keeps display/session and browser/media NVIDIA extras separate from the core lane plumbing in the shared NVIDIA layers.

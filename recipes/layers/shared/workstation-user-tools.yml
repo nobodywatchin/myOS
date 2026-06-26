@@ -2,6 +2,12 @@ modules:
   - type: brew
     nofile-limits: true
     brew-analytics: false
+
+  - type: files
+    files:
+      - source: workstation/user-tools
+        destination: /
+
   - type: containerfile
     snippets:
       # Legacy validation marker: brave-origin-beta was replaced by brave-origin release.

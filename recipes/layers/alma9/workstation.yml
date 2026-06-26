@@ -7,5 +7,6 @@ modules:
         - almalinux-release
         - google-noto-cjk-fonts-common
         - google-noto-fonts-common
+        - libva-utils
         - systemd-oomd
         - xorg-x11-utils

@@ -64,15 +64,24 @@ grep -q "myos-flatpak-system-maintenance ensure" files/flatpak/base/etc/systemd/
 test -f files/workstation/shared/usr/libexec/myos-workstation-dm-apply
 
 grep -q 'from-file: layers/shared/workstation-substrate.yml' recipes/layers/shared/workstation-common.yml
+grep -q 'from-file: layers/shared/workstation-media.yml' recipes/layers/shared/workstation-common.yml
 grep -q 'from-file: layers/shared/workstation-admin-tools.yml' recipes/layers/shared/workstation-common.yml
 grep -q 'from-file: layers/shared/workstation-policy.yml' recipes/layers/shared/workstation-common.yml
 grep -q 'from-file: layers/shared/workstation-user-tools.yml' recipes/layers/shared/workstation-common.yml
 ! grep -q 'brave-browser-rpm-beta' recipes/layers/shared/workstation-common.yml
 ! grep -q 'myos-workstation-dm-apply.service' recipes/layers/shared/workstation-common.yml
 grep -q '^        - ModemManager$' recipes/layers/shared/workstation-substrate.yml
+grep -q '^        - libva$' recipes/layers/shared/workstation-media.yml
+grep -q '^        - libvdpau$' recipes/layers/shared/workstation-media.yml
+grep -q '^        - mesa-dri-drivers$' recipes/layers/shared/workstation-media.yml
+grep -q '^        - libva-utils$' recipes/layers/alma9/workstation.yml
+grep -q 'libva-nvidia-driver' recipes/layers/alma9/nvidia-workstation.yml
+! grep -q 'libva-nvidia-driver' recipes/layers/alma9/nvidia-580.yml
 grep -q '^        - tcpdump$' recipes/layers/shared/workstation-admin-tools.yml
 grep -q 'myos-workstation-dm-apply.service' recipes/layers/shared/workstation-policy.yml
 grep -q 'brave-origin-beta' recipes/layers/shared/workstation-user-tools.yml
+test -f files/workstation/user-tools/usr/lib/tmpfiles.d/myos-brave-origin-opt.conf
+grep -Eq '^L\+ /var/opt/brave\.com .*/usr/lib/opt/brave\.com$' files/workstation/user-tools/usr/lib/tmpfiles.d/myos-brave-origin-opt.conf
 
 test -f files/base/runtime/etc/ld.so.conf.d/rocm.conf
 test -f files/base/runtime/etc/profile.d/rocm.sh

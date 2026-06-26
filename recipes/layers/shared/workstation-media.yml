@@ -1,0 +1,13 @@
+modules:
+  # DE-agnostic media acceleration runtime shared by workstation images.
+  #
+  # Keep this layer to distro-native packages that are available across the
+  # supported workstation lanes. Distro/vendor-specific diagnostics and VAAPI
+  # backends stay in their Alma/Fedora/NVIDIA layers.
+  - type: dnf
+    install:
+      install-weak-deps: false
+      packages:
+        - libva
+        - libvdpau
+        - mesa-dri-drivers
