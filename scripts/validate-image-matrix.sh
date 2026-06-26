@@ -104,6 +104,7 @@ platform_ceph_layers = {
     'fedora': root / 'recipes/layers/fedora/ceph-host.yml',
 }
 nvidia_base = root / 'recipes/layers/shared/nvidia-base.yml'
+alma9_nvidia_workstation = root / 'recipes/layers/alma9/nvidia-workstation.yml'
 recipe_ymls = sorted((root / 'recipes').rglob('*.yml'))
 alma_only_shared_patterns = {
     'epel-release': 'EPEL is Alma/RHEL-family repository setup; use layers/alma/core.yml',
@@ -223,6 +224,13 @@ for row in rows:
             die(f"standard image {row['image']} must not include shared/nvidia-base.yml")
     elif nvidia_count != 1:
         die(f"NVIDIA image {row['image']} must include shared/nvidia-base.yml exactly once")
+
+    alma9_nvidia_workstation_count = graph.count(alma9_nvidia_workstation)
+    if row['platform'] == 'alma9' and row['driver'] == 'nvidia-580' and row['role'] == 'workstation':
+        if alma9_nvidia_workstation_count != 1:
+            die(f"Alma 9 NVIDIA workstation {row['image']} must include alma9/nvidia-workstation.yml exactly once")
+    elif alma9_nvidia_workstation_count != 0:
+        die(f"Image {row['image']} must not include Alma 9 NVIDIA workstation-only media backend layer")
 
 expected_singletons = {
     'pcp package': (r'^\s*-\s+pcp\s*$', 1),

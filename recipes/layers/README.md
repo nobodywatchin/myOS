@@ -14,7 +14,8 @@ These files are the reusable composition units included from image recipes with 
 - `shared/flatpak-gnome.yml`: GNOME portal backend configuration and GNOME-specific managed Flatpaks.
 - `shared/flatpak-gnome-legacy.yml`: Alma 9 GNOME managed Flatpak app delta for apps provided natively on modern GNOME lanes.
 - `shared/flatpak-cosmic.yml`: COSMIC portal backend configuration and COSMIC Flatpak remotes.
-- `shared/workstation-common.yml`: DE-agnostic workstation substrate.
+- `shared/workstation-common.yml`: DE-agnostic workstation orchestrator.
+- `shared/workstation-media.yml`: shared workstation media/VAAPI runtime baseline; distro/vendor-specific diagnostics and backends remain in their distro or driver layers.
 - `shared/workstation-modern.yml`: shared workstation delta reused by the Alma 10 and Fedora lanes.
 - `shared/workstation-gnome.yml`: GNOME workstation layer.
 - `shared/workstation-gnome-modern.yml`: shared GNOME app delta reused by the Alma 10 and Fedora lanes.
@@ -29,7 +30,8 @@ These files are the reusable composition units included from image recipes with 
 - `alma9/gnome.yml`, `alma10/gnome.yml`: GNOME-only distro drift where the shared GNOME layers are not enough.
 - `alma/cosmic.yml`: Alma-family COSMIC COPR source setup and COPR-backed applets shared by Alma 9 and Alma 10.
 - `fedora/cosmic.yml`, `fedora/nvidia-open.yml`: Fedora edge-lane drift.
-- `alma9/nvidia-580.yml`: the Alma 9 implementation of the public NVIDIA 580 lane.
+- `alma9/nvidia-580.yml`: the Alma 9 implementation of the public NVIDIA 580 lane shared by server and workstation images.
+- `alma9/nvidia-workstation.yml`: Alma 9 NVIDIA workstation-only media backend additions, kept out of the server lane.
 
 ## Feature layers
 

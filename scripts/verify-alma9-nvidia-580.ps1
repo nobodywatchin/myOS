@@ -4,6 +4,7 @@ Set-StrictMode -Version Latest
 $repoRoot = Split-Path -Parent $PSScriptRoot
 $matrixPath = Join-Path $repoRoot "files/base/runtime/usr/share/myos/image-matrix.tsv"
 $laneLayerPath = Join-Path $repoRoot "recipes/layers/alma9/nvidia-580.yml"
+$workstationVaapiLayerPath = Join-Path $repoRoot "recipes/layers/alma9/nvidia-workstation.yml"
 
 if (-not (Test-Path $laneLayerPath)) {
     throw "Missing Alma 9 NVIDIA 580 layer: $laneLayerPath"
@@ -11,6 +12,10 @@ if (-not (Test-Path $laneLayerPath)) {
 
 if (-not (Test-Path $matrixPath)) {
     throw "Missing image matrix manifest: $matrixPath"
+}
+
+if (-not (Test-Path $workstationVaapiLayerPath)) {
+    throw "Missing Alma 9 NVIDIA workstation VAAPI layer: $workstationVaapiLayerPath"
 }
 
 $laneRows = @(
@@ -71,6 +76,29 @@ $requiredSnippets = @(
 foreach ($snippet in $requiredSnippets) {
     if (-not $laneLayer.Contains($snippet)) {
         throw "Alma 9 NVIDIA 580 layer is missing required snippet: $snippet"
+    }
+}
+
+if ($laneLayer.Contains("libva-nvidia-driver")) {
+    throw "Alma 9 NVIDIA 580 lane layer must stay server-safe; libva-nvidia-driver belongs in alma9/nvidia-workstation.yml."
+}
+
+$workstationVaapiLayer = Get-Content $workstationVaapiLayerPath -Raw
+if (-not $workstationVaapiLayer.Contains("libva-nvidia-driver")) {
+    throw "Alma 9 NVIDIA workstation VAAPI layer must install libva-nvidia-driver."
+}
+
+foreach ($row in $laneRows) {
+    $recipePath = Join-Path $repoRoot $row.recipe
+    $recipeText = Get-Content $recipePath -Raw
+    $hasWorkstationVaapiLayer = $recipeText.Contains("layers/alma9/nvidia-workstation.yml")
+
+    if ($row.role -eq "workstation") {
+        if (-not $hasWorkstationVaapiLayer) {
+            throw "Alma 9 NVIDIA workstation recipe $($row.recipe) must include layers/alma9/nvidia-workstation.yml."
+        }
+    } elseif ($hasWorkstationVaapiLayer) {
+        throw "Alma 9 NVIDIA non-workstation recipe $($row.recipe) must not include layers/alma9/nvidia-workstation.yml."
     }
 }
 
