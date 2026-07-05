@@ -10,7 +10,7 @@ modules:
   - type: systemd
     system:
       enabled:
-        - myos-workstation-dm-apply.service
+        - current-workstation-dm-apply.service
 
   # Prefer the modern suspend mode on supported workstation hardware.
   - type: kargs

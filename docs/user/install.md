@@ -8,8 +8,6 @@ For a new bare-metal install, prefer the Current AlmaLinux 10 Server installer I
 
 That installer uses Anaconda and installs the published `ghcr.io/pelagians/alma10-server:latest` bootc payload by default. It is intended to give Current a predictable install path without inheriting Fedora Workstation's Btrfs-oriented desktop defaults.
 
-The legacy `ghcr.io/myos-dev/alma10-server:latest` reference remains a compatibility alias when alias publishing is enabled.
-
 See [installer-iso.md](installer-iso.md) for the ISO build and USB install flow.
 
 Recommended storage layout:

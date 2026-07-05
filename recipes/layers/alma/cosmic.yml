@@ -7,7 +7,7 @@ modules:
     snippets:
       - >-
         RUN set -eux; \
-          . /usr/share/myos/os-release-meta.env; \
+          . /usr/share/current/os-release-meta.env; \
           arch="$(uname -m)"; \
           if [ "${EL_MAJOR}" = "9" ]; then \
             copr_target="epel-9-${arch}"; \

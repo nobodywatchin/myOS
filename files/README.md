@@ -18,4 +18,4 @@ Top-level payload groups:
 - `scripts/`: image-build helper scripts consumed by recipe layers
 - `workstation/`: shared workstation helper scripts and display-manager reconciliation
 
-Do not put hosted application platforms, tenant runtimes, or product-specific services in this tree. Those belong above myOS, usually in containers or k3s.
+Do not put hosted application platforms, tenant runtimes, or product-specific services in this tree. Those belong above Current, usually in containers or k3s.

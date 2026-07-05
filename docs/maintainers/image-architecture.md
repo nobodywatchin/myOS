@@ -32,7 +32,7 @@ Public names follow this grammar:
 - `<platform>-<environment>`
 - `<platform>-<environment>-<driver>`
 
-The exact supported set lives in `files/base/runtime/usr/share/myos/image-matrix.tsv`.
+The exact supported set lives in `files/base/runtime/usr/share/current/image-matrix.tsv`.
 
 The renderer and CI treat that TSV as the canonical support contract for:
 
@@ -43,7 +43,7 @@ The renderer and CI treat that TSV as the canonical support contract for:
 
 ## Machine-readable matrix
 
-`files/base/runtime/usr/share/myos/image-matrix.tsv` is shipped into images at `/usr/share/myos/image-matrix.tsv`. `current rebase` downloads the same source path from the Current GitHub repo at runtime so the picker can reflect the online support matrix. The matrix remains on the legacy data path until that runtime-data migration moves all consumers together.
+`files/base/runtime/usr/share/current/image-matrix.tsv` is shipped into images at `/usr/share/current/image-matrix.tsv`. `current rebase` downloads the same source path from the Current GitHub repo at runtime so the picker can reflect the online support matrix.
 
 It is consumed by:
 
@@ -108,7 +108,6 @@ The core base intentionally delegates feature areas that were getting too large:
 `recipes/layers/shared/core.yml` owns the remaining host/operator package baseline:
 
 - fastfetch, fzf, zstd, gcc, distrobox, and podman-compose
-- generic `/etc/myos` filesystem scaffolding
 - inclusion of Cockpit and Ceph feature overlays
 
 ### Workstation layers
@@ -155,6 +154,6 @@ The public tags are uniform and short.
 - no `default` suffix in published names
 - no `nvidia-legacy` naming in the supported recipe tree or manifest
 
-## Compatibility namespace
+## Registry namespace
 
-Current-native image references use `ghcr.io/pelagians/<image>:<tag>`. Legacy `ghcr.io/myos-dev/<image>:<tag>` references are compatibility aliases when the alias sync job has credentials to publish them.
+Current image references use `ghcr.io/pelagians/<image>:<tag>`.

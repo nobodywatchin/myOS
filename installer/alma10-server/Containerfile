@@ -1,31 +1,12 @@
-# MYOS_PAYLOAD_REF remains the Containerfile build-arg compatibility name.
-# scripts/build-alma10-installer-iso.sh maps CURRENT_INSTALLER_PAYLOAD_REF into it.
-ARG MYOS_PAYLOAD_REF=ghcr.io/pelagians/alma10-server:latest
-FROM ${MYOS_PAYLOAD_REF}
+ARG CURRENT_PAYLOAD_REF=ghcr.io/pelagians/alma10-server:latest
+FROM ${CURRENT_PAYLOAD_REF}
 
 # This image is the Anaconda-capable installer environment used by
 # bootc-image-builder --type bootc-installer. The installed payload is passed
 # separately with --installer-payload-ref by scripts/build-alma10-installer-iso.sh.
-RUN dnf install -y \
-    anaconda \
-    anaconda-install-env-deps \
-    anaconda-dracut \
-    dracut-config-generic \
-    dracut-network \
-    net-tools \
-    squashfs-tools \
-    grub2-efi-x64-cdboot \
-    grub2-tools-extra \
-    efibootmgr \
-    shim-x64 \
-    python3-mako \
-    lorax-templates-rhel \
-    biosdevname \
-    prefixdevname \
-    && dnf clean all
+RUN dnf install -y     anaconda     anaconda-install-env-deps     anaconda-dracut     dracut-config-generic     dracut-network     net-tools     squashfs-tools     grub2-efi-x64-cdboot     grub2-tools-extra     efibootmgr     shim-x64     python3-mako     lorax-templates-rhel     biosdevname     prefixdevname     && dnf clean all
 
 # bootc-image-builder / lorax compatibility glue for installer media builds.
-RUN mkdir -p /boot/efi && \
-    if [ -d /usr/lib/efi ]; then cp -ra /usr/lib/efi/*/*/EFI /boot/efi || true; fi
+RUN mkdir -p /boot/efi &&     if [ -d /usr/lib/efi ]; then cp -ra /usr/lib/efi/*/*/EFI /boot/efi || true; fi
 
 RUN mkdir -p /var/mnt

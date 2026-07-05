@@ -6,7 +6,7 @@ Before=pmlogger.service
 
 [Service]
 Type=oneshot
-ExecStart=/usr/local/libexec/myos/myos-pcp-nvidia-pmda-apply
+ExecStart=/usr/local/libexec/current/current-pcp-nvidia-pmda-apply
 
 [Install]
 WantedBy=multi-user.target

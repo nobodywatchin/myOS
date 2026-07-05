@@ -6,7 +6,7 @@ on:
       payload_ref:
         description: BootC payload image to install
         required: false
-        default: ghcr.io/myos-dev/alma10-server:latest
+        default: ghcr.io/pelagians/alma10-server:latest
   push:
     paths:
       - installer/alma10-server/**
@@ -39,9 +39,9 @@ jobs:
 
       - name: Build installer ISO
         env:
-          MYOS_INSTALLER_PAYLOAD_REF: ${{ github.event.inputs.payload_ref || 'ghcr.io/myos-dev/alma10-server:latest' }}
-          MYOS_INSTALLER_IMAGE: localhost/myos-alma10-server-installer:ci
-          MYOS_INSTALLER_OUTPUT_DIR: ${{ github.workspace }}/output/installer/alma10-server
+          CURRENT_INSTALLER_PAYLOAD_REF: ${{ github.event.inputs.payload_ref || 'ghcr.io/pelagians/alma10-server:latest' }}
+          CURRENT_INSTALLER_IMAGE: localhost/current-alma10-server-installer:ci
+          CURRENT_INSTALLER_OUTPUT_DIR: ${{ github.workspace }}/output/installer/alma10-server
         run: bash ./scripts/build-alma10-installer-iso.sh
 
       - name: List generated files
@@ -50,7 +50,7 @@ jobs:
       - name: Upload installer ISO artifact
         uses: actions/upload-artifact@v7
         with:
-          name: myos-alma10-server-installer
+          name: current-alma10-server-installer
           path: |
             output/installer/alma10-server/*.iso
             output/installer/alma10-server/*.sha256

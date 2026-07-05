@@ -4,7 +4,7 @@ set -euo pipefail
 export PATH="/usr/sbin:/usr/bin:/sbin:/bin:${PATH:-}"
 
 log() {
-  printf 'myos-flatpak-system-maintenance: %s\n' "$*" >&2
+  printf 'current-flatpak-system-maintenance: %s\n' "$*" >&2
 }
 
 require_flatpak() {
@@ -106,7 +106,7 @@ case "${1:-}" in
   status) status_system ;;
   *)
     cat >&2 <<'EOF'
-Usage: myos-flatpak-system-maintenance ensure|cleanup|repair|status
+Usage: current-flatpak-system-maintenance ensure|cleanup|repair|status
 
 Commands operate only on the system Flatpak installation.
 EOF

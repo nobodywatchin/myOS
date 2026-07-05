@@ -34,7 +34,7 @@ Supported published tags are short and come from the shipped image matrix rather
 - Every recipe builds from an explicit distro core plus the shared admin/operator overlay carried through `shared/core.yml`.
 - Workstation recipes build from an explicit distro core plus the shared workstation and environment layers.
 - Fedora has both workstation and server recipes.
-- The machine-readable support contract lives in `files/base/runtime/usr/share/myos/image-matrix.tsv`.
+- The machine-readable support contract lives in `files/base/runtime/usr/share/current/image-matrix.tsv`.
 - Retired product lines stay deleted; if the product model changes, update the manifest first and then add recipes intentionally.
 
 ## Reading order

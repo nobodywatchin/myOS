@@ -1,6 +1,6 @@
 # Contributing
 
-Current is the public identity and primary technical namespace. The project does not ship a `myos` CLI alias. Changes to remaining legacy surfaces such as `/usr/share/myos`, `MYOS_*`, or `ghcr.io/myos-dev/*` must keep the compatibility policy in [docs/compatibility.md](docs/compatibility.md).
+Current is the public identity and technical namespace. The supported command is `current`, published images live under `ghcr.io/pelagians`, and runtime data belongs under `/usr/share/current`.
 
 ## Start with the image contract
 
@@ -27,8 +27,6 @@ If a change alters the supported image matrix, runtime contracts, validation exp
 
 Use Current for public product language.
 
-Use legacy names only when referring to compatibility aliases, migration behavior, old image references, paths, or environment variables that still exist.
-
 Current should sound practical, upstream-respecting, developer-first, and calm. Avoid AI hype, cyberpunk language, electrical-current metaphors, or claims that Current replaces upstream Linux distributions.
 
 ## Validation
@@ -43,10 +41,10 @@ bash ./scripts/validate-runtime-artifacts.sh
 bash ./scripts/validate-image-matrix.sh
 ```
 
-If you touch Alma 9 NVIDIA legacy logic and have the tooling available:
+If you touch Alma 9 NVIDIA 580 logic and have the tooling available:
 
 ```bash
-pwsh ./scripts/verify-alma9-nvidia-legacy.ps1
+pwsh ./scripts/verify-alma9-nvidia-580.ps1
 ```
 
 More detail lives in [docs/maintainers/validation.md](docs/maintainers/validation.md).

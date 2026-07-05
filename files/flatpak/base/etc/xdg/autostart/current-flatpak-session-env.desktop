@@ -1,7 +1,7 @@
 [Desktop Entry]
 Type=Application
-Name=myOS Flatpak Session Environment
-Exec=/usr/libexec/myos-flatpak-session-env
+Name=Current Flatpak Session Environment
+Exec=/usr/libexec/current-flatpak-session-env
 OnlyShowIn=GNOME;COSMIC;
 NoDisplay=true
 X-GNOME-Autostart-enabled=true

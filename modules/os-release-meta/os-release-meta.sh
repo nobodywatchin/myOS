@@ -2,7 +2,7 @@
 set -euo pipefail
 
 os_release_path="${OS_RELEASE_META_OS_RELEASE_PATH:-/etc/os-release}"
-env_output_path="${OS_RELEASE_META_ENV_PATH:-/usr/share/myos/os-release-meta.env}"
+env_output_path="${OS_RELEASE_META_ENV_PATH:-/usr/share/current/os-release-meta.env}"
 dnf_vars_dir="${OS_RELEASE_META_DNF_VARS_DIR:-/etc/dnf/vars}"
 
 if [[ ! -r "${os_release_path}" ]]; then

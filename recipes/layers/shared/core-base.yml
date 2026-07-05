@@ -1,5 +1,5 @@
 modules:
-  # Cross-distro core baseline shared by every supported myOS image.
+  # Cross-distro core baseline shared by every supported Current image.
   - type: os-release-meta
     source: local
 

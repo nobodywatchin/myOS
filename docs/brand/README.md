@@ -1,9 +1,7 @@
 # Brand
 
-These docs define the Phase 2 Current identity baseline.
+Current brand references:
 
 - [visual-identity.md](visual-identity.md): mark, wordmark, color, typography, and usage guidance
-- [runtime-branding.md](runtime-branding.md): what runtime-visible branding changes now and what remains compatibility-protected
+- [runtime-branding.md](runtime-branding.md): runtime-visible branding surfaces
 - [assets/README.md](assets/README.md): SVG asset inventory
-
-The goal is to evolve the strongest myOS ideas into Current without changing the technical architecture or breaking existing users.

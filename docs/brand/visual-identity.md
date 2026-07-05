@@ -25,7 +25,7 @@ Current should not feel:
 
 ## Mark
 
-The Phase 2 mark is a circular current form. It intentionally preserves the old myOS logo's strongest gesture: a circular shape with internal motion.
+The mark is a circular ocean-current form with internal motion.
 
 Use the mark when space is tight or when Current appears near other project names.
 
