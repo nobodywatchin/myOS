@@ -1,6 +1,6 @@
 # Contributing
 
-Current is the public identity and primary technical namespace. The project preserves myOS compatibility aliases, so changes to `myos`, `/usr/share/myos`, `MYOS_*`, or `ghcr.io/myos-dev/*` must keep the compatibility policy in [docs/compatibility.md](docs/compatibility.md).
+Current is the public identity and primary technical namespace. The project does not ship a `myos` CLI alias. Changes to remaining legacy surfaces such as `/usr/share/myos`, `MYOS_*`, or `ghcr.io/myos-dev/*` must keep the compatibility policy in [docs/compatibility.md](docs/compatibility.md).
 
 ## Start with the image contract
 

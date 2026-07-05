@@ -22,9 +22,9 @@ Unsupported combinations should not be treated as soft promises. If they are mis
 
 ## Rebrand compatibility
 
-Current is the primary identity and technical namespace. During the compatibility transition, support requests may still include legacy names such as `myos`, `MYOS_*`, `myos-dev`, `/usr/share/myos`, or `ghcr.io/myos-dev/*`.
+Current is the primary identity and technical namespace. No `myos` CLI is installed. During the compatibility transition, support requests may still include legacy non-command names such as `MYOS_*`, `myos-dev`, `/usr/share/myos`, or `ghcr.io/myos-dev/*`.
 
-Do not treat those legacy names as a new product boundary. They are compatibility aliases documented in [docs/compatibility.md](docs/compatibility.md).
+Do not treat those legacy names as a new product boundary. They are transition surfaces documented in [docs/compatibility.md](docs/compatibility.md).
 
 ## Where to file issues
 

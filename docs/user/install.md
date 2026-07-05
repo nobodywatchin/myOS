@@ -24,13 +24,11 @@ Avoid Btrfs if the system is expected to move between Alma and Fedora image lane
 
 ## Switch an installed system
 
-The primary command is:
+The supported command is:
 
 ```bash
 current rebase
 ```
-
-The legacy `myos rebase` command remains a compatibility alias.
 
 That picker presents images by role, environment, platform, and driver.
 

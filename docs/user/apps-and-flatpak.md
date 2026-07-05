@@ -35,7 +35,6 @@ Useful targets:
 
 `current update-system` updates system Flatpaks, safely cleans unused system runtime content, reapplies the baseline extension warmup, then stages the bootc image update.
 
-Legacy `myos` commands remain compatibility aliases.
 
 ## Why this split exists
 

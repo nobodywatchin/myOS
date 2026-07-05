@@ -51,7 +51,7 @@ ROCm userspace is not a universal cross-image promise. It belongs to the platfor
 `recipes/layers/shared/core.yml` owns the remaining host/operator package baseline:
 
 - fastfetch, fzf, zstd, gcc, distrobox, and podman-compose
-- generic `/etc/myos` filesystem scaffolding and `/usr/share/current` compatibility exposure for shared runtime payloads
+- generic `/etc/myos` filesystem scaffolding for data paths not yet migrated
 - inclusion of Cockpit and Ceph feature overlays
 
 ## Flatpak contract
@@ -108,6 +108,6 @@ GNOME and COSMIC are workstation-environment implementations.
 
 ## Current compatibility namespace
 
-`current` is the primary command wrapper. `myos` remains a compatibility alias that execs `current`.
+`current` is the only project command wrapper. No `myos` CLI alias is installed.
 
-Runtime payloads remain sourced from `/usr/share/myos` in the repo and installed image, with `/usr/share/current` exposed as a symlink for Current-native consumers. `CURRENT_*` environment variables take precedence over matching `MYOS_*` fallback variables in migration-aware scripts.
+Justfile command payloads live under `/usr/share/current/just`. Runtime data payloads that have not moved together may still use `/usr/share/myos`. `CURRENT_*` environment variables take precedence over matching `MYOS_*` fallback variables in migration-aware scripts.

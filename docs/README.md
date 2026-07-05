@@ -39,6 +39,7 @@ These capture durable project decisions that affect Current's identity, compatib
 - [docs/decisions/0001-myos-to-current-rebrand.md](decisions/0001-myos-to-current-rebrand.md)
 - [docs/decisions/0002-current-visual-identity-runtime-branding.md](decisions/0002-current-visual-identity-runtime-branding.md)
 - [docs/decisions/0003-current-compatibility-migration.md](decisions/0003-current-compatibility-migration.md)
+- [docs/decisions/0004-current-cli-primary-no-myos-command-alias.md](decisions/0004-current-cli-primary-no-myos-command-alias.md)
 
 ## Maintainer docs
 

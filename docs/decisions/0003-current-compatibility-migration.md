@@ -4,6 +4,7 @@
 - Date: 2026-07-05
 - Decision owner: Noah / technical migration implementation
 - Scope: CLI command namespace, registry namespace, runtime path compatibility, docs redirects, and environment-variable compatibility
+- Superseded in part by [0004: Current CLI Primary, No myOS Command Alias](0004-current-cli-primary-no-myos-command-alias.md)
 
 ## Decision
 
@@ -19,7 +20,7 @@ The new primary surfaces are:
 
 The legacy surfaces remain supported during the transition:
 
-- `myos` CLI wrapper
+- `myos` CLI wrapper (later removed by 0004)
 - `ghcr.io/myos-dev/*` image references when compatibility aliases are published
 - `/usr/share/myos` installed runtime path and repository source path
 - `MYOS_*` environment variables
@@ -27,11 +28,11 @@ The legacy surfaces remain supported during the transition:
 
 ## Compatibility policy
 
-`current` is the primary command. `myos` is a compatibility wrapper that execs `current`.
+`current` became the primary command. 0004 later removed the `myos` compatibility wrapper entirely.
 
 `ghcr.io/pelagians` is the primary registry namespace. `ghcr.io/myos-dev` remains a compatibility alias namespace and is populated by `scripts/sync-ghcr-compat-aliases.sh` when credentials are available.
 
-`/usr/share/myos` remains the canonical source-tree path for payloads that already live there, including the image matrix. Installed systems expose `/usr/share/current` as a symlink to `/usr/share/myos` so new commands have a Current-native path without duplicating payloads.
+`/usr/share/myos` remains the canonical source-tree path for payloads that already live there, including the image matrix. 0004 later made `/usr/share/current/just` the command payload source of truth; non-command data payloads may still use `/usr/share/myos` until migrated together.
 
 `CURRENT_*` environment variables take precedence. Matching `MYOS_*` variables remain fallbacks for existing automation.
 
