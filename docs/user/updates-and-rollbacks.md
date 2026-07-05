@@ -1,10 +1,10 @@
 # Updates And Rollbacks
 
-myOS keeps updates explicit.
+Current keeps updates explicit.
 
 ## Updates
 
-Use the project wrapper to update managed system Flatpaks, remove unused system Flatpak refs, and stage an OS image update:
+Use the compatibility project wrapper to update managed system Flatpaks, remove unused system Flatpak refs, and stage an OS image update:
 
 ```bash
 myos update-system
@@ -24,7 +24,7 @@ myos clean-system
 
 `myos clean-system` clears system runtime pins first, then lets Flatpak remove only refs it considers unused.
 
-myOS disables the stock `bootc-fetch-apply-updates` timer and service. Updates are downloaded and applied when you choose, then activated on reboot.
+Current disables the stock `bootc-fetch-apply-updates` timer and service. Updates are downloaded and applied when you choose, then activated on reboot.
 
 ## Rebase
 
@@ -49,3 +49,5 @@ Then reboot into the previous deployment.
 ## User-space updates
 
 `myos update-user` refreshes user Flatpaks, Homebrew when present on workstation images, and Distrobox containers.
+
+The command name remains `myos` until a Current-native CLI wrapper is introduced.

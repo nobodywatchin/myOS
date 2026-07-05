@@ -3,7 +3,7 @@
 ## Product roles
 
 - Server is the headless infrastructure role.
-- Workstation is the operator desktop and laptop role.
+- Workstation is the developer/operator desktop and laptop role.
 - GNOME and COSMIC are workstation environments, not separate products.
 
 ## Supported image matrix
@@ -14,10 +14,17 @@ Unsupported combinations should not be treated as soft promises. If they are mis
 
 ## Boundaries
 
-- myOS is a base operating system image project.
-- Higher-level services should run above myOS, usually in containers or k3s.
+- Current is a base operating system image ecosystem.
+- Higher-level services should run above Current, usually in containers or k3s.
+- Current is the preferred OS used internally by Pelagian, but Pelagian commercial products are distribution-agnostic and do not require it.
 - Alma 9 NVIDIA legacy is first-class and intentionally validated.
 - Alma 10 does not support the NVIDIA legacy lane.
+
+## Rebrand compatibility
+
+Current is the new identity for myOS. During the compatibility transition, support requests may still include legacy names such as `myos`, `myos-dev`, `/usr/share/myos`, or `ghcr.io/myos-dev/*`.
+
+Do not treat those legacy names as a new product boundary. They are compatibility surfaces until explicit migration work replaces them.
 
 ## Where to file issues
 

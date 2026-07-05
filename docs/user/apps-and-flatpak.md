@@ -1,6 +1,6 @@
 # Apps And Flatpak
 
-myOS keeps two Flatpak lanes on workstation images.
+Current keeps two Flatpak lanes on workstation images.
 
 ## User-managed apps
 
@@ -14,7 +14,7 @@ That means the default path for a user-installed app is still the user's own hom
 
 It is hidden from app and source enumeration, but Flatpak can still use it for automatic runtime dependency resolution for managed system apps.
 
-This is where the distro or an admin can keep a clean shared app set without turning every machine into an anything-goes system-wide app bucket.
+This is where the image or an admin can keep a clean shared app set without turning every machine into an anything-goes system-wide app bucket.
 
 ## Startup behavior
 
@@ -35,6 +35,8 @@ Useful targets:
 
 `myos update-system` updates system Flatpaks, safely cleans unused system runtime content, reapplies the baseline extension warmup, then stages the bootc image update.
 
+The command name remains `myos` until a Current-native CLI wrapper is introduced.
+
 ## Why this split exists
 
 The split is there so both of these can be true at once:
@@ -42,4 +44,4 @@ The split is there so both of these can be true at once:
 - users keep ownership of their own app installs
 - admins still get a real, deliberate place for shared curated apps
 
-That is why myOS keeps the system-vs-user Flatpak model instead of flattening everything into one scope.
+That is why Current keeps the system-vs-user Flatpak model instead of flattening everything into one scope.
