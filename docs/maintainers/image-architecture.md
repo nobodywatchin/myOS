@@ -43,7 +43,7 @@ The renderer and CI treat that TSV as the canonical support contract for:
 
 ## Machine-readable matrix
 
-`files/base/runtime/usr/share/myos/image-matrix.tsv` is shipped into images at `/usr/share/myos/image-matrix.tsv` and exposed at `/usr/share/current/image-matrix.tsv` through the installed compatibility symlink. `current rebase` downloads the same source path from the Current GitHub repo at runtime so the picker can reflect the online support matrix.
+`files/base/runtime/usr/share/myos/image-matrix.tsv` is shipped into images at `/usr/share/myos/image-matrix.tsv`. `current rebase` downloads the same source path from the Current GitHub repo at runtime so the picker can reflect the online support matrix. The matrix remains on the legacy data path until that runtime-data migration moves all consumers together.
 
 It is consumed by:
 

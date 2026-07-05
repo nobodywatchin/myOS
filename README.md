@@ -12,7 +12,7 @@ It is container-first, close to upstream, and intentionally lightweight: just en
 
 Current is not a replacement for Fedora, AlmaLinux, Debian, Arch, Universal Blue, or other Linux ecosystems. It is a curated image layer built on top of excellent upstream systems, asking what they should look like when designed today around image-native updates and container-native workflows.
 
-> **Compatibility status:** Current-native entrypoints now exist: `current`, `ghcr.io/pelagians/*`, `/usr/share/current`, and `CURRENT_*`. Legacy myOS surfaces such as `myos`, `ghcr.io/myos-dev/*`, `/usr/share/myos`, and `MYOS_*` remain compatibility aliases during the migration.
+> **Compatibility status:** `current` is the supported CLI and `/usr/share/current/just` is the command payload source of truth. No `myos` CLI is installed. Legacy image, data-path, and environment transition surfaces such as `ghcr.io/myos-dev/*`, `/usr/share/myos`, and selected `MYOS_*` fallbacks may remain until separately migrated.
 
 ## Why Current
 
@@ -52,7 +52,7 @@ The exact supported tags live in the shipped manifest:
 files/base/runtime/usr/share/myos/image-matrix.tsv
 ```
 
-The source-tree path stays in the legacy location during the transition. Installed systems expose the same payloads at `/usr/share/current` through a compatibility symlink.
+The image-matrix source path stays in the legacy location until the data-path migration moves all consumers together. User command Justfiles live under `files/justfiles/usr/share/current/just`.
 
 User-facing image selection docs live here:
 
@@ -134,13 +134,11 @@ Details:
 
 ## Install and update
 
-The primary command for installed systems is now:
+The supported command for installed systems is:
 
 ```bash
 current rebase
 ```
-
-The legacy `myos rebase` command remains a compatibility alias.
 
 The picker is grouped by role, environment, platform, and driver. It downloads the same image matrix from the GitHub repo that CI validates, so supported lanes and published tags stay in sync.
 
@@ -213,6 +211,7 @@ Decision records live under `docs/decisions/`:
 - [docs/decisions/0001-myos-to-current-rebrand.md](docs/decisions/0001-myos-to-current-rebrand.md)
 - [docs/decisions/0002-current-visual-identity-runtime-branding.md](docs/decisions/0002-current-visual-identity-runtime-branding.md)
 - [docs/decisions/0003-current-compatibility-migration.md](docs/decisions/0003-current-compatibility-migration.md)
+- [docs/decisions/0004-current-cli-primary-no-myos-command-alias.md](docs/decisions/0004-current-cli-primary-no-myos-command-alias.md)
 
 Compatibility docs live here:
 

@@ -10,7 +10,7 @@ These files are the reusable composition units included from image recipes with 
 - `features/ceph.yml`: shared Ceph host prerequisites.
 - `features/k3s.yml`: shared k3s runtime capability.
 - `shared/flatpak-base.yml`: workstation Flatpak package baseline, user/system remotes, shared managed app set, policy payloads, and session environment import hook.
-- `shared/flatpak-cleanup.yml`: system-scope Flatpak maintenance helper used by startup hooks and `myos` targets.
+- `shared/flatpak-cleanup.yml`: system-scope Flatpak maintenance helper used by startup hooks and `current` targets.
 - `shared/flatpak-gnome.yml`: GNOME portal backend configuration and GNOME-specific managed Flatpaks.
 - `shared/flatpak-gnome-legacy.yml`: Alma 9 GNOME managed Flatpak app delta for apps provided natively on modern GNOME lanes.
 - `shared/flatpak-cosmic.yml`: COSMIC portal backend configuration and COSMIC Flatpak remotes.

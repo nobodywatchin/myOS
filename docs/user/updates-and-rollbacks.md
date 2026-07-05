@@ -48,6 +48,4 @@ Then reboot into the previous deployment.
 
 ## User-space updates
 
-`myos update-user` refreshes user Flatpaks, Homebrew when present on workstation images, and Distrobox containers.
-
-The command name remains `myos` until a Current-native CLI wrapper is introduced.
+`current update-user` refreshes user Flatpaks, Homebrew when present on workstation images, and Distrobox containers.

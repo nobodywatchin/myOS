@@ -12,7 +12,6 @@ bash -n files/flatpak/cleanup/usr/libexec/myos-flatpak-system-maintenance
 bash -n files/nvidia/usr/local/libexec/myos/myos-pcp-nvidia-pmda-apply
 bash -n modules/os-release-meta/os-release-meta.sh
 bash -n files/justfiles/usr/local/bin/current
-bash -n files/justfiles/usr/local/bin/myos
 bash -n scripts/build-alma10-installer-iso.sh
 bash -n scripts/sync-ghcr-compat-aliases.sh
 
@@ -28,20 +27,19 @@ grep -q 'NAME: Current' recipes/layers/shared/core-base.yml
 grep -q 'PRETTY_NAME: Current' recipes/layers/shared/core-base.yml
 grep -q 'VENDOR_NAME: Current' recipes/layers/shared/core-base.yml
 
-# Phase 3 Current compatibility migration.
+# Phase 3/4 Current command namespace.
 test -f files/justfiles/usr/local/bin/current
-test -f files/justfiles/usr/local/bin/myos
-grep -q '/usr/share/current/just/index.just' files/justfiles/usr/local/bin/current
-grep -q 'exec /usr/local/bin/current' files/justfiles/usr/local/bin/myos
-test -L files/justfiles/usr/share/current
-test "$(readlink files/justfiles/usr/share/current)" = myos
-grep -q "default_matrix_url=\"https://raw.githubusercontent.com/Pelagians/Current/stable/files/base/runtime/usr/share/myos/image-matrix.tsv\"" files/justfiles/usr/share/myos/just/rebase.just
-grep -q 'CURRENT_IMAGE_MATRIX_URL' files/justfiles/usr/share/myos/just/rebase.just
-grep -q 'MYOS_IMAGE_MATRIX_URL' files/justfiles/usr/share/myos/just/rebase.just
-grep -q 'CURRENT_REGISTRY_NAMESPACE' files/justfiles/usr/share/myos/just/rebase.just
-grep -q 'MYOS_REGISTRY_NAMESPACE' files/justfiles/usr/share/myos/just/rebase.just
-grep -q 'ghcr.io/pelagians' files/justfiles/usr/share/myos/just/rebase.just
-grep -q 'current --list' files/justfiles/usr/share/myos/just/index.just
+test ! -e files/justfiles/usr/local/bin/myos
+test -d files/justfiles/usr/share/current/just
+test ! -e files/justfiles/usr/share/myos/just
+grep -q 'JUSTFILE="/usr/share/current/just/index.just"' files/justfiles/usr/local/bin/current
+grep -q "default_matrix_url=\"https://raw.githubusercontent.com/Pelagians/Current/stable/files/base/runtime/usr/share/myos/image-matrix.tsv\"" files/justfiles/usr/share/current/just/rebase.just
+grep -q 'CURRENT_IMAGE_MATRIX_URL' files/justfiles/usr/share/current/just/rebase.just
+grep -q 'MYOS_IMAGE_MATRIX_URL' files/justfiles/usr/share/current/just/rebase.just
+grep -q 'CURRENT_REGISTRY_NAMESPACE' files/justfiles/usr/share/current/just/rebase.just
+grep -q 'MYOS_REGISTRY_NAMESPACE' files/justfiles/usr/share/current/just/rebase.just
+grep -q 'ghcr.io/pelagians' files/justfiles/usr/share/current/just/rebase.just
+grep -q 'current --list' files/justfiles/usr/share/current/just/index.just
 grep -q 'CURRENT_INSTALLER_PAYLOAD_REF' scripts/build-alma10-installer-iso.sh
 grep -q 'MYOS_INSTALLER_PAYLOAD_REF' scripts/build-alma10-installer-iso.sh
 grep -q 'MYOS_COMPAT_REGISTRY_NAMESPACE' scripts/sync-ghcr-compat-aliases.sh
@@ -156,9 +154,9 @@ grep -q 'gpgcheck=1' recipes/layers/shared/nvidia-base.yml
 test -f files/nvidia/usr/local/libexec/myos/myos-pcp-nvidia-pmda-apply
 test -f files/nvidia/usr/lib/systemd/system/myos-pcp-nvidia-pmda-apply.service
 
-grep -q "import '/usr/share/myos/just/default.just'" files/justfiles/usr/share/myos/just/index.just
-grep -q "import '/usr/share/myos/just/rebase.just'" files/justfiles/usr/share/myos/just/index.just
-grep -q "import '/usr/share/myos/just/update.just'" files/justfiles/usr/share/myos/just/index.just
-! grep -q "cluster.just" files/justfiles/usr/share/myos/just/index.just
-test ! -e files/justfiles/usr/share/myos/just/cluster.just
-grep -q '^rebase:$' files/justfiles/usr/share/myos/just/rebase.just
+grep -q "import '/usr/share/current/just/default.just'" files/justfiles/usr/share/current/just/index.just
+grep -q "import '/usr/share/current/just/rebase.just'" files/justfiles/usr/share/current/just/index.just
+grep -q "import '/usr/share/current/just/update.just'" files/justfiles/usr/share/current/just/index.just
+! grep -q "cluster.just" files/justfiles/usr/share/current/just/index.just
+test ! -e files/justfiles/usr/share/current/just/cluster.just
+grep -q '^rebase:$' files/justfiles/usr/share/current/just/rebase.just

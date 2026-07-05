@@ -19,15 +19,14 @@ These are display identity surfaces, not command, path, registry, or image-tag m
 Phase 3 makes these Current-native surfaces primary:
 
 - `current` command wrapper
-- `/usr/share/current` installed runtime path
+- `/usr/share/current/just` command payload path
 - `CURRENT_*` environment variables
 - `ghcr.io/pelagians/*` image references
 - `https://github.com/Pelagians/Current` docs links
 
-These legacy surfaces remain aliases during the transition:
+These non-command legacy surfaces may remain during the transition:
 
-- `myos` command wrapper
-- `/usr/share/myos` source and installed runtime path
+- `/usr/share/myos` internal data paths not yet migrated
 - `/etc/myos` config scaffold
 - `MYOS_*` environment variables
 - `ghcr.io/myos-dev/*` image references when aliases are published
@@ -53,6 +52,6 @@ Do not remove those files in Phase 2.
 
 ## Phase 3 migration
 
-Phase 3 introduces the CLI, registry, path, docs, and environment compatibility baseline. See [docs/compatibility.md](../compatibility.md) and [0003: Current Compatibility Migration Baseline](../decisions/0003-current-compatibility-migration.md).
+Phase 3 introduced the registry, path, docs, and environment compatibility baseline. Phase 4 made `current` the only CLI and moved the Justfile command payload to `/usr/share/current/just`. See [docs/compatibility.md](../compatibility.md), [0003: Current Compatibility Migration Baseline](../decisions/0003-current-compatibility-migration.md), and [0004: Current CLI Primary, No myOS Command Alias](../decisions/0004-current-cli-primary-no-myos-command-alias.md).
 
 `/etc/current` is not introduced yet. `/etc/myos` remains the compatibility config scaffold until a real Current-native config consumer exists.

@@ -58,7 +58,7 @@ Legacy bitmap assets are not removed in this phase. PNG/favicon/Plymouth replace
 Review this decision when:
 
 - bitmap assets are regenerated
-- the `current` command wrapper is introduced
+- the `current` command wrapper is introduced; resolved by [0004](0004-current-cli-primary-no-myos-command-alias.md)
 - runtime paths move from `/usr/share/myos` to `/usr/share/current`
 - registry namespaces move from `myos-dev` to a Current-native namespace
 - a public website is added

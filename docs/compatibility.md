@@ -1,44 +1,38 @@
 # Current Compatibility Migration
 
-Current is the public identity and primary technical namespace. myOS-era names remain compatibility aliases during the transition.
+Current is the public identity and primary technical namespace.
 
 ## Primary names
 
 Use these for new docs, scripts, and examples:
 
 - CLI: `current`
+- Command payload path: `/usr/share/current/just`
 - Registry namespace: `ghcr.io/pelagians`
-- Installed runtime path: `/usr/share/current`
 - Environment variables: `CURRENT_*`
 - Repository/docs: `https://github.com/Pelagians/Current`
 
-## Compatibility aliases
+## Removed command compatibility
 
-These remain supported for existing users and automation:
+No `myos` CLI wrapper is installed.
 
-- CLI: `myos`
-- Registry namespace: `ghcr.io/myos-dev`
-- Installed/source runtime path: `/usr/share/myos`
-- Environment variables: `MYOS_*`
-- Old docs/raw URLs that GitHub redirects or compatibility notes still cover
-
-## CLI
-
-`current` is the primary wrapper. `myos` remains installed as a compatibility alias and execs `current`.
-
-Prefer:
+Use:
 
 ```bash
 current rebase
 current update-system
 ```
 
-Old commands still work:
+Do not document new user flows with `myos rebase`, `myos update-system`, or other `myos` command examples.
 
-```bash
-myos rebase
-myos update-system
-```
+## Remaining transition aliases
+
+These remain compatibility or transition surfaces outside the command namespace:
+
+- Registry namespace: `ghcr.io/myos-dev` when alias publishing is enabled
+- Runtime data path: `/usr/share/myos` for payloads not yet moved, such as the image matrix metadata path
+- Environment variables: selected `MYOS_*` variables as fallbacks for existing automation
+- Old docs/raw URLs that GitHub redirects or compatibility notes still cover
 
 ## Registry
 
@@ -48,7 +42,7 @@ New examples should use:
 sudo bootc switch ghcr.io/pelagians/alma10-gnome:latest
 ```
 
-Legacy references are aliases when compatibility publishing is enabled:
+Legacy image references remain aliases when compatibility publishing is enabled:
 
 ```bash
 sudo bootc switch ghcr.io/myos-dev/alma10-gnome:latest
@@ -58,13 +52,13 @@ sudo bootc switch ghcr.io/myos-dev/alma10-gnome:latest
 
 ## Runtime paths
 
-Installed systems expose `/usr/share/current` as a symlink to `/usr/share/myos`.
+Justfile command payloads live under `/usr/share/current/just`.
 
-The repository still keeps shared payloads under `files/.../usr/share/myos` to avoid duplicating the image matrix and Justfile payloads during the migration.
+The image matrix and some internal runtime metadata still use `/usr/share/myos` until a separate data-path migration moves those consumers together.
 
 ## Environment variables
 
-Current-native variables win. Legacy variables are fallback only.
+Current-native variables win. Legacy variables are fallback only where explicitly supported.
 
 Examples:
 
