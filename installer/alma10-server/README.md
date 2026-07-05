@@ -112,6 +112,6 @@ Use the script unless you are debugging the builder invocation itself.
 - Do not add `firewall --enabled` to the Kickstart unless `firewalld` is present in the installed payload image.
 - Keep storage decisions visible in Anaconda unless a separate automated installer profile is introduced.
 
-## Compatibility variables
+## Environment variables
 
-The build script prefers `CURRENT_INSTALLER_*` variables. Matching `MYOS_INSTALLER_*` variables remain fallbacks for existing automation.
+The build script uses `CURRENT_INSTALLER_*` variables for payload, output, config, and root filesystem overrides.

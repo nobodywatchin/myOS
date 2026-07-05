@@ -3,7 +3,7 @@ set -euo pipefail
 
 cd "$(dirname "$0")/.."
 
-matrix_file="files/base/runtime/usr/share/myos/image-matrix.tsv"
+matrix_file="files/base/runtime/usr/share/current/image-matrix.tsv"
 matrix_script="scripts/render-image-matrix.py"
 workflow_file=".github/workflows/build.yml"
 
@@ -31,7 +31,7 @@ done
 for retired_path in \
   recipes/images/console \
   recipes/layers/shared/console.yml \
-  files/console/shared/usr/share/myos/console/role.env \
+  files/console/shared/usr/share/current/console/role.env \
   recipes/layers/alma9/full.yml \
   recipes/layers/alma10/full.yml \
   recipes/layers/fedora/gnome.yml \
@@ -55,7 +55,7 @@ if find recipes/images/workstation -type f -name 'full*.yml' 2>/dev/null | grep 
   exit 1
 fi
 
-if grep -RInE -- 'nvidia-legacy' files/base/runtime/usr/share/myos/image-matrix.tsv recipes/images scripts/render-image-matrix.py >/dev/null; then
+if grep -RInE -- 'nvidia-legacy' files/base/runtime/usr/share/current/image-matrix.tsv recipes/images scripts/render-image-matrix.py >/dev/null; then
   printf 'Legacy NVIDIA naming still leaks into the active matrix or recipe tree.\n' >&2
   exit 1
 fi
@@ -90,7 +90,7 @@ import re
 from pathlib import Path
 
 root = Path('.')
-matrix_file = root / 'files/base/runtime/usr/share/myos/image-matrix.tsv'
+matrix_file = root / 'files/base/runtime/usr/share/current/image-matrix.tsv'
 include_re = re.compile(r'^\s*-\s+from-file:\s+([^\s#]+)\s*(?:#.*)?$')
 core_base = root / 'recipes/layers/shared/core-base.yml'
 shared_core = root / 'recipes/layers/shared/core.yml'
@@ -237,7 +237,7 @@ expected_singletons = {
     'NVIDIA PCP PMDA package': (r'^\s*-\s+pcp-pmda-nvidia-gpu\s*$', 1),
     'pmcd service enablement': (r'^\s*-\s+pmcd\.service\s*$', 1),
     'pmlogger service enablement': (r'^\s*-\s+pmlogger\.service\s*$', 1),
-    'NVIDIA PMDA registration service enablement': (r'^\s*-\s+myos-pcp-nvidia-pmda-apply\.service\s*$', 1),
+    'NVIDIA PMDA registration service enablement': (r'^\s*-\s+current-pcp-nvidia-pmda-apply\.service\s*$', 1),
 }
 
 for label, (pattern, expected) in expected_singletons.items():
@@ -246,7 +246,7 @@ for label, (pattern, expected) in expected_singletons.items():
         die(f'{label} must appear exactly {expected} time in recipes/**/*.yml; found {count}')
 
 if any('cockpit-pcp' in item.read_text(encoding='utf-8') for item in recipe_ymls):
-    die('cockpit-pcp must not be layered into myOS recipes')
+    die('cockpit-pcp must not be layered into Current recipes')
 PY
 
 required_workflow_snippets=(

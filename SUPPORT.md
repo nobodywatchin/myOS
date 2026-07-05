@@ -16,15 +16,9 @@ Unsupported combinations should not be treated as soft promises. If they are mis
 
 - Current is a base operating system image ecosystem.
 - Higher-level services should run above Current, usually in containers or k3s.
-- Current is the preferred OS used internally by Pelagian, but Pelagian commercial products are distribution-agnostic and do not require it.
-- Alma 9 NVIDIA legacy is first-class and intentionally validated.
-- Alma 10 does not support the NVIDIA legacy lane.
-
-## Rebrand compatibility
-
-Current is the primary identity and technical namespace. No `myos` CLI is installed. During the compatibility transition, support requests may still include legacy non-command names such as `MYOS_*`, `myos-dev`, `/usr/share/myos`, or `ghcr.io/myos-dev/*`.
-
-Do not treat those legacy names as a new product boundary. They are transition surfaces documented in [docs/compatibility.md](docs/compatibility.md).
+- Current is maintained by Pelagian and used internally by Pelagian, but it stands alone as an open-source project.
+- Alma 9 NVIDIA 580 is first-class and intentionally validated.
+- Alma 10 does not support the NVIDIA 580 lane.
 
 ## Where to file issues
 

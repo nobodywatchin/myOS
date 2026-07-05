@@ -19,13 +19,13 @@ modules:
       # later unrelated DNF transactions do not fail before package resolution.
       - RUN sed -i -e 's/^repo_gpgcheck=.*/repo_gpgcheck=0/' -e 's/^gpgcheck=.*/gpgcheck=1/' /etc/yum.repos.d/nvidia-container-toolkit.repo && if ! grep -q '^repo_gpgcheck=' /etc/yum.repos.d/nvidia-container-toolkit.repo; then printf '\nrepo_gpgcheck=0\n' >> /etc/yum.repos.d/nvidia-container-toolkit.repo; fi && if ! grep -q '^gpgcheck=' /etc/yum.repos.d/nvidia-container-toolkit.repo; then printf 'gpgcheck=1\n' >> /etc/yum.repos.d/nvidia-container-toolkit.repo; fi
       - RUN dnf -y --enablerepo "nvidia-container-toolkit" install nvidia-container-toolkit nvidia-container-toolkit-base libnvidia-container-tools libnvidia-container1
-      - RUN chmod 0755 /usr/local/libexec/myos/myos-pcp-nvidia-pmda-apply
+      - RUN chmod 0755 /usr/local/libexec/current/current-pcp-nvidia-pmda-apply
       - RUN ldconfig
 
   - type: systemd
     system:
       enabled:
-        - myos-pcp-nvidia-pmda-apply.service
+        - current-pcp-nvidia-pmda-apply.service
 
   - type: kargs
     kargs:

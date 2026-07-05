@@ -1,7 +1,7 @@
 [customizations.iso]
-volume_id = "MYOS-ALMA10"
-application_id = "myOS Alma 10 Server Installer"
-publisher = "myOS"
+volume_id = "CURRENT-ALMA10"
+application_id = "Current Alma 10 Server Installer"
+publisher = "Current"
 
 [customizations.installer.kickstart]
 contents = """
@@ -24,7 +24,7 @@ reboot
 
 # --- Post-install tweaks ---
 %post --erroronfail
-echo myos > /etc/hostname
+echo current > /etc/hostname
 %end
 """
 

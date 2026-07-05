@@ -16,10 +16,10 @@ Flatpak governance payloads live under `files/flatpak/base/`, which keeps app po
 
 Workstation images ship:
 
-- `usr/lib/systemd/system/myos-workstation-dm-apply.service`
-- `usr/libexec/myos-workstation-dm-apply`
+- `usr/lib/systemd/system/current-workstation-dm-apply.service`
+- `usr/libexec/current-workstation-dm-apply`
 
-That helper reads the active family marker from `/usr/share/myos/workstation/desktop.env` and repairs stale `display-manager.service` ownership after bootc rebases.
+That helper reads the active family marker from `/usr/share/current/workstation/desktop.env` and repairs stale `display-manager.service` ownership after bootc rebases.
 
 It also queues the selected display manager on the first boot after a rebase, so
 the handoff is not delayed until the next reboot while still avoiding a boot-time

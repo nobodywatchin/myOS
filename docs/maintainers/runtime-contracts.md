@@ -51,7 +51,6 @@ ROCm userspace is not a universal cross-image promise. It belongs to the platfor
 `recipes/layers/shared/core.yml` owns the remaining host/operator package baseline:
 
 - fastfetch, fzf, zstd, gcc, distrobox, and podman-compose
-- generic `/etc/myos` filesystem scaffolding for data paths not yet migrated
 - inclusion of Cockpit and Ceph feature overlays
 
 ## Flatpak contract
@@ -97,7 +96,7 @@ GNOME and COSMIC are workstation-environment implementations.
 - `workstation-gnome.yml` owns GNOME session, extension, and Software integration behavior; `flatpak-gnome.yml` owns GNOME portal selection and GNOME-specific Flatpaks.
 - `workstation-gnome-modern.yml` owns the extra GNOME app delta shared by the Alma 10 and Fedora lanes.
 - `workstation-cosmic.yml` owns common COSMIC session, greeter, and validation; `flatpak-cosmic.yml` owns COSMIC portal selection and COSMIC Flatpak remotes; `alma/cosmic.yml` and `fedora/cosmic.yml` own distro source/config drift.
-- `files/gnome/shared/usr/share/myos/workstation/desktop.env` and `files/cosmic/shared/usr/share/myos/workstation/desktop.env` are the family markers consumed by the shared DM helper.
+- `files/gnome/shared/usr/share/current/workstation/desktop.env` and `files/cosmic/shared/usr/share/current/workstation/desktop.env` are the family markers consumed by the shared DM helper.
 
 ## NVIDIA contract
 
@@ -106,8 +105,6 @@ GNOME and COSMIC are workstation-environment implementations.
 - `shared/nvidia-common.yml` and `shared/nvidia-open.yml` own the Alma-family NVIDIA lanes.
 - `fedora/nvidia-open.yml` owns only the Fedora-specific open-driver delta on top of the shared NVIDIA layers.
 
-## Current compatibility namespace
+## Current namespace
 
-`current` is the only project command wrapper. No `myos` CLI alias is installed.
-
-Justfile command payloads live under `/usr/share/current/just`. Runtime data payloads that have not moved together may still use `/usr/share/myos`. `CURRENT_*` environment variables take precedence over matching `MYOS_*` fallback variables in migration-aware scripts.
+`current` is the only project command wrapper. Justfile command payloads live under `/usr/share/current/just`. Runtime data payloads live under `/usr/share/current`. New scripts and workflows use `CURRENT_*` environment variables.

@@ -2,7 +2,7 @@ $ErrorActionPreference = "Stop"
 Set-StrictMode -Version Latest
 
 $repoRoot = Split-Path -Parent $PSScriptRoot
-$matrixPath = Join-Path $repoRoot "files/base/runtime/usr/share/myos/image-matrix.tsv"
+$matrixPath = Join-Path $repoRoot "files/base/runtime/usr/share/current/image-matrix.tsv"
 $laneLayerPath = Join-Path $repoRoot "recipes/layers/alma9/nvidia-580.yml"
 $workstationVaapiLayerPath = Join-Path $repoRoot "recipes/layers/alma9/nvidia-workstation.yml"
 

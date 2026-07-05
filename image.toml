@@ -1,6 +1,6 @@
 [[customizations.user]]
-name = "myos"
-password = "myos"
+name = "current"
+password = "current"
 groups = ["wheel", "render", "video"]
 
 [[customizations.filesystem]]

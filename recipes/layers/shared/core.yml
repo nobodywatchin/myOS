@@ -14,9 +14,5 @@ modules:
 
   - from-file: layers/features/cockpit.yml
 
-  - type: containerfile
-    snippets:
-      - RUN install -d -m 0755 /etc/myos
-      - RUN restorecon -RF /etc/myos || true
 
   - from-file: layers/features/ceph.yml
