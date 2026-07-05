@@ -1,0 +1,7 @@
+<svg width="256" height="256" viewBox="0 0 256 256" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="title desc">
+  <title id="title">Current mark, white</title>
+  <desc id="desc">A white circular current mark for dark backgrounds.</desc>
+  <path d="M190 72C174 51 149 38 121 38C73 38 34 77 34 125C34 173 73 212 121 212C155 212 184 193 199 165" stroke="#FFFFFF" stroke-width="18" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M170 121C153 93 111 92 94 118C78 142 99 170 128 160C146 154 157 139 190 140" stroke="#FFFFFF" stroke-width="16" stroke-linecap="round" stroke-linejoin="round" opacity="0.82"/>
+  <path d="M190 140L172 126" stroke="#FFFFFF" stroke-width="16" stroke-linecap="round" stroke-linejoin="round" opacity="0.82"/>
+</svg>

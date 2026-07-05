@@ -1,6 +1,6 @@
 # Contributing
 
-Current is the new public identity for myOS. The project is being rebranded without a technical rewrite, so compatibility-sensitive names such as `myos`, `/usr/share/myos`, and `ghcr.io/myos-dev/*` should only change as part of explicit migration work.
+Current is the public identity and primary technical namespace. The project preserves myOS compatibility aliases, so changes to `myos`, `/usr/share/myos`, `MYOS_*`, or `ghcr.io/myos-dev/*` must keep the compatibility policy in [docs/compatibility.md](docs/compatibility.md).
 
 ## Start with the image contract
 
@@ -27,7 +27,7 @@ If a change alters the supported image matrix, runtime contracts, validation exp
 
 Use Current for public product language.
 
-Use legacy names only when referring to existing technical compatibility surfaces, commands, image references, paths, or environment variables that still exist.
+Use legacy names only when referring to compatibility aliases, migration behavior, old image references, paths, or environment variables that still exist.
 
 Current should sound practical, upstream-respecting, developer-first, and calm. Avoid AI hype, cyberpunk language, electrical-current metaphors, or claims that Current replaces upstream Linux distributions.
 

@@ -193,7 +193,7 @@ def build_parser() -> argparse.ArgumentParser:
     gha.add_argument('job', choices=sorted(ALLOWED_JOBS))
     gha.set_defaults(func=cmd_gha)
 
-    rebase = subparsers.add_parser('rebase', help='emit myos rebase picker rows')
+    rebase = subparsers.add_parser('rebase', help='emit current rebase picker rows')
     rebase.set_defaults(func=cmd_rebase)
 
     return parser

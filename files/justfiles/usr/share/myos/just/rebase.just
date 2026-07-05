@@ -5,9 +5,13 @@ rebase:
     command -v fzf >/dev/null || { echo "Missing 'fzf'."; exit 1; }
     command -v curl >/dev/null || { echo "Missing 'curl'."; exit 1; }
 
-    matrix_url="${MYOS_IMAGE_MATRIX_URL:-https://raw.githubusercontent.com/myos-dev/myOS/stable/files/base/runtime/usr/share/myos/image-matrix.tsv}"
-    matrix_file="$(mktemp -t myos-image-matrix.XXXXXX)"
-    curl_error_file="$(mktemp -t myos-image-matrix-curl.XXXXXX)"
+    default_matrix_url="https://raw.githubusercontent.com/Pelagians/Current/stable/files/base/runtime/usr/share/myos/image-matrix.tsv"
+    matrix_url="${CURRENT_IMAGE_MATRIX_URL:-${MYOS_IMAGE_MATRIX_URL:-$default_matrix_url}}"
+    registry_namespace="${CURRENT_REGISTRY_NAMESPACE:-${MYOS_REGISTRY_NAMESPACE:-ghcr.io/pelagians}}"
+    registry_namespace="${registry_namespace%/}"
+
+    matrix_file="$(mktemp -t current-image-matrix.XXXXXX)"
+    curl_error_file="$(mktemp -t current-image-matrix-curl.XXXXXX)"
     trap 'rm -f "$matrix_file" "$curl_error_file"' EXIT
 
     curl_status=0
@@ -100,9 +104,9 @@ rebase:
     test -n "$sel" || { echo "No image selected"; exit 1; }
 
     tag="$(printf '%s\n' "$sel" | cut -d'|' -f5 | tr -d ' ')"
-    ref="ghcr.io/myos-dev/${tag}"
+    ref="${registry_namespace}/${tag}"
     echo "Selected: $ref"
     echo "Executing: sudo bootc switch $ref"
     sudo bootc switch "$ref"
     echo "Workstation images re-apply the correct display-manager ownership on boot after the switch."
-    echo "bootc auto-apply is disabled in myOS; reboot when you are ready to activate the new image."
+    echo "bootc auto-apply is disabled in Current; reboot when you are ready to activate the new image."

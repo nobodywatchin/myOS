@@ -14,7 +14,7 @@ Current publishes a small image matrix with explicit contracts.
 - Published images are meant to be updated intentionally.
 - Rebases between supported images are part of the normal workflow.
 - Workstation-environment rebases are expected to preserve the correct display-manager ownership on boot.
-- The supported image matrix is the source of truth for published tags and `myos rebase` until a Current-native command migration lands.
+- The supported image matrix is the source of truth for published tags and `current rebase`.
 
 ## Support boundaries
 

@@ -29,7 +29,7 @@ Choose in this order.
 
 ## Supported images
 
-The exact supported image list comes from `files/base/runtime/usr/share/myos/image-matrix.tsv`; the compatibility `myos rebase` command downloads that matrix from GitHub when it builds the picker.
+The exact supported image list comes from `files/base/runtime/usr/share/myos/image-matrix.tsv`; `current rebase` downloads that matrix from GitHub when it builds the picker. Installed systems also expose it through `/usr/share/current` for the Current-native path.
 
 Current lanes:
 
@@ -51,4 +51,4 @@ Unsupported combinations are intentional.
 - Current AlmaLinux 10 Server: `alma10-server`
 - Current Fedora Server: `fedora-server`
 
-`myos rebase` shows the full list grouped by role, environment, platform, and driver until the Current-native command migration lands.
+`current rebase` shows the full list grouped by role, environment, platform, and driver. `myos rebase` remains a compatibility alias.

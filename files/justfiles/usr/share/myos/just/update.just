@@ -1,10 +1,10 @@
 # Update System Flatpaks and OS Image
 update-system:
   sudo flatpak update --system -y
-  myos flatpak-clean-system
+  current flatpak-clean-system
   sudo /usr/libexec/myos-flatpak-system-maintenance ensure
   sudo bootc upgrade
-  @echo "bootc auto-apply is disabled in myOS; reboot during your maintenance window to activate the staged image update"
+  @echo "bootc auto-apply is disabled in Current; reboot during your maintenance window to activate the staged image update"
 
 # Clean Unused System Flatpaks
 flatpak-clean-system:
@@ -12,7 +12,7 @@ flatpak-clean-system:
 
 # Backward-compatible alias for older muscle memory.
 clean-system:
-  myos flatpak-clean-system
+  current flatpak-clean-system
 
 # Repair System Flatpaks
 flatpak-repair-system:
@@ -148,10 +148,10 @@ update-firmware:
 
 # Update Everything
 update-all:
-  myos update-system
-  myos update-user
-  myos update-podman
-  myos update-firmware
+  current update-system
+  current update-user
+  current update-podman
+  current update-firmware
 
 # Update Chooser
 update:
@@ -163,4 +163,4 @@ update:
     [[ -n "$sel" ]] || { echo "No selection."; exit 0; }
     target="${sel%% *}"
     echo "→ Running: just ${target}"
-    exec myos "${target}"
+    exec current "${target}"
