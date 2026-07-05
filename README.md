@@ -1,4 +1,10 @@
-# Current &nbsp; [![BlueBuild build badge](https://github.com/myos-dev/myOS/actions/workflows/build.yml/badge.svg)](https://github.com/myos-dev/myOS/actions/workflows/build.yml)
+<p align="center">
+  <a href="https://github.com/Pelagians/Current">
+    <img src="docs/brand/assets/current-wordmark.svg" alt="Current" width="420" />
+  </a>
+</p>
+
+# Current &nbsp; [![BlueBuild build badge](https://github.com/Pelagians/Current/actions/workflows/build.yml/badge.svg)](https://github.com/Pelagians/Current/actions/workflows/build.yml)
 
 Current is an open-source ecosystem of immutable bootc-based Linux images for developers.
 
@@ -6,7 +12,7 @@ It is container-first, close to upstream, and intentionally lightweight: just en
 
 Current is not a replacement for Fedora, AlmaLinux, Debian, Arch, Universal Blue, or other Linux ecosystems. It is a curated image layer built on top of excellent upstream systems, asking what they should look like when designed today around image-native updates and container-native workflows.
 
-> **Rebrand status:** Current is the new identity for myOS. Technical namespaces such as the `myos` command, `ghcr.io/myos-dev/*` images, and `/usr/share/myos` runtime paths remain in place until a compatibility-preserving migration introduces Current-native replacements.
+> **Compatibility status:** Current-native entrypoints now exist: `current`, `ghcr.io/pelagians/*`, `/usr/share/current`, and `CURRENT_*`. Legacy myOS surfaces such as `myos`, `ghcr.io/myos-dev/*`, `/usr/share/myos`, and `MYOS_*` remain compatibility aliases during the migration.
 
 ## Why Current
 
@@ -46,7 +52,7 @@ The exact supported tags live in the shipped manifest:
 files/base/runtime/usr/share/myos/image-matrix.tsv
 ```
 
-The legacy path remains the source of truth until the technical namespace migration introduces a Current-native path.
+The source-tree path stays in the legacy location during the transition. Installed systems expose the same payloads at `/usr/share/current` through a compatibility symlink.
 
 User-facing image selection docs live here:
 
@@ -128,18 +134,20 @@ Details:
 
 ## Install and update
 
-The compatibility command for installed systems is currently:
+The primary command for installed systems is now:
 
 ```bash
-myos rebase
+current rebase
 ```
+
+The legacy `myos rebase` command remains a compatibility alias.
 
 The picker is grouped by role, environment, platform, and driver. It downloads the same image matrix from the GitHub repo that CI validates, so supported lanes and published tags stay in sync.
 
 For manual switching:
 
 ```bash
-sudo bootc switch ghcr.io/myos-dev/alma10-gnome:latest
+sudo bootc switch ghcr.io/pelagians/alma10-gnome:latest
 ```
 
 Current disables unattended `bootc` auto-apply.
@@ -147,7 +155,7 @@ Current disables unattended `bootc` auto-apply.
 Use:
 
 ```bash
-myos update-system
+current update-system
 ```
 
 to update managed system Flatpaks, prune unused system Flatpak refs, and stage a bootc image update.
@@ -203,6 +211,17 @@ Start here:
 Decision records live under `docs/decisions/`:
 
 - [docs/decisions/0001-myos-to-current-rebrand.md](docs/decisions/0001-myos-to-current-rebrand.md)
+- [docs/decisions/0002-current-visual-identity-runtime-branding.md](docs/decisions/0002-current-visual-identity-runtime-branding.md)
+- [docs/decisions/0003-current-compatibility-migration.md](docs/decisions/0003-current-compatibility-migration.md)
+
+Compatibility docs live here:
+
+- [docs/compatibility.md](docs/compatibility.md)
+
+Brand identity docs live under `docs/brand/`:
+
+- [docs/brand/visual-identity.md](docs/brand/visual-identity.md)
+- [docs/brand/runtime-branding.md](docs/brand/runtime-branding.md)
 
 Maintainer and operator-facing docs live under `docs/maintainers/`:
 

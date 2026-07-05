@@ -28,14 +28,14 @@ System-scope maintenance never touches user Flatpak installs.
 
 Useful targets:
 
-- `myos flatpak-status` shows system remotes, apps, runtimes, and extensions.
-- `myos flatpak-clean-system` removes unused system-scope Flatpak runtime content.
-- `myos flatpak-repair-system` runs system-scope Flatpak repair and reapplies the system baseline.
-- `myos flatpak-portal-status` shows the current user's portal service state.
+- `current flatpak-status` shows system remotes, apps, runtimes, and extensions.
+- `current flatpak-clean-system` removes unused system-scope Flatpak runtime content.
+- `current flatpak-repair-system` runs system-scope Flatpak repair and reapplies the system baseline.
+- `current flatpak-portal-status` shows the current user's portal service state.
 
-`myos update-system` updates system Flatpaks, safely cleans unused system runtime content, reapplies the baseline extension warmup, then stages the bootc image update.
+`current update-system` updates system Flatpaks, safely cleans unused system runtime content, reapplies the baseline extension warmup, then stages the bootc image update.
 
-The command name remains `myos` until a Current-native CLI wrapper is introduced.
+Legacy `myos` commands remain compatibility aliases.
 
 ## Why this split exists
 

@@ -1,0 +1,38 @@
+#!/bin/sh
+set -eu
+
+find_justfile() {
+  if [ -f /usr/share/current/just/index.just ]; then
+    printf '%s
+' /usr/share/current/just/index.just
+    return 0
+  fi
+
+  if [ -f /usr/share/myos/just/index.just ]; then
+    printf '%s
+' /usr/share/myos/just/index.just
+    return 0
+  fi
+
+  return 1
+}
+
+if ! JUSTFILE="$(find_justfile)"; then
+  echo "current: justfile not found at /usr/share/current/just/index.just or /usr/share/myos/just/index.just" >&2
+  exit 1
+fi
+
+JUST_BIN=""
+
+if [ -x /usr/bin/just ]; then
+  JUST_BIN="/usr/bin/just"
+elif [ -x /usr/local/bin/just ]; then
+  JUST_BIN="/usr/local/bin/just"
+elif JUST_BIN="$(command -v just 2>/dev/null)"; then
+  :
+else
+  echo "current: could not find just in /usr/bin, /usr/local/bin, or PATH" >&2
+  exit 1
+fi
+
+exec "$JUST_BIN" --justfile "$JUSTFILE" "$@"

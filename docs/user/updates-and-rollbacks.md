@@ -4,10 +4,10 @@ Current keeps updates explicit.
 
 ## Updates
 
-Use the compatibility project wrapper to update managed system Flatpaks, remove unused system Flatpak refs, and stage an OS image update:
+Use the Current project wrapper to update managed system Flatpaks, remove unused system Flatpak refs, and stage an OS image update:
 
 ```bash
-myos update-system
+current update-system
 ```
 
 If you only want to stage the OS image update, use plain `bootc`:
@@ -19,10 +19,10 @@ sudo bootc upgrade
 To remove unused system Flatpak refs, including stale pinned runtimes that are no longer needed by installed system apps:
 
 ```bash
-myos clean-system
+current clean-system
 ```
 
-`myos clean-system` clears system runtime pins first, then lets Flatpak remove only refs it considers unused.
+`current clean-system` clears system runtime pins first, then lets Flatpak remove only refs it considers unused.
 
 Current disables the stock `bootc-fetch-apply-updates` timer and service. Updates are downloaded and applied when you choose, then activated on reboot.
 
@@ -31,7 +31,7 @@ Current disables the stock `bootc-fetch-apply-updates` timer and service. Update
 To switch roles, environments, distro lanes, or driver lanes:
 
 ```bash
-myos rebase
+current rebase
 ```
 
 Workstation images re-apply the expected display manager on boot after a switch so GNOME and COSMIC rebases do not leave stale `display-manager.service` state behind.

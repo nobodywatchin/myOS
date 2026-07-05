@@ -51,7 +51,7 @@ ROCm userspace is not a universal cross-image promise. It belongs to the platfor
 `recipes/layers/shared/core.yml` owns the remaining host/operator package baseline:
 
 - fastfetch, fzf, zstd, gcc, distrobox, and podman-compose
-- generic `/etc/myos` filesystem scaffolding
+- generic `/etc/myos` filesystem scaffolding and `/usr/share/current` compatibility exposure for shared runtime payloads
 - inclusion of Cockpit and Ceph feature overlays
 
 ## Flatpak contract
@@ -105,3 +105,9 @@ GNOME and COSMIC are workstation-environment implementations.
 - `shared/nvidia-open-common.yml` owns the open-driver helper shim.
 - `shared/nvidia-common.yml` and `shared/nvidia-open.yml` own the Alma-family NVIDIA lanes.
 - `fedora/nvidia-open.yml` owns only the Fedora-specific open-driver delta on top of the shared NVIDIA layers.
+
+## Current compatibility namespace
+
+`current` is the primary command wrapper. `myos` remains a compatibility alias that execs `current`.
+
+Runtime payloads remain sourced from `/usr/share/myos` in the repo and installed image, with `/usr/share/current` exposed as a symlink for Current-native consumers. `CURRENT_*` environment variables take precedence over matching `MYOS_*` fallback variables in migration-aware scripts.

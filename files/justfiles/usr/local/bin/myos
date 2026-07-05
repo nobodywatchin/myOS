@@ -1,23 +1,14 @@
 #!/bin/sh
+# Legacy compatibility alias for the Current CLI.
+set -eu
 
-JUSTFILE="/usr/share/myos/just/index.just"
-
-if [ ! -f "$JUSTFILE" ]; then
-  echo "myos: justfile not found at $JUSTFILE" >&2
-  exit 1
+if [ -x /usr/local/bin/current ]; then
+  exec /usr/local/bin/current "$@"
 fi
 
-JUST_BIN=""
-
-if [ -x /usr/bin/just ]; then
-  JUST_BIN="/usr/bin/just"
-elif [ -x /usr/local/bin/just ]; then
-  JUST_BIN="/usr/local/bin/just"
-elif JUST_BIN="$(command -v just 2>/dev/null)"; then
-  :
-else
-  echo "myos: could not find just in /usr/bin, /usr/local/bin, or PATH" >&2
-  exit 1
+if command -v current >/dev/null 2>&1; then
+  exec current "$@"
 fi
 
-exec "$JUST_BIN" --justfile "$JUSTFILE" "$@"
+echo "myos: Current CLI compatibility target not found: current" >&2
+exit 1

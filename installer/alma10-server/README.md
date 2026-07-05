@@ -1,6 +1,6 @@
-# myOS Alma 10 Server Installer
+# Current Alma 10 Server Installer
 
-This directory contains the source files for generating a myOS Alma 10 Server Anaconda installer ISO.
+This directory contains the source files for generating a Current Alma 10 Server Anaconda installer ISO.
 
 The generated ISO is not checked into git. It is built from the files in this directory and written to `output/installer/alma10-server/` by the build script.
 
@@ -18,7 +18,7 @@ The installer flow uses two images:
 
 ```text
 installer environment = local image built from installer/alma10-server/Containerfile
-installed payload     = ghcr.io/myos-dev/alma10-server:latest by default
+installed payload     = ghcr.io/pelagians/alma10-server:latest by default
 root filesystem       = xfs by default
 installer config      = installer/alma10-server/iso.toml
 ```
@@ -52,10 +52,10 @@ The output should include an ISO and a matching `.sha256` file.
 To test a modified TOML file without changing the repo copy:
 
 ```bash
-cp installer/alma10-server/iso.toml /tmp/myos-iso.toml
-$EDITOR /tmp/myos-iso.toml
+cp installer/alma10-server/iso.toml /tmp/current-iso.toml
+$EDITOR /tmp/current-iso.toml
 
-MYOS_INSTALLER_CONFIG=/tmp/myos-iso.toml \
+CURRENT_INSTALLER_CONFIG=/tmp/current-iso.toml \
   bash ./scripts/build-alma10-installer-iso.sh
 ```
 
@@ -64,7 +64,7 @@ MYOS_INSTALLER_CONFIG=/tmp/myos-iso.toml \
 To install a different tag or digest:
 
 ```bash
-MYOS_INSTALLER_PAYLOAD_REF=ghcr.io/myos-dev/alma10-server:latest \
+CURRENT_INSTALLER_PAYLOAD_REF=ghcr.io/pelagians/alma10-server:latest \
   bash ./scripts/build-alma10-installer-iso.sh
 ```
 
@@ -75,7 +75,7 @@ For release media, prefer a digest instead of a mutable tag.
 The default root filesystem is XFS:
 
 ```bash
-MYOS_INSTALLER_ROOTFS=xfs \
+CURRENT_INSTALLER_ROOTFS=xfs \
   bash ./scripts/build-alma10-installer-iso.sh
 ```
 
@@ -98,9 +98,9 @@ sudo podman run \
   build \
   --type bootc-installer \
   --rootfs xfs \
-  --installer-payload-ref ghcr.io/myos-dev/alma10-server:latest \
+  --installer-payload-ref ghcr.io/pelagians/alma10-server:latest \
   --output /output \
-  localhost/myos-alma10-server-installer:dev
+  localhost/current-alma10-server-installer:dev
 ```
 
 Use the script unless you are debugging the builder invocation itself.
@@ -111,3 +111,7 @@ Use the script unless you are debugging the builder invocation itself.
 - Keep `iso.toml` interactive by default. It should let the user walk through Anaconda.
 - Do not add `firewall --enabled` to the Kickstart unless `firewalld` is present in the installed payload image.
 - Keep storage decisions visible in Anaconda unless a separate automated installer profile is introduced.
+
+## Compatibility variables
+
+The build script prefers `CURRENT_INSTALLER_*` variables. Matching `MYOS_INSTALLER_*` variables remain fallbacks for existing automation.

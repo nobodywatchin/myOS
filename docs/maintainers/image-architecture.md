@@ -1,6 +1,6 @@
 # Image Architecture
 
-The repo models myOS by role first, and the supported image set is rendered directly from the matrix manifest.
+The repo models Current by role first, and the supported image set is rendered directly from the matrix manifest.
 
 ## Authoritative image tree
 
@@ -39,18 +39,18 @@ The renderer and CI treat that TSV as the canonical support contract for:
 - published image names
 - supported recipe paths
 - workflow matrix expansion
-- `myos rebase` output
+- `current rebase` output
 
 ## Machine-readable matrix
 
-`files/base/runtime/usr/share/myos/image-matrix.tsv` is shipped into images at `/usr/share/myos/image-matrix.tsv`. `myos rebase` downloads the same path from the GitHub repo at runtime so the picker can reflect the online support matrix.
+`files/base/runtime/usr/share/myos/image-matrix.tsv` is shipped into images at `/usr/share/myos/image-matrix.tsv` and exposed at `/usr/share/current/image-matrix.tsv` through the installed compatibility symlink. `current rebase` downloads the same source path from the Current GitHub repo at runtime so the picker can reflect the online support matrix.
 
 It is consumed by:
 
 - `scripts/render-image-matrix.py`
 - `scripts/validate-image-matrix.sh`
 - `.github/workflows/build.yml`
-- `myos rebase` through the raw GitHub copy
+- `current rebase` through the raw GitHub copy
 
 The TSV schema is intentionally small:
 
@@ -154,3 +154,7 @@ The public tags are uniform and short.
 - no `workstation-*` prefix
 - no `default` suffix in published names
 - no `nvidia-legacy` naming in the supported recipe tree or manifest
+
+## Compatibility namespace
+
+Current-native image references use `ghcr.io/pelagians/<image>:<tag>`. Legacy `ghcr.io/myos-dev/<image>:<tag>` references are compatibility aliases when the alias sync job has credentials to publish them.

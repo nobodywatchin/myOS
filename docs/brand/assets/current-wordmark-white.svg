@@ -1,0 +1,8 @@
+<svg width="920" height="240" viewBox="0 0 920 240" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="title desc">
+  <title id="title">Current, white</title>
+  <desc id="desc">White Current wordmark with a circular ocean-current mark for dark backgrounds.</desc>
+  <path d="M188 68C172 47 147 34 119 34C71 34 32 73 32 121C32 169 71 208 119 208C153 208 182 189 197 161" stroke="#FFFFFF" stroke-width="18" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M168 117C151 89 109 88 92 114C76 138 97 166 126 156C144 150 155 135 188 136" stroke="#FFFFFF" stroke-width="16" stroke-linecap="round" stroke-linejoin="round" opacity="0.82"/>
+  <path d="M188 136L170 122" stroke="#FFFFFF" stroke-width="16" stroke-linecap="round" stroke-linejoin="round" opacity="0.82"/>
+  <text x="244" y="153" fill="#FFFFFF" font-family="Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="92" font-weight="650" letter-spacing="-2.4">Current</text>
+</svg>

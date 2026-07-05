@@ -1,4 +1,4 @@
-name: myos-builder
+name: current-builder
 
 on:
   schedule:
@@ -124,3 +124,36 @@ jobs:
           pr_event_number: ${{ github.event.number }}
           rechunk: true
           maximize_build_space: true
+
+  publish-ghcr-compat-aliases:
+    name: Publish GHCR compatibility aliases
+    if: ${{ github.event_name != 'pull_request' && github.ref == 'refs/heads/stable' }}
+    needs:
+      - server-images
+      - workstation-images
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: read
+    env:
+      CURRENT_REGISTRY_NAMESPACE: ghcr.io/pelagians
+      MYOS_COMPAT_REGISTRY_NAMESPACE: ghcr.io/myos-dev
+      CURRENT_REGISTRY_USERNAME: ${{ github.actor }}
+      CURRENT_REGISTRY_TOKEN: ${{ github.token }}
+      MYOS_COMPAT_REGISTRY_USERNAME: ${{ secrets.MYOS_COMPAT_REGISTRY_USERNAME }}
+      MYOS_COMPAT_REGISTRY_TOKEN: ${{ secrets.MYOS_COMPAT_REGISTRY_TOKEN }}
+    steps:
+      - uses: actions/checkout@v7
+      - name: Install skopeo
+        run: |
+          set -euo pipefail
+          sudo apt-get update
+          sudo apt-get install -y skopeo
+      - name: Copy Current images to legacy myOS GHCR aliases
+        run: |
+          set -euo pipefail
+          if [ -z "${MYOS_COMPAT_REGISTRY_USERNAME}" ] || [ -z "${MYOS_COMPAT_REGISTRY_TOKEN}" ]; then
+            echo "::notice::Skipping GHCR compatibility aliases; set MYOS_COMPAT_REGISTRY_USERNAME and MYOS_COMPAT_REGISTRY_TOKEN."
+            exit 0
+          fi
+          bash ./scripts/sync-ghcr-compat-aliases.sh

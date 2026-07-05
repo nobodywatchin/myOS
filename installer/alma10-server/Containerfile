@@ -1,4 +1,6 @@
-ARG MYOS_PAYLOAD_REF=ghcr.io/myos-dev/alma10-server:latest
+# MYOS_PAYLOAD_REF remains the Containerfile build-arg compatibility name.
+# scripts/build-alma10-installer-iso.sh maps CURRENT_INSTALLER_PAYLOAD_REF into it.
+ARG MYOS_PAYLOAD_REF=ghcr.io/pelagians/alma10-server:latest
 FROM ${MYOS_PAYLOAD_REF}
 
 # This image is the Anaconda-capable installer environment used by
