@@ -1,10 +1,10 @@
 # Docs
 
-Use the docs in two lanes.
+Use the docs in three lanes.
 
-## User docs
+## Start here
 
-These explain what myOS is, how to choose an image, and how the day-to-day experience works.
+These explain what Current is, how to choose an image, and how the day-to-day experience works.
 
 - [docs/user/README.md](user/README.md)
 - [docs/user/design-principles.md](user/design-principles.md)
@@ -16,6 +16,13 @@ These explain what myOS is, how to choose an image, and how the day-to-day exper
 - [docs/user/apps-and-flatpak.md](user/apps-and-flatpak.md)
 - [docs/user/ai-ready.md](user/ai-ready.md)
 - [docs/user/release-policy.md](user/release-policy.md)
+
+## Decision records
+
+These capture durable project decisions that affect Current's identity, compatibility, architecture, or public direction.
+
+- [docs/decisions/README.md](decisions/README.md)
+- [docs/decisions/0001-myos-to-current-rebrand.md](decisions/0001-myos-to-current-rebrand.md)
 
 ## Maintainer docs
 

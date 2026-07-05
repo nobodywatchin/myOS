@@ -1,6 +1,8 @@
 # Choose An Image
 
-Public image names follow this grammar:
+Current is an image ecosystem. Choose the image that best matches the machine's hardware and workflow.
+
+Public image names follow this technical grammar:
 
 - `<platform>-<environment>`
 - `<platform>-<environment>-<driver>`
@@ -27,7 +29,7 @@ Choose in this order.
 
 ## Supported images
 
-The exact supported image list comes from `files/base/runtime/usr/share/myos/image-matrix.tsv`; `myos rebase` downloads that matrix from GitHub when it builds the picker.
+The exact supported image list comes from `files/base/runtime/usr/share/myos/image-matrix.tsv`; the compatibility `myos rebase` command downloads that matrix from GitHub when it builds the picker.
 
 Current lanes:
 
@@ -42,11 +44,11 @@ Unsupported combinations are intentional.
 
 ## Published tag examples
 
-- Stable GNOME workstation on Alma 10: `alma10-gnome`
-- Stable COSMIC workstation on Alma 10 with the open NVIDIA lane: `alma10-cosmic-nvidia-open`
-- Edge GNOME workstation on Fedora: `fedora-gnome`
-- NVIDIA 580 GNOME workstation on Alma 9: `alma9-gnome-nvidia-580`
-- Stable server on Alma 10: `alma10-server`
-- Edge server on Fedora: `fedora-server`
+- Current AlmaLinux 10 GNOME workstation: `alma10-gnome`
+- Current AlmaLinux 10 COSMIC workstation with the open NVIDIA lane: `alma10-cosmic-nvidia-open`
+- Current Fedora GNOME workstation: `fedora-gnome`
+- Current AlmaLinux 9 NVIDIA 580 GNOME workstation: `alma9-gnome-nvidia-580`
+- Current AlmaLinux 10 Server: `alma10-server`
+- Current Fedora Server: `fedora-server`
 
-`myos rebase` shows the full list grouped by role, environment, platform, and driver.
+`myos rebase` shows the full list grouped by role, environment, platform, and driver until the Current-native command migration lands.

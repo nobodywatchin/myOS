@@ -1,14 +1,17 @@
 # Contributing
 
+Current is the new public identity for myOS. The project is being rebranded without a technical rewrite, so compatibility-sensitive names such as `myos`, `/usr/share/myos`, and `ghcr.io/myos-dev/*` should only change as part of explicit migration work.
+
 ## Start with the image contract
 
 Before changing a layer, decide which role and tier should own that behavior.
 
 - shared low-level base behavior belongs in `recipes/layers/shared/core-base.yml`
 - shared cross-distro core tooling belongs in `recipes/layers/shared/core.yml`
-- shared cockpit / ceph / k3s / host-overlay behavior belongs in `recipes/layers/features/*.yml` and the remaining shared host/operator remainder belongs in `recipes/layers/shared/core.yml`
-- end-user app/runtime behavior belongs in `recipes/layers/shared/end-user-common.yml`
-- workstation behavior belongs in `workstation-common` plus a workstation family layer
+- shared Cockpit / Ceph / k3s / PCP / Tailscale behavior belongs in `recipes/layers/features/*.yml`
+- shared system policy belongs in `recipes/layers/shared/system-policy.yml`
+- workstation behavior belongs in `workstation-common` plus explicit workstation sublayers
+- workstation app governance belongs in the Flatpak layers under `recipes/layers/shared/flatpak-*.yml`
 - distro-family or distro-version drift belongs under `recipes/layers/alma/`, `recipes/layers/alma9/`, `recipes/layers/alma10/`, or `recipes/layers/fedora/`
 - optional capabilities belong under `recipes/layers/features/`
 
@@ -16,8 +19,17 @@ Before changing a layer, decide which role and tier should own that behavior.
 
 User-facing docs live under `docs/user/`.
 Maintainer and operator docs live under `docs/maintainers/`.
+Decision records live under `docs/decisions/`.
 
-If a change alters the supported image matrix, runtime contracts, or validation expectations, update the matching docs in the same change.
+If a change alters the supported image matrix, runtime contracts, validation expectations, or public product identity, update the matching docs in the same change.
+
+## Writing guidance
+
+Use Current for public product language.
+
+Use legacy names only when referring to existing technical compatibility surfaces, commands, image references, paths, or environment variables that still exist.
+
+Current should sound practical, upstream-respecting, developer-first, and calm. Avoid AI hype, cyberpunk language, electrical-current metaphors, or claims that Current replaces upstream Linux distributions.
 
 ## Validation
 

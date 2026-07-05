@@ -1,8 +1,10 @@
 # AI-Ready
 
-In myOS, AI-ready means local host/runtime capability without turning the OS image into a hosted service platform.
+Current is designed to be a dependable host for AI development without turning the operating system into an AI appliance.
 
-It does not mean every image ships with preloaded models, hosted services, or a built-in application runtime.
+It provides practical local host/runtime capability for containers, GPUs where supported, and Kubernetes workflows where appropriate.
+
+AI-ready does not mean every image ships with preloaded models, hosted services, or a built-in application runtime.
 
 ## What core images include
 
@@ -15,7 +17,7 @@ Shared local-runtime support includes:
 
 ROCm userspace is platform-lane-specific. It is included where the current platform lane supports it, currently the Alma 10 and Fedora lanes. Do not assume every supported image includes the same ROCm package set.
 
-## What myOS does not do
+## What Current does not do
 
 - It does not ship a hosted application platform.
 - It does not preload models as branding theater.
@@ -25,4 +27,4 @@ ROCm userspace is platform-lane-specific. It is included where the current platf
 
 Explicit device-aware container config is still required for local GPU backends.
 
-Higher-level services belong above myOS, usually in containers or k3s.
+Higher-level services belong above Current, usually in containers or k3s.

@@ -1,6 +1,6 @@
 # Hardware
 
-myOS makes hardware and GPU policy explicit instead of hiding it behind one generic image.
+Current makes hardware and GPU policy explicit instead of hiding it behind one generic image.
 
 ## Standard lane
 
@@ -16,7 +16,7 @@ Choose `nvidia-open` for newer supported NVIDIA GPUs on supported Alma 10 and Fe
 
 Choose `nvidia-580` only on Alma 9.
 
-That lane is intentionally pinned to the proprietary `nvidia-driver:580` stream for supported older GPUs. It is not available on Alma 10 or Fedora.
+That lane is intentionally pinned to the proprietary `nvidia-driver:580` stream for supported older GPUs. It is not available on Alma 10 or Fedora in the stable matrix.
 
 ## PCP monitoring
 
@@ -26,7 +26,7 @@ NVIDIA images include the NVIDIA GPU PMDA package.
 
 ## AMD, Vulkan, and ROCm
 
-myOS treats local GPU support as host/runtime capability.
+Current treats local GPU support as host/runtime capability.
 
 The shared baseline includes Vulkan tooling where supported by the platform lane, plus render/video group support for common GPU workflows.
 
@@ -48,4 +48,4 @@ Useful expectations:
 
 - `vulkaninfo --summary` should show the real GPU instead of only software rendering when the driver stack is available.
 - rootless GPU container flows are safest when Podman is using `crun`.
-- container access to GPU hardware should be configured explicitly by the runtime above myOS.
+- container access to GPU hardware should be configured explicitly by the runtime above Current.

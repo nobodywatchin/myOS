@@ -1,12 +1,14 @@
 # Install
 
-myOS is shipped as BootC images.
+Current is shipped as bootc images.
 
 ## Install bare metal with the Alma 10 installer ISO
 
-For a new bare-metal install, prefer the myOS Alma 10 Server installer ISO.
+For a new bare-metal install, prefer the Current AlmaLinux 10 Server installer ISO.
 
-That installer uses Anaconda and installs the published `ghcr.io/myos-dev/alma10-server:latest` BootC payload. It is intended to give myOS a predictable install path without inheriting Fedora Workstation's Btrfs-oriented desktop defaults.
+That installer uses Anaconda and installs the published `ghcr.io/myos-dev/alma10-server:latest` bootc payload. It is intended to give Current a predictable install path without inheriting Fedora Workstation's Btrfs-oriented desktop defaults.
+
+The image reference still uses the legacy `myos-dev` namespace until registry migration work lands.
 
 See [installer-iso.md](installer-iso.md) for the ISO build and USB install flow.
 
@@ -22,7 +24,7 @@ Avoid Btrfs if the system is expected to move between Alma and Fedora image lane
 
 ## Switch an installed system
 
-The easiest path is:
+The compatibility command is currently:
 
 ```bash
 myos rebase
@@ -45,19 +47,7 @@ TMP=$(mktemp)
 curl -fsSL https://raw.githubusercontent.com/myos-dev/myOS/stable/image.toml -o "$TMP"
 sudo podman pull ghcr.io/myos-dev/alma10-gnome:latest
 sudo podman pull quay.io/centos-bootc/bootc-image-builder:latest
-sudo podman run --rm -it --privileged --pull=newer \
-  --security-opt label=type:unconfined_t \
-  --network=host \
-  -v /var/lib/containers/storage:/var/lib/containers/storage \
-  -v "$(pwd)/output:/output" \
-  -v "$TMP:/config.toml:ro" \
-  quay.io/centos-bootc/bootc-image-builder:latest \
-  build \
-  --type qcow2 \
-  --progress verbose \
-  --use-librepo=false \
-  --output /output \
-  ghcr.io/myos-dev/alma10-gnome:latest
+sudo podman run --rm -it --privileged --pull=newer   --security-opt label=type:unconfined_t   --network=host   -v /var/lib/containers/storage:/var/lib/containers/storage   -v "$(pwd)/output:/output"   -v "$TMP:/config.toml:ro"   quay.io/centos-bootc/bootc-image-builder:latest   build   --type qcow2   --progress verbose   --use-librepo=false   --output /output   ghcr.io/myos-dev/alma10-gnome:latest
 rm -f "$TMP"
 ```
 
