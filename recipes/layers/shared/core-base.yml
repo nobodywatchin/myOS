@@ -111,7 +111,7 @@ modules:
     snippets:
       - >-
         RUN export ORIGINAL_NAME=$(grep -oP '^NAME="\K[^"]*' /etc/os-release) &&
-        export VERSION_ID=$(grep -oP '^VERSION_ID="\K[^"]*' /etc/os-release) &&
+        export VERSION_ID=$(grep -oP '^VERSION_ID="?\K[^"\n]*' /etc/os-release) &&
         export ORIGINAL_PRETTY=$(grep -oP '^PRETTY_NAME="\K[^"]*' /etc/os-release) &&
         sed -i "s/^NAME=.*/NAME=\"Current ${ORIGINAL_NAME} ${VERSION_ID}\"/" /etc/os-release &&
         sed -i "s/^PRETTY_NAME=.*/PRETTY_NAME=\"Current ${ORIGINAL_PRETTY}\"/" /etc/os-release &&
