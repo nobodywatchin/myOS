@@ -66,7 +66,7 @@ Old `myos-dev/myOS` docs and raw URLs are transition surfaces only. They may con
 
 ### Rename all source paths immediately
 
-Rejected because source paths such as `files/base/runtime/usr/share/myos/image-matrix.tsv` are consumed by scripts, docs, and installed systems. A symlink gives installed systems a Current-native path without duplicating source payloads.
+Rejected because source paths such as `files/base/runtime/usr/share/current/image-matrix.tsv` are consumed by scripts, docs, and installed systems. A symlink gives installed systems a Current-native path without duplicating source payloads.
 
 ### Drop old image references after the repo move
 

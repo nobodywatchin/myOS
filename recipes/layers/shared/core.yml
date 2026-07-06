@@ -16,7 +16,7 @@ modules:
 
   - type: containerfile
     snippets:
-      - RUN install -d -m 0755 /etc/myos
-      - RUN restorecon -RF /etc/myos || true
+      - RUN install -d -m 0755 /etc/current
+      - RUN restorecon -RF /etc/current || true
 
   - from-file: layers/features/ceph.yml

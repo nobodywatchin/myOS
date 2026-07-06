@@ -32,7 +32,7 @@ Public names follow this grammar:
 - `<platform>-<environment>`
 - `<platform>-<environment>-<driver>`
 
-The exact supported set lives in `files/base/runtime/usr/share/myos/image-matrix.tsv`.
+The exact supported set lives in `files/base/runtime/usr/share/current/image-matrix.tsv`.
 
 The renderer and CI treat that TSV as the canonical support contract for:
 
@@ -43,7 +43,7 @@ The renderer and CI treat that TSV as the canonical support contract for:
 
 ## Machine-readable matrix
 
-`files/base/runtime/usr/share/myos/image-matrix.tsv` is shipped into images at `/usr/share/myos/image-matrix.tsv` and exposed at `/usr/share/current/image-matrix.tsv` through the installed compatibility symlink. `current rebase` downloads the same source path from the Current GitHub repo at runtime so the picker can reflect the online support matrix.
+`files/base/runtime/usr/share/current/image-matrix.tsv` is shipped into images at `/usr/share/current/image-matrix.tsv` and exposed at `/usr/share/current/image-matrix.tsv` through the installed compatibility symlink. `current rebase` downloads the same source path from the Current GitHub repo at runtime so the picker can reflect the online support matrix.
 
 It is consumed by:
 

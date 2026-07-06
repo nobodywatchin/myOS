@@ -2,7 +2,7 @@
 
 set -euo pipefail
 
-desktop_env_file="/usr/share/myos/workstation/desktop.env"
+desktop_env_file="/usr/share/current/workstation/desktop.env"
 
 if [[ ! -r "${desktop_env_file}" ]]; then
   exit 0
@@ -12,7 +12,7 @@ fi
 . "${desktop_env_file}"
 
 log() {
-  printf 'myos-workstation-dm-apply: %s\n' "$*"
+  printf 'current-workstation-dm-apply: %s\n' "$*"
 }
 
 have_unit() {

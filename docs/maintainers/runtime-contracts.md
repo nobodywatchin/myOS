@@ -97,7 +97,7 @@ GNOME and COSMIC are workstation-environment implementations.
 - `workstation-gnome.yml` owns GNOME session, extension, and Software integration behavior; `flatpak-gnome.yml` owns GNOME portal selection and GNOME-specific Flatpaks.
 - `workstation-gnome-modern.yml` owns the extra GNOME app delta shared by the Alma 10 and Fedora lanes.
 - `workstation-cosmic.yml` owns common COSMIC session, greeter, and validation; `flatpak-cosmic.yml` owns COSMIC portal selection and COSMIC Flatpak remotes; `alma/cosmic.yml` and `fedora/cosmic.yml` own distro source/config drift.
-- `files/gnome/shared/usr/share/myos/workstation/desktop.env` and `files/cosmic/shared/usr/share/myos/workstation/desktop.env` are the family markers consumed by the shared DM helper.
+- `files/gnome/shared/usr/share/current/workstation/desktop.env` and `files/cosmic/shared/usr/share/current/workstation/desktop.env` are the family markers consumed by the shared DM helper.
 
 ## NVIDIA contract
 

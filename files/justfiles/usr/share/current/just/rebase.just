@@ -5,9 +5,9 @@ rebase:
     command -v fzf >/dev/null || { echo "Missing 'fzf'."; exit 1; }
     command -v curl >/dev/null || { echo "Missing 'curl'."; exit 1; }
 
-    default_matrix_url="https://raw.githubusercontent.com/Pelagians/Current/stable/files/base/runtime/usr/share/myos/image-matrix.tsv"
-    matrix_url="${CURRENT_IMAGE_MATRIX_URL:-${MYOS_IMAGE_MATRIX_URL:-$default_matrix_url}}"
-    registry_namespace="${CURRENT_REGISTRY_NAMESPACE:-${MYOS_REGISTRY_NAMESPACE:-ghcr.io/pelagians}}"
+    default_matrix_url="https://raw.githubusercontent.com/Pelagians/Current/stable/files/base/runtime/usr/share/current/image-matrix.tsv"
+    matrix_url="${CURRENT_IMAGE_MATRIX_URL:-${CURRENT_IMAGE_MATRIX_URL:-$default_matrix_url}}"
+    registry_namespace="${CURRENT_REGISTRY_NAMESPACE:-${CURRENT_REGISTRY_NAMESPACE:-ghcr.io/pelagians}}"
     registry_namespace="${registry_namespace%/}"
 
     matrix_file="$(mktemp -t current-image-matrix.XXXXXX)"

@@ -29,7 +29,7 @@ Choose in this order.
 
 ## Supported images
 
-The exact supported image list comes from `files/base/runtime/usr/share/myos/image-matrix.tsv`; `current rebase` downloads that matrix from GitHub when it builds the picker. Installed systems also expose it through `/usr/share/current` for the Current-native path.
+The exact supported image list comes from `files/base/runtime/usr/share/current/image-matrix.tsv`; `current rebase` downloads that matrix from GitHub when it builds the picker. Installed systems also expose it through `/usr/share/current` for the Current-native path.
 
 Current lanes:
 

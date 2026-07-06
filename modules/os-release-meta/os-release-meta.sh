@@ -2,7 +2,7 @@
 set -euo pipefail
 
 os_release_path="${OS_RELEASE_META_OS_RELEASE_PATH:-/etc/os-release}"
-env_output_path="${OS_RELEASE_META_ENV_PATH:-/usr/share/myos/os-release-meta.env}"
+env_output_path="${OS_RELEASE_META_ENV_PATH:-/usr/share/current/os-release-meta.env}"
 dnf_vars_dir="${OS_RELEASE_META_DNF_VARS_DIR:-/etc/dnf/vars}"
 
 if [[ ! -r "${os_release_path}" ]]; then
@@ -12,6 +12,9 @@ fi
 
 # shellcheck source=/dev/null
 . "${os_release_path}"
+
+# Capture upstream PRETTY_NAME before any rebranding.
+export ORIGINAL_PRETTY=$(grep -oP '^PRETTY_NAME="\K[^"]*' "${os_release_path}" || true)
 
 distro_id="${ID:-}"
 distro_id_like="${ID_LIKE:-}"
@@ -96,6 +99,7 @@ fi
 install -d "$(dirname "${env_output_path}")"
 
 {
+  printf 'ORIGINAL_PRETTY=%q\n' "${ORIGINAL_PRETTY}"
   printf 'DISTRO_ID=%q\n' "${distro_id}"
   printf 'DISTRO_ID_LIKE=%q\n' "${distro_id_like}"
   printf 'OS_VERSION=%q\n' "${os_version}"

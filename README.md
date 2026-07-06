@@ -49,7 +49,7 @@ Product-facing examples include:
 The exact supported tags live in the shipped manifest:
 
 ```text
-files/base/runtime/usr/share/myos/image-matrix.tsv
+files/base/runtime/usr/share/current/image-matrix.tsv
 ```
 
 The source-tree path stays in the legacy location during the transition. Installed systems expose the same payloads at `/usr/share/current` through a compatibility symlink.
