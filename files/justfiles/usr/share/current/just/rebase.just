@@ -59,7 +59,7 @@ rebase:
     picker_rows="$(awk -F $'\t' '
       NR == 1 { next }
       NF != 7 {
-        printf "Invalid image matrix row %%d: expected 7 tab-separated fields.\n", NR > "/dev/stderr"
+        printf "Invalid image matrix row %d: expected 7 tab-separated fields.\n", NR > "/dev/stderr"
         bad = 1
         next
       }
@@ -74,7 +74,7 @@ rebase:
         } else {
           environment = toupper(substr(environment, 1, 1)) substr(environment, 2)
         }
-        printf "%%s | %%s | %%s | %%s | %%s:latest\n", role, environment, $2, $5, $6
+        printf "%s | %s | %s | %s | %s:latest\n", role, environment, $2, $5, $6
       }
       END {
         if (bad) {
