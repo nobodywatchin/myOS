@@ -23,7 +23,7 @@ test ! -e files/base/branding/usr/share/fastfetch/presets/myos.jsonc
 grep -q 'fastfetch -c current' files/base/branding/etc/profile.d/current-fastfetch.sh
 grep -q '"source": "current"' files/base/branding/usr/share/fastfetch/presets/current.jsonc
 grep -q 'export ORIGINAL_PRETTY=' modules/os-release-meta/os-release-meta.sh || grep -q 'ORIGINAL_PRETTY' recipes/layers/shared/core-base.yml
-grep -q 'NAME=\\"Current\\"' recipes/layers/shared/core-base.yml
+grep -q 'NAME=\\"Current ' recipes/layers/shared/core-base.yml
 grep -q 'VENDOR_NAME=\\"Pelagian Current\\"' recipes/layers/shared/core-base.yml
 grep -q 'UPSTREAM_OS=' recipes/layers/shared/core-base.yml
 
