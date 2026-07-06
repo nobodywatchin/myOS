@@ -59,8 +59,7 @@ rebase:
     picker_rows="$(awk -F $'	' '
       NR == 1 { next }
       NF != 7 {
-        printf "Invalid image matrix row %d: expected 7 tab-separated fields.
-", NR > "/dev/stderr"
+        printf "Invalid image matrix row %d: expected 7 tab-separated fields.\n", NR > "/dev/stderr"
         bad = 1
         next
       }
@@ -75,8 +74,7 @@ rebase:
         } else {
           environment = toupper(substr(environment, 1, 1)) substr(environment, 2)
         }
-        printf "%s | %s | %s | %s | %s:latest
-", role, environment, $2, $5, $6
+        printf "%s | %s | %s | %s | %s:latest\n", role, environment, $2, $5, $6
       }
       END {
         if (bad) {
@@ -101,13 +99,11 @@ rebase:
         ;;
     esac
 
-    sel="$(printf '%s
-' "$picker_rows" | fzf           --delimiter='|'           --with-nth=1,2,3,4           --header='Role | Environment | Platform | Driver'           --prompt='Select image: ')" || { echo "No image selected"; exit 1; }
+    sel="$(printf '%s\n' "$picker_rows" | fzf           --delimiter='|'           --with-nth=1,2,3,4           --header='Role | Environment | Platform | Driver'           --prompt='Select image: ')" || { echo "No image selected"; exit 1; }
 
     test -n "$sel" || { echo "No image selected"; exit 1; }
 
-    tag="$(printf '%s
-' "$sel" | cut -d'|' -f5 | tr -d ' ')"
+    tag="$(printf '%s\n' "$sel" | cut -d'|' -f5 | tr -d ' ')"
     ref="${registry_namespace}/${tag}"
     echo "Selected: $ref"
     echo "Executing: sudo bootc switch $ref"
