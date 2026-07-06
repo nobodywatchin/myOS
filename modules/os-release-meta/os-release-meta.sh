@@ -14,7 +14,7 @@ fi
 . "${os_release_path}"
 
 # Capture upstream PRETTY_NAME before any rebranding.
-export ORIGINAL_PRETTY=$(grep -oP '^PRETTY_NAME="\K[^"]*' "${os_release_path}")
+export ORIGINAL_PRETTY=$(grep -oP '^PRETTY_NAME="\K[^"]*' "${os_release_path}" || true)
 
 distro_id="${ID:-}"
 distro_id_like="${ID_LIKE:-}"
