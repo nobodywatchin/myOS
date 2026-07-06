@@ -1,24 +1,10 @@
 #!/bin/sh
 set -eu
 
-find_justfile() {
-  if [ -f /usr/share/current/just/index.just ]; then
-    printf '%s
-' /usr/share/current/just/index.just
-    return 0
-  fi
+JUSTFILE="/usr/share/current/just/index.just"
 
-  if [ -f /usr/share/myos/just/index.just ]; then
-    printf '%s
-' /usr/share/myos/just/index.just
-    return 0
-  fi
-
-  return 1
-}
-
-if ! JUSTFILE="$(find_justfile)"; then
-  echo "current: justfile not found at /usr/share/current/just/index.just or /usr/share/myos/just/index.just" >&2
+if [ ! -f "$JUSTFILE" ]; then
+  echo "current: justfile not found at $JUSTFILE" >&2
   exit 1
 fi
 
