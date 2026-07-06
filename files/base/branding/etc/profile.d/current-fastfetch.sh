@@ -1,2 +1,2 @@
-# Legacy filename retained during the myOS -> Current compatibility transition.
+# Legacy filename retained during the Current -> Current compatibility transition.
 alias fastfetch='fastfetch -c current'

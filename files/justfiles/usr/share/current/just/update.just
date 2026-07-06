@@ -49,7 +49,7 @@ update-user:
 
       repaired_any=0
       while IFS= read -r -d '' config; do
-        backup_path="${config}.myos-distrobox-helper-paths.bak"
+        backup_path="${config}.current-distrobox-helper-paths.bak"
 
         for helper in distrobox-export distrobox-host-exec distrobox-init; do
           old_path="/usr/sbin/${helper}"

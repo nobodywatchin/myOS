@@ -1,5 +1,5 @@
 [Unit]
-Description=Apply myOS workstation display-manager ownership
+Description=Apply Current workstation display-manager ownership
 Documentation=file:/usr/share/current/workstation/desktop.env
 ConditionPathExists=/usr/share/current/workstation/desktop.env
 After=local-fs.target

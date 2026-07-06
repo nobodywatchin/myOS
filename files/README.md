@@ -12,10 +12,10 @@ Top-level payload groups:
 - `dnf/`: repository and DNF configuration payloads
 - `flatpak/`: workstation Flatpak policy, remotes, portal integration, and cleanup helpers
 - `gnome/`: GNOME workstation environment payloads
-- `justfiles/`: user-facing `myos` Just command surface
+- `justfiles/`: user-facing `current` Just command surface
 - `k3s/`: k3s systemd units and host integration files
 - `nvidia/`: NVIDIA lane support payloads and PMDA registration helper
 - `scripts/`: image-build helper scripts consumed by recipe layers
 - `workstation/`: shared workstation helper scripts and display-manager reconciliation
 
-Do not put hosted application platforms, tenant runtimes, or product-specific services in this tree. Those belong above myOS, usually in containers or k3s.
+Do not put hosted application platforms, tenant runtimes, or product-specific services in this tree. Those belong above Current, usually in containers or k3s.

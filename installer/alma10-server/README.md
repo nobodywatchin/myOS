@@ -114,4 +114,4 @@ Use the script unless you are debugging the builder invocation itself.
 
 ## Compatibility variables
 
-The build script prefers `CURRENT_INSTALLER_*` variables. Matching `MYOS_INSTALLER_*` variables remain fallbacks for existing automation.
+The build script prefers `CURRENT_INSTALLER_*` variables. Matching `CURRENT_INSTALLER_*` variables remain fallbacks for existing automation.

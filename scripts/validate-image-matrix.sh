@@ -246,7 +246,7 @@ for label, (pattern, expected) in expected_singletons.items():
         die(f'{label} must appear exactly {expected} time in recipes/**/*.yml; found {count}')
 
 if any('cockpit-pcp' in item.read_text(encoding='utf-8') for item in recipe_ymls):
-    die('cockpit-pcp must not be layered into myOS recipes')
+    die('cockpit-pcp must not be layered into Current recipes')
 PY
 
 required_workflow_snippets=(

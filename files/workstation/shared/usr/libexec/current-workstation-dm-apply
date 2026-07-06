@@ -142,7 +142,7 @@ ensure_graphical_default
 cleanup_display_manager_links
 systemctl daemon-reload >/dev/null 2>&1 || true
 
-case "${MYOS_DESKTOP:-}" in
+case "${CURRENT_DESKTOP:-}" in
   gnome)
     log "selecting GDM for GNOME"
     retire_unit cosmic-greeter.service
@@ -193,7 +193,7 @@ case "${MYOS_DESKTOP:-}" in
     exit 1
     ;;
   *)
-    log "unsupported desktop marker: ${MYOS_DESKTOP}"
+    log "unsupported desktop marker: ${CURRENT_DESKTOP}"
     exit 1
     ;;
 esac
