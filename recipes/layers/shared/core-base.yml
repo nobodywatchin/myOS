@@ -107,8 +107,11 @@ modules:
   - from-file: layers/features/tailscale.yml
   - from-file: layers/shared/system-policy.yml
 
-  - type: os-release
-    properties:
-      NAME: Current
-      PRETTY_NAME: Current
-      VENDOR_NAME: Current
+  - type: containerfile
+    snippets:
+      - >-
+        RUN export ORIGINAL_PRETTY=$(grep -oP '^PRETTY_NAME="\K[^"]*' /etc/os-release) &&
+        sed -i "s/^NAME=.*/NAME=\"Current\"/" /etc/os-release &&
+        sed -i "s/^PRETTY_NAME=.*/PRETTY_NAME=\"Current ${ORIGINAL_PRETTY}\"/" /etc/os-release &&
+        sed -i "s/^VENDOR_NAME=.*/VENDOR_NAME=\"Pelagian Current\"/" /etc/os-release &&
+        echo "UPSTREAM_OS=\"${ORIGINAL_PRETTY}\"" >> /etc/os-release
