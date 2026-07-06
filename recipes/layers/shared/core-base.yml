@@ -113,5 +113,5 @@ modules:
         RUN export ORIGINAL_PRETTY=$(grep -oP '^PRETTY_NAME="\K[^"]*' /etc/os-release) &&
         sed -i "s/^NAME=.*/NAME=\"Current\"/" /etc/os-release &&
         sed -i "s/^PRETTY_NAME=.*/PRETTY_NAME=\"Current ${ORIGINAL_PRETTY}\"/" /etc/os-release &&
-        sed -i "s/^VENDOR_NAME=.*/VENDOR_NAME=\"Pelagian Current\"/" /etc/os-release &&
+        sed -i "s/^VENDOR_NAME=.*/VENDOR_NAME=\"Pelagian\"/" /etc/os-release &&
         echo "UPSTREAM_OS=\"${ORIGINAL_PRETTY}\"" >> /etc/os-release
