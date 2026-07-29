@@ -181,6 +181,10 @@ grep -q 'modinfo' recipes/layers/fedora/nvidia-580.yml
 grep -q 'dnf -y remove akmod-nvidia akmods kernel-devel kernel-headers' recipes/layers/fedora/nvidia-580.yml
 grep -q 'nvidia-driver nvidia-persistenced nvidia-driver-cuda' recipes/layers/fedora/nvidia-580.yml
 ! grep -q 'libva-nvidia-driver' recipes/layers/fedora/nvidia-580.yml
+grep -q 'fedora-nvidia-580.repo' recipes/layers/fedora/nvidia-580-workstation.yml
+grep -q 'https://negativo17.org/repos/fedora-nvidia-580.repo' recipes/layers/fedora/nvidia-580-workstation.yml
+grep -q 'install libnvidia-cfg libnvidia-fbc nvidia-libXNVCtrl nvidia-settings' recipes/layers/fedora/nvidia-580-workstation.yml
+grep -q 'rm -f /etc/yum.repos.d/fedora-nvidia-580.repo' recipes/layers/fedora/nvidia-580-workstation.yml
 test -f files/nvidia/usr/local/libexec/current/current-pcp-nvidia-pmda-apply
 test -f files/nvidia/usr/lib/systemd/system/current-pcp-nvidia-pmda-apply.service
 
