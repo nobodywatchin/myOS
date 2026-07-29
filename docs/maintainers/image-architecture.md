@@ -143,8 +143,9 @@ NVIDIA ownership is split three ways:
 - `shared/nvidia-base.yml`: common repo bootstrap, NVIDIA container toolkit setup, NVIDIA PCP PMDA package, copied NVIDIA support payloads, and kernel args
 - `shared/nvidia-common.yml` / `shared/nvidia-open.yml`: Alma-family NVIDIA lane wiring
 - `fedora/nvidia-open.yml`: Fedora open-driver delta on top of the shared NVIDIA base
+- `fedora/nvidia-580.yml`: Fedora proprietary R580 lane that builds Negativo17 akmods during image build and verifies the resulting modules
 
-That keeps the repo bootstrap, package selection, copied support files, and open-driver shim owned once instead of repeated across distro layers.
+That keeps common repo bootstrap, container-toolkit wiring, copied support files, and driver-lane-specific package/build behavior separated instead of repeated across image recipes.
 
 ## Naming
 

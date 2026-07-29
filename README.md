@@ -22,7 +22,7 @@ It builds bootc images close to upstream Fedora and AlmaLinux, with a small set 
 
 Current publishes workstation and server images across three platform lanes:
 
-- `fedora`: edge lane for newer userspace and hardware enablement
+- `fedora`: edge lane for newer userspace and hardware enablement, including akmod-built NVIDIA 580 images
 - `alma10`: stable AlmaLinux lane
 - `alma9`: NVIDIA 580 compatibility lane
 
@@ -35,7 +35,7 @@ Driver lanes:
 
 - standard images, with no driver suffix
 - `nvidia-open` where supported
-- `nvidia-580` on Alma 9
+- `nvidia-580` on Alma 9 and Fedora
 
 The supported image matrix is generated from:
 

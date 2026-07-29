@@ -13,7 +13,7 @@ Choose in this order.
 
 - `alma9`: NVIDIA 580 compatibility lane
 - `alma10`: stable lane
-- `fedora`: edge lane
+- `fedora`: edge lane, including akmod-built NVIDIA 580 images
 
 ## 2. Pick an environment
 
@@ -25,7 +25,7 @@ Choose in this order.
 
 - images without a driver suffix are the standard lane
 - `nvidia-open`: newer supported NVIDIA GPUs on supported Alma 10 and Fedora images
-- `nvidia-580`: Alma 9 only, for the supported proprietary R580 lane
+- `nvidia-580`: supported proprietary R580 lane; Alma 9 uses prebuilt module-stream kmods and Fedora builds modules during image build with akmods
 
 ## Supported images
 
@@ -35,7 +35,7 @@ Current lanes:
 
 - `alma9`: `alma9-gnome-nvidia-580`, `alma9-cosmic-nvidia-580`, `alma9-server-nvidia-580`
 - `alma10`: `alma10-gnome`, `alma10-gnome-nvidia-open`, `alma10-cosmic`, `alma10-cosmic-nvidia-open`, `alma10-server`, `alma10-server-nvidia-open`
-- `fedora`: `fedora-gnome`, `fedora-gnome-nvidia-open`, `fedora-cosmic`, `fedora-cosmic-nvidia-open`, `fedora-server`
+- `fedora`: `fedora-gnome`, `fedora-gnome-nvidia-open`, `fedora-gnome-nvidia-580`, `fedora-cosmic`, `fedora-cosmic-nvidia-open`, `fedora-cosmic-nvidia-580`, `fedora-server`, `fedora-server-nvidia-580`
 
 Unsupported combinations are intentional.
 
@@ -47,6 +47,7 @@ Unsupported combinations are intentional.
 - Current AlmaLinux 10 GNOME workstation: `alma10-gnome`
 - Current AlmaLinux 10 COSMIC workstation with the open NVIDIA lane: `alma10-cosmic-nvidia-open`
 - Current Fedora GNOME workstation: `fedora-gnome`
+- Current Fedora NVIDIA 580 GNOME workstation: `fedora-gnome-nvidia-580`
 - Current AlmaLinux 9 NVIDIA 580 GNOME workstation: `alma9-gnome-nvidia-580`
 - Current AlmaLinux 10 Server: `alma10-server`
 - Current Fedora Server: `fedora-server`

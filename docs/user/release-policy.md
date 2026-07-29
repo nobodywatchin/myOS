@@ -5,7 +5,7 @@ Current publishes a small image matrix with explicit contracts.
 ## Stability policy
 
 - `alma10` is the stable baseline lane.
-- `fedora` is the edge lane for newer userspace and hardware enablement.
+- `fedora` is the edge lane for newer userspace and hardware enablement, including akmod-built NVIDIA 580 images.
 - `alma9` is reserved for the legacy/prebuilt NVIDIA 580 compatibility lane.
 - Role, environment, platform, and driver lanes are all explicit supported contracts.
 

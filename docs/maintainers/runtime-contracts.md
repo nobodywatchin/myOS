@@ -104,6 +104,7 @@ GNOME and COSMIC are workstation-environment implementations.
 - `shared/nvidia-open-common.yml` owns the open-driver helper shim.
 - `shared/nvidia-common.yml` and `shared/nvidia-open.yml` own the Alma-family NVIDIA lanes.
 - `fedora/nvidia-open.yml` owns only the Fedora-specific open-driver delta on top of the shared NVIDIA layers.
+- `fedora/nvidia-580.yml` owns the Fedora-specific proprietary R580 akmod build path: Negativo17 repo setup, matched kernel-devel install, akmods build, `modinfo` verification, userspace package install, and akmod/kernel-devel cleanup.
 
 ## Current namespace
 

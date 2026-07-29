@@ -14,9 +14,9 @@ Choose `nvidia-open` for newer supported NVIDIA GPUs on supported Alma 10 and Fe
 
 ## NVIDIA 580 lane
 
-Choose `nvidia-580` only on Alma 9.
+Choose `nvidia-580` on supported Alma 9 or Fedora images when the proprietary R580 driver is needed for older supported NVIDIA GPUs.
 
-That lane is intentionally pinned to the proprietary `nvidia-driver:580` stream for supported older GPUs. It is not available on Alma 10 or Fedora in the stable matrix.
+Alma 9 uses the Alma/NVIDIA `nvidia-driver:580` module stream and prebuilt proprietary kmods. Fedora uses the BlueBuild-style path: Negativo17's Fedora 580 akmod source packages are built during the image build, verified with `modinfo`, and then the akmod/kernel-devel build path is removed from the final image. The `nvidia-580` lane is not currently available on Alma 10 in the stable matrix.
 
 ## PCP monitoring
 

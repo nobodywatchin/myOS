@@ -105,6 +105,7 @@ platform_ceph_layers = {
 }
 nvidia_base = root / 'recipes/layers/shared/nvidia-base.yml'
 alma9_nvidia_workstation = root / 'recipes/layers/alma9/nvidia-workstation.yml'
+fedora_nvidia_580 = root / 'recipes/layers/fedora/nvidia-580.yml'
 recipe_ymls = sorted((root / 'recipes').rglob('*.yml'))
 alma_only_shared_patterns = {
     'epel-release': 'EPEL is Alma/RHEL-family repository setup; use layers/alma/core.yml',
@@ -167,6 +168,29 @@ def exact_line_count(pattern: str, paths: list[Path]) -> int:
 
 with matrix_file.open('r', encoding='utf-8', newline='') as handle:
     rows = list(csv.DictReader(handle, delimiter='\t'))
+
+fedora_nvidia_580_rows = [
+    row for row in rows
+    if row['platform'] == 'fedora' and row['driver'] == 'nvidia-580'
+]
+if len(fedora_nvidia_580_rows) != 3:
+    die(
+        'Expected exactly three Fedora NVIDIA 580 rows in the image matrix '
+        f'(server, GNOME, COSMIC); found {len(fedora_nvidia_580_rows)}'
+    )
+
+expected_fedora_nvidia_580_images = {
+    'fedora-server-nvidia-580',
+    'fedora-gnome-nvidia-580',
+    'fedora-cosmic-nvidia-580',
+}
+actual_fedora_nvidia_580_images = {row['image'] for row in fedora_nvidia_580_rows}
+if actual_fedora_nvidia_580_images != expected_fedora_nvidia_580_images:
+    die(
+        'Fedora NVIDIA 580 rows must be exactly '
+        f'{sorted(expected_fedora_nvidia_580_images)}; found '
+        f'{sorted(actual_fedora_nvidia_580_images)}'
+    )
 
 for row in rows:
     recipe = root / row['recipe']
@@ -231,6 +255,13 @@ for row in rows:
             die(f"Alma 9 NVIDIA workstation {row['image']} must include alma9/nvidia-workstation.yml exactly once")
     elif alma9_nvidia_workstation_count != 0:
         die(f"Image {row['image']} must not include Alma 9 NVIDIA workstation-only media backend layer")
+
+    fedora_nvidia_580_count = graph.count(fedora_nvidia_580)
+    if row['platform'] == 'fedora' and row['driver'] == 'nvidia-580':
+        if fedora_nvidia_580_count != 1:
+            die(f"Fedora NVIDIA 580 image {row['image']} must include fedora/nvidia-580.yml exactly once")
+    elif fedora_nvidia_580_count != 0:
+        die(f"Image {row['image']} must not include Fedora NVIDIA 580 layer")
 
 expected_singletons = {
     'pcp package': (r'^\s*-\s+pcp\s*$', 1),
