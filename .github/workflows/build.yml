@@ -88,13 +88,12 @@ jobs:
         include: ${{ fromJSON(needs.define-image-matrix.outputs.server_images) }}
     steps:
       - name: Build Server image
-        uses: blue-build/github-action@v1.11
+        uses: blue-build/github-action@v1.12
         with:
           recipe: ${{ matrix.recipe }}
           cosign_private_key: ${{ secrets.SIGNING_SECRET }}
           registry_token: ${{ github.token }}
           pr_event_number: ${{ github.event.number }}
-          rechunk: true
           maximize_build_space: true
 
   workstation-images:
@@ -116,11 +115,10 @@ jobs:
         include: ${{ fromJSON(needs.define-image-matrix.outputs.workstation_images) }}
     steps:
       - name: Build Workstation image
-        uses: blue-build/github-action@v1.11
+        uses: blue-build/github-action@v1.12
         with:
           recipe: ${{ matrix.recipe }}
           cosign_private_key: ${{ secrets.SIGNING_SECRET }}
           registry_token: ${{ github.token }}
           pr_event_number: ${{ github.event.number }}
-          rechunk: true
           maximize_build_space: true
